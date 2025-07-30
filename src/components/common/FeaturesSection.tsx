@@ -21,30 +21,30 @@ export function FeaturesSection() {
       icon: ShoppingBag,
       title: "Trading Platform",
       description: "Buy and sell products/services within the community",
-      href: "/trading",
+      href: "/",
     },
     {
       icon: Calendar,
       title: "Events & Calendar",
       description: "Stay updated with community events and celebrations",
-      href: "/events",
+      href: "/",
     },
     {
       icon: HandHeart,
       title: "Help Exchange",
       description: "Get help or offer assistance to community members",
-      href: "/help",
+      href: "/",
     },
     {
       icon: Trophy,
       title: "Achievements",
       description: "Showcase and celebrate community achievements",
-      href: "/achievements",
+      href: "/",
     },
   ]
 
   return (
-    <section className="py-16 bg-[#FFFDEF]">
+    <section className="py-16 bg-[#FFFDEF] px-8">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-[#8B0000]">Community Services</h2>
@@ -67,8 +67,16 @@ export function FeaturesSection() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="mb-4">{feature.description}</CardDescription>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href={feature.href}>Learn More</Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className={feature.href === "/" ? "  cursor-not-allowed" : "text-orange-600"}
+                  disabled={feature.href === "/"} // Disable the button when href is "/"
+                >
+                  <Link href={feature.href}>
+                    {feature.href === "/" ? "Coming Soon" : "Learn More"}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

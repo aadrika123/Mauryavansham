@@ -19,7 +19,7 @@ export default function HeritagePage() {
       </div>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-8 text-center">
+      <div className="container mx-auto px-8 py-8 text-center">
         <div className="mb-8">
           <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
           <div className="relative">
@@ -136,7 +136,7 @@ export default function HeritagePage() {
       </div>
 
       {/* Sacred Knowledge Section */}
-      <div className="bg-yellow-50 py-16">
+      <div className="bg-yellow-50 py-16 px-8">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <div className="relative">
@@ -183,7 +183,7 @@ export default function HeritagePage() {
       </div>
 
       {/* Divine Lineage Section */}
-      <div className="bg-yellow-50 py-16 ">
+      <div className="bg-yellow-50 py-16 px-8">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <div className="relative">
@@ -265,7 +265,7 @@ export default function HeritagePage() {
         </div>
       </div>
       {/* Our core value section */}
-      <div className=" bg-yellow-50 py-8">
+      <div className=" bg-yellow-50 py-8 px-12">
         <div className=" mb-8 bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] text-white py-16 rounded-2xl container mx-auto px-4 ">
           <div className="container mx-auto px-4 ">
             <h2 className="text-3xl font-bold text-center mb-12">

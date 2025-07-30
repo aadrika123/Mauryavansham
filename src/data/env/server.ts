@@ -1,3 +1,9 @@
-// This file will contain server-side environment variables.
-// Example: export const DATABASE_URL = process.env.DATABASE_URL;
-// export const JWT_SECRET = process.env.JWT_SECRET;
+import 'dotenv/config';
+
+export const env = {
+  DB_HOST: process.env.DB_HOST || 'localhost',
+  DB_USER: process.env.DB_USER || 'postgres',
+  DB_PASSWORD: process.env.DB_PASSWORD || '12345',
+  DB_NAME: process.env.DB_NAME || 'mauryavansham',
+  DATABASE_URL: process.env.DATABASE_URL || '',
+};

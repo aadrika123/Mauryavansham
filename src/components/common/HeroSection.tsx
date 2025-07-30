@@ -18,7 +18,7 @@ export function HeroSection() {
   ]
 
   return (
-    <section className="relative text-white py-24 md:py-32 lg:py-40 overflow-hidden">
+    <section className="relative text-white py-20 md:py-28 lg:py-32 overflow-hidden">
       <ImageCarousel images={carouselImages} />
       <div
         className="absolute inset-0 bg-gradient-to-r to-[#ffae00] via-[#FF5C00] from-[#8B0000] text-white"

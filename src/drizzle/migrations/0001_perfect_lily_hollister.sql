@@ -1,0 +1,5 @@
+-- ALTER TABLE "users" DROP COLUMN "account_status";--> statement-breakpoint
+-- ALTER TABLE "users" DROP COLUMN "role";--> statement-breakpoint
+-- -- DROP TYPE "public"."account_status";--> statement-breakpoint
+-- DROP TYPE "public"."role";--> statement-breakpoint
+-- DROP TYPE "public"."verification_status";

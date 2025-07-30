@@ -1,6 +1,6 @@
 export function CommunityStatsSection() {
   return (
-    <div className="bg-[#FFFDEF]">
+    <div className="bg-[#FFFDEF] px-8">
       <div className="container mx-auto px-4">
         <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] text-white py-8 rounded-2xl">
           <div className="text-center mb-12">

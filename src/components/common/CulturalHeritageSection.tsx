@@ -5,7 +5,7 @@ import { Globe } from "lucide-react"
 
 export function CulturalHeritageSection() {
   return (
-    <section className="py-16 bg-[#FFFDEF]">
+    <section className="py-16 bg-[#FFFDEF] px-8">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>

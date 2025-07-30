@@ -156,7 +156,8 @@ export default function MatrimonialPage() {
             Join thousands of Maurya families who have found their perfect match through our platform
           </p>
           <Button className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
-            Create Profile Now
+            
+            <Link href="/create-profile" className="ml-2">Create Profile Now</Link>
           </Button>
         </div>
       </div>
