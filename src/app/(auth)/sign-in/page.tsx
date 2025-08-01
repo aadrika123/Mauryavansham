@@ -1,8 +1,9 @@
-// import SignInForm from "./signin-form"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Crown } from "lucide-react"
-import Link from "next/link"
-import SignInForm from "./signin-form"
+"use client";
+import { Suspense } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
+import { Crown } from "lucide-react";
+import Link from "next/link";
+import SignInForm from "./signin-form"; // client component
 
 export default function SignInPage() {
   return (
@@ -21,9 +22,10 @@ export default function SignInPage() {
             <CardTitle className="text-center text-red-700">Sign In</CardTitle>
           </CardHeader>
           <CardContent>
-            <SignInForm />
+            <Suspense fallback={<div>Loading form...</div>}>
+              <SignInForm />
+            </Suspense>
 
-            {/* Sign Up Link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{" "}
@@ -36,5 +38,5 @@ export default function SignInPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
