@@ -16,7 +16,9 @@ export function Header() {
     // { title: "Registration", href: "/registration" },
     { title: "Community Forum", href: "/community", icon: Users },
     { title: "Matrimonial", href: "/matrimonial", icon: Heart },
-    // { title: "Events", href: "/events" },
+    { title: "Events", href: "/events" },
+    {title:"Donation", href:"/donation"},
+    { title: "Achievements", href: "/achievements" },
     // { title: "Contact", href: "/contact" },
   ];
 
