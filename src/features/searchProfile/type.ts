@@ -46,6 +46,11 @@ export type DatabaseProfile = {
   castPreferences: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  isPremium: boolean | null
+  isVerified: boolean | null
+  isActive: boolean | null
+  profilePicture: string | null
+  
 }
 
 // UI Profile type (what your components expect)
@@ -62,9 +67,71 @@ export type Profile = {
   gotra: string
   interests: string[]
   isPremium: boolean
+  profilePicture: string
   isVerified: boolean
   lastActive: string
   profileImage?: string
   createdAt?: string
   updatedAt?: string
+  isActive?: boolean
+  isDeleted?: boolean
+  
+}
+export type DetailedProfile = {
+  id: string
+  name: string
+  nickName?: string
+  age: number
+  dob: string
+  height: string
+  weight: string
+  location: string
+  education: string
+  occupation: string
+  company: string
+  designation: string
+  workLocation: string
+  income: string
+  workExperience: string
+  gotra: string
+  interests: string[]
+  isPremium: boolean
+  isVerified: boolean
+  isActive: boolean
+  profileImage?: string
+  personalDetails: {
+    complexion: string
+    bodyType: string
+    maritalStatus: string
+    languagesKnown: string[]
+    diet: string
+    smoking: string
+    drinking: string
+    exercise: string
+    religiousBeliefs: string
+  }
+  familyDetails: {
+    fatherName: string
+    fatherOccupation: string
+    motherName: string
+    motherOccupation: string
+    brothers: string
+    sisters: string
+    familyIncome: string
+    ancestralVillage: string
+    familyHistory: string
+    communityContributions: string
+    familyTraditions: string
+  }
+  preferences: {
+    musicPreferences: string
+    moviePreferences: string
+    readingInterests: string
+    travelInterests: string
+    castPreferences: string
+  }
+  aboutMe: string
+  lastActive: string
+  createdAt: string
+  updatedAt: string
 }

@@ -84,7 +84,7 @@ export function Header() {
               <Link href="/sign-in">Login</Link>
             </Button>
             <Button className="bg-gradient-to-r to-[#ffae00] via-[#FF5C00] from-[#8B0000] hover:from-orange-600 hover:to-red-700 text-white">
-              <Link href="/registration">Join Community</Link>
+              <Link href="/sign-up">Sign Up</Link>
             </Button>
           </div>
 

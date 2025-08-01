@@ -1,36 +1,62 @@
-"use client"
+"use client";
 
-import { Card } from "@/src/components/ui/card"
-import { Button } from "@/src/components/ui/button"
-import { Badge } from "@/src/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { Heart, MessageCircle, Eye, MapPin, GraduationCap, Briefcase, Users } from "lucide-react"
-import type React from "react"
-import type { Profile } from "../type"
+import { Card } from "@/src/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import { Badge } from "@/src/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
+import {
+  Heart,
+  MessageCircle,
+  Eye,
+  MapPin,
+  GraduationCap,
+  Briefcase,
+  Users,
+  Crown,
+  Verified,
+} from "lucide-react";
+import type React from "react";
+import type { Profile } from "../type";
+import { useRouter } from "next/navigation";
+
 
 interface ProfilesListProps {
-  profiles: Profile[]
-  totalCount: number
-  sortBy: string
-  onSortChange: (sortBy: string) => void
+  profiles: Profile[];
+  totalCount: number;
+  sortBy: string;
+  onSortChange: (sortBy: string) => void;
 }
 
-const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortBy, onSortChange }) => {
-  console.log("ProfilesList received profiles:", profiles)
+const ProfilesList: React.FC<ProfilesListProps> = ({
+  profiles,
+  totalCount,
+  sortBy,
+  onSortChange,
+}) => {
+  console.log("ProfilesList received profiles:", profiles);
+  const router = useRouter()
+
   const handleExpressInterest = (profileId: string) => {
-    console.log("Express interest:", profileId)
+    console.log("Express interest:", profileId);
     // TODO: Implement express interest functionality
-  }
+  };
 
   const handleSendMessage = (profileId: string) => {
-    console.log("Send message:", profileId)
+    console.log("Send message:", profileId);
     // TODO: Implement send message functionality
-  }
+  };
 
   const handleViewProfile = (profileId: string) => {
-    console.log("View profile:", profileId)
+    console.log("View profile:", profileId);
+    
     // TODO: Implement view profile functionality - could navigate to profile detail page
-  }
+  };
 
   const getInitials = (name: string): string => {
     return name
@@ -38,14 +64,14 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
       .map((n) => n[0])
       .join("")
       .toUpperCase()
-      .slice(0, 2) // Limit to 2 characters
-  }
+      .slice(0, 2);
+  };
 
   const formatLastActive = (lastActive: string): string => {
-    if (lastActive === "Never") return "Never active"
-    if (lastActive === "Online now") return "Online now"
-    return `Last seen ${lastActive}`
-  }
+    if (lastActive === "Never") return "Never active";
+    if (lastActive === "Online now") return "Online now";
+    return `Last seen ${lastActive}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -76,7 +102,10 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
       {/* Profiles */}
       <div className="space-y-4">
         {profiles?.map((profile) => (
-          <Card key={profile.id} className="p-6 hover:shadow-md transition-shadow">
+          <Card
+            key={profile.id}
+            className="p-6 hover:shadow-md transition-shadow"
+          >
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Profile Image */}
               <div className="flex-shrink-0">
@@ -88,25 +117,29 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         // Fallback to initials if image fails to load
-                        const target = e.target as HTMLImageElement
-                        target.style.display = "none"
-                        const parent = target.parentElement
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                        const parent = target.parentElement;
                         if (parent) {
-                          parent.innerHTML = `<div class="text-gray-400 text-2xl font-bold">${getInitials(profile.name)}</div>`
+                          parent.innerHTML = `<div class="text-gray-400 text-2xl font-bold">${getInitials(
+                            profile.name
+                          )}</div>`;
                         }
                       }}
                     />
                   ) : (
-                    <div className="text-gray-400 text-2xl font-bold">{getInitials(profile.name)}</div>
+                    <div className="text-gray-400 text-2xl font-bold">
+                      {getInitials(profile.name)}
+                    </div>
                   )}
 
                   {/* Badges */}
-                  <div className="absolute -top-2 -right-2 flex flex-col gap-1">
+                  <div className="absolute -top-6 -right-2 ">
                     {profile.isPremium && (
-                      <Badge className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-2 py-1">Premium</Badge>
+                      <Crown className="w-7 h-7 text-orange-600 text-" />
                     )}
                     {profile.isVerified && (
-                      <Badge className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1">Verified</Badge>
+                      <Verified className=" w-7 h-7 text-green-600" />
                     )}
                   </div>
                 </div>
@@ -117,7 +150,9 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
                   <div className="space-y-3">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{profile.name}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {profile.name}
+                      </h3>
                       <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
                         <span>{profile.age} years</span>
                         <span>•</span>
@@ -138,15 +173,17 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
                         </div>
                       )}
 
-                      {(profile.occupation !== "Not specified" || profile.company !== "Not specified") && (
+                      {(profile.occupation !== "Not specified" ||
+                        profile.company !== "Not specified") && (
                         <div className="flex items-center gap-2 text-sm text-gray-700">
                           <Briefcase className="w-4 h-4" />
                           <span>
-                            {profile.occupation !== "Not specified" && profile.company !== "Not specified"
+                            {profile.occupation !== "Not specified" &&
+                            profile.company !== "Not specified"
                               ? `${profile.occupation} at ${profile.company}`
                               : profile.occupation !== "Not specified"
-                                ? profile.occupation
-                                : profile.company}
+                              ? profile.occupation
+                              : profile.company}
                           </span>
                         </div>
                       )}
@@ -162,11 +199,17 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
                     {/* Interests */}
                     {profile.interests.length > 0 && (
                       <div className="flex flex-wrap gap-2">
-                        {profile.interests.slice(0, 5).map((interest, index) => (
-                          <Badge key={`${interest}-${index}`} variant="secondary" className="text-xs">
-                            {interest}
-                          </Badge>
-                        ))}
+                        {profile.interests
+                          .slice(0, 5)
+                          .map((interest, index) => (
+                            <Badge
+                              key={`${interest}-${index}`}
+                              variant="secondary"
+                              className="text-xs"
+                            >
+                              {interest}
+                            </Badge>
+                          ))}
                         {profile.interests.length > 5 && (
                           <Badge variant="outline" className="text-xs">
                             +{profile.interests.length - 5} more
@@ -176,7 +219,9 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
                     )}
                   </div>
 
-                  <div className="text-right text-sm text-gray-500">{formatLastActive(profile.lastActive)}</div>
+                  <div className="text-right text-sm text-gray-500">
+                    {formatLastActive(profile.lastActive)}
+                  </div>
                 </div>
 
                 {/* Action Buttons */}
@@ -201,7 +246,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleViewProfile(profile.id)}
+                    onClick={() => router.push(`/search-profile/${profile.id}`)}
                     className="flex items-center gap-2 hover:bg-blue-50 hover:border-blue-300"
                   >
                     <Eye className="w-4 h-4" />
@@ -222,9 +267,12 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
               <Users className="w-8 h-8 text-gray-400" />
             </div>
             <div>
-              <p className="text-gray-500 font-medium">No profiles found matching your criteria</p>
+              <p className="text-gray-500 font-medium">
+                No profiles found matching your criteria
+              </p>
               <p className="text-sm text-gray-400 mt-2">
-                Try adjusting your filters to see more results, or check back later for new profiles.
+                Try adjusting your filters to see more results, or check back
+                later for new profiles.
               </p>
             </div>
           </div>
@@ -240,7 +288,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortB
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ProfilesList
+export default ProfilesList;

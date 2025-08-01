@@ -61,26 +61,18 @@ export function transformDatabaseProfileToProfile(dbProfile: DatabaseProfile): P
     company: dbProfile.companyOrganization || "Not specified",
     gotra: dbProfile.gotraDetails || "Not specified",
     interests,
-    isPremium: false, // You might want to add this field to your schema
-    isVerified: false, // You might want to add this field to your schema
+    // isPremium: false, 
+    // isVerified: false, 
+    isPremium: dbProfile.isPremium || false,
+    profilePicture: dbProfile.profilePicture || "",
+    isVerified: dbProfile.isVerified || false,
     lastActive: formatLastActive(dbProfile.updatedAt || dbProfile.createdAt),
-    profileImage: undefined, // You might want to add this field to your schema
+    profileImage: undefined, 
     createdAt: formatDate(dbProfile.createdAt),
     updatedAt: formatDate(dbProfile.updatedAt),
   }
 }
 
-// Helper function to extract age (you'll need to implement based on your data)
-function extractAgeFromProfile(dbProfile: DatabaseProfile): number | null {
-  // Option 1: If you have birth date, calculate age
-  // Option 2: If age is stored somewhere else in your system
-  // Option 3: Parse from other fields
-  // For now, return a placeholder - you'll need to add age field to your schema
-
-  // Temporary: generate a random age between 22-45 for demo purposes
-  // In production, you should add an age field to your schema
-  return Math.floor(Math.random() * (45 - 22 + 1)) + 22
-}
 
 // Helper function to extract interests from various fields
 function extractInterests(dbProfile: DatabaseProfile): string[] {

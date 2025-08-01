@@ -1,30 +1,75 @@
-import { cookies } from "next/headers"
-import { verify } from "jsonwebtoken"
+import type { AuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { compare } from "bcryptjs";
+import { db } from "@/src/drizzle/db";
+// import { users } from "@/src/drizzle/schema/users"
+import { users } from "@/src/drizzle/schema";
+import { eq } from "drizzle-orm";
 
-// Define a secret for JWT. In production, this should be a strong, random string from environment variables.
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_key_here_replace_in_production"
+export const authOptions: AuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
+  providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-interface UserSession {
-  userId: number
-  email: string
-  role: string
-  exp: number
-  iat: number
-}
+        try {
+          const user = await db.query.users.findFirst({
+            where: eq(users.email, credentials.email),
+          });
 
-export async function getSession(): Promise<UserSession | null> {
-  const sessionToken = cookies().get("session-token")?.value
+          if (!user) {
+            return null;
+          }
 
-  if (!sessionToken) {
-    return null
-  }
+          const isPasswordValid = await compare(
+            credentials.password,
+            user.password
+          );
 
-  try {
-    const decoded = verify(sessionToken, JWT_SECRET) as UserSession
-    return decoded
-  } catch (error) {
-    console.error("Failed to verify session token:", error)
-    cookies().delete("session-token") // Clear invalid token
-    return null
-  }
-}
+          if (!isPasswordValid) {
+            return null;
+          }
+
+          return {
+            id: user.id.toString(),
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          } as any; // quick fix, or see safer typed fix below
+        } catch (error) {
+          console.error("Auth error:", error);
+          return null;
+        }
+      },
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.sub!;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/auth/signin",
+    // signUp: "/auth/signup",
+  },
+};

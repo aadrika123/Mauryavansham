@@ -14,14 +14,19 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { Profile } from "@/src/features/searchProfile/type";
+// import { Profile } from "@/src/features/searchProfile/type";
 
-export default function MatrimonialPage() {
+type Props = {
+  initialProfiles: Profile[];
+};
+export default function MatrimonialPage({ initialProfiles }: Props) {
   const [searchFilters, setSearchFilters] = useState({
     ageFrom: "",
     ageTo: "",
     cityState: "",
   });
-
+  console.log(initialProfiles);
   const profiles = [
     {
       id: 1,
@@ -71,7 +76,7 @@ export default function MatrimonialPage() {
 
   const successStories = [
     {
-      couple: "Rahul & Kavita Maurya",
+      couple: "Rahul & Kavya Maurya",
       marriedDate: "Married in March 2024",
       testimonial:
         "We found each other through Mauryavansh matrimonial and it was the best decision of our lives. Thank you for helping us find our soulmates!",
@@ -189,7 +194,7 @@ export default function MatrimonialPage() {
       {/* Profile Cards Grid */}
       <div className="container mx-auto px-4 mb-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {profiles.map((profile) => (
+          {profiles?.map((profile) => (
             <Card
               key={profile.id}
               className="bg-yellow-50 border-yellow-200 hover:shadow-lg transition-shadow hover:shadow-yellow-200"
@@ -287,3 +292,7 @@ export default function MatrimonialPage() {
     </div>
   );
 }
+
+
+
+

@@ -56,4 +56,10 @@ export const profiles = pgTable("profiles", {
   castPreferences: varchar("cast_preferences", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  isPremium: boolean("is_premium").default(false),
+  isVerified: boolean("is_verified").default(false),
+  isActive: boolean("is_active").default(true),
+  isDeleted: boolean("is_deleted").default(false),
+  profilePicture: varchar("profile_picture", { length: 255 }).default(""),
+  
 });

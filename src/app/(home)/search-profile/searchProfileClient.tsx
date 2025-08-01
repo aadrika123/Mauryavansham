@@ -24,7 +24,7 @@ export default function SearchProfilesClient({ initialProfiles }: Props) {
 
   const [filters, setFilters] = useState({
     searchName: "",
-    ageRange: [25, 35] as [number, number],
+    ageRange: [18, 60] as [number, number],
     location: "",
     dob: "",
     education: "",

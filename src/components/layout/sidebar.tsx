@@ -79,7 +79,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="w-64 bg-white border-r min-h-screen p-4">
+    <div className="bg-yellow-50  min-h-screen p-4">
       <nav className="space-y-2">
         {sidebarItems.map((item) => (
           <Link
