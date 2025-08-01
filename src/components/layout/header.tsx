@@ -13,7 +13,7 @@ export function Header() {
   const navigationItems = [
     { title: "Home", href: "/" },
     { title: "Heritage", href: "/heritage" },
-    { title: "Registration", href: "/registration" },
+    // { title: "Registration", href: "/registration" },
     { title: "Community Forum", href: "/community", icon: Users },
     { title: "Matrimonial", href: "/matrimonial", icon: Heart },
     // { title: "Events", href: "/events" },

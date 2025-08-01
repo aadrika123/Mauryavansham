@@ -5,5 +5,6 @@ export * from "./db/schemas/accounts.schema";
 export * from "./db/schemas/sessions.schema";
 export * from "./db/schemas/verificationTokens.schema";
 export * from "./db/relations/users.relation";
-export * from "./db/schemas/registration.schema"
+export * from "./db/schemas/registration.schema";
+export * from "./db/schemas/createProfile.schema";
 

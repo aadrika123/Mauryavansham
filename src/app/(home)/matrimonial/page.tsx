@@ -1,18 +1,26 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Card, CardContent } from "@/src/components/ui/card"
-import { ArrowLeft, Crown, Heart, MapPin, Briefcase, GraduationCap, Users } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Card, CardContent } from "@/src/components/ui/card";
+import {
+  ArrowLeft,
+  Crown,
+  Heart,
+  MapPin,
+  Briefcase,
+  GraduationCap,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function MatrimonialPage() {
   const [searchFilters, setSearchFilters] = useState({
     ageFrom: "",
     ageTo: "",
     cityState: "",
-  })
+  });
 
   const profiles = [
     {
@@ -59,7 +67,7 @@ export default function MatrimonialPage() {
       familyType: "Nuclear Family",
       image: "/placeholder.svg?height=120&width=120&text=VM",
     },
-  ]
+  ];
 
   const successStories = [
     {
@@ -76,11 +84,11 @@ export default function MatrimonialPage() {
         "The platform helped us connect based on shared values and family traditions. We are grateful for this wonderful community service.",
       icon: "❤️",
     },
-  ]
+  ];
 
   const handleSearch = () => {
-    console.log("Searching with filters:", searchFilters)
-  }
+    console.log("Searching with filters:", searchFilters);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
@@ -101,16 +109,18 @@ export default function MatrimonialPage() {
         <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
         <div className="relative mb-6">
           <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg transform "></div>
-          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">Maurya Matrimonial</h1>
+          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">
+            Maurya Matrimonial
+          </h1>
         </div>
         <p className="text-lg text-red-600 max-w-4xl mx-auto leading-relaxed mb-12">
-          Find your perfect life partner within our respected Maurya community. Build a future together rooted in our
-          shared values and heritage.
+          Find your perfect life partner within our respected Maurya community.
+          Build a future together rooted in our shared values and heritage.
         </p>
       </div>
 
       {/* Search Section */}
-      <div className="container mx-auto px-4 mb-12">
+      {/* <div className="container mx-auto px-4 mb-12">
         <Card className="bg-yellow-50 border-yellow-200 shadow-lg max-w-4xl mx-auto hover:shadow-yellow-200">
           <CardContent className="p-6">
             <div className="flex items-center gap-2 mb-4 text-red-700">
@@ -145,20 +155,34 @@ export default function MatrimonialPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Create Profile CTA */}
       <div className="container mx-auto px-4 mb-12">
         <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] rounded-lg p-8 text-center text-white max-w-4xl mx-auto">
           <Heart className="h-16 w-16 mx-auto mb-4 text-white" />
-          <h2 className="text-2xl font-bold mb-4">Create Your Matrimonial Profile</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            Create Your Matrimonial Profile
+          </h2>
           <p className="text-lg mb-6 opacity-90">
-            Join thousands of Maurya families who have found their perfect match through our platform
+            Join thousands of Maurya families who have found their perfect match
+            through our platform
           </p>
-          <Button className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
-            
-            <Link href="/create-profile" className="ml-2">Create Profile Now</Link>
-          </Button>
+          <div className="flex justify-center gap-4 flex-wrap">
+            <Button
+              asChild
+              className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+            >
+              <Link href="/create-profile">Create Profile Now</Link>
+            </Button>
+
+            <Button
+              asChild
+              className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+            >
+              <Link href="/search-profile">Search Profile</Link>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -166,7 +190,10 @@ export default function MatrimonialPage() {
       <div className="container mx-auto px-4 mb-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {profiles.map((profile) => (
-            <Card key={profile.id} className="bg-yellow-50 border-yellow-200 hover:shadow-lg transition-shadow hover:shadow-yellow-200">
+            <Card
+              key={profile.id}
+              className="bg-yellow-50 border-yellow-200 hover:shadow-lg transition-shadow hover:shadow-yellow-200"
+            >
               <CardContent className="p-6 text-center">
                 {/* Profile Image */}
                 <div className="relative mb-4">
@@ -180,7 +207,9 @@ export default function MatrimonialPage() {
                 </div>
 
                 {/* Profile Info */}
-                <h3 className="text-lg font-bold text-red-700 mb-1">{profile.name}</h3>
+                <h3 className="text-lg font-bold text-red-700 mb-1">
+                  {profile.name}
+                </h3>
                 <p className="text-sm text-red-600 mb-4">
                   {profile.age} years • {profile.gotra}
                 </p>
@@ -227,13 +256,18 @@ export default function MatrimonialPage() {
         <div className="text-center mb-8">
           <div className="relative">
             <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg transform "></div>
-            <h2 className="relative text-2xl font-bold text-red-700">Success Stories</h2>
+            <h2 className="relative text-2xl font-bold text-red-700">
+              Success Stories
+            </h2>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {successStories.map((story, index) => (
-            <Card key={index} className="bg-yellow-50 border-yellow-200 hover:shadow-yellow-200 transition-shadow shadow-lg">
+            <Card
+              key={index}
+              className="bg-yellow-50 border-yellow-200 hover:shadow-yellow-200 transition-shadow shadow-lg"
+            >
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white text-xl">
@@ -251,5 +285,5 @@ export default function MatrimonialPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,23 +1,35 @@
-"use client"
+"use client";
 
-import { User } from "lucide-react"
-import { Label } from "@/src/components/ui/label"
-import { Input } from "@/src/components/ui/input"
-import { Textarea } from "@/src/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
+import { User } from "lucide-react";
+import { Label } from "@/src/components/ui/label";
+import { Input } from "@/src/components/ui/input";
+import { Textarea } from "@/src/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
 
 interface PersonalInfoTabProps {
   data: {
-    height: string
-    weight: string
-    complexion: string
-    bodyType: string
-    maritalStatus: string
-    languagesKnown: string
-    hobbies: string
-    aboutMe: string
-  }
-  onUpdate: (data: Partial<PersonalInfoTabProps["data"]>) => void
+    name: string;
+    nickName: string;
+    phoneNo: string;
+    email: string;
+    website: string;
+    dob: string;
+    height: string;
+    weight: string;
+    complexion: string;
+    bodyType: string;
+    maritalStatus: string;
+    languagesKnown: string;
+    hobbies: string;
+    aboutMe: string;
+  };
+  onUpdate: (data: Partial<PersonalInfoTabProps["data"]>) => void;
 }
 
 export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
@@ -33,10 +45,86 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
+          <Label htmlFor="name">
+            Name <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="name"
+            placeholder="Enter your name"
+            value={data.name}
+            onChange={(e) => onUpdate({ name: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="nickName">
+           Nick Name <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="nickName"
+            placeholder="Enter your nick name"
+            value={data.nickName}
+            onChange={(e) => onUpdate({ nickName: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="dob">
+           Date Of Birth <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="dob"
+            placeholder="Enter your date of birth"
+            value={data.dob}
+            onChange={(e) => onUpdate({ dob: e.target.value })}
+            type="date"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="phoneNo">
+            Phone No. <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="phoneNo"
+            placeholder="Enter your phone number"
+            value={data.phoneNo}
+            onChange={(e) => onUpdate({ phoneNo: e.target.value })}
+            type="tel"
+          />
+          
+        </div>
+         <div className="space-y-2">
+          <Label htmlFor="email">
+            Email <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="email"
+            placeholder="Enter your email address"
+            value={data.email}
+            onChange={(e) => onUpdate({ email: e.target.value })}
+            type="email"
+          />
+          
+        </div>
+         <div className="space-y-2">
+          <Label htmlFor="website">
+            Website <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="website"
+            placeholder="Enter your website URL"
+            value={data.website}
+            onChange={(e) => onUpdate({ website: e.target.value })}
+            type="url"
+          />
+          
+        </div>
+        <div className="space-y-2">
           <Label htmlFor="height">
             Height <span className="text-red-500">*</span>
           </Label>
-          <Select value={data.height} onValueChange={(value) => onUpdate({ height: value })}>
+          <Select
+            value={data.height}
+            onValueChange={(value) => onUpdate({ height: value })}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select height" />
             </SelectTrigger>
@@ -82,7 +170,10 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
 
         <div className="space-y-2">
           <Label htmlFor="complexion">Complexion</Label>
-          <Select value={data.complexion} onValueChange={(value) => onUpdate({ complexion: value })}>
+          <Select
+            value={data.complexion}
+            onValueChange={(value) => onUpdate({ complexion: value })}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select complexion" />
             </SelectTrigger>
@@ -97,7 +188,10 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
 
         <div className="space-y-2">
           <Label htmlFor="bodyType">Body Type</Label>
-          <Select value={data.bodyType} onValueChange={(value) => onUpdate({ bodyType: value })}>
+          <Select
+            value={data.bodyType}
+            onValueChange={(value) => onUpdate({ bodyType: value })}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select body type" />
             </SelectTrigger>
@@ -110,12 +204,15 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
           </Select>
         </div>
 
-        <div className="space-y-2 md:col-span-2">
+        <div className="space-y-2 ">
           <Label htmlFor="maritalStatus">
             Marital Status <span className="text-red-500">*</span>
           </Label>
-          <Select value={data.maritalStatus} onValueChange={(value) => onUpdate({ maritalStatus: value })}>
-            <SelectTrigger className="md:w-1/2">
+          <Select
+            value={data.maritalStatus}
+            onValueChange={(value) => onUpdate({ maritalStatus: value })}
+          >
+            <SelectTrigger className="">
               <SelectValue placeholder="Select marital status" />
             </SelectTrigger>
             <SelectContent>
@@ -127,7 +224,7 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
           </Select>
         </div>
 
-        <div className="space-y-2 md:col-span-2">
+        <div className="space-y-2 ">
           <Label htmlFor="languagesKnown">Languages Known</Label>
           <Input
             id="languagesKnown"
@@ -160,5 +257,5 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

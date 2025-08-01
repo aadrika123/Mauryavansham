@@ -13,11 +13,12 @@ interface FamilyDetailsTabProps {
     motherOccupation: string
     brothers: string
     sisters: string
-    marriedSiblings: string
-    familyType: string
-    familyValues: string
     familyIncome: string
-    familyLocation: string
+    // marriedSiblings: string
+    // familyType: string
+    // familyValues: string
+    // familyIncome: string
+    // familyLocation: string
   }
   onUpdate: (data: Partial<FamilyDetailsTabProps["data"]>) => void
 }
@@ -109,51 +110,6 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
             </SelectContent>
           </Select>
         </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="marriedSiblings">Married Siblings</Label>
-          <Select value={data.marriedSiblings} onValueChange={(value) => onUpdate({ marriedSiblings: value })}>
-            <SelectTrigger>
-              <SelectValue placeholder="Count" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0">0</SelectItem>
-              <SelectItem value="1">1</SelectItem>
-              <SelectItem value="2">2</SelectItem>
-              <SelectItem value="3">3</SelectItem>
-              <SelectItem value="4+">4+</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="familyType">Family Type</Label>
-          <Select value={data.familyType} onValueChange={(value) => onUpdate({ familyType: value })}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select family type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="nuclear">Nuclear Family</SelectItem>
-              <SelectItem value="joint">Joint Family</SelectItem>
-              <SelectItem value="extended">Extended Family</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="familyValues">Family Values</Label>
-          <Select value={data.familyValues} onValueChange={(value) => onUpdate({ familyValues: value })}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select family values" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="traditional">Traditional</SelectItem>
-              <SelectItem value="moderate">Moderate</SelectItem>
-              <SelectItem value="liberal">Liberal</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="space-y-2">
           <Label htmlFor="familyIncome">Family Income (Annual)</Label>
           <Select value={data.familyIncome} onValueChange={(value) => onUpdate({ familyIncome: value })}>
@@ -168,16 +124,6 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
               <SelectItem value="above-50">Above 50 Lakhs</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="familyLocation">Family Location</Label>
-          <Input
-            id="familyLocation"
-            placeholder="City, State where family resides"
-            value={data.familyLocation}
-            onChange={(e) => onUpdate({ familyLocation: e.target.value })}
-          />
         </div>
       </div>
     </div>

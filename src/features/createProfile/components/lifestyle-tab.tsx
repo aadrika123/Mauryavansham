@@ -17,6 +17,7 @@ interface LifestyleTabProps {
     moviePreferences: string
     readingInterests: string
     travelInterests: string
+    castPreferences: string
   }
   onUpdate: (data: Partial<LifestyleTabProps["data"]>) => void
 }
@@ -93,10 +94,10 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
           </Select>
         </div>
 
-        <div className="space-y-2 md:col-span-2">
+        <div className="space-y-2 ">
           <Label htmlFor="religiousBeliefs">Religious Beliefs</Label>
           <Select value={data.religiousBeliefs} onValueChange={(value) => onUpdate({ religiousBeliefs: value })}>
-            <SelectTrigger className="md:w-1/2">
+            <SelectTrigger className="">
               <SelectValue placeholder="Select religious inclination" />
             </SelectTrigger>
             <SelectContent>
@@ -106,6 +107,20 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
               <SelectItem value="not-religious">Not Religious</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-2 ">
+          <Label htmlFor="castPreferences">Cast Preference</Label>
+          <Select value={data.castPreferences} onValueChange={(value) => onUpdate({ castPreferences: value })}>
+            <SelectTrigger className="">
+              <SelectValue placeholder="Select cast preference" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="any">Any</SelectItem>
+              <SelectItem value="same-caste">Same Caste</SelectItem>
+              <SelectItem value="different-caste">Different Caste</SelectItem>
+            </SelectContent>
+          </Select>
+         
         </div>
 
         <div className="space-y-2 md:col-span-2">

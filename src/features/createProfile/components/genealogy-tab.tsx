@@ -15,9 +15,10 @@ interface GenealogyTabProps {
     familyHistory: string
     communityContributions: string
     familyTraditions: string
-    knownCommunityRelatives: string
-    familyName: string
-    familyTreeVisibility: string
+    // knownCommunityRelatives: string
+    // familyName: string
+    // familyTreeVisibility: string
+    // familyTreeVisibility: string
   }
   onUpdate: (data: Partial<GenealogyTabProps["data"]>) => void
 }
@@ -93,7 +94,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
           />
         </div>
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="knownCommunityRelatives">Known Community Relatives</Label>
           <Textarea
             id="knownCommunityRelatives"
@@ -102,9 +103,9 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
             onChange={(e) => onUpdate({ knownCommunityRelatives: e.target.value })}
             rows={3}
           />
-        </div>
+        </div> */}
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="familyName">
             Family Name (Based on Topmost Ancestor) <span className="text-red-500">*</span>
           </Label>
@@ -117,9 +118,9 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
           <p className="text-xs text-gray-500">
             This will be your {"family's"} identifying name in the community directory
           </p>
-        </div>
+        </div> */}
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="familyTreeVisibility">Family Tree Visibility</Label>
           <Select
             value={data.familyTreeVisibility}
@@ -135,33 +136,9 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
               <SelectItem value="private">Private - Only Me</SelectItem>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
 
-        <Card className="p-4 bg-orange-50 border-orange-200">
-          <div className="space-y-3">
-            <h3 className="font-medium text-orange-800">Family Connections & Tree Builder</h3>
-            <p className="text-sm text-orange-700">
-              After completing your profile, you can connect with family members, build your family tree, and discover
-              relatives within the community. Your Family Name will help others identify and connect with your lineage.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-orange-700 border-orange-300 hover:bg-orange-100 bg-transparent"
-              >
-                Learn About Family Connections
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-orange-700 border-orange-300 hover:bg-orange-100 bg-transparent"
-              >
-                Privacy Settings
-              </Button>
-            </div>
-          </div>
-        </Card>
+       
       </div>
     </div>
   )
