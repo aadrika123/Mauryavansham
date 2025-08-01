@@ -11,12 +11,12 @@ export default withAuth(
         if (req.nextUrl.pathname.startsWith("/dashboard")) {
           return !!token
         }
-        if (req.nextUrl.pathname.startsWith("/create-profile")) {
-          return !token
-        }
-        if (req.nextUrl.pathname.startsWith("/profile/edit")) {
-          return !!token
-        }
+        // if (req.nextUrl.pathname.startsWith("/create-profile")) {
+        //   return !token
+        // }
+        // if (req.nextUrl.pathname.startsWith("/profile/edit")) {
+        //   return !!token
+        // }
         return true
       },
     },
