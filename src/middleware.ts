@@ -12,7 +12,7 @@ export default withAuth(
           return !!token
         }
         if (req.nextUrl.pathname.startsWith("/create-profile")) {
-          return !!token
+          return !token
         }
         if (req.nextUrl.pathname.startsWith("/profile/edit")) {
           return !!token
