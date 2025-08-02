@@ -64,7 +64,7 @@ export default function HeritagePage() {
           <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
             <div className="h-64 bg-gradient-to-br from-blue-400 to-purple-600 relative overflow-hidden">
               <img
-                src="/placeholder.svg?height=256&width=400"
+                src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/ram_joew2j.png"
                 alt="Historical Monument"
                 className="w-full h-full object-cover"
               />
@@ -113,7 +113,7 @@ export default function HeritagePage() {
           <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
             <div className="h-64 bg-gradient-to-br from-purple-400 to-indigo-600 relative overflow-hidden">
               <img
-                src="/placeholder.svg?height=256&width=400"
+                src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/chandragup_maur_vmo5vb.png"
                 alt="Modern Architecture"
                 className="w-full h-full object-cover"
               />
