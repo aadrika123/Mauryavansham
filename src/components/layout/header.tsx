@@ -17,7 +17,7 @@ export function Header() {
     { title: "Community Forum", href: "/community", icon: Users },
     { title: "Matrimonial", href: "/matrimonial", icon: Heart },
     { title: "Events", href: "/events" },
-    {title:"Donation", href:"/donation"},
+    { title: "Donation", href: "/donation" },
     { title: "Achievements", href: "/achievements" },
     // { title: "Contact", href: "/contact" },
   ];
@@ -59,9 +59,10 @@ export function Header() {
               <Crown className="text-white text-xl" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-orange-600">
+              <h1 className="text-4xl font-bold font-sans bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] text-transparent bg-clip-text">
                 Mauryavansh
               </h1>
+
               <p className="text-sm text-red-700">मौर्यवंश - गौरवशाली परंपरा</p>
             </div>
           </Link>

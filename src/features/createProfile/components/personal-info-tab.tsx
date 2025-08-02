@@ -57,7 +57,7 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="nickName">
-           Nick Name <span className="text-red-500">*</span>
+            Nick Name <span className="text-red-500">*</span>
           </Label>
           <Input
             id="nickName"
@@ -68,7 +68,7 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="dob">
-           Date Of Birth <span className="text-red-500">*</span>
+            Date Of Birth <span className="text-red-500">*</span>
           </Label>
           <Input
             id="dob"
@@ -89,9 +89,8 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
             onChange={(e) => onUpdate({ phoneNo: e.target.value })}
             type="tel"
           />
-          
         </div>
-         <div className="space-y-2">
+        <div className="space-y-2">
           <Label htmlFor="email">
             Email <span className="text-red-500">*</span>
           </Label>
@@ -102,9 +101,8 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
             onChange={(e) => onUpdate({ email: e.target.value })}
             type="email"
           />
-          
         </div>
-         <div className="space-y-2">
+        <div className="space-y-2">
           <Label htmlFor="website">
             Website <span className="text-red-500">*</span>
           </Label>
@@ -115,47 +113,53 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
             onChange={(e) => onUpdate({ website: e.target.value })}
             type="url"
           />
-          
         </div>
         <div className="space-y-2">
           <Label htmlFor="height">
             Height <span className="text-red-500">*</span>
           </Label>
-          <Select
-            value={data.height}
-            onValueChange={(value) => onUpdate({ height: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select height" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5'0">{"5'0\""}</SelectItem>
-              <SelectItem value="5'1">{"5'1\""}</SelectItem>
-              <SelectItem value="5'2">{"5'2\""}</SelectItem>
-              <SelectItem value="5'3">{"5'3\""}</SelectItem>
-              <SelectItem value="5'4">{"5'4\""}</SelectItem>
-              <SelectItem value="5'5">{"5'5\""}</SelectItem>
-              <SelectItem value="5'6">{"5'6\""}</SelectItem>
-              <SelectItem value="5'7">{"5'7\""}</SelectItem>
-              <SelectItem value="5'8">{"5'8\""}</SelectItem>
-              <SelectItem value="5'9">{"5'9\""}</SelectItem>
-              <SelectItem value="5'10">{"5'10\""}</SelectItem>
-              <SelectItem value="5'11">{"5'11\""}</SelectItem>
-              <SelectItem value="6'0">{"6'0\""}</SelectItem>
-              <SelectItem value="6'1">{"6'1\""}</SelectItem>
-              <SelectItem value="6'2">{"6'2\""}</SelectItem>
-              <SelectItem value="6'3">{"6'3\""}</SelectItem>
-              <SelectItem value="6'4">{"6'4\""}</SelectItem>
-              <SelectItem value="6'5">{"6'5\""}</SelectItem>
-              <SelectItem value="6'6">{"6'6\""}</SelectItem>
-              <SelectItem value="6'7">{"6'7\""}</SelectItem>
-              <SelectItem value="6'8">{"6'8\""}</SelectItem>
-              <SelectItem value="6'9">{"6'9\""}</SelectItem>
-              <SelectItem value="6'10">{"6'10\""}</SelectItem>
-              <SelectItem value="6'11">{"6'11\""}</SelectItem>
-              <SelectItem value="7'0">{"7'0\""}</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Select
+              value={data.height?.split("'")[0] || ""}
+              onValueChange={(feet) => {
+                const inches =
+                  data.height?.split("'")[1]?.replace('"', "") || "0";
+                const newHeight = `${feet}'${inches}"`;
+                onUpdate({ height: newHeight });
+              }}
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue placeholder="Feet" />
+              </SelectTrigger>
+              <SelectContent>
+                {["3","4", "5", "6", "7"].map((ft) => (
+                  <SelectItem key={ft} value={ft}>
+                    {ft} ft
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={data.height?.split("'")[1]?.replace('"', "") || ""}
+              onValueChange={(inches) => {
+                const feet = data.height?.split("'")[0] || "5";
+                const newHeight = `${feet}'${inches}"`;
+                onUpdate({ height: newHeight });
+              }}
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue placeholder="Inches" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 12 }, (_, i) => String(i)).map((inch) => (
+                  <SelectItem key={inch} value={inch}>
+                    {inch} in
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -216,7 +220,7 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
               <SelectValue placeholder="Select marital status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="never-married">Never Married</SelectItem>
+              <SelectItem value="single">Single</SelectItem>
               <SelectItem value="divorced">Divorced</SelectItem>
               <SelectItem value="widowed">Widowed</SelectItem>
               <SelectItem value="separated">Separated</SelectItem>
@@ -228,7 +232,7 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
           <Label htmlFor="languagesKnown">Languages Known</Label>
           <Input
             id="languagesKnown"
-            placeholder="e.g., Hindi, English, Marathi"
+            placeholder="e.g., Hindi, English, Sadari, Nagpuri, khortha"
             value={data.languagesKnown}
             onChange={(e) => onUpdate({ languagesKnown: e.target.value })}
           />

@@ -1,9 +1,11 @@
-"use server"
+"use server";
 
-import { z } from "zod"
-import { revalidatePath } from "next/cache"
-import { db } from "@/src/drizzle/db"
-import { profiles } from "@/src/drizzle/db/schemas/createProfile.schema"
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
+import { db } from "@/src/drizzle/db";
+import { profiles } from "@/src/drizzle/db/schemas/createProfile.schema";
+import { Toast } from "@/src/components/ui/toast";
+import { Toaster } from "@/src/components/ui/toaster";
 
 export async function createProfile(formData: FormData) {
   try {
@@ -61,7 +63,7 @@ export async function createProfile(formData: FormData) {
       workLocation: z.string().optional(),
       annualIncome: z.string().optional(),
       workExperience: z.string().optional(),
-    })
+    });
 
     const parsedData = profileSchema.parse({
       // Personal Information
@@ -96,7 +98,8 @@ export async function createProfile(formData: FormData) {
       gotraDetails: (formData.get("gotraDetails") as string) || "",
       ancestralVillage: (formData.get("ancestralVillage") as string) || "",
       familyHistory: (formData.get("familyHistory") as string) || "",
-      communityContributions: (formData.get("communityContributions") as string) || "",
+      communityContributions:
+        (formData.get("communityContributions") as string) || "",
       familyTraditions: (formData.get("familyTraditions") as string) || "",
 
       // Family Details
@@ -112,17 +115,39 @@ export async function createProfile(formData: FormData) {
       highestEducation: (formData.get("highestEducation") as string) || "",
       collegeUniversity: (formData.get("collegeUniversity") as string) || "",
       occupation: (formData.get("occupation") as string) || "",
-      companyOrganization: (formData.get("companyOrganization") as string) || "",
+      companyOrganization:
+        (formData.get("companyOrganization") as string) || "",
       designation: (formData.get("designation") as string) || "",
       workLocation: (formData.get("workLocation") as string) || "",
       annualIncome: (formData.get("annualIncome") as string) || "",
       workExperience: (formData.get("workExperience") as string) || "",
-    })
+    });
+    // if (!parsedData.success) {
+    //   return {
+    //     success: false,
+    //     message: "Validation failed",
+    //     errors: parsedData.error.errors,
+    //     timestamp: Date.now(),
+    //   };
+    // }
+    // ✅ Check if required fields are filled
+    if (!parsedData.name || !parsedData.phoneNo || !parsedData.email) {
+      return {
+        success: false,
+        message: "Name, Phone Number, and Email are required.",
+        timestamp: Date.now(),
+        Toaster: {
+          type: "error",
+          message: "Please fill in all required fields.",
+          title: "Profile Creation Error",
+        },
+      };
+    }
 
     // ✅ Check if email already exists
     const existing = await db.query.profiles.findFirst({
       where: (fields, { eq }) => eq(fields.email, parsedData.email),
-    })
+    });
 
     if (existing) {
       return {
@@ -130,7 +155,7 @@ export async function createProfile(formData: FormData) {
         message: "Profile already exists for this email.",
         data: existing,
         timestamp: Date.now(),
-      }
+      };
     }
 
     // ✅ Insert data into DB
@@ -194,25 +219,26 @@ export async function createProfile(formData: FormData) {
       // Timestamps
       createdAt: new Date(),
       updatedAt: new Date(),
-    })
+    });
 
-    revalidatePath("/create-profile")
+    revalidatePath("/create-profile");
 
     return {
       success: true,
       message: "Profile created successfully.",
       data: parsedData,
       timestamp: Date.now(),
-    }
+    };
   } catch (error) {
-    console.error("Profile creation error:", error)
+    console.error("Profile creation error:", error);
 
     return {
       success: false,
-      message: error instanceof Error ? error.message : "An unexpected error occurred.",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       timestamp: Date.now(),
-    }
+    };
   }
 }
-
-

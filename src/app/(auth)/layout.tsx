@@ -9,7 +9,7 @@ import { Footer } from "@/src/components/layout/footer"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Mauryavansham.com - Hindu Maurya Community Portal",
+  title: "Mauryavansham",
   description:
     "A comprehensive digital platform for the Hindu Maurya (Kushwaha) community fostering social connectivity, cultural preservation, and mutual support.",
 }

@@ -133,15 +133,15 @@ export function Footer() {
               <div className="space-y-3 text-red-200">
                 <div className="flex items-center gap-2">
                   <span className="text-yellow-400">✉</span>
-                  <span>info@mauryavansh.com</span>
+                  <span>Info.mauryavansham@gmail.com</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-yellow-400">📞</span>
-                  <span>+91 98765 43210</span>
+                  <span>+91 88629 41658</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-yellow-400">📍</span>
-                  <span>New Delhi, India</span>
+                  <span>Ranchi, Jharkhand</span>
                 </div>
               </div>
             </div>
@@ -150,7 +150,7 @@ export function Footer() {
           {/* Bottom Footer */}
           <div className="border-t border-red-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-red-200 text-sm">
-              © 2024 Mauryavansh.com. All rights reserved. | Proudly serving the Maurya community worldwide.
+              © 2025 Mauryavansh.com. All rights reserved. | Proudly serving the Maurya community worldwide.
             </p>
             <div className="flex gap-6 text-sm text-red-200 mt-4 md:mt-0">
               <Link href="/privacy" className="hover:text-white">
