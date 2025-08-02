@@ -333,7 +333,6 @@ export default function HeritagePage() {
         </div>
       </div>
 
-      {/* Advertisement Banner - Top */}
       <div className="container mx-auto px-8 py-2 w-5/6">
         <div className="relative">
           {/* Book-style Ad Banner */}
