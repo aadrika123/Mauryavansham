@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import { Profile } from "@/src/features/searchProfile/type";
 // import { Profile } from "@/src/features/searchProfile/type";
+import { useSession } from "next-auth/react";
 
 type Props = {
   initialProfiles: Profile[];
@@ -27,6 +28,10 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
     cityState: "",
   });
   console.log(initialProfiles);
+  const { data: session } = useSession();
+  const isAuthenticated = !!session?.user; // Check if user is authenticated
+  const userName = session?.user?.name || "User";
+
   const profiles = [
     {
       id: 1,
@@ -183,9 +188,16 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
 
             <Button
               asChild
-              className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+              className={`bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold `}
+              disabled={!isAuthenticated}
             >
-              <Link href="/search-profile">Search Profile</Link>
+              {isAuthenticated ? (
+                <Link href="/create-profile">Create Profile Now</Link>
+              ) : (
+                <Link href="/sign-in">
+                  <span>Login to Create Profile</span>
+                </Link>
+              )}
             </Button>
           </div>
         </div>
@@ -292,7 +304,3 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
     </div>
   );
 }
-
-
-
-

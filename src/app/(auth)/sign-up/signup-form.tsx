@@ -120,7 +120,8 @@ export default function SignUpForm() {
         router.push("/sign-in")
       } else {
         // Redirect to profile creation or dashboard
-        router.push("/create-profile")
+        // router.push("/create-profile")
+        router.push("/sign-in")
       }
     } catch (error) {
       console.error("Signup error:", error)

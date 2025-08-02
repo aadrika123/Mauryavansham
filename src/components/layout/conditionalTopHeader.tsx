@@ -8,7 +8,7 @@ export const ConditionalTopHeader = () => {
   const pathname = usePathname();
 
   // Show only on root or /home path
-  if (pathname !== "/" && pathname !== "/home") return null;
+  if (pathname !== "/" && pathname !== "/home" && pathname == "sign-in") return null;
 
   return <TopHeader />;
 };
