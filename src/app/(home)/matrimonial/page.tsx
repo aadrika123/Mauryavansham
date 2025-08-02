@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Profile } from "@/src/features/searchProfile/type";
 // import { Profile } from "@/src/features/searchProfile/type";
 import { useSession } from "next-auth/react";
+import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
 import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
 
 type Props = {
@@ -114,7 +115,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           <span>Matrimonial Services</span>
         </div>
       </div>
-
+<div className="absolute top-72 left-16 z-50">
+        <LeftSideAddBanner />
+    </div>
       {/* Header Section */}
       <div className="container mx-auto px-4 py-8 text-center">
         <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />

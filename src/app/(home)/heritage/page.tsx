@@ -26,7 +26,9 @@ export default function HeritagePage() {
 
         </div>
       </div>
-
+ <div className="absolute top-72 left-16 z-50">
+        <LeftSideAddBanner />
+    </div>
       {/* Hero Section */}
       <div className="container mx-auto px-8 py-8 text-center">
         <div className="mb-8">

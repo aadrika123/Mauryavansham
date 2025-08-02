@@ -91,7 +91,9 @@ export default function CommunityForumPage() {
           <span>Community Forum</span>
         </div>
       </div>
-
+ <div className="absolute top-72 left-16 z-50">
+        <LeftSideAddBanner />
+    </div>
       {/* Header Section */}
       <div className="container mx-auto px-4 py-8 text-center">
         <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
