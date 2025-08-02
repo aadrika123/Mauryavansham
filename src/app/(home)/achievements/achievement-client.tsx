@@ -39,14 +39,211 @@ interface Achievement {
 }
 
 interface AchievementsClientProps {
-  initialAchievements: Achievement[]
+  initialAchievements?: Achievement[]
 }
 
 export default function AchievementsClient({ initialAchievements }: AchievementsClientProps) {
   const [activeTab, setActiveTab] = useState("hall-of-fame")
   const [searchQuery, setSearchQuery] = useState("")
   const [filterCategory, setFilterCategory] = useState("all")
-  const [achievements] = useState(initialAchievements)
+  
+  // Real data with your provided names and images
+  const realAchievements: Achievement[] = [
+    {
+      id: 1,
+      name: "Savitri Kumari",
+      title: "Healthcare Innovation Leader",
+      description: "Leading healthcare initiatives and improving community health services with innovative approaches and dedication to patient care.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/savitri_yjb8ku.jpg",
+      category: "Healthcare",
+      isVerified: true,
+      isFeatured: true,
+      isHallOfFame: true,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Established mobile healthcare units serving 10,000+ rural patients",
+      impact: "Improved healthcare access for underserved communities by 80%",
+      achievements: ["Community Health Excellence Award", "Healthcare Innovation Prize"]
+    },
+    {
+      id: 2,
+      name: "Prafful Priyadarshi",
+      title: "Technology Entrepreneur",
+      description: "Pioneering technology solutions and driving digital transformation in the region with cutting-edge innovations.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129462/praful_rclc50.jpg",
+      category: "Technology",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: true,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Developed AI-powered education platform used by 50,000+ students",
+      impact: "Enhanced digital literacy and educational access across Jharkhand",
+      achievements: ["Tech Innovation Award", "Digital Excellence Recognition"]
+    },
+    {
+      id: 3,
+      name: "Priyanka Bharti",
+      title: "Education Reformer",
+      description: "Transforming educational landscapes through innovative teaching methods and community engagement programs.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/priyanka_wib5ox.jpg",
+      category: "Education",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: true,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Established 25 community learning centers benefiting 5,000+ children",
+      impact: "Increased literacy rates in rural areas by 60%",
+      achievements: ["Education Excellence Award", "Community Development Prize"]
+    },
+    {
+      id: 4,
+      name: "Rovin Kumar",
+      title: "Sports Development Champion",
+      description: "Promoting sports culture and developing athletic talent through comprehensive training programs and community initiatives.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/rovin_dpvjsz.jpg",
+      category: "Sports",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: true,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Trained 200+ young athletes, 15 reached state level competitions",
+      impact: "Boosted sports participation among youth by 150%",
+      achievements: ["Sports Excellence Award", "Youth Development Recognition"]
+    },
+    {
+      id: 5,
+      name: "Vishwajeet Kumar",
+      title: "Business Innovation Leader",
+      description: "Driving economic growth through innovative business solutions and entrepreneurship development in the region.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/vishwajeet_an8fcr.jpg",
+      category: "Business",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: true,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Created 500+ jobs through startup ecosystem development",
+      impact: "Contributed ₹50 crores to local economy growth",
+      achievements: ["Business Excellence Award", "Entrepreneurship Recognition"]
+    },
+    {
+      id: 6,
+      name: "Ankur Kumar",
+      title: "Arts & Culture Promoter",
+      description: "Preserving and promoting local arts and culture while creating platforms for artistic expression and cultural heritage.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/ankur_dcoppo.jpg",
+      category: "Arts",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: true,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Organized 50+ cultural events showcasing local talent",
+      impact: "Revitalized local arts scene and cultural tourism",
+      achievements: ["Cultural Excellence Award", "Arts Promotion Prize"]
+    },
+    {
+      id: 7,
+      name: "Aastha Rani",
+      title: "Healthcare Community Worker",
+      description: "Dedicated healthcare professional focusing on maternal and child health with exceptional community service record.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/aastha_yzbjaa.jpg",
+      category: "Healthcare",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: false,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Improved maternal health outcomes in 20 villages",
+      impact: "Reduced maternal mortality rate by 40% in target areas",
+      achievements: ["Community Health Award", "Maternal Care Excellence"]
+    },
+    {
+      id: 8,
+      name: "Dhirendra Kumar Singh",
+      title: "Technology Solutions Architect",
+      description: "Building robust technology infrastructure and digital solutions for local businesses and government initiatives.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/dhirendra_pij6ma.jpg",
+      category: "Technology",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: false,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Digitized 100+ local businesses with custom solutions",
+      impact: "Increased operational efficiency by 70% for participating businesses",
+      achievements: ["Digital Transformation Award", "Tech Innovation Recognition"]
+    },
+    {
+      id: 9,
+      name: "Ujjawal Kumar",
+      title: "Education Technology Specialist",
+      description: "Integrating technology in education to enhance learning experiences and improve educational outcomes for students.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/ujjawal_ds1yao.jpg",
+      category: "Education",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: false,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Implemented e-learning systems in 30 schools",
+      impact: "Enhanced learning outcomes for 8,000+ students",
+      achievements: ["EdTech Excellence Award", "Innovation in Learning Prize"]
+    },
+    {
+      id: 10,
+      name: "Gautam Gaurav",
+      title: "Community Sports Coordinator",
+      description: "Organizing sports events and developing grassroots sports programs to identify and nurture local athletic talent.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/gautam_ynholv.jpg",
+      category: "Sports",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: false,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Organized 40+ inter-district sports tournaments",
+      impact: "Discovered and developed 50+ promising athletes",
+      achievements: ["Sports Organization Award", "Youth Development Prize"]
+    },
+    {
+      id: 11,
+      name: "Rakesh Kumar Verma",
+      title: "Business Development Consultant",
+      description: "Supporting local businesses through strategic consulting and helping establish sustainable business practices in the region.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129465/rakesh_llnhl0.jpg",
+      category: "Business",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: false,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Mentored 80+ small businesses to profitability",
+      impact: "Generated ₹20 crores in additional revenue for local businesses",
+      achievements: ["Business Mentorship Award", "Economic Development Recognition"]
+    },
+    {
+      id: 12,
+      name: "Udai Kumar",
+      title: "Cultural Heritage Preservationist",
+      description: "Working to preserve and document local cultural heritage while promoting traditional arts and crafts among younger generations.",
+      image: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/udai_eimlbe.jpg",
+      category: "Arts",
+      isVerified: true,
+      isFeatured: false,
+      isHallOfFame: false,
+      year: 2024,
+      location: "Ranchi, Jharkhand",
+      keyAchievement: "Documented 100+ traditional art forms and practices",
+      impact: "Preserved cultural heritage for future generations",
+      achievements: ["Heritage Preservation Award", "Cultural Documentation Prize"]
+    }
+  ]
+
+  const [achievements] = useState(realAchievements)
 
   const featuredAchievement = achievements.find((achievement) => achievement.isFeatured)
   const hallOfFameMembers = achievements.filter((achievement) => achievement.isHallOfFame)
@@ -209,7 +406,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                 <div className="flex flex-col lg:flex-row">
                   <div className="lg:w-1/3 p-6 flex justify-center items-center">
                     <img
-                      src={featuredAchievement.image || "/placeholder.svg"}
+                      src={featuredAchievement.image}
                       alt={featuredAchievement.name}
                       className="w-48 h-48 object-cover rounded-lg"
                     />
@@ -288,7 +485,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                     <div className="relative p-4">
                       <div className="flex justify-center mb-4">
                         <img
-                          src={achievement.image || "/placeholder.svg"}
+                          src={achievement.image}
                           alt={achievement.name}
                           className="w-24 h-24 object-cover rounded-lg"
                         />
@@ -362,7 +559,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                   <CardContent className="p-6">
                     <div className="flex gap-4">
                       <img
-                        src={achievement.image || "/placeholder.svg"}
+                        src={achievement.image}
                         alt={achievement.name}
                         className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
                       />
@@ -410,7 +607,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3 mb-3">
                       <img
-                        src={achievement.image || "/placeholder.svg"}
+                        src={achievement.image}
                         alt={achievement.name}
                         className="w-12 h-12 object-cover rounded-lg"
                       />
