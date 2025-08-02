@@ -154,7 +154,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       category: "Healthcare",
       isVerified: true,
       isFeatured: false,
-      isHallOfFame: false,
+      isHallOfFame: true,
       year: 2024,
       location: "Ranchi, Jharkhand",
       keyAchievement: "Improved maternal health outcomes in 20 villages",
@@ -170,7 +170,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       category: "Technology",
       isVerified: true,
       isFeatured: false,
-      isHallOfFame: false,
+      isHallOfFame: true,
       year: 2024,
       location: "Ranchi, Jharkhand",
       keyAchievement: "Digitized 100+ local businesses with custom solutions",
@@ -186,7 +186,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       category: "Education",
       isVerified: true,
       isFeatured: false,
-      isHallOfFame: false,
+      isHallOfFame: true,
       year: 2024,
       location: "Ranchi, Jharkhand",
       keyAchievement: "Implemented e-learning systems in 30 schools",
@@ -202,7 +202,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       category: "Sports",
       isVerified: true,
       isFeatured: false,
-      isHallOfFame: false,
+      isHallOfFame: true,
       year: 2024,
       location: "Ranchi, Jharkhand",
       keyAchievement: "Organized 40+ inter-district sports tournaments",
@@ -218,7 +218,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       category: "Business",
       isVerified: true,
       isFeatured: false,
-      isHallOfFame: false,
+      isHallOfFame: true,
       year: 2024,
       location: "Ranchi, Jharkhand",
       keyAchievement: "Mentored 80+ small businesses to profitability",
@@ -234,7 +234,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       category: "Arts",
       isVerified: true,
       isFeatured: false,
-      isHallOfFame: false,
+      isHallOfFame: true,
       year: 2024,
       location: "Ranchi, Jharkhand",
       keyAchievement: "Documented 100+ traditional art forms and practices",
@@ -398,7 +398,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
 
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Achievement */}
-        {featuredAchievement && activeTab === "hall-of-fame" && (
+        {/* {featuredAchievement && activeTab === "hall-of-fame" && (
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-red-700 mb-6">Featured Achievement</h2>
             <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
@@ -472,7 +472,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
               </CardContent>
             </Card>
           </div>
-        )}
+        )} */}
 
         {/* Hall of Fame Members */}
         {activeTab === "hall-of-fame" && (
@@ -495,12 +495,12 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                           <span className="mr-1">{getCategoryIcon(achievement.category)}</span>
                           {achievement.category}
                         </Badge>
-                        {achievement.isVerified && (
+                        {/* {achievement.isVerified && (
                           <Badge className="bg-blue-100 text-blue-800">
                             <CheckCircle className="w-3 h-3 mr-1" />
                             Verified
                           </Badge>
-                        )}
+                        )} */}
                       </div>
                     </div>
 
