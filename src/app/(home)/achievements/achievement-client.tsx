@@ -396,7 +396,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
           </div>
         </div>
       </div>
-    <div className="absolute top-72 left-16">
+    <div className="absolute top-72 left-16`">
         <LeftSideAddBanner />
     </div>
       <div className="max-w-7xl mx-auto p-6">
