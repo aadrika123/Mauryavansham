@@ -13,7 +13,7 @@ export function Header() {
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name || "User";
-  const userImage = session?.user?.image;
+  const userImage = session?.user?.image ; 
 
   const navigationItems = [
     { title: "Home", href: "/" },
@@ -71,9 +71,7 @@ export function Header() {
               <div className="flex items-center gap-3">
                 {/* User Info */}
                 <div className="flex items-center gap-2">
-
-
-                  <Image src="/placeholder-user.jpg" alt="User" unoptimized />
+                 <Image src="/placeholder-user.jpg" alt="User" unoptimized className="w-8 h-8 rounded-full border-2 border-white"/>
                   <span className="font-medium text-orange-600">{userName}</span>
                 </div>
 
