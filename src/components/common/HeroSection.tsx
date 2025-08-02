@@ -101,7 +101,7 @@ import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { ImageCarousel } from "@/src/components/image-carousel";
 import { Sparkles, Star } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export function HeroSection() {
   const { data: session } = useSession();

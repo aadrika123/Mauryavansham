@@ -5,15 +5,15 @@ import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Menu, Search, Users, Heart, Crown, LogOut } from "lucide-react";
-import {  signOut, useSession } from "next-auth/react";
-import dummy from "@/public/placeholder-user.jpg"
-import Image from "next/image"
+import { signOut, useSession } from "next-auth/react";
+import dummy from "@/public/placeholder-user.jpg";
+import Image from "next/image";
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name || "User";
-  const userImage = session?.user?.image ; 
+  const userImage = session?.user?.image;
 
   const navigationItems = [
     { title: "Home", href: "/" },
@@ -25,8 +25,13 @@ export function Header() {
     { title: "Achievements", href: "/achievements" },
   ];
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+  const handleSignOut = async () => {
+    setIsOpen(false); // Close modal
+    await signOut({
+      callbackUrl: "/", // Redirect to home
+      redirect: false, // Prevent full page reload
+    });
+    window.location.href = "/"; // Manually redirect without loading /api/auth/signout in tab
   };
 
   return (
@@ -71,8 +76,15 @@ export function Header() {
               <div className="flex items-center gap-3">
                 {/* User Info */}
                 <div className="flex items-center gap-2">
-                 <Image src={dummy} alt="User" unoptimized className="w-8 h-8 rounded-full border-2 border-white"/>
-                  <span className="font-medium text-orange-600">{userName}</span>
+                  <Image
+                    src={dummy}
+                    alt="User"
+                    unoptimized
+                    className="w-8 h-8 rounded-full border-2 border-white"
+                  />
+                  <span className="font-medium text-orange-600">
+                    {userName}
+                  </span>
                 </div>
 
                 {/* Sign Out Button */}
@@ -103,7 +115,9 @@ export function Header() {
       {isOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-bold mb-4">Are you sure you want to sign out?</h2>
+            <h2 className="text-lg font-bold mb-4">
+              Are you sure you want to sign out?
+            </h2>
             <div className="flex justify-between space-x-4">
               <Button
                 onClick={() => setIsOpen(false)} // Close the modal without signing out
@@ -112,7 +126,7 @@ export function Header() {
                 Cancel
               </Button>
               <Button
-                onClick={handleSignOut} // Sign out and close the modal
+                onClick={handleSignOut}
                 className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
               >
                 Yes, Sign Out

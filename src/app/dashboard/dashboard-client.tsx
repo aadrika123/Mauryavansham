@@ -15,12 +15,14 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu"
 import { signOut } from "next-auth/react"
+import { useState } from "react"
 
 interface DashboardClientProps {
   user: NextAuthUser
 }
 
 export default function DashboardClient({ user }: DashboardClientProps) {
+  const [isOpen, setIsOpen] = useState(false);
   // Mock data - replace with real data from your API
   const dashboardStats = {
     profileViews: 45,
@@ -75,7 +77,14 @@ export default function DashboardClient({ user }: DashboardClientProps) {
       avatar: "RK",
     },
   ]
-
+ const handleSignOut = async () => {
+    setIsOpen(false); // Close modal
+    await signOut({
+      callbackUrl: "/", // Redirect to home
+      redirect: false, // Prevent full page reload
+    });
+    window.location.href = "/"; // Manually redirect without loading /api/auth/signout in tab
+  };
   return (
     <div className=" bg-orange-50">
       {/* Header */}
@@ -115,7 +124,7 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                   onClick={() => setIsOpen(true)}
                   className="text-red-600 focus:text-red-600"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
@@ -326,6 +335,30 @@ export default function DashboardClient({ user }: DashboardClientProps) {
           </div>
         </div>
       </div>
+      {/* Confirmation Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 className="text-lg font-bold mb-4">
+              Are you sure you want to sign out?
+            </h2>
+            <div className="flex justify-between space-x-4">
+              <Button
+                onClick={() => setIsOpen(false)} // Close the modal without signing out
+                className="w-full bg-gray-300 text-gray-700"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSignOut}
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
+              >
+                Yes, Sign Out
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
