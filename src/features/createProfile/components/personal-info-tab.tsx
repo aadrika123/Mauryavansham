@@ -130,7 +130,8 @@ export function PersonalInfoTab({ data, onUpdate }: PersonalInfoTabProps) {
         </div>
         {/* add gender */}
        <div className="space-y-2">
-          <Label htmlFor="gender">Gender</Label>
+          <Label htmlFor="gender">Gender <span className="text-red-500">*</span>
+            </Label>
           <Select
             value={data.gender}
             onValueChange={(value) => onUpdate({ gender: value })}
