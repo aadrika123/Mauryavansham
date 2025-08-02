@@ -25,13 +25,8 @@ export function Header() {
     { title: "Achievements", href: "/achievements" },
   ];
 
-  const handleSignOut = async () => {
-    setIsOpen(false); // Close modal
-    await signOut({
-      callbackUrl: "/", // Redirect to home
-      redirect: false, // Prevent full page reload
-    });
-    window.location.href = "/"; // Manually redirect without loading /api/auth/signout in tab
+  const handleSignOut = () => {
+    signOut({ callbackUrl: "/" });
   };
 
   return (
@@ -77,11 +72,14 @@ export function Header() {
                 {/* User Info */}
                 <div className="flex items-center gap-2">
                   <Image
-                    src={dummy}
+                    src="/placeholder-user.jpg"
                     alt="User"
+                    width={32}
+                    height={32}
                     unoptimized
-                    className="w-8 h-8 rounded-full border-2 border-white"
+                    className="rounded-full border-2 border-white"
                   />
+
                   <span className="font-medium text-orange-600">
                     {userName}
                   </span>
@@ -126,7 +124,7 @@ export function Header() {
                 Cancel
               </Button>
               <Button
-                onClick={handleSignOut}
+                onClick={handleSignOut} // Sign out and close the modal
                 className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
               >
                 Yes, Sign Out
