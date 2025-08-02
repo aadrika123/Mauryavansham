@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Users, Heart, ShoppingBag, Calendar, HandHeart, Trophy } from "lucide-react"
+import { Users, Heart, ShoppingBag, Calendar, HandHeart, Trophy, Sparkles, Star } from "lucide-react"
 
 export function FeaturesSection() {
   const features = [
@@ -45,6 +45,9 @@ export function FeaturesSection() {
 
   return (
     <section className="py-16 bg-[#FFFDEF] px-8">
+
+ 
+
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 text-[#8B0000]">Community Services</h2>
