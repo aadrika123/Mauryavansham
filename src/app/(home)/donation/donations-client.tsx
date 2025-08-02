@@ -90,7 +90,9 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
           </Button>
         </div>
       </div>
-
+<div className="absolute top-72 left-16 z-50">
+        <LeftSideAddBanner />
+    </div>
       {/* Search and Filter */}
       <div className="bg-[#FFF7ED] border-b border-yellow-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
