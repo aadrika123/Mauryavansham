@@ -44,7 +44,6 @@
 //                     Book Your Ad
 //                   </h3>
 
-
 //                   <div className="space-y-4">
 //                     <div className="absolute top-4 left-4">
 //                       <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
@@ -70,7 +69,6 @@
 //           </div>
 //         </div>
 //       </div>
-
 
 //       {/* Overlay for text readability */}
 //       <div className="container mx-auto px-4 relative z-10">
@@ -98,12 +96,19 @@
 //     </section>
 //   )
 // }
-import Link from "next/link"
-import { Button } from "@/src/components/ui/button"
-import { ImageCarousel } from "@/src/components/image-carousel"
-import { Sparkles, Star } from "lucide-react"
+"use client";
+import Link from "next/link";
+import { Button } from "@/src/components/ui/button";
+import { ImageCarousel } from "@/src/components/image-carousel";
+import { Sparkles, Star } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 export function HeroSection() {
+  const { data: session } = useSession();
+  const isAuthenticated = !!session?.user;
+  const userName = session?.user?.name || "User";
+  const userImage = session?.user?.image;
+
   const carouselImages = [
     { src: "/images/maurya-empire-art.png", alt: "Ancient Maurya Empire Art" },
     { src: "/images/lord-ram-temple.png", alt: "Lord Ram Temple Ayodhya" },
@@ -116,10 +121,10 @@ export function HeroSection() {
       src: "/images/indian-community-gathering.png",
       alt: "Large Indian Community Gathering",
     },
-  ]
+  ];
 
   return (
-    <section className="relative text-white py-20 md:py-28 lg:py-32 overflow-hidden">
+    <section className="relative text-white py-20  overflow-hidden">
       <ImageCarousel images={carouselImages} />
       <div
         className="absolute inset-0 bg-gradient-to-r to-[#ffae00] via-[#FF5C00] from-[#8B0000] text-white"
@@ -201,23 +206,37 @@ export function HeroSection() {
           {/* Main Content */}
           <div className="flex-1">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-5xl font-bold mb-6">The Royal Heritage of Maurya Community</h1>
+              <h1 className="text-5xl font-bold mb-6">
+                The Royal Heritage of Maurya Community
+              </h1>
               <p className="text-xl mb-8 opacity-90">
-                Descendants of Lord Ram, inheritors of Samrat Chandragupta Maurya's legacy, and followers of Samrat Ashoka's
-                wisdom. Join our proud community portal connecting Mauryas and Kushwahas across the globe.
+                Descendants of Lord Ram, inheritors of Samrat Chandragupta
+                Maurya's legacy, and followers of Samrat Ashoka's wisdom. Join
+                our proud community portal connecting Mauryas and Kushwahas
+                across the globe.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100" asChild>
+                {/* <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100" asChild>
                   <Link href="/sign-up">Join Community</Link>
-                </Button>
-                <Button
+                </Button> */}
+                {isAuthenticated ? (
+                  // <Button className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white">
+                  //   <Link href="/dashboard">Dashboard</Link>
+                  // </Button>
+                  ""
+                ) : (
+                  <Button className="bg-white text-orange-600 hover:bg-orange-100">
+                    <Link href="/sign-up">Join Community</Link>
+                  </Button>
+                )}
+                {/* <Button
                   size="lg"
                   variant="outline"
                   className="border-white text-white hover:bg-white hover:text-orange-600 bg-transparent"
                   asChild
                 >
                   <Link href="/sign-in">Sign In</Link>
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>
@@ -271,5 +290,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

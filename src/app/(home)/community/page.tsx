@@ -1,17 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Badge } from "@/src/components/ui/badge"
-import { Card, CardContent } from "@/src/components/ui/card"
-import { ArrowLeft, Crown, Plus, MessageCircle, Heart, Search } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Badge } from "@/src/components/ui/badge";
+import { Card, CardContent } from "@/src/components/ui/card";
+import {
+  ArrowLeft,
+  Crown,
+  Plus,
+  MessageCircle,
+  Heart,
+  Search,
+} from "lucide-react";
+import Link from "next/link";
 import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
 import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
 export default function CommunityForumPage() {
-  const [selectedCategory, setSelectedCategory] = useState("All Discussions")
-  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("All Discussions");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const categories = [
     { name: "All Discussions", count: 156 },
@@ -21,7 +28,7 @@ export default function CommunityForumPage() {
     { name: "Education", count: 28 },
     { name: "Matrimonial Advice", count: 19 },
     { name: "Health & Wellness", count: 15 },
-  ]
+  ];
 
   const discussions = [
     {
@@ -64,7 +71,7 @@ export default function CommunityForumPage() {
       likes: 28,
       category: "Education",
     },
-  ]
+  ];
 
   const getCategoryColor = (category: string) => {
     const colors = {
@@ -74,12 +81,15 @@ export default function CommunityForumPage() {
       Education: "bg-orange-100 text-orange-800 border-orange-200",
       "Matrimonial Advice": "bg-pink-100 text-pink-800 border-pink-200",
       "Health & Wellness": "bg-teal-100 text-teal-800 border-teal-200",
-    }
-    return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800 border-gray-200"
-  }
+    };
+    return (
+      colors[category as keyof typeof colors] ||
+      "bg-gray-100 text-gray-800 border-gray-200"
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
+    <div className="px-12 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
       {/* Breadcrumb Navigation */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -91,15 +101,17 @@ export default function CommunityForumPage() {
           <span>Community Forum</span>
         </div>
       </div>
- <div className="absolute top-72 left-16 z-50">
+      {/* <div className="absolute top-72 left-16 z-50">
         <LeftSideAddBanner />
-    </div>
+    </div> */}
       {/* Header Section */}
       <div className="container mx-auto px-4 py-8 text-center">
         <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
         <div className="relative mb-6">
           <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg transform "></div>
-          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">Community Forum</h1>
+          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">
+            Community Forum
+          </h1>
         </div>
         <p className="text-lg text-red-600 max-w-3xl mx-auto leading-relaxed mb-8">
           Connect, share, and help each other in our supportive Maurya community
@@ -140,8 +152,12 @@ export default function CommunityForumPage() {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{category.name}</span>
-                        <span className="text-xs opacity-75">({category.count})</span>
+                        <span className="text-sm font-medium">
+                          {category.name}
+                        </span>
+                        <span className="text-xs opacity-75">
+                          ({category.count})
+                        </span>
                       </div>
                     </button>
                   ))}
@@ -168,7 +184,10 @@ export default function CommunityForumPage() {
             {/* Discussion Threads */}
             <div className="space-y-4">
               {discussions.map((discussion) => (
-                <Card key={discussion.id} className="bg-yellow-50 border-yellow-200 hover:shadow-md transition-shadow hover:shadow-yellow-200">
+                <Card
+                  key={discussion.id}
+                  className="bg-yellow-50 border-yellow-200 hover:shadow-md transition-shadow hover:shadow-yellow-200"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -176,7 +195,9 @@ export default function CommunityForumPage() {
                           {discussion.title}
                         </h3>
                         <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                          <span className="font-medium text-red-600">{discussion.author}</span>
+                          <span className="font-medium text-red-600">
+                            {discussion.author}
+                          </span>
                           <span>•</span>
                           <span>{discussion.location}</span>
                           <span>•</span>
@@ -193,7 +214,13 @@ export default function CommunityForumPage() {
                           </div>
                         </div>
                       </div>
-                      <Badge className={`${getCategoryColor(discussion.category)} ml-4`}>{discussion.category}</Badge>
+                      <Badge
+                        className={`${getCategoryColor(
+                          discussion.category
+                        )} ml-4`}
+                      >
+                        {discussion.category}
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>
@@ -210,13 +237,12 @@ export default function CommunityForumPage() {
               </Button>
             </div>
 
-<div className="mt-12">
-<VerticalAdBanner />
-</div>
-            
+            <div className="mt-12">
+              <VerticalAdBanner />
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,14 +1,20 @@
-
 import { Badge } from "@/src/components/ui/badge";
 import { Card, CardContent } from "@/src/components/ui/card";
-import { ArrowLeft, Crown, BookOpen, Scroll, Star, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  Crown,
+  BookOpen,
+  Scroll,
+  Star,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
 import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
 
 export default function HeritagePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
+    <div className="min-h-screen px-12 bg-gradient-to-b from-yellow-50 to-orange-50">
       {/* Breadcrumb Navigation */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -22,13 +28,11 @@ export default function HeritagePage() {
       </div>
 
       <div className="container mx-auto px-8 py-2 w-5/6">
-        <div className="relative">
-
-        </div>
+        <div className="relative"></div>
       </div>
- <div className="absolute top-72 left-16 z-50">
+      {/* <div className="absolute top-72 left-16 z-50">
         <LeftSideAddBanner />
-    </div>
+      </div> */}
       {/* Hero Section */}
       <div className="container mx-auto px-8 py-8 text-center">
         <div className="mb-8">
@@ -48,8 +52,6 @@ export default function HeritagePage() {
 
         {/* Heritage Cards Grid */}
         <div className="grid md:px-36 md:grid-cols-2 gap-8">
-
-
           {/* Mauryan Empire Card */}
           <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
             <div className="h-64 bg-gradient-to-br from-blue-400 to-purple-600 relative overflow-hidden">
@@ -97,14 +99,12 @@ export default function HeritagePage() {
                 </Badge>
               </div>
               <p className="text-gray-700 text-left">
-                It was founded by Chandragupta Maurya, our ancestor who established one
-                of the largest empires in ancient India, spanning from
-                Afghanistan to Bengal.
+                It was founded by Chandragupta Maurya, our ancestor who
+                established one of the largest empires in ancient India,
+                spanning from Afghanistan to Bengal.
               </p>
             </CardContent>
           </Card>
-
-
 
           <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
             <div className="h-64 bg-gradient-to-br from-purple-400 to-indigo-600 relative overflow-hidden">

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Menu, Search, Users, Heart, Crown, LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import {  signOut, useSession } from "next-auth/react";
 import dummy from "@/public/placeholder-user.jpg"
 import Image from "next/image"
 export function Header() {
@@ -71,7 +71,7 @@ export function Header() {
               <div className="flex items-center gap-3">
                 {/* User Info */}
                 <div className="flex items-center gap-2">
-                 <Image src="/placeholder-user.jpg" alt="User" unoptimized className="w-8 h-8 rounded-full border-2 border-white"/>
+                 <Image src={dummy} alt="User" unoptimized className="w-8 h-8 rounded-full border-2 border-white"/>
                   <span className="font-medium text-orange-600">{userName}</span>
                 </div>
 

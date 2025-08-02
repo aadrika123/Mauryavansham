@@ -59,7 +59,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       category: "Healthcare",
       isVerified: true,
       isFeatured: true,
-      isHallOfFame: true,
+      isHallOfFame: false,
       year: 2024,
       location: "Ranchi, Jharkhand",
       keyAchievement: "Established mobile healthcare units serving 10,000+ rural patients",
@@ -396,12 +396,12 @@ export default function AchievementsClient({ initialAchievements }: Achievements
           </div>
         </div>
       </div>
-    <div className="absolute top-72 left-16">
+    {/* <div className="absolute top-72 left-16">
         <LeftSideAddBanner />
-    </div>
+    </div> */}
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Achievement */}
-        {/* {featuredAchievement && activeTab === "hall-of-fame" && (
+        {featuredAchievement && activeTab === "hall-of-fame" && (
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-red-700 mb-6">Featured Achievement</h2>
             <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
@@ -475,7 +475,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
               </CardContent>
             </Card>
           </div>
-        )} */}
+        )}
 
         {/* Hall of Fame Members */}
         {activeTab === "hall-of-fame" && (

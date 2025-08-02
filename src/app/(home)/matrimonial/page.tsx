@@ -115,9 +115,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           <span>Matrimonial Services</span>
         </div>
       </div>
-<div className="absolute top-72 left-16 z-50">
+      <div className="absolute top-72 left-16 z-50">
         <LeftSideAddBanner />
-    </div>
+      </div>
       {/* Header Section */}
       <div className="container mx-auto px-4 py-8 text-center">
         <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
@@ -185,11 +185,17 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           <div className="flex justify-center gap-4 flex-wrap">
             <Button
               asChild
-              className="bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+              className={`bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold `}
+              disabled={!isAuthenticated}
             >
-              <Link href="/create-profile">Create Profile Now</Link>
+              {isAuthenticated ? (
+                <Link href="/search-profile">Search Profile</Link>
+              ) : (
+                <Link href="/sign-in">
+                  <span>Login To Search Profile</span>
+                </Link>
+              )}
             </Button>
-
             <Button
               asChild
               className={`bg-white text-red-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold `}
@@ -199,7 +205,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
                 <Link href="/create-profile">Create Profile Now</Link>
               ) : (
                 <Link href="/sign-in">
-                  <span>Login to Create Profile</span>
+                  <span>Login To Create Profile</span>
                 </Link>
               )}
             </Button>
@@ -208,7 +214,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       </div>
 
       {/* Profile Cards Grid */}
-      <div className="container mx-auto px-4 mb-12">
+      {/* <div className="container mx-auto px-4 mb-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {profiles?.map((profile) => (
             <Card
@@ -216,7 +222,6 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
               className="bg-yellow-50 border-yellow-200 hover:shadow-lg transition-shadow hover:shadow-yellow-200"
             >
               <CardContent className="p-6 text-center">
-                {/* Profile Image */}
                 <div className="relative mb-4">
                   <div className="w-24 h-24 mx-auto rounded-full border-4 border-yellow-400 overflow-hidden">
                     <img
@@ -227,7 +232,6 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
                   </div>
                 </div>
 
-                {/* Profile Info */}
                 <h3 className="text-lg font-bold text-red-700 mb-1">
                   {profile.name}
                 </h3>
@@ -254,7 +258,6 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -270,7 +273,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </Card>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Success Stories */}
       <div className="container mx-auto px-4 pb-12">
@@ -282,9 +285,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </h2>
           </div>
         </div>
-<div className="mt-8 mb-12">
-  <VerticalAdBanner />
-</div>
+        <div className="mt-8 mb-12">
+          <VerticalAdBanner />
+        </div>
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {successStories.map((story, index) => (
             <Card
