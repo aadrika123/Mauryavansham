@@ -12,7 +12,7 @@ import { Sidebar } from "@/src/components/layout/sidebar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Mauryavansham",
+  title: "Mauryavansham - Hindu Maurya Community Portal",
   description:
     "A comprehensive digital platform for the Hindu Maurya (Kushwaha) community fostering social connectivity, cultural preservation, and mutual support.",
 };

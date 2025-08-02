@@ -101,18 +101,18 @@ export default function AchievementsClient({ initialAchievements }: Achievements
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
+           <Link href="/" className="flex items-center  text-gray-600 hover:text-red-700">
+              <ArrowLeft className="w-4 h-4 text-red-700" />
+              <span className="text-red-700">Back to Home / </span>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Community Achievements</h1>
+            <h1 className="text-2xl font-bold text-red-700">Community Achievements</h1>
           </div>
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white">
+          <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
             <Plus className="w-4 h-4 mr-2" />
             Nominate Achievement
           </Button>
@@ -120,7 +120,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white border-b border-gray-200 p-4">
+      <div className="bg-[#FFF7ED] border-b border-yellow-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -152,14 +152,14 @@ export default function AchievementsClient({ initialAchievements }: Achievements
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[#FFF7ED] border-b border-yellow-200">
         <div className="max-w-7xl mx-auto">
           <div className="flex">
             <button
               onClick={() => setActiveTab("hall-of-fame")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "hall-of-fame"
-                  ? "border-purple-600 text-purple-600"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -169,7 +169,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
               onClick={() => setActiveTab("recent")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "recent"
-                  ? "border-purple-600 text-purple-600"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -179,7 +179,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
               onClick={() => setActiveTab("by-category")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "by-category"
-                  ? "border-purple-600 text-purple-600"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -189,7 +189,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
               onClick={() => setActiveTab("nominations")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "nominations"
-                  ? "border-purple-600 text-purple-600"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -203,8 +203,8 @@ export default function AchievementsClient({ initialAchievements }: Achievements
         {/* Featured Achievement */}
         {featuredAchievement && activeTab === "hall-of-fame" && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Achievement</h2>
-            <Card className="bg-purple-50 border-purple-200 overflow-hidden">
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Featured Achievement</h2>
+            <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
               <CardContent className="p-0">
                 <div className="flex flex-col lg:flex-row">
                   <div className="lg:w-1/3 p-6 flex justify-center items-center">
@@ -228,13 +228,13 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                       )}
                     </div>
 
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{featuredAchievement.name}</h3>
-                    <h4 className="text-lg font-semibold text-purple-600 mb-4">{featuredAchievement.title}</h4>
+                    <h3 className="text-2xl font-bold text-red-700 mb-2">{featuredAchievement.name}</h3>
+                    <h4 className="text-lg font-semibold text-red-600 mb-4">{featuredAchievement.title}</h4>
 
                     <p className="text-gray-600 mb-6 leading-relaxed">{featuredAchievement.description}</p>
 
                     <div className="mb-6">
-                      <h5 className="font-semibold text-gray-900 mb-2">Key Achievement:</h5>
+                      <h5 className="font-semibold text-red-700 mb-2">Key Achievement:</h5>
                       <p className="text-gray-700">{featuredAchievement.keyAchievement}</p>
                     </div>
 
@@ -258,7 +258,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                     </div>
 
                     <div className="flex gap-3">
-                      <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white">
+                      <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
                         <User className="w-4 h-4 mr-2" />
                         View Full Profile
                       </Button>
@@ -280,10 +280,10 @@ export default function AchievementsClient({ initialAchievements }: Achievements
         {/* Hall of Fame Members */}
         {activeTab === "hall-of-fame" && (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Hall of Fame Members</h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Hall of Fame Members</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hallOfFameMembers.map((achievement) => (
-                <Card key={achievement.id} className="bg-white hover:shadow-lg transition-shadow overflow-hidden">
+                <Card key={achievement.id} className="bg-yellow-50 hover:shadow-lg transition-shadow overflow-hidden">
                   <CardContent className="p-0">
                     <div className="relative p-4">
                       <div className="flex justify-center mb-4">
@@ -308,7 +308,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                     </div>
 
                     <div className="p-4 pt-0">
-                      <h3 className="text-lg font-bold text-gray-900 mb-1 text-center">{achievement.name}</h3>
+                      <h3 className="text-lg font-bold text-red-700 mb-1 text-center">{achievement.name}</h3>
                       <h4 className="text-sm font-semibold text-purple-600 mb-3 text-center">{achievement.title}</h4>
 
                       <p className="text-gray-600 text-sm mb-4 line-clamp-3">{achievement.description}</p>
@@ -331,7 +331,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          className="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white"
+                          className="flex-1 bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white"
                         >
                           <Trophy className="w-4 h-4 mr-1" />
                           View Profile
@@ -355,7 +355,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
         {/* Recent Achievements */}
         {activeTab === "recent" && (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Achievements (2024)</h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Recent Achievements (2024)</h2>
             <div className="space-y-6">
               {recentAchievements.map((achievement) => (
                 <Card key={achievement.id} className="bg-white hover:shadow-lg transition-shadow">
@@ -368,7 +368,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-bold text-gray-900">{achievement.name}</h3>
+                          <h3 className="text-lg font-bold text-red-700">{achievement.name}</h3>
                           <Badge className={getCategoryColor(achievement.category)}>
                             <span className="mr-1">{getCategoryIcon(achievement.category)}</span>
                             {achievement.category}
@@ -403,7 +403,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
         {/* By Category */}
         {activeTab === "by-category" && (
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Achievements by Category</h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Achievements by Category</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAchievements.map((achievement) => (
                 <Card key={achievement.id} className="bg-white hover:shadow-lg transition-shadow overflow-hidden">
@@ -415,7 +415,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
                         className="w-12 h-12 object-cover rounded-lg"
                       />
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{achievement.name}</h3>
+                        <h3 className="font-semibold text-red-700">{achievement.name}</h3>
                         <p className="text-sm text-purple-600">{achievement.title}</p>
                       </div>
                       <Badge className={getCategoryColor(achievement.category)}>
@@ -438,7 +438,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
         {activeTab === "nominations" && (
           <Card className="p-8 text-center">
             <Award className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Nominations</h3>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">Nominations</h3>
             <p className="text-gray-600 mb-4">Pending nominations and community suggestions will appear here</p>
             <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white">
               <Plus className="w-4 h-4 mr-2" />

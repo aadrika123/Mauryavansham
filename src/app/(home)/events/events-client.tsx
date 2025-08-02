@@ -86,12 +86,12 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
+          <div className="flex items-center gap-1">
+            <Link href="/" className="flex items-center  text-gray-600 hover:text-gray-900">
+              <ArrowLeft className="w-4 h-4 text-red-700" />
+              <span className="text-red-700">Back to Home / </span>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Community Events</h1>
+            <h1 className="text-2xl font-bold text-red-700">Community Events</h1>
           </div>
           <Button className="bg-orange-600 hover:bg-orange-700 text-white">
             <Plus className="w-4 h-4 mr-2" />
@@ -101,7 +101,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white border-b border-gray-200 p-4">
+      <div className="bg-[#FFF7ED] border-b border-yellow-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -130,7 +130,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[#FFF7ED] border-yellow-200 border-b ">
         <div className="max-w-7xl mx-auto">
           <div className="flex">
             <button
@@ -171,7 +171,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
         {/* Featured Event */}
         {featuredEvent && activeTab === "upcoming" && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Event</h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Featured Event</h2>
             <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
               <CardContent className="p-0">
                 <div className="flex flex-col lg:flex-row">
@@ -188,7 +188,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                       <Badge className={getTypeColor(featuredEvent.type)}>{featuredEvent.type}</Badge>
                     </div>
 
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{featuredEvent.title}</h3>
+                    <h3 className="text-2xl font-bold text-red-700 mb-3">{featuredEvent.title}</h3>
 
                     <p className="text-gray-600 mb-6 leading-relaxed">{featuredEvent.description}</p>
 
@@ -233,12 +233,12 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
 
         {/* All Events */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">All Events</h2>
+          <h2 className="text-2xl font-bold text-red-700 mb-6">All Events</h2>
 
           {filteredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((event) => (
-                <Card key={event.id} className="bg-white hover:shadow-lg transition-shadow overflow-hidden">
+                <Card key={event.id} className="bg-[#FEFCE8] hover:shadow-lg transition-shadow overflow-hidden">
                   <CardContent className="p-0">
                     <div className="relative">
                       <img
@@ -255,7 +255,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                     </div>
 
                     <div className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{event.title}</h3>
+                      <h3 className="text-lg font-semibold text-red-700 mb-2 line-clamp-2">{event.title}</h3>
 
                       <p className="text-gray-600 text-sm mb-4 line-clamp-2">{event.description}</p>
 
@@ -285,7 +285,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="flex-1 border-gray-300 text-gray-700 bg-transparent"
+                          className="flex-1 border-gray-300 text-yellow-700 bg-transparent"
                         >
                           Details
                         </Button>
@@ -314,7 +314,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
         {activeTab === "calendar" && (
           <Card className="p-8 text-center">
             <Calendar className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Calendar View</h3>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">Calendar View</h3>
             <p className="text-gray-600">Calendar view will be implemented here</p>
           </Card>
         )}
@@ -323,7 +323,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
         {activeTab === "my-events" && (
           <Card className="p-8 text-center">
             <User className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">My Events</h3>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">My Events</h3>
             <p className="text-gray-600">Your registered and created events will appear here</p>
           </Card>
         )}

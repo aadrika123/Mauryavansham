@@ -72,18 +72,18 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
+            <Link href="/" className="flex items-center  text-gray-600 hover:text-gray-900">
+              <ArrowLeft className="w-4 h-4 text-red-700" />
+              <span className="text-red-700">Back to Home / </span>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Community Donations</h1>
+            <h1 className="text-2xl font-bold text-red-700">Community Donations</h1>
           </div>
-          <Button className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white">
+          <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
             <Plus className="w-4 h-4 mr-2" />
             Start Campaign
           </Button>
@@ -91,7 +91,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-white border-b border-gray-200 p-4">
+      <div className="bg-[#FFF7ED] border-b border-yellow-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -121,14 +121,14 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-[#FFF7ED] border-b border-yellow-200">
         <div className="max-w-7xl mx-auto">
           <div className="flex">
             <button
               onClick={() => setActiveTab("active")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "active"
-                  ? "border-green-600 text-green-600"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -138,7 +138,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
               onClick={() => setActiveTab("completed")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "completed"
-                  ? "border-green-600 text-green-600"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -148,7 +148,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
               onClick={() => setActiveTab("my-donations")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "my-donations"
-                  ? "border-green-600 text-green-600"
+                   ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -158,7 +158,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
               onClick={() => setActiveTab("impact")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "impact"
-                  ? "border-green-600 text-green-600"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -168,12 +168,12 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6 ">
         {/* Featured Campaign */}
         {featuredCampaign && activeTab === "active" && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Campaign</h2>
-            <Card className="bg-green-50 border-green-200 overflow-hidden">
+            <h2 className="text-2xl  font-bold text-red-700 mb-6">Featured Campaign</h2>
+            <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
               <CardContent className="p-0">
                 <div className="flex flex-col lg:flex-row">
                   <div className="lg:w-1/3">
@@ -194,7 +194,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
                       )}
                     </div>
 
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{featuredCampaign.title}</h3>
+                    <h3 className="text-2xl font-bold text-red-700 mb-3">{featuredCampaign.title}</h3>
 
                     <p className="text-gray-600 mb-6 leading-relaxed">{featuredCampaign.description}</p>
 
@@ -231,7 +231,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
                     </div>
 
                     <div className="flex gap-3">
-                      <Button className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white">
+                      <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
                         <Heart className="w-4 h-4 mr-2" />
                         Donate Now
                       </Button>
@@ -258,12 +258,12 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
 
         {/* All Active Campaigns */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">All Active Campaigns</h2>
+          <h2 className="text-2xl font-bold text-red-700 mb-6">All Active Campaigns</h2>
 
           {filteredCampaigns.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCampaigns.map((campaign) => (
-                <Card key={campaign.id} className="bg-white hover:shadow-lg transition-shadow overflow-hidden">
+                <Card key={campaign.id} className="bg-yellow-50 hover:shadow-lg transition-shadow overflow-hidden">
                   <CardContent className="p-0">
                     <div className="relative">
                       <img
@@ -283,7 +283,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
                     </div>
 
                     <div className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{campaign.title}</h3>
+                      <h3 className="text-lg font-semibold text-red-700 mb-2 line-clamp-2">{campaign.title}</h3>
 
                       <p className="text-gray-600 text-sm mb-4 line-clamp-2">{campaign.description}</p>
 
@@ -307,7 +307,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          className="flex-1 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white"
+                          className="flex-1 bg-gradient-to-r bg-orange-600 hover:bg-orange-700  text-white"
                         >
                           <Heart className="w-4 h-4 mr-1" />
                           Donate
@@ -344,7 +344,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
         {activeTab === "completed" && (
           <Card className="p-8 text-center">
             <CheckCircle className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Completed Campaigns</h3>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">Completed Campaigns</h3>
             <p className="text-gray-600">Successfully completed fundraising campaigns will appear here</p>
           </Card>
         )}
@@ -352,7 +352,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
         {activeTab === "my-donations" && (
           <Card className="p-8 text-center">
             <Heart className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">My Donations</h3>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">My Donations</h3>
             <p className="text-gray-600">Your donation history and contributions will be displayed here</p>
           </Card>
         )}
@@ -360,7 +360,7 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
         {activeTab === "impact" && (
           <Card className="p-8 text-center">
             <Users className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Impact Report</h3>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">Impact Report</h3>
             <p className="text-gray-600">Community impact statistics and success stories will be shown here</p>
           </Card>
         )}
