@@ -8,6 +8,7 @@ import { Badge } from "@/src/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { ArrowLeft, Plus, Search, Filter, Calendar, MapPin, Users, User } from "lucide-react"
 import Link from "next/link"
+import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner"
 
 interface Event {
   id: number
@@ -231,6 +232,9 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
           </div>
         )}
 
+<div className="mt-8 mb-12">
+  <VerticalAdBanner/>
+</div>
         {/* All Events */}
         <div>
           <h2 className="text-2xl font-bold text-red-700 mb-6">All Events</h2>

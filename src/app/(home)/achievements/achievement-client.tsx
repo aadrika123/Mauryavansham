@@ -20,7 +20,8 @@ import {
   Award,
 } from "lucide-react"
 import Link from "next/link"
-
+import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
+import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
 interface Achievement {
   id: number
   name: string
@@ -395,7 +396,9 @@ export default function AchievementsClient({ initialAchievements }: Achievements
           </div>
         </div>
       </div>
-
+    <div className="absolute top-72 left-16">
+        <LeftSideAddBanner />
+    </div>
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Achievement */}
         {/* {featuredAchievement && activeTab === "hall-of-fame" && (
@@ -477,7 +480,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
         {/* Hall of Fame Members */}
         {activeTab === "hall-of-fame" && (
           <div>
-            <h2 className="text-2xl font-bold text-red-700 mb-6">Hall of Fame Members</h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Hall of Fame Members ffff</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hallOfFameMembers.map((achievement) => (
                 <Card key={achievement.id} className="bg-yellow-50 hover:shadow-lg transition-shadow overflow-hidden">
@@ -644,6 +647,7 @@ export default function AchievementsClient({ initialAchievements }: Achievements
           </Card>
         )}
       </div>
+      <VerticalAdBanner />
     </div>
   )
 }

@@ -7,7 +7,8 @@ import { Badge } from "@/src/components/ui/badge"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { ArrowLeft, Crown, Plus, MessageCircle, Heart, Search } from "lucide-react"
 import Link from "next/link"
-
+import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
+import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
 export default function CommunityForumPage() {
   const [selectedCategory, setSelectedCategory] = useState("All Discussions")
   const [searchQuery, setSearchQuery] = useState("")
@@ -206,6 +207,11 @@ export default function CommunityForumPage() {
                 Load More Discussions
               </Button>
             </div>
+
+<div className="mt-12">
+<VerticalAdBanner />
+</div>
+            
           </div>
         </div>
       </div>

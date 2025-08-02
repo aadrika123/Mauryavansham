@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/src/components/ui/progress"
 import { ArrowLeft, Plus, Search, Filter, Heart, Users, Calendar, CheckCircle, Share } from "lucide-react"
 import Link from "next/link"
-
+import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner"
+import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
 interface Campaign {
   id: number
   title: string
@@ -126,41 +127,37 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
           <div className="flex">
             <button
               onClick={() => setActiveTab("active")}
-              className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "active"
+              className={`px-6 py-4 text-sm font-medium border-b-2 ${activeTab === "active"
                   ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
+                }`}
             >
               Active Campaigns
             </button>
             <button
               onClick={() => setActiveTab("completed")}
-              className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "completed"
+              className={`px-6 py-4 text-sm font-medium border-b-2 ${activeTab === "completed"
                   ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
+                }`}
             >
               Completed
             </button>
             <button
               onClick={() => setActiveTab("my-donations")}
-              className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "my-donations"
-                   ? "border-orange-600 text-orange-600"
+              className={`px-6 py-4 text-sm font-medium border-b-2 ${activeTab === "my-donations"
+                  ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
+                }`}
             >
               My Donations
             </button>
             <button
               onClick={() => setActiveTab("impact")}
-              className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "impact"
+              className={`px-6 py-4 text-sm font-medium border-b-2 ${activeTab === "impact"
                   ? "border-orange-600 text-orange-600"
                   : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
+                }`}
             >
               Impact Report
             </button>
@@ -255,7 +252,9 @@ export default function DonationsClient({ initialCampaigns }: DonationsClientPro
             </Card>
           </div>
         )}
-
+        <div className="mt-8 mb-12">
+          <VerticalAdBanner />
+        </div>
         {/* All Active Campaigns */}
         <div>
           <h2 className="text-2xl font-bold text-red-700 mb-6">All Active Campaigns</h2>

@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Profile } from "@/src/features/searchProfile/type";
 // import { Profile } from "@/src/features/searchProfile/type";
 import { useSession } from "next-auth/react";
+import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
 
 type Props = {
   initialProfiles: Profile[];
@@ -278,7 +279,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </h2>
           </div>
         </div>
-
+<div className="mt-8 mb-12">
+  <VerticalAdBanner />
+</div>
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {successStories.map((story, index) => (
             <Card
