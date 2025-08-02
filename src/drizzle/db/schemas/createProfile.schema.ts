@@ -13,6 +13,7 @@ export const profiles = pgTable("profiles", {
   name: varchar("name", { length: 100 }),
   nickName: varchar("nick_name", { length: 100 }),
   phoneNo: varchar("phone_no", { length: 15 }),
+  gender: varchar("gender", { length: 10 }), 
   email: varchar("email", { length: 100 }),
   website: varchar("website", { length: 100 }),
   dob: varchar("dob", { length: 10 }), // Assuming date format is YYYY-MM-DD
@@ -54,12 +55,16 @@ export const profiles = pgTable("profiles", {
   readingInterests: varchar("reading_interests", { length: 100 }),
   travelInterests: varchar("travel_interests", { length: 100 }),
   castPreferences: varchar("cast_preferences", { length: 100 }),
+  facebook: varchar("facebook", { length: 100 }).default(""),
+  instagram: varchar("instagram", { length: 100 }).default(""),
+  linkedin: varchar("linkedin", { length: 100 }).default(""),
+  profileImage: varchar("profile_picture", { length: 255 }).default(""),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
   isPremium: boolean("is_premium").default(false),
   isVerified: boolean("is_verified").default(false),
   isActive: boolean("is_active").default(true),
   isDeleted: boolean("is_deleted").default(false),
-  profilePicture: varchar("profile_picture", { length: 255 }).default(""),
+  
   
 });

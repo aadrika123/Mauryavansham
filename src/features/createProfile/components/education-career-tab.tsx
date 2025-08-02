@@ -16,6 +16,7 @@ interface EducationCareerTabProps {
     workLocation: string
     annualIncome: string
     workExperience: string
+    website: string
   }
   onUpdate: (data: Partial<EducationCareerTabProps["data"]>) => void
 }
@@ -97,6 +98,18 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
             placeholder="Your current position/title"
             value={data.designation}
             onChange={(e) => onUpdate({ designation: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="website">
+            Website <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="website"
+            placeholder="Enter your website URL"
+            value={data.website}
+            onChange={(e) => onUpdate({ website: e.target.value })}
+            type="url"
           />
         </div>
 

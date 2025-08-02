@@ -18,8 +18,8 @@ export type ProfileData = {
     nickName: string;
     phoneNo: string;
     email: string;
-    website: string;
     dob: string;
+    gender: string
     height: string;
     weight: string;
     complexion: string;
@@ -28,6 +28,10 @@ export type ProfileData = {
     languagesKnown: string;
     hobbies: string;
     aboutMe: string;
+    profileImage: string; // Assuming you handle image uploads separately
+    facebook: string;
+    instagram: string;
+    linkedin: string;
   };
   familyDetails: {
     fatherName: string;
@@ -51,6 +55,8 @@ export type ProfileData = {
     workLocation: string;
     annualIncome: string;
     workExperience: string;
+    website: string;
+
   };
   lifestyle: {
     diet: string;
@@ -92,8 +98,13 @@ export default function CreateProfilePage() {
       nickName: "",
       phoneNo: "",
       email: "",
-      website: "",
       dob: "",
+      gender: "",
+      profileImage: "", // Assuming you handle image uploads separately
+      facebook: "",
+      instagram: "",
+      linkedin: "",
+
     },
     familyDetails: {
       fatherName: "",
@@ -117,6 +128,8 @@ export default function CreateProfilePage() {
       workLocation: "",
       annualIncome: "",
       workExperience: "",
+      website: "",
+
     },
     lifestyle: {
       diet: "",
@@ -206,8 +219,8 @@ export default function CreateProfilePage() {
           nickName: "",
           phoneNo: "",
           email: "",
-          website: "",
           dob: "",
+          gender: "",
           height: "",
           weight: "",
           complexion: "",
@@ -216,6 +229,10 @@ export default function CreateProfilePage() {
           languagesKnown: "",
           hobbies: "",
           aboutMe: "",
+          profileImage: "", // Assuming you handle image uploads separately
+          facebook: "",
+          instagram: "",
+          linkedin: "",
         },
         familyDetails: {
           fatherName: "",
@@ -239,6 +256,8 @@ export default function CreateProfilePage() {
           workLocation: "",
           annualIncome: "",
           workExperience: "",
+          website: "",
+
         },
         lifestyle: {
           diet: "",
