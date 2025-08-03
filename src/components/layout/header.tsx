@@ -4,7 +4,21 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
-import { Menu, Search, Users, Heart, Crown, LogOut, X, Calendar, HandHeart, Trophy, HeartHandshake, Landmark, House } from "lucide-react";
+import {
+  Menu,
+  Search,
+  Users,
+  Heart,
+  Crown,
+  LogOut,
+  X,
+  Calendar,
+  HandHeart,
+  Trophy,
+  HeartHandshake,
+  Landmark,
+  House,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -133,15 +147,20 @@ export function Header() {
 
       {/* Mobile Sidebar Menu */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex transition-opacity duration-300 ease-in-out">
-          {/* Sidebar panel */}
-          <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-64 h-full shadow-lg p-4 space-y-4 transform transition-transform duration-300 ease-in-out translate-x-0">
+        <div className="fixed inset-0 z-50 flex pointer-events-none">
+          {/* Sidebar */}
+          <div
+            className={`bg-gradient-to-r from-orange-500 to-red-600 text-white w-64 h-full shadow-lg p-4 space-y-4 transform transition-transform duration-300 ease-in-out ${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } pointer-events-auto`}
+          >
             <div className="flex justify-between items-center mb-4">
               <span className="text-xl font-bold text-white">Menu</span>
               <button onClick={() => setSidebarOpen(false)}>
                 <X className="text-white" />
               </button>
             </div>
+
             {navigationItems
               .filter((item) => item.title !== "Home")
               .map((item) => (
@@ -193,7 +212,11 @@ export function Header() {
 
           {/* Overlay */}
           <div
-            className="flex-1 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out"
+            className={`flex-1 transition-opacity duration-300 ease-in-out ${
+              sidebarOpen
+                ? "bg-black bg-opacity-50 pointer-events-auto"
+                : "bg-transparent pointer-events-none"
+            }`}
             onClick={() => setSidebarOpen(false)}
           />
         </div>
