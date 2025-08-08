@@ -7,6 +7,7 @@ declare module "next-auth" {
       email: string
       name: string
       role: string
+      profileId: string
     } & DefaultSession["user"]
   }
 
@@ -15,6 +16,7 @@ declare module "next-auth" {
     email: string
     name: string
     role: string
+    profileId: string
   }
 }
 

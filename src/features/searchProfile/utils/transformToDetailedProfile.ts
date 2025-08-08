@@ -59,6 +59,8 @@ export function transformToDetailedProfile(dbProfile: DatabaseProfile): Detailed
   return {
     id: dbProfile.id.toString(),
     name: dbProfile.name,
+    email: dbProfile.email || "",
+    userId: dbProfile.userId || "",
     nickName: dbProfile.nickName || undefined,
     age: calculateAge(dbProfile.dob),
     dob: dbProfile.dob || "",
@@ -79,7 +81,7 @@ export function transformToDetailedProfile(dbProfile: DatabaseProfile): Detailed
     isPremium: dbProfile.isPremium || false,
     isVerified: dbProfile.isVerified || false,
     isActive: dbProfile.isActive || false,
-    profileImage: dbProfile.profilePicture || undefined,
+    profileImage: dbProfile.profileImage || "Not specified",
     personalDetails: {
       complexion: dbProfile.complexion || "Not specified",
       bodyType: dbProfile.bodyType || "Not specified",

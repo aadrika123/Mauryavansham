@@ -29,14 +29,14 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
       <div className="flex items-center gap-3">
         <Users className="w-5 h-5 text-gray-600" />
         <div>
-          <h2 className="text-xl font-semibold">Family Details</h2>
-          <p className="text-sm text-gray-600">Information about your family background</p>
+          <h2 className="text-xl font-semibold text-red-800">Family Details</h2>
+          <p className="text-sm text-red-600">Information about your family background</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="fatherName">
+          <Label className="text-red-800" htmlFor="fatherName">
             {"Father's Name"} <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -48,7 +48,7 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="fatherOccupation">{"Father's Occupation"}</Label>
+          <Label className="text-red-800" htmlFor="fatherOccupation">{"Father's Occupation"}</Label>
           <Input
             id="fatherOccupation"
             placeholder="Enter father's occupation"
@@ -58,7 +58,7 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="motherName">
+          <Label className="text-red-800" htmlFor="motherName">
             {"Mother's Name"} <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -70,7 +70,7 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="motherOccupation">{"Mother's Occupation"}</Label>
+          <Label className="text-red-800" htmlFor="motherOccupation">{"Mother's Occupation"}</Label>
           <Input
             id="motherOccupation"
             placeholder="Enter mother's occupation"
@@ -80,7 +80,7 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="brothers">Brothers</Label>
+          <Label className="text-red-800" htmlFor="brothers">Brothers</Label>
           <Select value={data.brothers} onValueChange={(value) => onUpdate({ brothers: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Count" />
@@ -96,7 +96,7 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="sisters">Sisters</Label>
+          <Label className="text-red-800" htmlFor="sisters">Sisters</Label>
           <Select value={data.sisters} onValueChange={(value) => onUpdate({ sisters: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Count" />
@@ -111,7 +111,7 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="familyIncome">Family Income (Annual)</Label>
+          <Label className="text-red-800" htmlFor="familyIncome">Family Income (Annual)</Label>
           <Select value={data.familyIncome} onValueChange={(value) => onUpdate({ familyIncome: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select income range" />

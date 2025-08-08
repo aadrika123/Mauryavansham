@@ -27,14 +27,14 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
       <div className="flex items-center gap-3">
         <GraduationCap className="w-5 h-5 text-gray-600" />
         <div>
-          <h2 className="text-xl font-semibold">Education & Career</h2>
-          <p className="text-sm text-gray-600">Your educational background and professional details</p>
+          <h2 className="text-xl font-semibold text-red-800">Education & Career</h2>
+          <p className="text-sm text-red-600">Your educational background and professional details</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="highestEducation">
+          <Label className="text-red-800" htmlFor="highestEducation">
             Highest Education <span className="text-red-500">*</span>
           </Label>
           <Select value={data.highestEducation} onValueChange={(value) => onUpdate({ highestEducation: value })}>
@@ -53,7 +53,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="collegeUniversity">College/University</Label>
+          <Label className="text-red-800" htmlFor="collegeUniversity">College/University</Label>
           <Input
             id="collegeUniversity"
             placeholder="Name of your college/university"
@@ -63,7 +63,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="occupation">
+          <Label className="text-red-800" htmlFor="occupation">
             Occupation <span className="text-red-500">*</span>
           </Label>
           <Select value={data.occupation} onValueChange={(value) => onUpdate({ occupation: value })}>
@@ -82,7 +82,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="companyOrganization">Company/Organization</Label>
+          <Label className="text-red-800" htmlFor="companyOrganization">Company/Organization</Label>
           <Input
             id="companyOrganization"
             placeholder="Current company or organization"
@@ -92,7 +92,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="designation">Designation</Label>
+          <Label className="text-red-800" htmlFor="designation">Designation</Label>
           <Input
             id="designation"
             placeholder="Your current position/title"
@@ -101,7 +101,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="website">
+          <Label className="text-red-800" htmlFor="website">
             Website <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -114,7 +114,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="workLocation">Work Location</Label>
+          <Label className="text-red-800" htmlFor="workLocation">Work Location</Label>
           <Input
             id="workLocation"
             placeholder="City where you work"
@@ -124,7 +124,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="annualIncome">Annual Income</Label>
+          <Label className="text-red-800" htmlFor="annualIncome">Annual Income</Label>
           <Select value={data.annualIncome} onValueChange={(value) => onUpdate({ annualIncome: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select income range" />
@@ -141,7 +141,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="workExperience">Work Experience</Label>
+          <Label className="text-red-800" htmlFor="workExperience">Work Experience</Label>
           <Textarea
             id="workExperience"
             placeholder="Brief description of your work experience and achievements"

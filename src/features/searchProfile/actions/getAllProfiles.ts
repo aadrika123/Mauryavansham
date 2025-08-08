@@ -7,7 +7,7 @@ import { DatabaseProfile } from "../type";
 export async function getAllProfiles() {
   try {
     // Query with the correct type
-    const allProfiles: DatabaseProfile[] = await db.query.profiles.findMany({
+    const allProfiles : DatabaseProfile[] = await db.query.profiles.findMany({
       orderBy: (fields, { desc }) => [desc(fields.createdAt)],
     })
 
@@ -16,7 +16,7 @@ export async function getAllProfiles() {
     // Transform database profiles to UI profiles
     const transformedProfiles = transformDatabaseProfilesToProfiles(allProfiles)
 
-    console.log("Transformed profiles for UI:", transformedProfiles.length)
+    console.log("Transformed profiles for UI:", transformedProfiles)
 
     return {
       success: true,

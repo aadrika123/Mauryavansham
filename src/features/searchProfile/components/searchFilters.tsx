@@ -32,14 +32,14 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
         <div className="flex items-center gap-3">
           <Filter className="w-5 h-5 text-gray-600" />
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Search Filters</h2>
-            <p className="text-sm text-gray-600">Find your perfect match</p>
+            <h2 className="text-lg font-semibold text-red-900">Search Filters</h2>
+            <p className="text-sm text-red-600">Find your perfect match</p>
           </div>
         </div>
 
         {/* Search by Name */}
         <div className="space-y-2">
-          <Label htmlFor="searchName">Search by Name</Label>
+          <Label className="text-red-800" htmlFor="searchName">Search by Name</Label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
@@ -54,7 +54,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Age Range */}
         <div className="space-y-3">
-          <Label>
+          <Label className="text-red-800">
             Age Range: {filters.ageRange[0]} - {filters.ageRange[1]} years
           </Label>
           <Slider
@@ -69,7 +69,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Location */}
         <div className="space-y-2">
-          <Label htmlFor="location">Location</Label>
+          <Label className="text-red-800" htmlFor="location">Location</Label>
           <Select value={filters.location} onValueChange={(value) => onFiltersChange({ location: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select city" />
@@ -89,7 +89,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Education */}
         <div className="space-y-2">
-          <Label htmlFor="education">Education</Label>
+          <Label className="text-red-800" htmlFor="education">Education</Label>
           <Select value={filters.education} onValueChange={(value) => onFiltersChange({ education: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select education" />
@@ -107,7 +107,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Occupation */}
         <div className="space-y-2">
-          <Label htmlFor="occupation">Occupation</Label>
+          <Label className="text-red-800" htmlFor="occupation">Occupation</Label>
           <Select value={filters.occupation} onValueChange={(value) => onFiltersChange({ occupation: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select occupation" />
@@ -127,7 +127,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Gotra */}
         <div className="space-y-2">
-          <Label htmlFor="gotra">Gotra</Label>
+          <Label className="text-red-800" htmlFor="gotra">Gotra</Label>
           <Select value={filters.gotra} onValueChange={(value) => onFiltersChange({ gotra: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select gotra" />
@@ -147,7 +147,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Height */}
         <div className="space-y-2">
-          <Label htmlFor="height">Height</Label>
+          <Label className="text-red-800" htmlFor="height">Height</Label>
           <Select value={filters.height} onValueChange={(value) => onFiltersChange({ height: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select height range" />
@@ -165,7 +165,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Advanced Filters */}
         <div className="space-y-3">
-          <Label className="text-base font-medium">Advanced Filters</Label>
+          <Label  className="text-base text-red-800 font-medium">Advanced Filters</Label>
 
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -173,7 +173,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
               checked={filters.verifiedOnly}
               onCheckedChange={(checked) => onFiltersChange({ verifiedOnly: checked === true })}
             />
-            <Label htmlFor="verifiedOnly" className="text-sm font-normal">
+            <Label htmlFor="verifiedOnly" className="text-sm font-normal text-red-800">
               Verified profiles only
             </Label>
           </div>
@@ -184,7 +184,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
               checked={filters.withPhotos}
               onCheckedChange={(checked) => onFiltersChange({ withPhotos: checked === true })}
             />
-            <Label htmlFor="withPhotos" className="text-sm font-normal">
+            <Label htmlFor="withPhotos" className="text-sm font-normal text-red-800">
               With photos
             </Label>
           </div>
@@ -195,7 +195,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
               checked={filters.onlineRecently}
               onCheckedChange={(checked) => onFiltersChange({ onlineRecently: checked === true })}
             />
-            <Label htmlFor="onlineRecently" className="text-sm font-normal">
+            <Label htmlFor="onlineRecently" className="text-sm font-normal text-red-800">
               Online in last 7 days
             </Label>
           </div>

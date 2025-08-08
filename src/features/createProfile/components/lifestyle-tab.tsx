@@ -28,14 +28,14 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
       <div className="flex items-center gap-3">
         <Home className="w-5 h-5 text-gray-600" />
         <div>
-          <h2 className="text-xl font-semibold">Lifestyle & Preferences</h2>
-          <p className="text-sm text-gray-600">Your lifestyle choices and preferences</p>
+          <h2 className="text-xl font-semibold text-red-800">Lifestyle & Preferences</h2>
+          <p className="text-sm text-red-600">Your lifestyle choices and preferences</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="diet">Diet</Label>
+          <Label className="text-red-800" htmlFor="diet">Diet</Label>
           <Select value={data.diet} onValueChange={(value) => onUpdate({ diet: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select diet preference" />
@@ -50,7 +50,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="smoking">Smoking</Label>
+          <Label className="text-red-800" htmlFor="smoking">Smoking</Label>
           <Select value={data.smoking} onValueChange={(value) => onUpdate({ smoking: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Smoking habits" />
@@ -65,7 +65,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="drinking">Drinking</Label>
+          <Label className="text-red-800" htmlFor="drinking">Drinking</Label>
           <Select value={data.drinking} onValueChange={(value) => onUpdate({ drinking: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Drinking habits" />
@@ -80,7 +80,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="exercise">Exercise</Label>
+          <Label className="text-red-800" htmlFor="exercise">Exercise</Label>
           <Select value={data.exercise} onValueChange={(value) => onUpdate({ exercise: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Exercise routine" />
@@ -95,7 +95,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2 ">
-          <Label htmlFor="religiousBeliefs">Religious Beliefs</Label>
+          <Label className="text-red-800" htmlFor="religiousBeliefs">Religious Beliefs</Label>
           <Select value={data.religiousBeliefs} onValueChange={(value) => onUpdate({ religiousBeliefs: value })}>
             <SelectTrigger className="">
               <SelectValue placeholder="Select religious inclination" />
@@ -109,7 +109,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
           </Select>
         </div>
         <div className="space-y-2 ">
-          <Label htmlFor="castPreferences">Cast Preference</Label>
+          <Label className="text-red-800" htmlFor="castPreferences">Cast Preference</Label>
           <Select value={data.castPreferences} onValueChange={(value) => onUpdate({ castPreferences: value })}>
             <SelectTrigger className="">
               <SelectValue placeholder="Select cast preference" />
@@ -124,7 +124,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="musicPreferences">Music Preferences</Label>
+          <Label className="text-red-800" htmlFor="musicPreferences">Music Preferences</Label>
           <Input
             id="musicPreferences"
             placeholder="e.g., Classical, Bollywood, Western"
@@ -134,7 +134,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="moviePreferences">Movie Preferences</Label>
+          <Label className="text-red-800" htmlFor="moviePreferences">Movie Preferences</Label>
           <Input
             id="moviePreferences"
             placeholder="e.g., Drama, Comedy, Action"
@@ -144,7 +144,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="readingInterests">Reading Interests</Label>
+          <Label className="text-red-800" htmlFor="readingInterests">Reading Interests</Label>
           <Input
             id="readingInterests"
             placeholder="e.g., Fiction, Non-fiction, Spiritual"
@@ -154,7 +154,7 @@ export function LifestyleTab({ data, onUpdate }: LifestyleTabProps) {
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="travelInterests">Travel Interests</Label>
+          <Label className="text-red-800" htmlFor="travelInterests">Travel Interests</Label>
           <Textarea
             id="travelInterests"
             placeholder="Places you've visited or would like to visit"

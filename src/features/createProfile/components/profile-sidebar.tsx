@@ -42,8 +42,8 @@ export function ProfileSidebar({ activeTab, onTabChange }: ProfileSidebarProps) 
     <Card className="p-4">
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Profile Sections</h2>
-          <p className="text-sm text-gray-600 mt-1">Complete all sections for better matches</p>
+          <h2 className="text-lg font-semibold text-red-900 ">Profile Sections</h2>
+          <p className="text-sm text-red-600 mt-1">Complete all sections for better matches</p>
         </div>
 
         <div className="space-y-2">
@@ -56,7 +56,7 @@ export function ProfileSidebar({ activeTab, onTabChange }: ProfileSidebarProps) 
                 className={`w-full justify-start gap-3 ${
                   activeTab === tab.id
                     ? "bg-orange-100 text-orange-800 hover:bg-orange-200"
-                    : "text-gray-700 hover:bg-gray-100"
+                    : "text-red-700 hover:bg-red-100"
                 }`}
                 onClick={() => onTabChange(tab.id)}
               >

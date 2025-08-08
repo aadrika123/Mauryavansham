@@ -29,17 +29,17 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-orange-600" />
-          <TreePine className="w-5 h-5 text-gray-600" />
+          <TreePine className="w-5 h-5 text-green-600" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold">Genealogy & Heritage</h2>
-          <p className="text-sm text-gray-600">Your ancestral lineage and community connections</p>
+          <h2 className="text-xl font-semibold text-red-800">Genealogy & Heritage</h2>
+          <p className="text-sm text-red-600">Your ancestral lineage and community connections</p>
         </div>
       </div>
 
       <div className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="gotraDetails">
+          <Label className="text-red-800" htmlFor="gotraDetails">
             Gotra Details <span className="text-red-500">*</span>
           </Label>
           <Textarea
@@ -52,7 +52,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="ancestralVillage">Ancestral Village/Place</Label>
+          <Label className="text-red-800" htmlFor="ancestralVillage">Ancestral Village/Place</Label>
           <Input
             id="ancestralVillage"
             placeholder="Original village or place of your ancestors"
@@ -62,7 +62,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="familyHistory">Family History</Label>
+          <Label className="text-red-800" htmlFor="familyHistory">Family History</Label>
           <Textarea
             id="familyHistory"
             placeholder="Brief history of your family, notable ancestors, traditions"
@@ -73,7 +73,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="communityContributions">Community Contributions</Label>
+          <Label className="text-red-800" htmlFor="communityContributions">Community Contributions</Label>
           <Textarea
             id="communityContributions"
             placeholder="Your or your family's contributions to the Mouryavansh community"
@@ -84,7 +84,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="familyTraditions">Family Traditions</Label>
+          <Label className="text-red-800" htmlFor="familyTraditions">Family Traditions</Label>
           <Textarea
             id="familyTraditions"
             placeholder="Special traditions, customs, or practices followed by your family"
@@ -95,7 +95,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
         </div>
 
         {/* <div className="space-y-2">
-          <Label htmlFor="knownCommunityRelatives">Known Community Relatives</Label>
+          <Label className="text-red-800" htmlFor="knownCommunityRelatives">Known Community Relatives</Label>
           <Textarea
             id="knownCommunityRelatives"
             placeholder="Names of known relatives or connections within the community"
@@ -106,7 +106,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
         </div> */}
 
         {/* <div className="space-y-2">
-          <Label htmlFor="familyName">
+          <Label className="text-red-800" htmlFor="familyName">
             Family Name (Based on Topmost Ancestor) <span className="text-red-500">*</span>
           </Label>
           <Input
@@ -121,7 +121,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
         </div> */}
 
         {/* <div className="space-y-2">
-          <Label htmlFor="familyTreeVisibility">Family Tree Visibility</Label>
+          <Label className="text-red-800" htmlFor="familyTreeVisibility">Family Tree Visibility</Label>
           <Select
             value={data.familyTreeVisibility}
             onValueChange={(value) => onUpdate({ familyTreeVisibility: value })}

@@ -10,6 +10,7 @@ import {
 
 export const profiles = pgTable("profiles", {
   id: serial("id").primaryKey(),
+  userId: varchar("user_id", { length: 256 }).notNull().unique(), // User ID from 
   name: varchar("name", { length: 100 }),
   nickName: varchar("nick_name", { length: 100 }),
   phoneNo: varchar("phone_no", { length: 15 }),
@@ -68,3 +69,4 @@ export const profiles = pgTable("profiles", {
   
   
 });
+// export const updateProfileSchema = profiles.partial();

@@ -5,7 +5,7 @@ export const LeftSideAddBanner = () => {
   return (
    
         
-         <div className="hidden lg:block w-48 flex-shrink-0">
+         <div className="hidden lg:block w-56 flex-shrink-0">
             <div className="sticky top-6">
               <div className="bg-gradient-to-b from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 h-96">
                 <div className="relative p-4 h-full">

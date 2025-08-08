@@ -34,7 +34,7 @@ export function ImageCarousel({ images, interval = 5000 }: ImageCarouselProps) {
           fill
           priority={index === 0} // Prioritize loading the first image
           className={cn(
-            "absolute inset-0 object-cover transition-opacity duration-1000 ease-in-out",
+            "absolute inset-0  transition-opacity duration-1000 ease-in-out",
             index === currentIndex ? "opacity-100" : "opacity-0",
           )}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"

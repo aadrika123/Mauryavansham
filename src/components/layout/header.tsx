@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -18,17 +18,47 @@ import {
   HeartHandshake,
   Landmark,
   House,
+  User,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 
+type HeaderProps = {
+  profileData: any; // ideally type it properly
+};
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name || "User";
-  const userImage = session?.user?.image || "/placeholder-user.jpg";
+  const userImage = profileData?.data?.profileImage || "/placeholder-user.jpg";
+  const loginUser = session?.user;
+
+  console.log(userImage, "authUser");
+  console.log(profileData, "profileData");
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (!loginUser?.id) return;
+
+      try {
+        const res = await fetch(`/api/profile/${loginUser.id}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          setProfileData(data);
+        } else {
+          console.error("Failed to fetch profile:", data?.error);
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    fetchProfileData();
+  }, [loginUser?.id]);
 
   const navigationItems = [
     { title: "Home", href: "/", icon: House },
@@ -62,10 +92,10 @@ export function Header() {
                 <Crown className="text-white text-xl" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-red-700 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-700 bg-clip-text text-transparent">
                   Mauryavansh
                 </h1>
-                <p className="text-sm text-red-700">
+                <p className="text-md font-semibold text-red-700">
                   मौर्यवंश - गौरवशाली परंपरा
                 </p>
               </div>
@@ -93,33 +123,40 @@ export function Header() {
                 <Link href="/sign-in">Login</Link>
               </Button>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
+                {/* Profile Image and Name */}
                 <div className="flex items-center gap-2">
-                  <Image
-                    src={userImage}
-                    alt="User"
-                    width={32}
-                    height={32}
-                    className="rounded-full border-2 border-white"
-                    unoptimized
-                  />
-                  <span className="font-medium text-orange-600">
-                    {userName}
+                  <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md">
+                    <img
+                      src={userImage || "/placeholder.svg"}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="font-semibold text-lg text-orange-600 ">
+                   <span className="font-medium italic"> Hello,</span> {userName}
                   </span>
                 </div>
+
+                {/* Sign Out Button */}
                 <Button
                   onClick={() => setIsOpen(true)}
-                  className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                  className="bg-gradient-to-r from-orange-500 to-red-600 text-white flex items-center gap-2 py-2 px-4 rounded-lg shadow-lg transition duration-300 ease-in-out hover:scale-105"
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
                 </Button>
               </div>
             )}
             {isAuthenticated ? (
-              <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
-                <Link href="/dashboard">Dashboard</Link>
-              </Button>
+              <Link href={`/view-profile/${loginUser?.id}`} passHref>
+                <Button
+                  asChild
+                  className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                >
+                  <a>View Profile</a>
+                </Button>
+              </Link>
             ) : (
               <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
                 <Link href="/sign-up">Sign Up</Link>
@@ -191,9 +228,12 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <Link href="/dashboard" onClick={() => setSidebarOpen(false)}>
-                    <Button className="w-full bg-white text-orange-500 hover:bg-gray-100">
-                      Dashboard
+                  <Link href={`/view-profile/${loginUser?.id}`} passHref>
+                    <Button
+                      asChild
+                      className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                    >
+                      <a>View Profile</a>
                     </Button>
                   </Link>
                   <Button

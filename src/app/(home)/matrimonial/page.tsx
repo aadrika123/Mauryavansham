@@ -34,53 +34,6 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
   const isAuthenticated = !!session?.user; // Check if user is authenticated
   const userName = session?.user?.name || "User";
 
-  const profiles = [
-    {
-      id: 1,
-      name: "Anita Maurya",
-      age: 26,
-      gotra: "Kashyap Gotra",
-      location: "Delhi, India",
-      profession: "Software Engineer",
-      education: "B.Tech Computer Science",
-      familyType: "Joint Family",
-      image: "/placeholder.svg?height=120&width=120&text=AM",
-    },
-    {
-      id: 2,
-      name: "Rohit Kushwaha",
-      age: 32,
-      gotra: "Bharadwaj Gotra",
-      location: "Mumbai, India",
-      profession: "Business Owner",
-      education: "MBA Finance",
-      familyType: "Nuclear Family",
-      image: "/placeholder.svg?height=120&width=120&text=RK",
-    },
-    {
-      id: 3,
-      name: "Priya Maurya",
-      age: 28,
-      gotra: "Vasishta Gotra",
-      location: "Bangalore, India",
-      profession: "Doctor",
-      education: "MBBS",
-      familyType: "Joint Family",
-      image: "/placeholder.svg?height=120&width=120&text=PM",
-    },
-    {
-      id: 4,
-      name: "Vikash Maurya",
-      age: 31,
-      gotra: "Gautam Gotra",
-      location: "Pune, India",
-      profession: "Chartered Accountant",
-      education: "CA",
-      familyType: "Nuclear Family",
-      image: "/placeholder.svg?height=120&width=120&text=VM",
-    },
-  ];
-
   const successStories = [
     {
       couple: "Rahul & Kavya Maurya",
@@ -115,15 +68,15 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           <span>Matrimonial Services</span>
         </div>
       </div>
-      <div className="absolute top-72 left-16 z-50">
+      <div className="absolute top-96 left-16 z-50">
         <LeftSideAddBanner />
       </div>
       {/* Header Section */}
-      <div className="container mx-auto px-4 py-8 text-center">
-        <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
-        <div className="relative mb-6">
+      <div className="container mx-auto  text-center -mt-12">
+        <Crown className="h-20 w-20 text-yellow-500 mx-auto" />
+        <div className="relative">
           <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg transform "></div>
-          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">
+          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700 under">
             Maurya Matrimonial
           </h1>
         </div>
@@ -132,48 +85,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           Build a future together rooted in our shared values and heritage.
         </p>
       </div>
-
-      {/* Search Section */}
-      {/* <div className="container mx-auto px-4 mb-12">
-        <Card className="bg-yellow-50 border-yellow-200 shadow-lg max-w-4xl mx-auto hover:shadow-yellow-200">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-2 mb-4 text-red-700">
-              <Heart className="h-5 w-5" />
-              <h2 className="text-xl font-bold">Find Your Life Partner</h2>
-            </div>
-            <div className="grid md:grid-cols-4 gap-4">
-              <Input
-                placeholder="Age from"
-                value={searchFilters.ageFrom}
-                onChange={(e) => setSearchFilters({ ...searchFilters, ageFrom: e.target.value })}
-                className="bg-white border-yellow-300 focus:border-red-500"
-              />
-              <Input
-                placeholder="Age to"
-                value={searchFilters.ageTo}
-                onChange={(e) => setSearchFilters({ ...searchFilters, ageTo: e.target.value })}
-                className="bg-white border-yellow-300 focus:border-red-500"
-              />
-              <Input
-                placeholder="City/State"
-                value={searchFilters.cityState}
-                onChange={(e) => setSearchFilters({ ...searchFilters, cityState: e.target.value })}
-                className="bg-white border-yellow-300 focus:border-red-500"
-              />
-              <Button
-                onClick={handleSearch}
-                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
-              >
-                Search Profiles
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div> */}
-
       {/* Create Profile CTA */}
       <div className="container mx-auto px-4 mb-12">
-        <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] rounded-lg p-8 text-center text-white max-w-4xl mx-auto">
+        <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] shadow-xl shadow-orange-300 rounded-lg p-8 text-center text-white max-w-4xl mx-auto">
           <Heart className="h-16 w-16 mx-auto mb-4 text-white" />
           <h2 className="text-2xl font-bold mb-4">
             Create Your Matrimonial Profile
@@ -285,9 +199,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </h2>
           </div>
         </div>
-        <div className="mt-8 mb-12">
-          <VerticalAdBanner />
-        </div>
+        
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {successStories.map((story, index) => (
             <Card
@@ -310,6 +222,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           ))}
         </div>
       </div>
+      <div className="mt-8 mb-12">
+          <VerticalAdBanner />
+        </div>
     </div>
   );
 }

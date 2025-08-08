@@ -52,6 +52,8 @@ export function transformDatabaseProfileToProfile(dbProfile: DatabaseProfile): P
   return {
     id: dbProfile.id.toString(),
     name: dbProfile.name,
+    userId: dbProfile.userId || "Not specified",
+    email: dbProfile.email || "Not specified",
     age,
     dob: dbProfile.dob || "Not specified", // Assuming dob is a string in ISO format
     height: dbProfile.height || "Not specified",
@@ -64,10 +66,9 @@ export function transformDatabaseProfileToProfile(dbProfile: DatabaseProfile): P
     // isPremium: false, 
     // isVerified: false, 
     isPremium: dbProfile.isPremium || false,
-    profilePicture: dbProfile.profilePicture || "",
     isVerified: dbProfile.isVerified || false,
     lastActive: formatLastActive(dbProfile.updatedAt || dbProfile.createdAt),
-    profileImage: undefined, 
+    profileImage: dbProfile.profileImage || "", 
     createdAt: formatDate(dbProfile.createdAt),
     updatedAt: formatDate(dbProfile.updatedAt),
   }

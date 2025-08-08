@@ -45,6 +45,7 @@ export const authOptions: AuthOptions = {
             email: user.email,
             name: user.name,
             role: user.role,
+            profileId: user.profileId,
           } as any; // quick fix, or see safer typed fix below
         } catch (error) {
           console.error("Auth error:", error);

@@ -1,6 +1,8 @@
 export type DatabaseProfile = {
   id: number
   name: string | null
+  gender: string | null
+  userId: string | null
   nickName: string | null
   phoneNo: string | null
   email: string | null
@@ -49,15 +51,18 @@ export type DatabaseProfile = {
   isPremium: boolean | null
   isVerified: boolean | null
   isActive: boolean | null
-  profilePicture: string | null
+  profileImage: string | null
+  
   
 }
 
 // UI Profile type (what your components expect)
 export type Profile = {
   id: string
+  userId: string
   name: string
   age: number
+  email: string
   dob: string
   height: string
   location: string
@@ -67,22 +72,24 @@ export type Profile = {
   gotra: string
   interests: string[]
   isPremium: boolean
-  profilePicture: string
   isVerified: boolean
   lastActive: string
-  profileImage?: string
+  profileImage: string
   createdAt?: string
   updatedAt?: string
   isActive?: boolean
   isDeleted?: boolean
   
+  
 }
 export type DetailedProfile = {
   id: string
   name: string
+  userId: string
   nickName?: string
   age: number
   dob: string
+  email: string
   height: string
   weight: string
   location: string
@@ -98,7 +105,7 @@ export type DetailedProfile = {
   isPremium: boolean
   isVerified: boolean
   isActive: boolean
-  profileImage?: string
+  profileImage: string
   personalDetails: {
     complexion: string
     bodyType: string

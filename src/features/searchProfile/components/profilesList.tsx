@@ -78,11 +78,11 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Browse Profiles</h1>
-          <p className="text-sm text-gray-600 mt-1">Find your perfect match</p>
+          <h1 className="text-2xl font-bold text-red-900">Browse Profiles</h1>
+          <p className="text-sm text-red-600 mt-1">Find your perfect match</p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-red-600">
             {totalCount} profile{totalCount !== 1 ? "s" : ""} found
           </span>
           <Select value={sortBy} onValueChange={onSortChange}>
@@ -110,9 +110,9 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               {/* Profile Image */}
               <div className="flex-shrink-0">
                 <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gray-200 rounded-lg flex items-center justify-center relative">
-                  {profile.profileImage ? (
+                  {profile?.profileImage ? (
                     <img
-                      src={profile.profileImage || "/placeholder.svg"}
+                      src={profile?.profileImage || "/placeholder.svg"}
                       alt={`${profile.name}'s profile`}
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
@@ -150,10 +150,10 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
                   <div className="space-y-3">
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">
+                      <h3 className="text-xl font-semibold text-red-900">
                         {profile.name}
                       </h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                      <div className="flex items-center gap-4 text-sm text-red-600 mt-1">
                         <span>{profile.age} years</span>
                         <span>•</span>
                         <span>{profile.height}</span>
@@ -167,7 +167,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
                     <div className="space-y-2">
                       {profile.education !== "Not specified" && (
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <div className="flex items-center gap-2 text-sm text-red-700">
                           <GraduationCap className="w-4 h-4" />
                           <span>{profile.education}</span>
                         </div>
@@ -175,7 +175,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
                       {(profile.occupation !== "Not specified" ||
                         profile.company !== "Not specified") && (
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <div className="flex items-center gap-2 text-sm text-red-700">
                           <Briefcase className="w-4 h-4" />
                           <span>
                             {profile.occupation !== "Not specified" &&
@@ -189,7 +189,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                       )}
 
                       {profile.gotra !== "Not specified" && (
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <div className="flex items-center gap-2 text-sm text-red-700">
                           <Users className="w-4 h-4" />
                           <span>Gotra: {profile.gotra}</span>
                         </div>
@@ -205,13 +205,13 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                             <Badge
                               key={`${interest}-${index}`}
                               variant="secondary"
-                              className="text-xs"
+                              className="text-xs text-red-800"
                             >
                               {interest}
                             </Badge>
                           ))}
                         {profile.interests.length > 5 && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs text-red-800">
                             +{profile.interests.length - 5} more
                           </Badge>
                         )}
@@ -219,7 +219,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                     )}
                   </div>
 
-                  <div className="text-right text-sm text-gray-500">
+                  <div className="text-right text-sm text-red-500">
                     {formatLastActive(profile.lastActive)}
                   </div>
                 </div>
@@ -246,7 +246,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => router.push(`/search-profile/${profile.id}`)}
+                    onClick={() => router.push(`/search-profile/${profile.userId}`)}
                     className="flex items-center gap-2 hover:bg-blue-50 hover:border-blue-300"
                   >
                     <Eye className="w-4 h-4" />

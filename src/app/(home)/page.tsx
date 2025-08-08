@@ -1,9 +1,10 @@
-import { HeroSection } from "@/src/components/common/HeroSection"
+// import { HeroSection } from "@/src/components/common/HeroSection"
 import { FeaturesSection } from "@/src/components/common/FeaturesSection"
 import { CommunityStatsSection } from "@/src/components/common/CommunityStatsSection"
 import { CulturalHeritageSection } from "@/src/components/common/CulturalHeritageSection"
 import { Header } from "../../components/layout/header"
 import { Footer } from "../../components/layout/footer"
+import HeroSection from "@/src/components/common/HeroSection"
 
 export default function HomePage() {
   return (

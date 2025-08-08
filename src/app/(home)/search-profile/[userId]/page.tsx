@@ -6,12 +6,13 @@ import ProfileDetailView from "./profileViewDetails"
 
 interface ProfilePageProps {
   params: {
-    id: string
+    userId: string
   }
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-  const result = await getProfileById(params.id)
+  const result = await getProfileById(params.userId)
+  console.log("ProfilePage result:", result)
 
   if (!result.success || !result.data) {
     notFound()
