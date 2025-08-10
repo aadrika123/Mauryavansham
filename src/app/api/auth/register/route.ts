@@ -1,70 +1,90 @@
+// app/api/auth/signup/route.ts
 import { type NextRequest, NextResponse } from "next/server"
-import bcrypt from "bcryptjs"
+import { hash } from "bcryptjs"
 import { db } from "@/src/drizzle/db"
-import { users } from "@/src/drizzle/schema" // Updated import path
+import { users } from "@/src/drizzle/db/schemas/users.schema"
 import { eq } from "drizzle-orm"
+import { sendWelcomeEmail } from "@/src/lib/email"
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { firstName, lastName, email, phone, password, dateOfBirth, gender, memberCategory, city, state, bio } = body
+  console.log("📩 [SIGNUP API] POST request received");
 
-    // Validate required fields
-    if (!firstName || !lastName || !email || !password) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+  try {
+    const body = await request.json();
+    console.log("📦 [SIGNUP API] Request body:", body);
+
+    const { name, email, password, phone } = body;
+
+    // Validation
+    if (!name || !email || !password) {
+      console.warn("⚠️ [SIGNUP API] Missing required fields");
+      return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 });
+    }
+
+    if (password.length < 6) {
+      console.warn("⚠️ [SIGNUP API] Weak password");
+      return NextResponse.json({ error: "Password must be at least 6 characters long" }, { status: 400 });
     }
 
     // Check if user already exists
+    console.log("🔍 [SIGNUP API] Checking if user exists:", email);
     const existingUser = await db.query.users.findFirst({
       where: eq(users.email, email),
-    })
+    });
 
     if (existingUser) {
-      return NextResponse.json({ error: "User with this email already exists" }, { status: 409 })
+      console.warn("⚠️ [SIGNUP API] User already exists:", email);
+      return NextResponse.json({ error: "User with this email already exists" }, { status: 400 });
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 12)
+    console.log("🔑 [SIGNUP API] Hashing password...");
+    const hashedPassword = await hash(password, 12);
 
-    // Insert user into database using Drizzle
-    const [newUser] = await db
+    // Create user
+    console.log("📝 [SIGNUP API] Inserting user into database...");
+    const newUser = await db
       .insert(users)
       .values({
-        firstName,
-        lastName,
+        name,
         email,
-        phone,
-        passwordHash,
-        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null, // Convert to Date object
-        gender: gender || null,
-        memberCategory: memberCategory || null,
-        city: city || null,
-        state: state || null,
-        bio: bio || null,
-        verificationStatus: "pending",
-        accountStatus: "inactive",
-        role: "member",
-        emailVerified: false, // Default to false
-        phoneVerified: false,
+        password: hashedPassword,
+        phone: phone || null,
       })
-      .returning() // Use .returning() to get the inserted user
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+      });
 
-    if (!newUser) {
-      throw new Error("Failed to create user in database.")
+    console.log("✅ [SIGNUP API] User created:", newUser[0]);
+
+    // Send welcome email
+    console.log("📧 [SIGNUP API] Calling sendWelcomeEmail...");
+    const emailResult = await sendWelcomeEmail({
+      name: newUser[0].name,
+      email: newUser[0].email,
+      password: password,
+    });
+
+    console.log("📬 [SIGNUP API] Email send result:", emailResult);
+
+    if (!emailResult.success) {
+      console.error("🚨 [SIGNUP API] Failed to send welcome email:", emailResult.error);
+    } else {
+      console.log("✅ [SIGNUP API] Welcome email sent successfully!");
     }
-
-    // Return success response (excluding password hash)
-    const { passwordHash: _, ...userResponse } = newUser
 
     return NextResponse.json(
       {
-        message: "Registration successful. Your account is pending verification.",
-        user: userResponse,
+        message: "User created successfully",
+        user: newUser[0],
+        emailSent: emailResult.success,
       },
       { status: 201 },
-    )
+    );
   } catch (error) {
-    console.error("Registration error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("💥 [SIGNUP API] Signup error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -9,7 +9,7 @@ import { Button } from "@/src/components/ui/button"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Alert, AlertDescription } from "@/src/components/ui/alert"
-import { Eye, EyeOff, Loader2, User, Mail, Phone, Lock } from "lucide-react"
+import { Eye, EyeOff, Loader2, User, Mail, Phone, Lock, CheckCircle } from "lucide-react"
 
 export default function SignUpForm() {
   const router = useRouter()
@@ -17,6 +17,7 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [emailSent, setEmailSent] = useState<boolean | null>(null)
 
   const [formData, setFormData] = useState({
     name: "",
@@ -84,6 +85,7 @@ export default function SignUpForm() {
     setIsLoading(true)
     setError("")
     setSuccess("")
+    setEmailSent(null)
 
     try {
       // Create account
@@ -106,7 +108,13 @@ export default function SignUpForm() {
         throw new Error(data.error || "Something went wrong")
       }
 
-      setSuccess("Account created successfully! Signing you in...")
+      // Set success message with email status
+      setEmailSent(data.emailSent)
+      if (data.emailSent) {
+        setSuccess("Account created successfully! Welcome email sent to your inbox. Signing you in...")
+      } else {
+        setSuccess("Account created successfully! (Note: Welcome email could not be sent) Signing you in...")
+      }
 
       // Auto sign in after successful registration
       const signInResult = await signIn("credentials", {
@@ -143,7 +151,17 @@ export default function SignUpForm() {
       {/* Success Alert */}
       {success && (
         <Alert className="border-green-200 bg-green-50">
-          <AlertDescription className="text-green-700">{success}</AlertDescription>
+          <div className="flex items-start space-x-2">
+            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <AlertDescription className="text-green-700">{success}</AlertDescription>
+              {emailSent === false && (
+                <AlertDescription className="text-amber-600 text-sm mt-1">
+                  ⚠️ Welcome email could not be delivered. Please check your email settings or contact support if needed.
+                </AlertDescription>
+              )}
+            </div>
+          </div>
         </Alert>
       )}
 

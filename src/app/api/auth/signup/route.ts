@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { hash } from "bcryptjs"
 import { db } from "@/src/drizzle/db"
-// import { users } from "@/src/drizzle/schema/users"
 import { users } from "@/src/drizzle/db/schemas/users.schema"
 import { eq } from "drizzle-orm"
+import { sendWelcomeEmail } from "@/src/lib/email"
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,6 +44,19 @@ export async function POST(request: NextRequest) {
         name: users.name,
         email: users.email,
       })
+
+    // Send welcome email
+    try {
+      const emailResult = await sendWelcomeEmail({
+        name: newUser[0].name,
+        email: newUser[0].email,
+        password, // original password in plain text
+      })
+
+      console.log('Welcome email send result:', emailResult)
+    } catch (emailError) {
+      console.error('Error sending welcome email:', emailError)
+    }
 
     return NextResponse.json(
       {
