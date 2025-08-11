@@ -1,9 +1,9 @@
 "use client";
 
+import { useToast } from "@/src/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-// import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 
 export default function ForgotPassword() {
   const [step, setStep] = useState<"email" | "otp" | "reset">("email");
@@ -13,61 +13,83 @@ export default function ForgotPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // NEW state
   const router = useRouter();
+  const { toast } = useToast();
 
   async function requestOtp() {
     setError("");
-    const res = await fetch("/api/auth/request-reset", {
-      method: "POST",
-      body: JSON.stringify({ email }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setMessage("OTP sent to your email");
-      setStep("otp");
-    } else {
-      setError(data.error || "Failed to send OTP");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/request-reset", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage("OTP sent to your email");
+        setStep("otp");
+      } else {
+        setError(data.error || "Failed to send OTP");
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
   async function verifyOtp() {
     setError("");
-    const res = await fetch("/api/auth/verify-reset", {
-      method: "POST",
-      body: JSON.stringify({ email, otp }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    if (res.ok && data.verified) {
-      setMessage("OTP verified, enter new password");
-      setStep("reset");
-    } else {
-      setError(data.error || "OTP verification failed");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/verify-reset", {
+        method: "POST",
+        body: JSON.stringify({ email, otp }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (res.ok && data.verified) {
+        setMessage("OTP verified, enter new password");
+        setStep("reset");
+      } else {
+        setError(data.error || "OTP verification failed");
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
   async function resetPassword() {
     setError("");
-    const res = await fetch("/api/auth/reset-password", {
-      method: "POST",
-      body: JSON.stringify({ email, newPassword }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setMessage("Password updated successfully");
-      setStep("email");
-      router.push("/sign-in");
-    } else {
-      setError(data.error || "Password reset failed");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        body: JSON.stringify({ email, newPassword }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage("Password updated successfully");
+
+        setStep("email");
+        router.push("/sign-in");
+        toast({
+          title: "Password updated successfully 🎉",
+          description: "Welcome back!",
+        });
+      } else {
+        setError(data.error || "Password reset failed");
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <div className="bg-orange-50 p-20">
       <div className="max-w-md mx-auto p-6 bg-yellow-50 rounded-md shadow-md border border-yellow-200">
-        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-red-700">
           Forgot Password
         </h2>
 
@@ -86,7 +108,7 @@ export default function ForgotPassword() {
           <>
             <label
               htmlFor="email"
-              className="block mb-2 font-medium text-gray-700"
+              className="block mb-2 font-medium text-red-700"
             >
               Enter your registered email
             </label>
@@ -100,9 +122,10 @@ export default function ForgotPassword() {
             />
             <button
               onClick={requestOtp}
-              className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 rounded transition duration-300"
+              disabled={loading}
+              className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 rounded transition duration-300 disabled:opacity-50"
             >
-              Request OTP
+              {loading ? "Sending..." : "Request OTP"}
             </button>
           </>
         )}
@@ -114,7 +137,7 @@ export default function ForgotPassword() {
             </p>
             <label
               htmlFor="otp"
-              className="block mb-2 font-medium text-gray-700"
+              className="block mb-2 font-medium text-red-700"
             >
               Enter OTP
             </label>
@@ -128,9 +151,10 @@ export default function ForgotPassword() {
             />
             <button
               onClick={verifyOtp}
-              className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 rounded transition duration-300"
+              disabled={loading}
+              className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 rounded transition duration-300 disabled:opacity-50"
             >
-              Verify OTP
+              {loading ? "Verifying..." : "Verify OTP"}
             </button>
           </>
         )}
@@ -139,7 +163,7 @@ export default function ForgotPassword() {
           <>
             <label
               htmlFor="newPassword"
-              className="block mb-2 font-medium text-gray-700"
+              className="block mb-2 font-medium text-red-700"
             >
               Enter new password
             </label>
@@ -166,14 +190,14 @@ export default function ForgotPassword() {
             </div>
             <button
               onClick={resetPassword}
-              className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 rounded transition duration-300"
+              disabled={loading}
+              className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 rounded transition duration-300 disabled:opacity-50"
             >
-              Reset Password
+              {loading ? "Updating..." : "Reset Password"}
             </button>
           </>
         )}
 
-        {/* Back to Sign In Link */}
         <p className="mt-4 text-center">
           <a
             href="/sign-in"
