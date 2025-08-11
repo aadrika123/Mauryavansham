@@ -9,8 +9,6 @@ const transporter = nodemailer.createTransport({
   port: Number(process.env.EMAIL_PORT ?? 587),
   secure: false, // true for 465, false for other ports
   auth: {
-    // user: "akshay.aadrika@gmail.com",
-    // pass: "ohonapfqewlrjshn",
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
@@ -376,5 +374,68 @@ export const testEmailConfig = async () => {
       console.error("❌ Unknown SMTP connection error:", error);
     }
     throw error;
+  }
+};
+
+
+
+//forgot password
+export interface ForgotPasswordEmailData {
+  name: string;
+  email: string;
+  otp: string;
+  resetLink?: string; // agar aap reset link bhejna chahte ho
+}
+
+export const sendForgotPasswordEmail = async (data: ForgotPasswordEmailData) => {
+  try {
+    const { name, email, otp, resetLink } = data;
+
+    const htmlContent = `
+      <html>
+      <body>
+        <h2>Password Reset Request</h2>
+        <p>Hi <strong>${name}</strong>,</p>
+        <p>We received a request to reset your password.</p>
+        <p>Your OTP is: <strong>${otp}</strong></p>
+        ${
+          resetLink
+            ? `<p>Or click this link to reset your password: <a href="${resetLink}">Reset Password</a></p>`
+            : ""
+        }
+        <p>If you didn't request this, please ignore this email.</p>
+      </body>
+      </html>
+    `;
+
+    const textContent = `
+      Password Reset Request
+
+      Hi ${name},
+
+      We received a request to reset your password.
+
+      Your OTP is: ${otp}
+
+      ${resetLink ? `Reset your password here: ${resetLink}` : ""}
+
+      If you didn't request this, please ignore this email.
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Password Reset OTP",
+      text: textContent,
+      html: htmlContent,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Forgot password email sent", info.messageId);
+
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending forgot password email:", error);
+    return { success: false, error };
   }
 };

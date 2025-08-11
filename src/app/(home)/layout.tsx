@@ -10,7 +10,6 @@ import { TopHeader } from "@/src/components/layout/topBar";
 import { ConditionalTopHeader } from "@/src/components/layout/conditionalTopHeader";
 const inter = Inter({ subsets: ["latin"] });
 
-
 export const metadata: Metadata = {
   title: "Mauryavansham - Hindu Maurya Community Portal",
   description:
@@ -27,13 +26,13 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConditionalTopHeader />
         <Header />
-        <Toaster />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
+          {/* <Toaster /> */}
           {children}
         </ThemeProvider>
         <Footer />

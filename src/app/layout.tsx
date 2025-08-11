@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "../components/theme-provider";
 import { Footer } from "../components/layout/footer";
+import { Toaster } from "../components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             enableSystem
             disableTransitionOnChange
           >
+            <Toaster />
             {children}
           </ThemeProvider>
         </SessionProvider>

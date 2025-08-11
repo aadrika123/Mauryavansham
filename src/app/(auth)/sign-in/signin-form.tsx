@@ -1,70 +1,79 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { signIn } from "next-auth/react"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
-import { Alert, AlertDescription } from "@/src/components/ui/alert"
-import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react"
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
+import { Alert, AlertDescription } from "@/src/components/ui/alert";
+import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
+import { useToast } from "@/src/hooks/use-toast";
 
 export default function SignInForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const searchParams = useSearchParams();
   // const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
-  const callbackUrl = searchParams.get("callbackUrl") || "/"
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState("")
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-    if (error) setError("")
-  }
+    }));
+    if (error) setError("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      setError("Please fill in all fields")
-      return
+      setError("Please fill in all fields");
+      return;
     }
 
-    setIsLoading(true)
-    setError("")
+    setIsLoading(true);
+    setError("");
 
     try {
       const result = await signIn("credentials", {
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
         redirect: false,
-      })
+      });
 
       if (result?.error) {
-        setError("Invalid email or password")
+        toast({
+          title: "Login Failed ❌",
+          description: "Invalid email or password",
+          variant: "destructive", // agar red warning chahiye
+        });
       } else {
-        router.push(callbackUrl)
+        toast({
+          title: "Login Successful 🎉",
+          description: "Welcome back!",
+        });
+        router.push(callbackUrl);
       }
     } catch (error) {
-      console.error("Sign in error:", error)
-      setError("Something went wrong. Please try again.")
+      console.error("Sign in error:", error);
+      setError("Something went wrong. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -97,6 +106,7 @@ export default function SignInForm() {
       {/* Password Field */}
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
+        
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
@@ -116,7 +126,11 @@ export default function SignInForm() {
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             disabled={isLoading}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>
@@ -136,6 +150,14 @@ export default function SignInForm() {
           "Sign In"
         )}
       </Button>
+      <p className="text-sm text-center mt-2">
+          <a
+            href="/forgot-password"
+            className="text-blue-600 hover:underline cursor-pointer"
+          >
+            Forgot Password?
+          </a>
+        </p>
     </form>
-  )
+  );
 }
