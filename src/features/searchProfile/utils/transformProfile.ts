@@ -68,9 +68,14 @@ export function transformDatabaseProfileToProfile(dbProfile: DatabaseProfile): P
     isPremium: dbProfile.isPremium || false,
     isVerified: dbProfile.isVerified || false,
     lastActive: formatLastActive(dbProfile.updatedAt || dbProfile.createdAt),
-    profileImage: dbProfile.profileImage || "", 
+    // profileImage: dbProfile.profileImage || "", 
+    profileImage1: dbProfile.profileImage1 || "",
+    profileImage2: dbProfile.profileImage2 || "",
+    profileImage3: dbProfile.profileImage3 || "",
     createdAt: formatDate(dbProfile.createdAt),
     updatedAt: formatDate(dbProfile.updatedAt),
+    profileRelation: dbProfile.profileRelation || "other",
+    customRelation: dbProfile.customRelation || "",
   }
 }
 

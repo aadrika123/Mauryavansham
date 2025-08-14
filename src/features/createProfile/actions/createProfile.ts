@@ -6,7 +6,7 @@ import { db } from "@/src/drizzle/db";
 import { profiles } from "@/src/drizzle/db/schemas/createProfile.schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/lib/auth";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 // Return type for server actions
 export type CreateProfileState = {
@@ -27,8 +27,21 @@ export async function createProfile(
   formData: FormData
 ): Promise<CreateProfileState> {
   try {
+    console.log("=== createProfile START ===");
+    console.log("Incoming prevState:", prevState);
+    
+    // Debug: Log all form data entries
+    console.log("=== FORM DATA ENTRIES ===");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+    console.log("=== END FORM DATA ENTRIES ===");
+
     const session = await getServerSession(authOptions);
+    console.log("Session:", session ? `User ID: ${session.user?.id}` : "No session");
+    
     if (!session?.user?.id) {
+      console.log("❌ Authentication failed");
       return {
         success: false,
         message: "User not authenticated.",
@@ -43,9 +56,11 @@ export async function createProfile(
 
     const profileSchema = z.object({
       userId: z.string(),
-      name: z.string().min(1),
-      phoneNo: z.string().min(1),
-      email: z.string().email(),
+      profileRelation: z.string().min(1, "Profile relation is required"),
+      customRelation: z.string().optional(),
+      name: z.string().min(1, "Name is required"),
+      phoneNo: z.string().min(1, "Phone number is required"),
+      email: z.string().email("Valid email is required"),
       // All optional fields hereafter
       nickName: z.string().optional(),
       website: z.string().optional(),
@@ -59,7 +74,10 @@ export async function createProfile(
       languagesKnown: z.string().optional(),
       hobbies: z.string().optional(),
       aboutMe: z.string().optional(),
-      profileImage: z.string().optional(),
+      // profileImage: z.string().optional(),
+      profileImage1: z.string().optional(),
+      profileImage2: z.string().optional(),
+      profileImage3: z.string().optional(),
       facebook: z.string().optional(),
       instagram: z.string().optional(),
       linkedin: z.string().optional(),
@@ -84,7 +102,11 @@ export async function createProfile(
       motherOccupation: z.string().optional(),
       brothers: z.string().optional(),
       sisters: z.string().optional(),
+      marriedSiblings: z.string().optional(),
+      familyType: z.string().optional(),
+      familyValues: z.string().optional(),
       familyIncome: z.string().optional(),
+      familyLocation: z.string().optional(),
       highestEducation: z.string().optional(),
       collegeUniversity: z.string().optional(),
       occupation: z.string().optional(),
@@ -101,49 +123,77 @@ export async function createProfile(
       userId: session.user.id,
     };
 
+    console.log("=== RAW DATA ===");
+    console.log(JSON.stringify(rawData, null, 2));
+
     const parsed = profileSchema.safeParse(rawData);
+    console.log("=== VALIDATION RESULT ===");
+    console.log("Success:", parsed.success);
+    
     if (!parsed.success) {
+      console.log("❌ Validation errors:", parsed.error.errors);
       return {
         success: false,
-        message: "Validation failed",
+        message: "Validation failed: " + parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
         errors: parsed.error.errors,
         timestamp: Date.now(),
         toast: {
           type: "error",
           title: "Validation Error",
-          message: "Please check the form for errors.",
+          message: "Please check the form for errors: " + parsed.error.errors[0]?.message,
         },
       };
     }
 
-    const exists = await db.query.profiles.findFirst({
-      where: (fields, { eq }) => eq(fields.email, parsed.data.email),
+    console.log("✅ Validation passed");
+    console.log("Parsed data:", JSON.stringify(parsed.data, null, 2));
+
+    // Check if a profile with the same email already exists for this specific user
+    // This prevents duplicate emails for the same user but allows multiple profiles
+    console.log("=== CHECKING FOR EXISTING EMAIL ===");
+    const existingProfile = await db.query.profiles.findFirst({
+      where: (fields, { eq, and }) => 
+        and(
+          eq(fields.email, parsed.data.email),
+          eq(fields.userId, session.user.id),
+          eq(fields.isDeleted, false) // Only check active profiles
+        ),
     });
-    if (exists) {
+
+    if (existingProfile) {
+      console.log("❌ Profile with this email already exists for this user");
       return {
         success: false,
-        message: "Profile already exists.",
-        data: exists,
+        message: "You already have a profile with this email address. Please use a different email for additional profiles.",
+        data: existingProfile,
         timestamp: Date.now(),
         toast: {
           type: "error",
-          title: "Profile Exists",
-          message: "A profile with this email already exists.",
+          title: "Duplicate Email",
+          message: "You already have a profile with this email address. Please use a different email.",
         },
       };
     }
 
-    await db.insert(profiles).values({
+    console.log("✅ No existing profile with this email found, proceeding with creation");
+
+    // Insert the profile
+    console.log("=== INSERTING PROFILE ===");
+    const result = await db.insert(profiles).values({
       ...parsed.data,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning();
+
+    console.log("✅ Profile created successfully:", result[0]);
 
     revalidatePath("/create-profile");
+    revalidatePath("/dashboard");
+    
     return {
       success: true,
       message: "Profile created successfully.",
-      data: parsed.data,
+      data: result[0] || parsed.data,
       timestamp: Date.now(),
       toast: {
         type: "success",
@@ -152,6 +202,7 @@ export async function createProfile(
       },
     };
   } catch (error) {
+    console.error("❌ Create profile error:", error);
     return {
       success: false,
       message: error instanceof Error ? error.message : "Unexpected error.",

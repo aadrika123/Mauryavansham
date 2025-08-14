@@ -181,11 +181,15 @@ interface PersonalInfoTabProps {
     languagesKnown: string;
     hobbies: string;
     aboutMe: string;
-    profileImage: string;
+    // profileImage: string;
+    profileImage1: string;
+    profileImage2: string;
+    profileImage3: string;
     facebook: string;
     instagram: string;
     linkedin: string;
     gender: string;
+    
   };
   onUpdate: (data: Partial<PersonalInfoTabProps["data"]>) => void;
   profileRelation?: string;
@@ -195,8 +199,8 @@ interface PersonalInfoTabProps {
 export function PersonalInfoTab({ 
   data, 
   onUpdate, 
-  profileRelation = "", 
-  customRelation = "" 
+  profileRelation, 
+  customRelation 
 }: PersonalInfoTabProps) {
   const getRelationDisplayText = () => {
     if (profileRelation === "other" && customRelation) {
@@ -213,9 +217,9 @@ export function PersonalInfoTab({
           <User className="w-5 h-5 text-red-600" />
           <div>
             <h2 className="text-xl font-semibold text-red-800">Personal Information</h2>
-            <p className="text-sm text-red-600">
+            {/* <p className="text-sm text-red-600">
               Basic details about yourself
-            </p>
+            </p> */}
             {profileRelation && (
               <p className="text-sm text-orange-600 font-medium mt-1">
                 Profile For: {getRelationDisplayText()}
@@ -233,7 +237,7 @@ export function PersonalInfoTab({
           </Label>
           <Input
             id="name"
-            placeholder="Enter your name"
+            placeholder="Enter name"
             value={data.name}
             onChange={(e) => onUpdate({ name: e.target.value })}
           />
@@ -245,7 +249,7 @@ export function PersonalInfoTab({
           </Label>
           <Input
             id="nickName"
-            placeholder="Enter your nick name"
+            placeholder="Enter nick name"
             value={data.nickName}
             onChange={(e) => onUpdate({ nickName: e.target.value })}
           />
@@ -291,7 +295,7 @@ export function PersonalInfoTab({
           <Input
             id="phoneNo"
             type="tel"
-            placeholder="Enter your phone number"
+            placeholder="Enter phone number"
             value={data.phoneNo}
             onChange={(e) => onUpdate({ phoneNo: e.target.value })}
           />
@@ -304,7 +308,7 @@ export function PersonalInfoTab({
           <Input
             id="email"
             type="email"
-            placeholder="Enter your email address"
+            placeholder="Enter email address"
             value={data.email}
             onChange={(e) => onUpdate({ email: e.target.value })}
           />

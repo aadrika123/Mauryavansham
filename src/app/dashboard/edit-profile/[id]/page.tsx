@@ -1,6 +1,13 @@
+// import CreateProfilePage, { FlatProfileData, ProfileData } from "@/src/app/(home)/create-profile/page";
 import { getProfileById } from "@/src/features/getProfile/actions/getProfileById";
-import CreateProfilePage, { FlatProfileData, ProfileData } from "../../create-profile/page";
+// import CreateProfilePage, { FlatProfileData, ProfileData } from "../../create-profile/page";
 import { Crown } from "lucide-react";
+import EditProfileForm, { FlatProfileData, ProfileData } from "./editProfileForm";
+import DashboardLayout from "@/src/components/layout/dashboardLayout";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/src/lib/auth";
+import { redirect } from "next/navigation";
+import CreateProfileForm from "../../create-profile/createProfileForm";
 const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
   return {
     id: flatData.id,
@@ -22,7 +29,10 @@ const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
       languagesKnown: flatData.languagesKnown || "",
       hobbies: flatData.hobbies || "",
       aboutMe: flatData.aboutMe || "",
-      profileImage: flatData.profileImage || "",
+      // profileImage: flatData.profileImage || "",
+      profileImage1: flatData.profileImage1 || "",
+      profileImage2: flatData.profileImage2 || "",
+      profileImage3: flatData.profileImage3 || "",
       facebook: flatData.facebook || "",
       instagram: flatData.instagram || "",
       linkedin: flatData.linkedin || "",
@@ -73,28 +83,38 @@ const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
   };
 };
 
-export default async function EditProfilePage({ params }: { params: { userId: string } }) {
+export default async function EditProfilePage({ params }: { params: { id: string } }) {
   // Await the params to resolve before using it
-  const { userId } = params;
+  const { id } = params;
 
-  const result = await getProfileById(userId);
+  const result = await getProfileById(id);
 
   console.log(result, "geteditprofilebyuser");
 
   if (!result.success || !result.data) {
     return <div className="text-red-500">Profile not found</div>;
   }
+   const session = await getServerSession(authOptions);
+  
+    // 2. Agar session nahi mila to sign-in page par bhejo
+    if (!session?.user?.id) {
+      redirect("/sign-in");
+    }
 
   // Transform the flat data from getProfileById into the nested ProfileData structure
-  const nestedProfileData: ProfileData = transformFlatToNested(result?.data as any);
+  // const nestedProfileData: ProfileData = transformFlatToNested(result?.data as FlatProfileData);
+
+  const nestedProfileData = transformFlatToNested(result?.data as any);
 
   return (
-    <div className="max-w-full mx-auto  bg-orange-50 px-4 py-8">
-      <h1 className="text-3xl font-semibold mb-4 text-center text-red-700 ml-40">
+    <DashboardLayout user={session.user}>
+    <div className="max-w-full mx-auto  bg-orange-50 ">
+      {/* <h1 className="text-3xl font-semibold mb-4 text-center text-red-700 ml-40">
         <Crown className="inline-block mr-2 w-8 h-10" />
         Edit Profile
-      </h1>
-      <CreateProfilePage profile={nestedProfileData} type="edit" />
+      </h1> */}
+      <EditProfileForm profile={nestedProfileData} type="edit" />
     </div>
+    </DashboardLayout>
   );
 }

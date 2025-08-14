@@ -7,6 +7,7 @@ import { users } from "@/src/drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export const authOptions: AuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,  // Add this line
   session: {
     strategy: "jwt",
   },
@@ -46,7 +47,7 @@ export const authOptions: AuthOptions = {
             name: user.name,
             role: user.role,
             profileId: user.profileId,
-          } as any; // quick fix, or see safer typed fix below
+          } as any;
         } catch (error) {
           console.error("Auth error:", error);
           return null;
@@ -58,6 +59,7 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.sub = user.id; // Add this line
       }
       return token;
     },
@@ -71,6 +73,5 @@ export const authOptions: AuthOptions = {
   },
   pages: {
     signIn: "/auth/signin",
-    // signUp: "/auth/signup",
   },
 };

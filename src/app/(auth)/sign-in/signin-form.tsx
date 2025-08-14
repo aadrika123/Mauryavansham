@@ -93,7 +93,7 @@ export default function SignInForm() {
             id="email"
             name="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="Enter email"
             value={formData.email}
             onChange={handleInputChange}
             className="pl-10 bg-white border-yellow-300 focus:border-red-500"
@@ -113,7 +113,7 @@ export default function SignInForm() {
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
+            placeholder="Enter password"
             value={formData.password}
             onChange={handleInputChange}
             className="pl-10 pr-10 bg-white border-yellow-300 focus:border-red-500"

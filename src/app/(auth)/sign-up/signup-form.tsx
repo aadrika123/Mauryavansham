@@ -174,7 +174,7 @@ export default function SignUpForm() {
             id="name"
             name="name"
             type="text"
-            placeholder="Enter your full name"
+            placeholder="Enter full name"
             value={formData.name}
             onChange={handleInputChange}
             className="pl-10 bg-white border-yellow-300 focus:border-red-500"
@@ -193,7 +193,7 @@ export default function SignUpForm() {
             id="email"
             name="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="Enter email"
             value={formData.email}
             onChange={handleInputChange}
             className="pl-10 bg-white border-yellow-300 focus:border-red-500"
@@ -212,7 +212,7 @@ export default function SignUpForm() {
             id="phone"
             name="phone"
             type="tel"
-            placeholder="Enter your phone number"
+            placeholder="Enter phone number"
             value={formData.phone}
             onChange={handleInputChange}
             className="pl-10 bg-white border-yellow-300 focus:border-red-500"

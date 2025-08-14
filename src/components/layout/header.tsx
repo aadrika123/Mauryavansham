@@ -149,12 +149,13 @@ export function Header() {
               </div>
             )}
             {isAuthenticated ? (
-              <Link href={`/view-profile/${loginUser?.id}`} passHref>
+              <Link href={`/dashboard`} passHref>
+              {/* <Link href={`/view-profile/${loginUser?.id}`} passHref> */}
                 <Button
                   asChild
                   className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
                 >
-                  <a>View Profile</a>
+                  <a>Main Pannel</a>
                 </Button>
               </Link>
             ) : (

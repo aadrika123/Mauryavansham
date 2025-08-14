@@ -110,7 +110,7 @@ export default function ForgotPassword() {
               htmlFor="email"
               className="block mb-2 font-medium text-red-700"
             >
-              Enter your registered email
+              Enter registered email
             </label>
             <input
               id="email"

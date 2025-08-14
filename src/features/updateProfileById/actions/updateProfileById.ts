@@ -21,13 +21,13 @@ type CreateProfileState = {
 
 export async function updateProfileById(
   formData: FormData,
-  userId: string
+  id: string
 ): Promise<CreateProfileState> {
   try {
     const updatedFields: Record<string, any> = {};
 
     for (const [key, value] of formData.entries()) {
-      if (key !== "userId") {
+      if (key !== "id") {
         updatedFields[key] = typeof value === "string" ? value.trim() : value;
       }
     }
@@ -49,16 +49,16 @@ export async function updateProfileById(
     await db
       .update(profiles)
       .set({ ...updatedFields, updatedAt: new Date() })
-      .where(eq(profiles.userId, userId));
+      .where(eq(profiles.id, Number(id)));
 
     const updatedProfile = await db
       .select()
       .from(profiles)
-      .where(eq(profiles.userId, userId))
+      .where(eq(profiles.id, Number(id)))
       .limit(1);
 
-    revalidatePath(`/view-profile/${userId}`);
-    revalidatePath(`/edit-profile/${userId}`);
+    revalidatePath(`/view-profile/${id}`);
+    revalidatePath(`/edit-profile/${id}`);
 
     return {
       success: true,

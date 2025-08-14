@@ -116,7 +116,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
               disabled={!isAuthenticated}
             >
               {isAuthenticated ? (
-                <Link href="/create-profile">Create Profile Now</Link>
+                <Link href="/dashboard/create-profile">Create Profile Now</Link>
               ) : (
                 <Link href="/sign-in">
                   <span>Login To Create Profile</span>

@@ -10,8 +10,10 @@ import {
 
 export const profiles = pgTable("profiles", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 256 }).notNull().unique(), // User ID from 
+  userId: varchar("user_id", { length: 256 }).notNull(), // Removed .unique() constraint
   name: varchar("name", { length: 100 }),
+  profileRelation: varchar("profile_relation", { length: 100 }),
+  customRelation: varchar("custom_relation", { length: 100 }),
   nickName: varchar("nick_name", { length: 100 }),
   phoneNo: varchar("phone_no", { length: 15 }),
   gender: varchar("gender", { length: 10 }), 
@@ -60,13 +62,19 @@ export const profiles = pgTable("profiles", {
   instagram: varchar("instagram", { length: 100 }).default(""),
   linkedin: varchar("linkedin", { length: 100 }).default(""),
   profileImage: varchar("profile_picture", { length: 255 }).default(""),
+  profileImage1: varchar("profile_image1", { length: 255 }).default(""),
+  profileImage2: varchar("profile_image2", { length: 255 }).default(""),
+  profileImage3: varchar("profile_image3", { length: 255 }).default(""),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
   isPremium: boolean("is_premium").default(false),
   isVerified: boolean("is_verified").default(false),
   isActive: boolean("is_active").default(true),
   isDeleted: boolean("is_deleted").default(false),
-  
-  
 });
+
+// If you want to ensure unique combinations, you could add a composite unique constraint
+// For example, to ensure unique email per user:
+// .unique(["userId", "email"])
+
 // export const updateProfileSchema = profiles.partial();

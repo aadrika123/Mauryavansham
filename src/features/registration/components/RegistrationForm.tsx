@@ -191,7 +191,7 @@ export default function CommunityRegistrationPage() {
                     </Label>
                     <Input
                       id="gotra"
-                      placeholder="Enter your gotra"
+                      placeholder="Enter gotra"
                       value={formData.gotra}
                       onChange={(e) =>
                         handleInputChange("gotra", e.target.value)

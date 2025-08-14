@@ -1,10 +1,11 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import Dashboard from "./dashboard-view";
+// import Dashboard from "./dashboard-view";
 import { authOptions } from "@/src/lib/auth";
 import { getProfileById } from "@/src/features/getProfile/actions/getProfileById";
 import { getAllProfiles } from "@/src/features/searchProfile/actions/getAllProfiles";
 import DashboardLayout from "@/src/components/layout/dashboardLayout";
+import CreateProfileForm from "./createProfileForm";
 
 export default async function DashboardPage() {
   // 1. Session fetch karo
@@ -22,7 +23,7 @@ export default async function DashboardPage() {
   console.log("SearchProfilePage result:", profileList?.data);
 
   // 4. Profile data fetch karo
-  // const result = await getProfileById(userId);
+  const result = await getProfileById(userId);
 
   // 5. Agar profile nahi mila
   // if (!result.success || !result.data) {
@@ -32,10 +33,7 @@ export default async function DashboardPage() {
   // 6. Dashboard ko profile data pass karo
   return (
     <DashboardLayout user={session.user}>
-      <Dashboard
-        // profileData={result.data}
-        profileList={profileList?.data || []}
-      />
+     <CreateProfileForm  />
     </DashboardLayout>
   );
 }

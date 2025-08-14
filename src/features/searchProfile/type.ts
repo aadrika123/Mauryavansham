@@ -1,5 +1,7 @@
 export type DatabaseProfile = {
   id: number
+  profileRelation: string | null
+  customRelation?: string | null
   name: string | null
   gender: string | null
   userId: string | null
@@ -51,7 +53,10 @@ export type DatabaseProfile = {
   isPremium: boolean | null
   isVerified: boolean | null
   isActive: boolean | null
-  profileImage: string | null
+  // profileImage: string | null
+  profileImage1: string | null
+  profileImage2: string | null
+  profileImage3: string | null
   
   
 }
@@ -74,17 +79,25 @@ export type Profile = {
   isPremium: boolean
   isVerified: boolean
   lastActive: string
-  profileImage: string
+  // profileImage: string
+  profileImage1: string
+  profileImage2: string
+  profileImage3: string
   createdAt?: string
   updatedAt?: string
   isActive?: boolean
   isDeleted?: boolean
+  profileRelation?: string
+  customRelation?: string
+  nickName?: string
   
   
 }
 export type DetailedProfile = {
   id: string
   name: string
+  profileRelation?: string
+  customRelation?: string
   userId: string
   nickName?: string
   age: number
@@ -105,7 +118,10 @@ export type DetailedProfile = {
   isPremium: boolean
   isVerified: boolean
   isActive: boolean
-  profileImage: string
+  // profileImage: string
+  profileImage1: string
+  profileImage2: string
+  profileImage3: string
   personalDetails: {
     complexion: string
     bodyType: string
@@ -116,6 +132,7 @@ export type DetailedProfile = {
     drinking: string
     exercise: string
     religiousBeliefs: string
+    
   }
   familyDetails: {
     fatherName: string

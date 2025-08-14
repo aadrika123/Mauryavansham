@@ -3,33 +3,39 @@
 import { db } from "@/src/drizzle/db";
 import { transformDatabaseProfilesToProfiles } from "../utils/transformProfile";
 import { DatabaseProfile } from "../type";
+import { eq, and } from "drizzle-orm"; // Drizzle ORM functions
 
 export async function getAllProfiles() {
   try {
-    // Query with the correct type
-    const allProfiles : DatabaseProfile[] = await db.query.profiles.findMany({
+    // Query with filter: is_active = true AND is_deleted = false
+    const allProfiles: DatabaseProfile[] = await db.query.profiles.findMany({
+      where: (fields, { eq, and }) =>
+        and(eq(fields.isActive, true), eq(fields.isDeleted, false)),
       orderBy: (fields, { desc }) => [desc(fields.createdAt)],
-    })
+    });
 
-    console.log("Fetched profiles from database:", allProfiles)
+    console.log("Fetched profiles from database:", allProfiles);
 
     // Transform database profiles to UI profiles
-    const transformedProfiles = transformDatabaseProfilesToProfiles(allProfiles)
+    const transformedProfiles = transformDatabaseProfilesToProfiles(allProfiles);
 
-    console.log("Transformed profiles for UI:", transformedProfiles)
+    console.log("Transformed profiles for UI:", transformedProfiles);
 
     return {
       success: true,
       data: transformedProfiles,
       timestamp: Date.now(),
-    }
+    };
   } catch (error) {
-    console.error("Error fetching profiles:", error)
+    console.error("Error fetching profiles:", error);
     return {
       success: false,
-      message: error instanceof Error ? error.message : "An unexpected error occurred.",
+      message:
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.",
       timestamp: Date.now(),
       data: [],
-    }
+    };
   }
 }

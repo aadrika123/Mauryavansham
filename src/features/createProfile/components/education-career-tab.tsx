@@ -106,7 +106,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
           </Label>
           <Input
             id="website"
-            placeholder="Enter your website URL"
+            placeholder="Enter website URL"
             value={data.website}
             onChange={(e) => onUpdate({ website: e.target.value })}
             type="url"
