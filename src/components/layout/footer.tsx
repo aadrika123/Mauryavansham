@@ -1,7 +1,16 @@
-import Link from "next/link"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Crown } from "lucide-react"
+import Link from "next/link";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  Mail,
+  Phone,
+  MapPin,
+  Crown,
+} from "lucide-react";
 
 export function Footer() {
   const footerLinks = {
@@ -29,7 +38,7 @@ export function Footer() {
       { name: "Privacy Policy", href: "/privacy" },
       { name: "Terms of Service", href: "/terms" },
     ],
-  }
+  };
 
   return (
     <footer className="bg-[#8B0000] text-white py-12">
@@ -45,7 +54,8 @@ export function Footer() {
               </div>
             </div>
             <p className="text-red-200 mb-4">
-              Connecting the global Maurya community and preserving our royal heritage for future generations.
+              Connecting the global Maurya community and preserving our royal
+              heritage for future generations.
             </p>
             <div className="flex gap-4">
               <div className="w-8 h-8 bg-red-800 rounded flex items-center justify-center">
@@ -65,7 +75,9 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-bold text-yellow-400 mb-4">Quick Links</h4>
+            <h4 className="text-lg font-bold text-yellow-400 mb-4">
+              Quick Links
+            </h4>
             <ul className="space-y-2 text-red-200">
               <li>
                 <Link href="/" className="hover:text-white">
@@ -129,7 +141,9 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-lg font-bold text-yellow-400 mb-4">Contact Us</h4>
+            <h4 className="text-lg font-bold text-yellow-400 mb-4">
+              Contact Us
+            </h4>
             <div className="space-y-3 text-red-200">
               <div className="flex items-center gap-2">
                 <span className="text-yellow-400">✉</span>
@@ -150,8 +164,18 @@ export function Footer() {
         {/* Bottom Footer */}
         <div className="border-t border-red-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-red-200 text-sm">
-            © 2025 Mauryavansh.com. All rights reserved. | Developed & Maintained by <Link className="underline" href={'https://aadrikaenterprises.com/'}>Aadrika Enterprises</Link>
+            © 2025 Mauryavansh.com. All rights reserved. | Developed &
+            Maintained by{" "}
+            <Link
+              href="https://aadrikaenterprises.com/"
+              className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Aadrika Enterprises
+            </Link>
           </p>
+
           <div className="flex gap-6 text-sm text-red-200 mt-4 md:mt-0">
             <Link href="/privacy" className="hover:text-white">
               Privacy Policy
@@ -166,5 +190,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

@@ -1,18 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Crown } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function TopHeader() {
+  const pathname = usePathname();
+  const [selectedLang, setSelectedLang] = useState("");
+
+  // Load Google Translate script once
   useEffect(() => {
-    const addGoogleTranslateScript = () => {
+    if (!document.getElementById("google-translate-script")) {
       const script = document.createElement("script");
+      script.id = "google-translate-script";
       script.src =
         "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
       script.type = "text/javascript";
       document.body.appendChild(script);
 
-      // Define the init function globally
       (window as any).googleTranslateElementInit = function () {
         new (window as any).google.translate.TranslateElement(
           {
@@ -24,24 +29,47 @@ export function TopHeader() {
           "google_translate_element"
         );
       };
-    };
+    }
 
-    addGoogleTranslateScript();
+    // Restore last selected language
+    const savedLang = localStorage.getItem("selectedLang");
+    if (savedLang) {
+      setSelectedLang(savedLang);
+      setTimeout(() => handleLanguageChange(savedLang), 1500); // delay for script load
+    }
   }, []);
 
-  const handleLanguageChange = (lang: string) => {
-    const iframe = document.querySelector("iframe.goog-te-menu-frame") as HTMLIFrameElement;
-    if (!iframe) return;
+  // Re-apply translation on route change
+  useEffect(() => {
+    if (selectedLang) {
+      setTimeout(() => handleLanguageChange(selectedLang), 1000);
+    }
+  }, [pathname]);
 
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-    const spanElements = iframeDoc?.querySelectorAll(".goog-te-menu2-item span.text");
-    spanElements?.forEach((span) => {
-      if (lang === "hi" && span.textContent === "Hindi") {
-        (span.parentElement as HTMLElement).click();
-      } else if (lang === "en" && span.textContent === "English") {
-        (span.parentElement as HTMLElement).click();
+  const handleLanguageChange = (lang: string) => {
+    localStorage.setItem("selectedLang", lang);
+    setSelectedLang(lang);
+
+    const tryClickLang = () => {
+      const iframe = document.querySelector("iframe.goog-te-menu-frame") as HTMLIFrameElement;
+      if (!iframe) {
+        setTimeout(tryClickLang, 500);
+        return;
       }
-    });
+
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      const spanElements = iframeDoc?.querySelectorAll(".goog-te-menu2-item span.text");
+
+      spanElements?.forEach((span) => {
+        if (lang === "hi" && span.textContent?.trim() === "Hindi") {
+          (span.parentElement as HTMLElement).click();
+        } else if (lang === "en" && span.textContent?.trim() === "English") {
+          (span.parentElement as HTMLElement).click();
+        }
+      });
+    };
+
+    tryClickLang();
   };
 
   return (
@@ -62,7 +90,7 @@ export function TopHeader() {
             <select
               onChange={(e) => handleLanguageChange(e.target.value)}
               className="w-28 text-xs border border-white text-white bg-transparent hover:bg-white hover:text-orange-600 rounded px-3 py-1"
-              defaultValue=""
+              value={selectedLang || ""}
             >
               <option value="" disabled>
                 Select Language

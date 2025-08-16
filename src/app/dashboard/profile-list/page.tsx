@@ -15,7 +15,7 @@ export default async function DashboardPage() {
     redirect("/sign-in");
   }
 
-  const profileList = await getAllProfiles();
+  const profileList = await getAllProfiles(Number(session.user.id));
 
   return (
     <DashboardLayout user={session.user}>

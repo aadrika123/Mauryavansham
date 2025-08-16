@@ -304,13 +304,17 @@ const ProfileRelationPopup = ({
   isOpen,
   onClose,
   onSelect,
+  currentRelation,
+  currentCustomRelation,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (relation: string, customRelation?: string) => void;
+  currentRelation?: string;
+  currentCustomRelation?: string;
 }) => {
-  const [selectedRelation, setSelectedRelation] = useState("");
-  const [customRelation, setCustomRelation] = useState("");
+  const [selectedRelation, setSelectedRelation] = useState(currentRelation || "");
+  const [customRelation, setCustomRelation] = useState(currentCustomRelation || "");
 
   const handleSubmit = () => {
     if (selectedRelation) {
@@ -403,7 +407,8 @@ export default function EditProfileForm({
   profile,
   type = "create",
 }: CreateProfilePageProps) {
-  const [showRelationPopup, setShowRelationPopup] = useState(type === "create");
+  // Initialize popup state - show for both create and edit modes initially
+  const [showRelationPopup, setShowRelationPopup] = useState(true);
   const [profileRelation, setProfileRelation] = useState("");
   const [customRelation, setCustomRelation] = useState("");
   const [activeTab, setActiveTab] = useState("personal-info");
@@ -453,8 +458,7 @@ export default function EditProfileForm({
 
   const [profileData, setProfileData] = useState<ProfileData>(() => {
     if (type === "edit" && profile) {
-      // For edit mode, don't show popup and set existing data
-      setShowRelationPopup(false);
+      // For edit mode, set existing relation data but still show popup
       setProfileRelation(profile.profileRelation || "myself");
       setCustomRelation(profile.customRelation || "");
 
@@ -1039,14 +1043,16 @@ export default function EditProfileForm({
     }
   };
 
-  // Show popup if it's create mode and popup should be shown
-  if (showRelationPopup && type === "create") {
+  // Show popup for both create and edit modes
+  if (showRelationPopup) {
     return (
       <div className="min-h-screen bg-orange-50">
         <ProfileRelationPopup
           isOpen={showRelationPopup}
           onClose={() => setShowRelationPopup(false)}
           onSelect={handleRelationSelect}
+          currentRelation={type === "edit" ? profileRelation : undefined}
+          currentCustomRelation={type === "edit" ? customRelation : undefined}
         />
       </div>
     );
@@ -1058,7 +1064,7 @@ export default function EditProfileForm({
     isUploadingImages.image3;
 
   return (
-    <div className="min-h-screen bg-orange-50   mr-16">
+    <div className="min-h-screen bg-orange-50 mr-16">
       <div className="max-w-full mx-auto">
         {/* Progress Bar */}
         <div className="mb-6">

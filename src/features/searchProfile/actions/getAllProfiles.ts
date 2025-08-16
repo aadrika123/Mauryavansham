@@ -3,14 +3,18 @@
 import { db } from "@/src/drizzle/db";
 import { transformDatabaseProfilesToProfiles } from "../utils/transformProfile";
 import { DatabaseProfile } from "../type";
-import { eq, and } from "drizzle-orm"; // Drizzle ORM functions
+import { eq, and } from "drizzle-orm";
 
-export async function getAllProfiles() {
+export async function getAllProfiles(userId: number) {
   try {
-    // Query with filter: is_active = true AND is_deleted = false
+    // Query with filter: userId match, is_active = true AND is_deleted = false
     const allProfiles: DatabaseProfile[] = await db.query.profiles.findMany({
       where: (fields, { eq, and }) =>
-        and(eq(fields.isActive, true), eq(fields.isDeleted, false)),
+        and(
+          eq(fields.userId, String(userId)), // ✅ match logged-in user
+          eq(fields.isActive, true),
+          eq(fields.isDeleted, false)
+        ),
       orderBy: (fields, { desc }) => [desc(fields.createdAt)],
     });
 

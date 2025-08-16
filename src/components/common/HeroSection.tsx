@@ -17,30 +17,6 @@ interface ImageCarouselProps {
 interface AdBannerProps {
   className?: string;
 }
-
-// Sample carousel images - replace with your actual images
-// const carouselImages: CarouselImage[] = [
-//   {
-//     id: 1,
-//     src: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop",
-//     alt: "Business Image 1"
-//   },
-//   {
-//     id: 2,
-//     src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop",
-//     alt: "Business Image 2"
-//   },
-//   {
-//     id: 3,
-//     src: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop",
-//     alt: "Business Image 3"
-//   },
-//   {
-//     id: 4,
-//     src: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&h=600&fit=crop",
-//     alt: "Business Image 4"
-//   }
-// ];
 const carouselImages: CarouselImage[] = [
   {
     src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754133157/Gemini_Generated_Image_pe53ibpe53ibpe53_ot4dkc.png",
@@ -108,7 +84,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               src={image.src}
               alt={image.alt}
               fill
-              className="object-cover object-center" // Ensures image is centered and not cut
+              className=" object-center" // Ensures image is centered and not cut
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
               priority={index === 0}
             />
@@ -274,8 +250,8 @@ const HeroSection: React.FC = () => {
 
       {/* Crown Background Icons */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <Crown className="absolute top-10 left-10 w-16 h-16 text-white/20 transform rotate-12" />
-        <Crown className="absolute top-32 right-20 w-20 h-20 text-white/20 transform -rotate-12" />
+        <Crown className="absolute top-10 left-10 w-20 h-20 text-white/20 transform rotate-12" />
+        <Crown className="absolute top-32 right-20 w-32 h-32 text-white/20 transform -rotate-12" />
         <Crown className="absolute bottom-20 left-20 w-12 h-12 text-white/20 transform rotate-45" />
         <Crown className="absolute bottom-32 right-10 w-16 h-16 text-white/20 transform -rotate-45" />
         <Crown className="absolute top-1/2 left-1/4 w-8 h-8 text-white/20 transform rotate-90" />
@@ -291,7 +267,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           {/* Main Content - Image Carousel */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 cover">
             <ImageCarousel images={carouselImages} />
           </div>
 
