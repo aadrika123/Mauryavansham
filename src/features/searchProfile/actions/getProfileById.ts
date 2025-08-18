@@ -7,9 +7,9 @@ import { eq } from "drizzle-orm";
 import type { DatabaseProfile } from "../type";
 import { transformToDetailedProfile } from "../utils/transformToDetailedProfile";
 
-export async function getProfileById(userId: string) {
+export async function getProfileById(id: string) {
   try {
-    const numericId = Number.parseInt(userId);
+    const numericId = Number.parseInt(id);
     if (isNaN(numericId)) {
       return {
         success: false,
@@ -20,7 +20,7 @@ export async function getProfileById(userId: string) {
 
     const profile: DatabaseProfile | undefined =
       await db.query.profiles.findFirst({
-        where: eq(profiles.userId, numericId.toString()), // Convert to string
+        where: eq(profiles.id, Number(numericId.toString())), // Convert to string
       });
 
     console.log("Fetched profile from database:", profile);

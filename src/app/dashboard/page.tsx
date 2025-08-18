@@ -18,7 +18,7 @@ export default async function DashboardPage() {
   // 3. Logged-in user ka ID lo
   const userId = session.user.id;
 
-  const profileList = await getAllProfiles();
+  const profileList = await getAllProfiles(Number(userId));
   console.log("SearchProfilePage result:", profileList?.data);
 
   // 4. Profile data fetch karo
@@ -32,6 +32,7 @@ export default async function DashboardPage() {
   // 6. Dashboard ko profile data pass karo
   return (
     <DashboardLayout user={session.user}>
+      
       <Dashboard
         // profileData={result.data}
         profileList={profileList?.data || []}

@@ -20,7 +20,8 @@ import {
   HandHeart,
   Trophy,
   Globe,
-  MessageSquare
+  MessageSquare,
+  Search
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -34,6 +35,7 @@ export default function DashboardLayout({ children, user }: { children: React.Re
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { title: "Create Matrimonial Profile", href: "/dashboard/create-profile", icon: LayoutDashboard },
     { title: "My Profiles", href: "/dashboard/profile-list", icon: LayoutDashboard },
+    { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
 
   ];
 
@@ -90,11 +92,11 @@ export default function DashboardLayout({ children, user }: { children: React.Re
       </div>
 
       {/* Content with sidebar */}
-      <div className=" mx-auto   pt-24">
+      <div className="pt-24">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="">
-            <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24 left-6 w-72 h-[calc(100vh-6rem)] ">
+            <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24  w-60 h-[calc(100vh-6rem)] ">
 
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
@@ -126,7 +128,7 @@ export default function DashboardLayout({ children, user }: { children: React.Re
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 -ml-32 px-8">
             {children}
           </div>
         </div>

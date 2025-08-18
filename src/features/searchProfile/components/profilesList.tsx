@@ -20,11 +20,13 @@ import {
   Users,
   Crown,
   Verified,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import type React from "react";
 import type { Profile } from "../type";
 import { useRouter } from "next/navigation";
-
+import { useState } from "react";
 
 interface ProfilesListProps {
   profiles: Profile[];
@@ -40,7 +42,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
   onSortChange,
 }) => {
   console.log("ProfilesList received profiles:", profiles);
-  const router = useRouter()
+  const router = useRouter();
 
   const handleExpressInterest = (profileId: string) => {
     console.log("Express interest:", profileId);
@@ -54,7 +56,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
   const handleViewProfile = (profileId: string) => {
     console.log("View profile:", profileId);
-    
+
     // TODO: Implement view profile functionality - could navigate to profile detail page
   };
 
@@ -71,6 +73,147 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
     if (lastActive === "Never") return "Never active";
     if (lastActive === "Online now") return "Online now";
     return `Last seen ${lastActive}`;
+  };
+  const ProfileImageCarousel = ({ profile }: { profile: any }) => {
+    // Get all available images, prioritizing profileImage1 as primary
+    const images = [
+      profile.profileImage1,
+      profile.profileImage2,
+      profile.profileImage3,
+    ].filter(Boolean); // Remove empty/null images
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const getInitials = (name: string): string => {
+      return name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+    };
+
+    const goToPrevious = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent card click
+      setCurrentImageIndex((prev) =>
+        prev === 0 ? images.length - 1 : prev - 1
+      );
+    };
+
+    const goToNext = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent card click
+      setCurrentImageIndex((prev) =>
+        prev === images.length - 1 ? 0 : prev + 1
+      );
+    };
+
+    const goToImage = (index: number, e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent card click
+      setCurrentImageIndex(index);
+    };
+
+    return (
+      <div className="relative w-32 h-32 lg:w-40 lg:h-40 bg-gradient-to-br from-orange-100 to-red-100 rounded-xl overflow-hidden group shadow-lg border-2 border-white">
+        {/* Main Image Display */}
+        {images.length > 0 ? (
+          <>
+            <img
+              src={images[currentImageIndex]}
+              alt={`${profile.name}'s profile`}
+              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+              onError={(e) => {
+                // Fallback to initials if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${getInitials(
+                    profile.name
+                  )}</div></div>`;
+                }
+              }}
+            />
+
+            {/* Navigation Controls - Only show if more than 1 image */}
+            {images.length > 1 && (
+              <>
+                {/* Previous Button */}
+                <button
+                  onClick={goToPrevious}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {/* Next Button */}
+                <button
+                  onClick={goToNext}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                {/* Image Indicators */}
+                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={(e) => goToImage(index, e)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                        currentImageIndex === index
+                          ? "bg-white scale-110 shadow-lg"
+                          : "bg-white/60 hover:bg-white/80 hover:scale-105"
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Image Counter */}
+                <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">
+                  {currentImageIndex + 1} / {images.length}
+                </div>
+              </>
+            )}
+
+            {/* Primary Image Badge */}
+            {currentImageIndex === 0 && images.length > 1 && (
+              <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium shadow-lg">
+                Primary
+              </div>
+            )}
+          </>
+        ) : (
+          // Fallback when no images available
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
+            <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
+              {getInitials(profile.name)}
+            </div>
+          </div>
+        )}
+
+        {/* Profile Badges */}
+        <div className="absolute -top-3 -right-3 flex flex-col gap-1">
+          {profile.isPremium && (
+            <div className="bg-white rounded-full p-1 shadow-lg">
+              <Crown className="w-6 h-6 text-orange-500" />
+            </div>
+          )}
+          {profile.isVerified && (
+            <div className="bg-white rounded-full p-1 shadow-lg">
+              <Verified className="w-6 h-6 text-green-500" />
+            </div>
+          )}
+        </div>
+
+        {/* Online Status Indicator */}
+        {profile.lastActive === "Online now" && (
+          <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -110,28 +253,9 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               {/* Profile Image */}
               <div className="flex-shrink-0">
                 <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gray-200 rounded-lg flex items-center justify-center relative">
-                  {profile?.profileImage ? (
-                    <img
-                      src={profile?.profileImage || "/placeholder.svg"}
-                      alt={`${profile.name}'s profile`}
-                      className="w-full h-full object-cover rounded-lg"
-                      onError={(e) => {
-                        // Fallback to initials if image fails to load
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = "none";
-                        const parent = target.parentElement;
-                        if (parent) {
-                          parent.innerHTML = `<div class="text-gray-400 text-2xl font-bold">${getInitials(
-                            profile.name
-                          )}</div>`;
-                        }
-                      }}
-                    />
-                  ) : (
-                    <div className="text-gray-400 text-2xl font-bold">
-                      {getInitials(profile.name)}
-                    </div>
-                  )}
+                  <div className="flex-shrink-0">
+                    <ProfileImageCarousel profile={profile} />
+                  </div>
 
                   {/* Badges */}
                   <div className="absolute -top-6 -right-2 ">
@@ -211,7 +335,10 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                             </Badge>
                           ))}
                         {profile.interests.length > 5 && (
-                          <Badge variant="outline" className="text-xs text-red-800">
+                          <Badge
+                            variant="outline"
+                            className="text-xs text-red-800"
+                          >
                             +{profile.interests.length - 5} more
                           </Badge>
                         )}
@@ -246,7 +373,9 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => router.push(`/search-profile/${profile.userId}`)}
+                    onClick={() =>
+                      router.push(`/dashboard/search-profile/${profile.id}`)
+                    }
                     className="flex items-center gap-2 hover:bg-blue-50 hover:border-blue-300"
                   >
                     <Eye className="w-4 h-4" />

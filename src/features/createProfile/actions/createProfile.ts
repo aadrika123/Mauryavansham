@@ -60,7 +60,7 @@ export async function createProfile(
       customRelation: z.string().optional(),
       name: z.string().min(1, "Name is required"),
       phoneNo: z.string().min(1, "Phone number is required"),
-      email: z.string().email("Valid email is required"),
+      email: z.string().optional(),
       // All optional fields hereafter
       nickName: z.string().optional(),
       website: z.string().optional(),

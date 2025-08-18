@@ -266,7 +266,7 @@ const ViewProfileById = (props: any) => {
                     </p>
                     <p className="flex items-center gap-1">
                       <Briefcase className="w-4 h-4" />
-                      {profileData.occupation.replace("-", " ")}
+                      {profileData.occupation}
                     </p>
                   </div>
                 </div>
@@ -281,7 +281,7 @@ const ViewProfileById = (props: any) => {
                   </p>
                   <p className="capitalize flex items-center gap-1">
                     <HeartHandshakeIcon className="w-4 h-4" />
-                    {profileData.maritalStatus.replace("-", " ")}
+                    {profileData.maritalStatus}
                   </p>
                   <p className="flex items-center gap-1">
                     <MapPin className="w-4 h-4" />

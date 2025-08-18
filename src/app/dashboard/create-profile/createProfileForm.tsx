@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useTransition, useRef } from "react";
+import type React from "react";
+
+import { useState, useTransition, useRef } from "react";
 import { Button } from "@/src/components/ui/button";
 import { PersonalInfoTab } from "@/src/features/createProfile/components/personal-info-tab";
 import { FamilyDetailsTab } from "@/src/features/createProfile/components/family-details-tab";
@@ -18,8 +20,6 @@ import {
   Loader2,
   Upload,
   X,
-  Camera,
-  Crown,
   User,
   Heart,
   Users,
@@ -29,7 +29,6 @@ import {
   Target,
   Trophy,
   Zap,
-  ArrowLeft,
   Plus,
 } from "lucide-react";
 import Image from "next/image";
@@ -43,7 +42,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/src/components/ui/dialog";
-import Link from "next/link";
 
 // Define the nested ProfileData type with multiple images
 export type ProfileData = {
@@ -190,6 +188,22 @@ const profileRelations = [
   { value: "brother", label: "For Brother", icon: Users },
   { value: "other", label: "Other", icon: Users },
 ];
+
+// Function to get gender based on profile relation
+const getGenderFromRelation = (relation: string): string => {
+  switch (relation) {
+    case "son":
+    case "brother":
+      return "Male";
+    case "daughter":
+    case "sister":
+      return "Female";
+    case "myself":
+    case "other":
+    default:
+      return ""; // Let user select manually for these cases
+  }
+};
 
 // Tab configuration with progress tracking and motivational messages
 const tabConfig = [
@@ -374,7 +388,11 @@ const ProfileRelationPopup = ({
           )}
 
           <div className="flex gap-3 pt-4">
-            <Button onClick={onClose} variant="outline" className="flex-1">
+            <Button
+              onClick={onClose}
+              variant="outline"
+              className="flex-1 bg-transparent"
+            >
               Cancel
             </Button>
             <Button
@@ -410,6 +428,9 @@ export default function CreateProfileForm({
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
 
   // Multiple file input refs
   const fileInputRef1 = useRef<HTMLInputElement>(null);
@@ -563,10 +584,18 @@ export default function CreateProfileForm({
   const handleRelationSelect = (relation: string, customRel?: string) => {
     setProfileRelation(relation);
     setCustomRelation(customRel || "");
+    
+    // Automatically set gender based on relation
+    const autoGender = getGenderFromRelation(relation);
+    
     setProfileData((prev) => ({
       ...prev,
       profileRelation: relation,
       customRelation: customRel || "",
+      personalInfo: {
+        ...prev.personalInfo,
+        gender: autoGender, // Auto-set gender here
+      },
     }));
   };
 
@@ -802,7 +831,7 @@ export default function CreateProfileForm({
             onClick={() => fileInputRef.current?.click()}
             size="sm"
             variant="outline"
-            className="text-xs border-orange-300 text-orange-600 hover:bg-orange-50"
+            className="text-[10px] border-orange-300 text-orange-600 hover:bg-orange-50"
             disabled={isUploading}
           >
             {isUploading ? (
@@ -812,7 +841,7 @@ export default function CreateProfileForm({
               </>
             ) : (
               <>
-                <Upload className="mr-1 h-3 w-3" />
+                <Upload className="mr-1 h-3 w-3 " />
                 Add Photo {imageNumber}
               </>
             )}
@@ -969,10 +998,10 @@ export default function CreateProfileForm({
               description: "Your profile has been created successfully!",
             });
 
-            if (createResult?.data?.userId) {
+            if (createResult?.data?.id) {
               setTimeout(() => {
                 router.push(
-                  `/dashboard/view-profile/${createResult.data.userId}`
+                  `/dashboard/view-profile/${createResult.data.id}`
                 );
               }, 1500);
             }
@@ -983,7 +1012,7 @@ export default function CreateProfileForm({
               variant: "destructive",
             });
           }
-        } 
+        }
       } catch (error) {
         console.error("Profile operation error:", error);
         toast({
@@ -1058,197 +1087,208 @@ export default function CreateProfileForm({
     isUploadingImages.image3;
 
   return (
-    <div className="min-h-screen bg-orange-50   mr-16">
-      <div className="max-w-full mx-auto">
-        {/* Progress Bar */}
-        <div className="mb-6">
-          <ProgressBar currentStep={currentStep} />
-        </div>
-
-        <div className="grid grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
-            {/* Multiple Photo Upload Section */}
-            <Card className="p-4 mb-4">
-              <h3 className="text-lg font-semibold mb-4 text-center text-orange-800">
-                Profile Photos
-              </h3>
-
-              {/* Multiple Image Upload Grid */}
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                <ImageUploadSlot
-                  imageNumber={1}
-                  preview={imagePreviews.preview1}
-                  isUploading={isUploadingImages.image1}
-                />
-                <ImageUploadSlot
-                  imageNumber={2}
-                  preview={imagePreviews.preview2}
-                  isUploading={isUploadingImages.image2}
-                />
-                <ImageUploadSlot
-                  imageNumber={3}
-                  preview={imagePreviews.preview3}
-                  isUploading={isUploadingImages.image3}
-                />
-              </div>
-
-              <p className="text-xs text-gray-500 text-center mb-4">
-                Upload up to 3 photos • Max 5MB each • JPG, PNG
-              </p>
-
-              {/* Photo Guidelines */}
-              <div className="mt-6 text-center">
-                <h4 className="text-sm font-medium text-orange-700 mb-3">
-                  Photo Guidelines
-                </h4>
-                <div className="flex justify-center gap-2">
-                  {/* Image 1 - Valid */}
-                  <div className="relative">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                      <Image
-                        src="https://img.shaadi.com/imgs/registration/male-closeup-v2.gif"
-                        alt="Example 1"
-                        width={64}
-                        height={64}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
-                    <p className="text-xs mt-1">Close Up</p>
-                  </div>
-
-                  {/* Image 2 - Valid */}
-                  <div className="relative">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                      <Image
-                        src="https://img.shaadi.com/imgs/registration/male-full-view-v2.gif"
-                        alt="Example 2"
-                        width={64}
-                        height={64}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
-                    <p className="text-xs mt-1">Full View</p>
-                  </div>
-
-                  {/* Image 3 - Invalid */}
-                  <div className="relative">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                      <Image
-                        src="https://img.shaadi.com/imgs/registration/male-face-blur-v2.gif"
-                        alt="Invalid Example 1"
-                        width={64}
-                        height={64}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
-                    <p className="text-xs mt-1">Blur</p>
-                  </div>
-
-                  {/* Image 4 - Invalid */}
-                  <div className="relative">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                      <Image
-                        src="https://img.shaadi.com/imgs/registration/male-face-group.gif"
-                        alt="Invalid Example 2"
-                        width={64}
-                        height={64}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                    <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
-                    <p className="text-xs mt-1">Group</p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <ProfileSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+    <div className="min-h-screen bg-orange-50 mt-6  mr-16">
+      <form onSubmit={handleCompleteProfile}>
+        <div className="max-w-full mx-auto">
+          {/* Progress Bar */}
+          <div className="mb-6">
+            <ProgressBar currentStep={currentStep} />
           </div>
 
-          <div className="lg:col-span-2">
-            {/* Motivational Message */}
-            {currentTabConfig && (
-              <MotivationalMessage
-                title={currentTabConfig.message.title}
-                subtitle={currentTabConfig.message.subtitle}
-                icon={currentTabConfig.message.icon}
-                currentStep={currentStep}
+          <div className="grid grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              {/* Multiple Photo Upload Section */}
+              <Card className="p-4 mb-4">
+                <h3 className="text-lg font-semibold mb-4 text-center text-orange-800">
+                  Profile Photos
+                </h3>
+
+                {/* Multiple Image Upload Grid */}
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <ImageUploadSlot
+                    imageNumber={1}
+                    preview={imagePreviews.preview1}
+                    isUploading={isUploadingImages.image1}
+                  />
+                  <ImageUploadSlot
+                    imageNumber={2}
+                    preview={imagePreviews.preview2}
+                    isUploading={isUploadingImages.image2}
+                  />
+                  <ImageUploadSlot
+                    imageNumber={3}
+                    preview={imagePreviews.preview3}
+                    isUploading={isUploadingImages.image3}
+                  />
+                </div>
+
+                <p className="text-xs text-gray-500 text-center mb-4">
+                  Upload up to 3 photos • Max 5MB each • JPG, PNG
+                </p>
+
+                {/* Photo Guidelines */}
+                <div className="mt-6 text-center">
+                  <h4 className="text-sm font-medium text-orange-700 mb-3">
+                    Photo Guidelines
+                  </h4>
+                  <div className="flex justify-center gap-2">
+                    {/* Image 1 - Valid */}
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <Image
+                          src="https://img.shaadi.com/imgs/registration/male-closeup-v2.gif"
+                          alt="Example 1"
+                          width={64}
+                          height={64}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
+                      <p className="text-xs mt-1">Close Up</p>
+                    </div>
+
+                    {/* Image 2 - Valid */}
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <Image
+                          src="https://img.shaadi.com/imgs/registration/male-full-view-v2.gif"
+                          alt="Example 2"
+                          width={64}
+                          height={64}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
+                      <p className="text-xs mt-1">Full View</p>
+                    </div>
+
+                    {/* Image 3 - Invalid */}
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <Image
+                          src="https://img.shaadi.com/imgs/registration/male-face-blur-v2.gif"
+                          alt="Invalid Example 1"
+                          width={64}
+                          height={64}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
+                      <p className="text-xs mt-1">Blur</p>
+                    </div>
+
+                    {/* Image 4 - Invalid */}
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <Image
+                          src="https://img.shaadi.com/imgs/registration/male-face-group.gif"
+                          alt="Invalid Example 2"
+                          width={64}
+                          height={64}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                      <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
+                      <p className="text-xs mt-1">Group</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              <ProfileSidebar
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
               />
-            )}
+            </div>
 
-            <Card className="p-6">{renderActiveTab()}</Card>
+            <div className="lg:col-span-2">
+              {/* Motivational Message */}
+              {currentTabConfig && (
+                <MotivationalMessage
+                  title={currentTabConfig.message.title}
+                  subtitle={currentTabConfig.message.subtitle}
+                  icon={currentTabConfig.message.icon}
+                  currentStep={currentStep}
+                />
+              )}
 
-            <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
-              {/* Navigation Buttons */}
-              <div className="flex gap-2 w-full sm:w-auto">
-                {/* Previous Button */}
-                {currentStep > 1 && (
-                  <Button
-                    onClick={() => {
-                      const prevTab = tabConfig.find(
-                        (tab) => tab.step === currentStep - 1
-                      );
-                      if (prevTab) setActiveTab(prevTab.id);
-                    }}
-                    variant="outline"
-                    className="w-full sm:w-auto border-orange-300 text-orange-600 hover:bg-orange-50"
-                  >
-                    ← Previous
-                  </Button>
-                )}
+              <Card className="p-6">
+                {renderActiveTab()}
+                {/* </form> */}
+              </Card>
 
-                {/* Next Button */}
-                {currentStep < 5 && (
-                  <Button
-                    onClick={() => {
-                      const nextTab = tabConfig.find(
-                        (tab) => tab.step === currentStep + 1
-                      );
-                      if (nextTab) setActiveTab(nextTab.id);
-                    }}
-                    className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
-                  >
-                    Next →
-                  </Button>
-                )}
-              </div>
-
-              {/* Complete/Update Profile Button */}
-              <div className="flex gap-2 w-full sm:w-auto">
-                <Button
-                  onClick={handleCompleteProfile}
-                  className={`w-full sm:w-auto ${
-                    currentStep === 5
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-orange-600 hover:bg-orange-700"
-                  }`}
-                  disabled={isPending || isAnyImageUploading}
-                >
-                  {isPending || isAnyImageUploading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isAnyImageUploading
-                        ? "Uploading Images..."
-                        : type === "edit"
-                        ? "Updating..."
-                        : "Creating..."}
-                    </>
-                  ) : type === "edit" ? (
-                    "Update Profile"
-                  ) : currentStep === 5 ? (
-                    "Complete Profile ✨"
-                  ) : (
-                    "Save & Complete Later"
+              <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 mb-10">
+                {/* Navigation Buttons */}
+                <div className="flex gap-2 w-full sm:w-auto">
+                  {/* Previous Button */}
+                  {currentStep > 1 && (
+                    <Button
+                      onClick={() => {
+                        const prevTab = tabConfig.find(
+                          (tab) => tab.step === currentStep - 1
+                        );
+                        if (prevTab) setActiveTab(prevTab.id);
+                      }}
+                      variant="outline"
+                       type="button"
+                      className="w-full sm:w-auto border-orange-300 text-orange-600 hover:bg-orange-50"
+                    >
+                      ← Previous
+                    </Button>
                   )}
-                </Button>
+
+                  {/* Next Button */}
+                  {currentStep < 5 && (
+                    <Button
+                      onClick={() => {
+                        const nextTab = tabConfig.find(
+                          (tab) => tab.step === currentStep + 1
+                        );
+                        if (nextTab) setActiveTab(nextTab.id);
+                      }}
+                      type="button"
+                      className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
+                    >
+                      Next →
+                    </Button>
+                  )}
+                </div>
+
+                {/* Complete/Update Profile Button */}
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button
+                    // onClick={handleCompleteProfile}
+                    type="submit"
+                    className={`w-full sm:w-auto ${
+                      currentStep === 5
+                        ? "bg-green-600 hover:bg-green-700"
+                        : "bg-orange-600 hover:bg-orange-700"
+                    }`}
+                    disabled={isPending || isAnyImageUploading}
+                  >
+                    {isPending || isAnyImageUploading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {isAnyImageUploading
+                          ? "Uploading Images..."
+                          : type === "edit"
+                          ? "Updating..."
+                          : "Creating..."}
+                      </>
+                    ) : type === "edit" ? (
+                      "Update Profile"
+                    ) : currentStep === 5 ? (
+                      "Complete Profile ✨"
+                    ) : (
+                      "Save & Complete Later"
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </form>
       <Toaster />
     </div>
   );
