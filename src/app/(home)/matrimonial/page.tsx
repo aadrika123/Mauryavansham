@@ -103,7 +103,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
               disabled={!isAuthenticated}
             >
               {isAuthenticated ? (
-                <Link href="/search-profile">Search Profile</Link>
+                <Link href="/dashboard/search-profile">Search Profile</Link>
               ) : (
                 <Link href="/sign-in">
                   <span>Login To Search Profile</span>
