@@ -24,6 +24,7 @@ interface FamilyDetailsTabProps {
 }
 
 export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
+    const isEmpty = (val: string | undefined) => !val || val.trim() === "";
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -45,6 +46,9 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
             value={data.fatherName}
             onChange={(e) => onUpdate({ fatherName: e.target.value })}
           />
+          {isEmpty(data.fatherName) && (
+            <p className="text-sm text-red-600">Please enter your father's name</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -67,6 +71,9 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
             value={data.motherName}
             onChange={(e) => onUpdate({ motherName: e.target.value })}
           />
+          {isEmpty(data.motherName) && (
+            <p className="text-sm text-red-600">Please enter your mother's name</p>
+          )}
         </div>
 
         <div className="space-y-2">

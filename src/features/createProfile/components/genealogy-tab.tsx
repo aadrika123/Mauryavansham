@@ -24,6 +24,7 @@ interface GenealogyTabProps {
 }
 
 export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
+  const isEmpty = (val: string | undefined) => !val || val.trim() === "";
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -49,6 +50,9 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
             onChange={(e) => onUpdate({ gotraDetails: e.target.value })}
             rows={4}
           />
+          {isEmpty(data.gotraDetails) && (
+            <p className="text-sm text-red-600">Please provide gotra details</p>
+          )}
         </div>
 
         <div className="space-y-2">

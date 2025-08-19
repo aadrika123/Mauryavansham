@@ -21,13 +21,7 @@ export default async function DashboardPage() {
   const profileList = await getAllProfiles(Number(userId));
   console.log("SearchProfilePage result:", profileList?.data);
 
-  // 4. Profile data fetch karo
-  // const result = await getProfileById(userId);
 
-  // 5. Agar profile nahi mila
-  // if (!result.success || !result.data) {
-  //   return <div className="p-4 text-red-500">Profile not found.</div>;
-  // }
 
   // 6. Dashboard ko profile data pass karo
   return (

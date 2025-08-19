@@ -1,6 +1,6 @@
 "use client";
 import * as yup from "yup";
-import { User, Sparkles, RefreshCw } from "lucide-react";
+import { User, Sparkles, RefreshCw, X } from "lucide-react";
 import { Label } from "@/src/components/ui/label";
 import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
@@ -116,6 +116,7 @@ const AboutMeSuggestions = ({
       setIsGenerating(false);
     }, 1500);
   };
+ 
 
   useEffect(() => {
     if (gender && relation) {
@@ -231,6 +232,7 @@ export function PersonalInfoTab({
     const day = String(today.getDate()).padStart(2, "0");
     return `${today.getFullYear()}-${month}-${day}`;
   }
+  const isEmpty = (val: string | undefined) => !val || val.trim() === "";
 
   return (
     <div className="space-y-6">
@@ -267,11 +269,14 @@ export function PersonalInfoTab({
             required
             onChange={(e) => onUpdate({ name: e.target.value })}
           />
+          {isEmpty(data.name) && (
+            <p className="text-xs text-red-500 mt-1">Name is required</p>
+          )}
         </div>
 
         <div className="space-y-2">
           <Label className="text-red-800" htmlFor="nickName">
-            Nick Name <span className="text-red-500">*</span>
+            Nick Name
           </Label>
           <Input
             id="nickName"
@@ -293,6 +298,11 @@ export function PersonalInfoTab({
             max={getMaxDob()}
             onChange={(e) => onUpdate({ dob: e.target.value })}
           />
+          {isEmpty(data.dob) && (
+            <p className="text-xs text-red-500 mt-1">
+              Date of birth is required
+            </p>
+          )}
         </div>
 
         {/* add gender */}
@@ -315,6 +325,9 @@ export function PersonalInfoTab({
               ))}
             </SelectContent>
           </Select>
+          {isEmpty(data.gender) && (
+            <p className="text-xs text-red-500 mt-1">Gender is required</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -337,10 +350,16 @@ export function PersonalInfoTab({
               }
             }}
           />
-          {data.phoneNo && data.phoneNo.length !== 10 && (
+          {isEmpty(data.phoneNo) ? (
             <p className="text-xs text-red-500 mt-1">
-              Phone number must be 10 digits
+              Phone number is required
             </p>
+          ) : (
+            data.phoneNo.length !== 10 && (
+              <p className="text-xs text-red-500 mt-1">
+                Phone number must be 10 digits
+              </p>
+            )
           )}
         </div>
 
@@ -353,8 +372,18 @@ export function PersonalInfoTab({
             type="email"
             placeholder="Enter email address"
             value={data.email}
+            required
             onChange={(e) => onUpdate({ email: e.target.value })}
           />
+          {isEmpty(data.email) ? (
+            <p className="text-xs text-red-500 mt-1">Email is required</p>
+          ) : (
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) && (
+              <p className="text-xs text-red-500 mt-1">
+                Please enter a valid email address (e.g., example@mail.com)
+              </p>
+            )
+          )}
         </div>
 
         <div className="space-y-2">
@@ -400,6 +429,11 @@ export function PersonalInfoTab({
               </SelectContent>
             </Select>
           </div>
+          {(!data.height ||
+            !data.height.includes("'") ||
+            data.height === "'") && (
+            <p className="text-xs text-red-500 mt-1">Height is required</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -477,17 +511,20 @@ export function PersonalInfoTab({
               )}
             </SelectContent>
           </Select>
+          {(!data.maritalStatus || data.maritalStatus === "single") && (
+            <p className="text-xs text-red-500 mt-1">
+              Marital status is required
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
           <Label className="text-red-800" htmlFor="languagesKnown">
             Languages Known
           </Label>
-          <Input
-            id="languagesKnown"
-            placeholder="e.g., Hindi, English, Sadari"
-            value={data.languagesKnown}
-            onChange={(e) => onUpdate({ languagesKnown: e.target.value })}
+          <LanguagesInput
+            value={data.languagesKnown} 
+            onChange={(val) => onUpdate({ languagesKnown: val })} 
           />
         </div>
 
@@ -571,3 +608,65 @@ export function PersonalInfoTab({
     </div>
   );
 }
+
+ function LanguagesInput({
+    value,
+    onChange,
+  }: {
+    value: string;
+    onChange: (val: string) => void;
+  }) {
+    const languages = value ? value.split(",") : [];
+    const [inputValue, setInputValue] = useState("");
+
+    const addLanguage = () => {
+      const newLang = inputValue.trim();
+      if (newLang && !languages.includes(newLang)) {
+        const updated = [...languages, newLang];
+        onChange(updated.join(","));
+      }
+      setInputValue("");
+    };
+
+    const removeLanguage = (lang: string) => {
+      const updated = languages.filter((l) => l !== lang);
+      onChange(updated.join(","));
+    };
+
+    return (
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <Input
+            value={inputValue}
+            placeholder="Type a language and press Add/Enter"
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addLanguage();
+              }
+            }}
+          />
+          <Button type="button" variant="outline" onClick={addLanguage}>
+            Add
+          </Button>
+        </div>
+
+        {/* Show added languages as tags */}
+        <div className="flex flex-wrap gap-2 mt-2">
+          {languages.map((lang, idx) => (
+            <span
+              key={idx}
+              className="flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-sm"
+            >
+              {lang}
+              <X
+                className="w-4 h-4 cursor-pointer hover:text-red-600"
+                onClick={() => removeLanguage(lang)}
+              />
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }

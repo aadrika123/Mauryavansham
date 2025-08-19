@@ -201,7 +201,7 @@ const getGenderFromRelation = (relation: string): string => {
     case "myself":
     case "other":
     default:
-      return ""; // Let user select manually for these cases
+      return ""; 
   }
 };
 
@@ -337,7 +337,7 @@ const ProfileRelationPopup = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} >
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-orange-700">
@@ -388,13 +388,13 @@ const ProfileRelationPopup = ({
           )}
 
           <div className="flex gap-3 pt-4">
-            <Button
+            {/* <Button
               onClick={onClose}
               variant="outline"
               className="flex-1 bg-transparent"
             >
               Cancel
-            </Button>
+            </Button> */}
             <Button
               onClick={handleSubmit}
               disabled={
@@ -1254,10 +1254,8 @@ export default function CreateProfileForm({
                   )}
                 </div>
 
-                {/* Complete/Update Profile Button */}
                 <div className="flex gap-2 w-full sm:w-auto">
                   <Button
-                    // onClick={handleCompleteProfile}
                     type="submit"
                     className={`w-full sm:w-auto ${
                       currentStep === 5

@@ -22,6 +22,7 @@ interface EducationCareerTabProps {
 }
 
 export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) {
+  const isEmpty = (val: string | undefined) => !val || val.trim() === "";
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -50,6 +51,9 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
               <SelectItem value="professional">Professional Degree</SelectItem>
             </SelectContent>
           </Select>
+          {isEmpty(data.highestEducation) && (
+            <p className="text-sm text-red-600">Please select your highest education level</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -79,6 +83,9 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
               <SelectItem value="other">Other</SelectItem>
             </SelectContent>
           </Select>
+          {isEmpty(data.occupation) && (
+            <p className="text-sm text-red-600">Please select your occupation</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -102,7 +109,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
         <div className="space-y-2">
           <Label className="text-red-800" htmlFor="website">
-            Website <span className="text-red-500">*</span>
+            Website
           </Label>
           <Input
             id="website"
