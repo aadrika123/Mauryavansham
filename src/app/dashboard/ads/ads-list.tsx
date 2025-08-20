@@ -118,7 +118,7 @@ export default function AdsList({ userId }: AdsListProps) {
       </div>
     )
   }
-
+console.log(ads,"ads")
   return (
     <div className="space-y-6">
       <div className="flex justify-end">

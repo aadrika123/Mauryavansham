@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Sparkles, Star, Crown, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import Ad1 from "@/public/Ad1.png";
-import Ad2 from "@/public/Ad2.png";
+
 
 // TypeScript interfaces
 interface CarouselImage {
@@ -266,13 +265,14 @@ const HeroSection: React.FC = () => {
           {/* Left Ad Banner */}
           <div className="hidden lg:block w-[18rem] flex-shrink-0">
             {/* <AdBanner /> */}
-            <Image
-              src={Ad2}
+            {/* <Image
+              src={"https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755690017/ads-banners/ub1087xjrz7gbw6wrub5.png"}
               alt="Advertisement Banner"
               className="w-full h-auto object-cover shadow-lg rounded-2xl"
               // sizes="(max-width: 768px) 100vw, 50vw"
               priority
-            />
+            /> */}
+            <img src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755690017/ads-banners/ub1087xjrz7gbw6wrub5.png" alt="" />
           </div>
 
           {/* Main Content - Image Carousel */}
@@ -283,13 +283,14 @@ const HeroSection: React.FC = () => {
           {/* Right Ad Banner */}
           <div className="hidden lg:block w-[18rem] flex-shrink-0">
             {/* <AdBanner /> */}
-            <Image
-              src={Ad1}
+            {/* <Image
+              src={"https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755680291/ads-banners/ncf2mrodjjthstwooqsu.png"}
               alt="Advertisement Banner"
               className="w-full h-auto object-cover shadow-lg rounded-2xl"
               // sizes="(max-width: 768px) 100vw, 50vw"
               priority
-            />
+            /> */}
+            <img src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755680291/ads-banners/ncf2mrodjjthstwooqsu.png" alt="" />
           </div>
         </div>
 
