@@ -1,5 +1,3 @@
-// File: src/app/api/users/[profileId]/route.ts
-
 import { NextResponse } from "next/server";
 import { db } from "@/src/drizzle/db";
 import { eq } from "drizzle-orm";
@@ -12,15 +10,20 @@ export async function GET(
 ) {
   try {
     const profileId = params.profileId;
+    console.log(profileId, "profileId");
 
     if (!profileId) {
-      return NextResponse.json({ error: "Profile ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Profile ID is required" },
+        { status: 400 }
+      );
     }
 
+    // Compare as string, do not convert to Number
     const user = await db.query.users.findFirst({
       where: eq(users.profileId, profileId),
     });
-
+    console.log("User from DB:", user);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -28,6 +31,9 @@ export async function GET(
     return NextResponse.json(user);
   } catch (error) {
     console.error("Failed to fetch user by profileId:", error);
-    return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch user" },
+      { status: 500 }
+    );
   }
 }

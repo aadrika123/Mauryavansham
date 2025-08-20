@@ -207,6 +207,7 @@ interface PersonalInfoTabProps {
   onUpdate: (data: Partial<PersonalInfoTabProps["data"]>) => void;
   profileRelation?: string;
   customRelation?: string;
+  validationErrors?: Record<string, string>;
 }
 
 export function PersonalInfoTab({
@@ -214,6 +215,7 @@ export function PersonalInfoTab({
   onUpdate,
   profileRelation,
   customRelation,
+  validationErrors = {},
 }: PersonalInfoTabProps) {
   const getRelationDisplayText = () => {
     if (profileRelation === "other" && customRelation) {
@@ -233,6 +235,13 @@ export function PersonalInfoTab({
     return `${today.getFullYear()}-${month}-${day}`;
   }
   const isEmpty = (val: string | undefined) => !val || val.trim() === "";
+  const getFieldError = (fieldName: string): string => {
+    return validationErrors[fieldName] || "";
+  };
+
+  const hasError = (fieldName: string): boolean => {
+    return !!validationErrors[fieldName];
+  };
 
   return (
     <div className="space-y-6">
@@ -267,8 +276,12 @@ export function PersonalInfoTab({
             placeholder="Enter name"
             value={data.name}
             required
+            className={hasError('name') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
             onChange={(e) => onUpdate({ name: e.target.value })}
           />
+          {hasError('name') && (
+            <p className="text-xs text-red-500 mt-1">{getFieldError('name')}</p>
+          )}
           {isEmpty(data.name) && (
             <p className="text-xs text-red-500 mt-1">Name is required</p>
           )}
@@ -296,8 +309,12 @@ export function PersonalInfoTab({
             required
             value={data.dob}
             max={getMaxDob()}
+            className={hasError('dob') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
             onChange={(e) => onUpdate({ dob: e.target.value })}
           />
+          {hasError('dob') && (
+            <p className="text-xs text-red-500 mt-1">{getFieldError('dob')}</p>
+          )}
           {isEmpty(data.dob) && (
             <p className="text-xs text-red-500 mt-1">
               Date of birth is required
@@ -343,6 +360,7 @@ export function PersonalInfoTab({
             maxLength={10}
             placeholder="Enter 10 digit phone number"
             value={data.phoneNo}
+            className={hasError('phoneNo') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
             onChange={(e) => {
               const numericValue = e.target.value.replace(/\D/g, "");
               if (numericValue.length <= 10) {
@@ -350,6 +368,9 @@ export function PersonalInfoTab({
               }
             }}
           />
+          {hasError('phoneNo') && (
+            <p className="text-xs text-red-500 mt-1">{getFieldError('phoneNo')}</p>
+          )}
           {isEmpty(data.phoneNo) ? (
             <p className="text-xs text-red-500 mt-1">
               Phone number is required
@@ -443,6 +464,7 @@ export function PersonalInfoTab({
           <Input
             id="weight"
             placeholder="Enter weight (kg)"
+            type="number"
             value={data.weight}
             onChange={(e) => onUpdate({ weight: e.target.value })}
           />
@@ -498,7 +520,7 @@ export function PersonalInfoTab({
             value={data.maritalStatus}
             onValueChange={(value) => onUpdate({ maritalStatus: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className={hasError('maritalStatus') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}>
               <SelectValue placeholder="Select marital status" />
             </SelectTrigger>
             <SelectContent>
@@ -511,11 +533,10 @@ export function PersonalInfoTab({
               )}
             </SelectContent>
           </Select>
-          {(!data.maritalStatus || data.maritalStatus === "single") && (
-            <p className="text-xs text-red-500 mt-1">
-              Marital status is required
-            </p>
+          {hasError('maritalStatus') && (
+            <p className="text-xs text-red-500 mt-1">{getFieldError('maritalStatus')}</p>
           )}
+          
         </div>
 
         <div className="space-y-2">
@@ -638,7 +659,7 @@ export function PersonalInfoTab({
         <div className="flex gap-2">
           <Input
             value={inputValue}
-            placeholder="Type a language and press Add/Enter"
+            placeholder="Type language and press Add/Enter"
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {

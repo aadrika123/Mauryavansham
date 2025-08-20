@@ -201,7 +201,7 @@ const getGenderFromRelation = (relation: string): string => {
     case "myself":
     case "other":
     default:
-      return ""; 
+      return "";
   }
 };
 
@@ -325,6 +325,7 @@ const ProfileRelationPopup = ({
 }) => {
   const [selectedRelation, setSelectedRelation] = useState("");
   const [customRelation, setCustomRelation] = useState("");
+  const router = useRouter();
 
   const handleSubmit = () => {
     if (selectedRelation) {
@@ -337,7 +338,7 @@ const ProfileRelationPopup = ({
   };
 
   return (
-    <Dialog open={isOpen} >
+    <Dialog open={isOpen}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-orange-700">
@@ -388,13 +389,13 @@ const ProfileRelationPopup = ({
           )}
 
           <div className="flex gap-3 pt-4">
-            {/* <Button
-              onClick={onClose}
+            <Button
+              onClick={() => router.push("/dashboard")}
               variant="outline"
               className="flex-1 bg-transparent"
             >
               Cancel
-            </Button> */}
+            </Button>
             <Button
               onClick={handleSubmit}
               disabled={
@@ -427,10 +428,11 @@ export default function CreateProfileForm({
   const [activeTab, setActiveTab] = useState("personal-info");
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
-  const router = useRouter();
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string>
   >({});
+
+  const router = useRouter();
 
   // Multiple file input refs
   const fileInputRef1 = useRef<HTMLInputElement>(null);
@@ -581,13 +583,97 @@ export default function CreateProfileForm({
     }));
   };
 
+  // Validation function
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    // Personal Info validation (required fields marked with *)
+    if (!profileData.personalInfo.name.trim()) {
+      errors.name = "Name is required";
+    }
+
+    if (!profileData.personalInfo.email.trim()) {
+      errors.email = "Email is required";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileData.personalInfo.email)
+    ) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    if (!profileData.personalInfo.phoneNo.trim()) {
+      errors.phoneNo = "Phone number is required";
+    } else if (profileData.personalInfo.phoneNo.length !== 10) {
+      errors.phoneNo = "Phone number must be exactly 10 digits";
+    } else if (!/^\d{10}$/.test(profileData.personalInfo.phoneNo)) {
+      errors.phoneNo = "Phone number must contain only digits";
+    }
+
+    if (!profileData.personalInfo.dob) {
+      errors.dob = "Date of birth is required";
+    }
+
+    if (!profileData.personalInfo.gender) {
+      errors.gender = "Gender is required";
+    }
+
+    if (
+      !profileData.personalInfo.height ||
+      profileData.personalInfo.height === "'" ||
+      !profileData.personalInfo.height.includes("'")
+    ) {
+      errors.height = "Height is required";
+    }
+
+    if (!profileData.personalInfo.maritalStatus) {
+      errors.maritalStatus = "Marital status is required";
+    }
+
+    // Profile relation validation
+    if (!profileRelation) {
+      errors.profileRelation =
+        "Please select who you are creating this profile for";
+    }
+
+    if (profileRelation === "other" && !customRelation.trim()) {
+      errors.customRelation = "Please specify the relationship";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Show validation errors as toast
+  const showValidationErrors = () => {
+    const errorMessages = Object.values(validationErrors);
+    if (errorMessages.length > 0) {
+      toast({
+        title: "Please fix the following errors:",
+        description: (
+          <ul className="list-disc pl-4 mt-2">
+            {errorMessages.slice(0, 3).map((error, index) => (
+              <li key={index} className="text-sm">
+                {error}
+              </li>
+            ))}
+            {errorMessages.length > 3 && (
+              <li className="text-sm">
+                ...and {errorMessages.length - 3} more errors
+              </li>
+            )}
+          </ul>
+        ),
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleRelationSelect = (relation: string, customRel?: string) => {
     setProfileRelation(relation);
     setCustomRelation(customRel || "");
-    
+
     // Automatically set gender based on relation
     const autoGender = getGenderFromRelation(relation);
-    
+
     setProfileData((prev) => ({
       ...prev,
       profileRelation: relation,
@@ -859,7 +945,25 @@ export default function CreateProfileForm({
   // Updated handleCompleteProfile function
   const handleCompleteProfile = (e: React.FormEvent) => {
     e.preventDefault();
+    // Validate form before submission
+    if (!validateForm()) {
+      showValidationErrors();
 
+      // Scroll to first error or switch to personal info tab if errors exist
+      if (
+        validationErrors.name ||
+        validationErrors.email ||
+        validationErrors.phoneNo ||
+        validationErrors.dob ||
+        validationErrors.gender ||
+        validationErrors.height ||
+        validationErrors.maritalStatus
+      ) {
+        setActiveTab("personal-info");
+      }
+
+      return;
+    }
     startTransition(async () => {
       try {
         // Upload all selected images
@@ -1000,9 +1104,7 @@ export default function CreateProfileForm({
 
             if (createResult?.data?.id) {
               setTimeout(() => {
-                router.push(
-                  `/dashboard/view-profile/${createResult.data.id}`
-                );
+                router.push(`/dashboard/view-profile/${createResult.data.id}`);
               }, 1500);
             }
           } else {
@@ -1033,6 +1135,7 @@ export default function CreateProfileForm({
             onUpdate={(data) => updateProfileData("personalInfo", data)}
             profileRelation={profileRelation}
             customRelation={customRelation}
+            validationErrors={validationErrors}
           />
         );
       case "family-details":
@@ -1094,7 +1197,14 @@ export default function CreateProfileForm({
           <div className="mb-6">
             <ProgressBar currentStep={currentStep} />
           </div>
-
+          {/* Show Profile Relation Error */}
+          {validationErrors.profileRelation && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-600 text-sm">
+                {validationErrors.profileRelation}
+              </p>
+            </div>
+          )}
           <div className="grid grid-cols-3 gap-6">
             <div className="lg:col-span-1">
               {/* Multiple Photo Upload Section */}
@@ -1230,7 +1340,7 @@ export default function CreateProfileForm({
                         if (prevTab) setActiveTab(prevTab.id);
                       }}
                       variant="outline"
-                       type="button"
+                      type="button"
                       className="w-full sm:w-auto border-orange-300 text-orange-600 hover:bg-orange-50"
                     >
                       ← Previous

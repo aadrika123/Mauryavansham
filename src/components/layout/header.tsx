@@ -33,11 +33,13 @@ export function Header() {
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const userName = session?.user?.name || "User";
+  const userDetails = session?.user;
   const userImage = profileData?.data?.profileImage || "/placeholder-user.jpg";
   const loginUser = session?.user;
 
   console.log(userImage, "authUser");
   console.log(profileData, "profileData");
+  console.log(userDetails, "userDetails");
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -134,7 +136,8 @@ export function Header() {
                     />
                   </div>
                   <span className="font-semibold text-lg text-orange-600 ">
-                   <span className="font-medium italic"> Hello,</span> {userName}
+                    <span className="font-medium italic"> Hello,</span>{" "}
+                    {userName}
                   </span>
                 </div>
 
@@ -149,15 +152,25 @@ export function Header() {
               </div>
             )}
             {isAuthenticated ? (
-              <Link href={`/dashboard`} passHref>
-              {/* <Link href={`/view-profile/${loginUser?.id}`} passHref> */}
-                <Button
-                  asChild
-                  className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
-                >
-                  <a>Main Pannel</a>
-                </Button>
-              </Link>
+              userDetails?.role == "user" ? (
+                <Link href={`/dashboard`} passHref>
+                  <Button
+                    asChild
+                    className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                  >
+                    <a>Main Panel</a>
+                  </Button>
+                </Link>
+              ) : userDetails?.role == "admin" ? (
+                <Link href={`/admin/overview`} passHref>
+                  <Button
+                    asChild
+                    className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                  >
+                    <a>Admin Panel</a>
+                  </Button>
+                </Link>
+              ) : null
             ) : (
               <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
                 <Link href="/sign-up">Sign Up</Link>

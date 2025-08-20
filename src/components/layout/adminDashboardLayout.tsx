@@ -28,18 +28,18 @@ import {
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
 
-export default function DashboardLayout({ children, user }: { children: React.ReactNode, user: NextAuthUser }) {
+export default function AdmindashboardLayout({ children, user }: { children: React.ReactNode, user: NextAuthUser }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const sidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
-    { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { title: "Create Matrimonial Profile", href: "/dashboard/create-profile", icon: LayoutDashboard },
-    { title: "My Profiles", href: "/dashboard/profile-list", icon: LayoutDashboard },
-    { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
-    { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
-    { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
+    { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+    { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
+    { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
+    // { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
+    // { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
+    // { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
 
   ];
 
@@ -57,7 +57,7 @@ export default function DashboardLayout({ children, user }: { children: React.Re
           <div className="flex items-center gap-4">
             <Crown className="w-8 h-8 text-orange-400" />
             <div>
-              <h1 className="text-2xl font-bold">Welcome back, {user?.name || ""}!</h1>
+              <h1 className="text-2xl font-bold capitalize">Welcome back, {user?.name || ""} ({user?.role})</h1>
               <p className="text-red-200">Your matrimonial journey continues</p>
             </div>
           </div>
@@ -103,12 +103,13 @@ export default function DashboardLayout({ children, user }: { children: React.Re
             <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24  w-60 h-[calc(100vh-6rem)] ">
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
+                <div className="w-10 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
                   {user?.name?.split(" ").map((n) => n[0]).join("").toUpperCase()}
                 </div>
                 <div>
                   <h3 className="font-semibold text-red-700">{user?.name}</h3>
                   <p className="text-sm text-red-600">{user?.email}</p>
+                  <h3 className="font-semibold text-red-700 text-center capitalize">{user?.role}</h3>
                 </div>
               </div>
               <nav className="space-y-2 h-screen">

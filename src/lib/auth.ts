@@ -1,13 +1,13 @@
-import type { AuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
-import { db } from "@/src/drizzle/db";
+import type { AuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { compare } from "bcryptjs"
+import { db } from "@/src/drizzle/db"
 // import { users } from "@/src/drizzle/schema/users"
-import { users } from "@/src/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { users } from "@/src/drizzle/schema"
+import { eq } from "drizzle-orm"
 
 export const authOptions: AuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,  // Add this line
+  secret: process.env.NEXTAUTH_SECRET, // Add this line
   session: {
     strategy: "jwt",
   },
@@ -20,25 +20,22 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          return null
         }
 
         try {
           const user = await db.query.users.findFirst({
             where: eq(users.email, credentials.email),
-          });
+          })
 
           if (!user) {
-            return null;
+            return null
           }
 
-          const isPasswordValid = await compare(
-            credentials.password,
-            user.password
-          );
+          const isPasswordValid = await compare(credentials.password, user.password)
 
           if (!isPasswordValid) {
-            return null;
+            return null
           }
 
           return {
@@ -47,10 +44,10 @@ export const authOptions: AuthOptions = {
             name: user.name,
             role: user.role,
             profileId: user.profileId,
-          } as any;
+          } as any
         } catch (error) {
-          console.error("Auth error:", error);
-          return null;
+          console.error("Auth error:", error)
+          return null
         }
       },
     }),
@@ -58,20 +55,20 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role;
-        token.sub = user.id; // Add this line
+        token.role = user.role
+        token.sub = user.id // Add this line
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.sub!;
-        session.user.role = token.role as string;
+        session.user.id = token.sub!
+        session.user.role = token.role as string
       }
-      return session;
+      return session
     },
   },
   pages: {
     signIn: "/auth/signin",
   },
-};
+}

@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Sparkles, Star, Crown, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Ad1 from "@/public/Ad1.png";
+import Ad2 from "@/public/Ad2.png";
 
 // TypeScript interfaces
 interface CarouselImage {
@@ -262,8 +264,15 @@ const HeroSection: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex gap-2 items-start">
           {/* Left Ad Banner */}
-          <div className="hidden lg:block w-56 flex-shrink-0">
-            <AdBanner />
+          <div className="hidden lg:block w-[18rem] flex-shrink-0">
+            {/* <AdBanner /> */}
+            <Image
+              src={Ad2}
+              alt="Advertisement Banner"
+              className="w-full h-auto object-cover shadow-lg rounded-2xl"
+              // sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
           </div>
 
           {/* Main Content - Image Carousel */}
@@ -272,8 +281,15 @@ const HeroSection: React.FC = () => {
           </div>
 
           {/* Right Ad Banner */}
-          <div className="hidden lg:block w-56 flex-shrink-0">
-            <AdBanner />
+          <div className="hidden lg:block w-[18rem] flex-shrink-0">
+            {/* <AdBanner /> */}
+            <Image
+              src={Ad1}
+              alt="Advertisement Banner"
+              className="w-full h-auto object-cover shadow-lg rounded-2xl"
+              // sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
           </div>
         </div>
 

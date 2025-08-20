@@ -214,6 +214,9 @@ const ViewProfileById = (props: any) => {
 
       {/* Main Content */}
       <div className="flex-1  px-4">
+         <h1 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-transparent bg-clip-text drop-shadow-lg">
+            Make sure to keep your profile 100% complete for better connections
+          </h1>
         <div className=" mx-auto bg-gradient-to-br from-orange-50 via-red-50 to-amber-50 shadow-lg rounded-lg overflow-hidden mt-8 mb-8 relative">
           {/* Background Crown Icons */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-5">
@@ -232,8 +235,10 @@ const ViewProfileById = (props: any) => {
             <div className="absolute top-60 right-32 text-amber-400">
               <Crown className="w-20 h-20" />
             </div>
+
           </div>{" "}
           {/* Header Section */}
+         
           <div
             className="bg-[linear-gradient(125deg,#ffc733,#a30000,#ff7426)]
  text-white p-6 relative grid grid-cols-4 "
@@ -364,53 +369,61 @@ const ViewProfileById = (props: any) => {
           </nav>
         </div>
         {/* Tab Content */}
-        <div className="p-6 relative z-10 bg-white/80 backdrop-blur-sm">
+        <div className="p-6 relative z-10 bg-white/80 backdrop-blur-sm mb-10 border border-gray-200 shadow-lg">
           {activeTab === "about" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-gray-900">
+                <h3 className="text-lg font-bold mb-3 text-gray-900">
                   About Me
                 </h3>
                 <p className="text-gray-700 leading-relaxed">
                   {profileData.aboutMe}
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-96">
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
+                  <h4 className="font-bold text-gray-900 mb-2">
                     Personal Details
                   </h4>
-                  <div className="space-y-2 text-sm text-gray-600">
+                  <div className="space-y-2 text-sm text-gray-600 font-bold">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Nick Name:</span>
+                      <span className="text-gray-600 font-bold">
+                        Nick Name:
+                      </span>
                       <span className="font-medium">
                         {profileData?.nickName}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Date of Birth:</span>
+                      <span className="text-gray-600 font-bold">
+                        Date of Birth:
+                      </span>
                       <span className="font-medium">
                         {new Date(profileData.dob).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Height:</span>
+                      <span className="text-gray-600 font-bold">Height:</span>
                       <span className="font-medium">{profileData.height}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Weight:</span>
+                      <span className="text-gray-600 font-bold">Weight:</span>
                       <span className="font-medium">
                         {profileData.weight} kg
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Complexion:</span>
+                      <span className="text-gray-600 font-bold">
+                        Complexion:
+                      </span>
                       <span className="font-medium capitalize">
                         {profileData.complexion}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Body Type:</span>
+                      <span className="text-gray-600 font-bold">
+                        Body Type:
+                      </span>
                       <span className="font-medium capitalize">
                         {profileData.bodyType}
                       </span>
@@ -418,10 +431,10 @@ const ViewProfileById = (props: any) => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">
+                  <h4 className="font-bold text-gray-900 mb-2">
                     Contact Information
                   </h4>
-                  <div className="space-y-2 text-sm text-gray-600">
+                  <div className="space-y-2 text-sm text-gray-600 font-bold">
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-gray-500" />
                       <span>{profileData.phoneNo}</span>
@@ -431,7 +444,7 @@ const ViewProfileById = (props: any) => {
                       <span>{profileData.email}</span>
                     </div>
                   </div>
-                  <h4 className="font-semibold text-gray-900 mb-2 mt-4">
+                  <h4 className="font-bold text-gray-900 mb-2 mt-4">
                     Interests
                   </h4>
                   <p className="text-sm text-gray-700">{profileData.hobbies}</p>
@@ -442,13 +455,13 @@ const ViewProfileById = (props: any) => {
           {activeTab === "education" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-gray-900">
+                <h3 className="text-lg font-bold mb-3 text-gray-900">
                   Education
                 </h3>
                 <div className="bg-gray-50/90 backdrop-blur-sm p-4 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 font-bold">
                     <div>
-                      <span className="text-gray-600 text-sm">
+                      <span className="text-gray-600 font-bold text-sm">
                         Highest Education:
                       </span>
                       <p className="font-medium capitalize">
@@ -456,7 +469,7 @@ const ViewProfileById = (props: any) => {
                       </p>
                     </div>
                     <div>
-                      <span className="text-gray-600 text-sm">
+                      <span className="text-gray-600 font-bold text-sm">
                         College/University:
                       </span>
                       <p className="font-medium">
@@ -467,43 +480,47 @@ const ViewProfileById = (props: any) => {
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-gray-900">
-                  Career
-                </h3>
+                <h3 className="text-lg font-bold mb-3 text-gray-900">Career</h3>
                 <div className="bg-gray-50/90 backdrop-blur-sm p-4 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-gray-600">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-gray-600 font-bold">
                     <div>
-                      <span className="text-gray-600 text-sm">Occupation:</span>
+                      <span className="text-gray-600 font-bold text-sm">
+                        Occupation:
+                      </span>
                       <p className="font-medium capitalize">
-                        {profileData.occupation.replace("-", " ")}
+                        {profileData.occupation}
                       </p>
                     </div>
                     <div>
-                      <span className="text-gray-600 text-sm">Company:</span>
+                      <span className="text-gray-600 font-bold text-sm">
+                        Company:
+                      </span>
                       <p className="font-medium">
                         {profileData.companyOrganization}
                       </p>
                     </div>
                     <div>
-                      <span className="text-gray-600 text-sm">
+                      <span className="text-gray-600 font-bold text-sm">
                         Designation:
                       </span>
                       <p className="font-medium">{profileData.designation}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 text-sm">
+                      <span className="text-gray-600 font-bold text-sm">
                         Work Location:
                       </span>
                       <p className="font-medium">{profileData.workLocation}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 text-sm">
+                      <span className="text-gray-600 font-bold text-sm">
                         Annual Income:
                       </span>
                       <p className="font-medium">{profileData.annualIncome}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 text-sm">Website:</span>
+                      <span className="text-gray-600 font-bold text-sm">
+                        Website:
+                      </span>
                       <a
                         href={profileData.website}
                         className="text-blue-600 hover:underline font-medium"
@@ -513,7 +530,7 @@ const ViewProfileById = (props: any) => {
                     </div>
                   </div>
                   <div>
-                    <span className="text-gray-600 text-sm">
+                    <span className="text-gray-600 font-bold text-sm">
                       Work Experience:
                     </span>
                     <p className="text-gray-700 mt-1">
@@ -527,44 +544,42 @@ const ViewProfileById = (props: any) => {
           {activeTab === "family" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                <h3 className="text-lg font-bold mb-4 text-gray-900">
                   Family Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
                   <div className="space-y-4">
                     <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        Father
-                      </h4>
+                      <h4 className="font-bold text-gray-900 mb-2">Father</h4>
                       <p className="font-medium">{profileData.fatherName}</p>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-600 font-bold text-sm">
                         {profileData.fatherOccupation}
                       </p>
                     </div>
                     <div className="bg-pink-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">
-                        Mother
-                      </h4>
+                      <h4 className="font-bold text-gray-900 mb-2">Mother</h4>
                       <p className="font-medium">{profileData.motherName}</p>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-600 font-bold text-sm">
                         {profileData.motherOccupation}
                       </p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-3">
-                        Siblings
-                      </h4>
+                      <h4 className="font-bold text-gray-900 mb-3">Siblings</h4>
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Brothers:</span>
+                          <span className="text-gray-600 font-bold">
+                            Brothers:
+                          </span>
                           <span className="font-medium">
                             {profileData.brothers}
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Sisters:</span>
+                          <span className="text-gray-600 font-bold">
+                            Sisters:
+                          </span>
                           <span className="font-medium">
                             {profileData.sisters}
                           </span>
@@ -572,7 +587,7 @@ const ViewProfileById = (props: any) => {
                       </div>
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">
+                      <h4 className="font-bold text-gray-900 mb-2">
                         Family Income
                       </h4>
                       <p className="font-medium">
@@ -587,19 +602,19 @@ const ViewProfileById = (props: any) => {
           {activeTab === "heritage" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                <h3 className="text-lg font-bold mb-4 text-gray-900">
                   Genealogy & Heritage
                 </h3>
                 <div className="space-y-4">
                   <div className="bg-orange-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">
+                    <h4 className="font-bold text-gray-900 mb-2">
                       Gotra Details
                     </h4>
                     <p className="text-gray-700">{profileData.gotraDetails}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">
+                      <h4 className="font-bold text-gray-900 mb-2">
                         Ancestral Village
                       </h4>
                       <p className="text-gray-700">
@@ -607,7 +622,7 @@ const ViewProfileById = (props: any) => {
                       </p>
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">
+                      <h4 className="font-bold text-gray-900 mb-2">
                         Family History
                       </h4>
                       <p className="text-gray-700">
@@ -616,7 +631,7 @@ const ViewProfileById = (props: any) => {
                     </div>
                   </div>
                   <div className="bg-purple-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">
+                    <h4 className="font-bold text-gray-900 mb-2">
                       Community Contributions
                     </h4>
                     <p className="text-gray-700">
@@ -624,7 +639,7 @@ const ViewProfileById = (props: any) => {
                     </p>
                   </div>
                   <div className="bg-indigo-50 p-4 rounded-lg">
-                    <h4 className="font-semibold text-gray-900 mb-2">
+                    <h4 className="font-bold text-gray-900 mb-2">
                       Family Traditions
                     </h4>
                     <p className="text-gray-700">
@@ -638,72 +653,84 @@ const ViewProfileById = (props: any) => {
           {activeTab === "lifestyle" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">
+                <h3 className="text-lg font-bold mb-4 text-gray-900">
                   Lifestyle & Preferences
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Habits</h4>
+                    <h4 className="font-bold text-gray-900 mb-3">Habits</h4>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center p-3 bg-white/70 backdrop-blur-sm rounded-lg">
-                        <span className="text-gray-600">Diet:</span>
+                        <span className="text-gray-600 font-bold">Diet:</span>
                         <span className="font-medium capitalize">
                           {profileData.diet}
                         </span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600">Smoking:</span>
+                        <span className="text-gray-600 font-bold">
+                          Smoking:
+                        </span>
                         <span className="font-medium capitalize">
                           {profileData.smoking}
                         </span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600">Drinking:</span>
+                        <span className="text-gray-600 font-bold">
+                          Drinking:
+                        </span>
                         <span className="font-medium capitalize">
                           {profileData.drinking}
                         </span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600">Exercise:</span>
+                        <span className="text-gray-600 font-bold">
+                          Exercise:
+                        </span>
                         <span className="font-medium capitalize">
                           {profileData.exercise}
                         </span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600">
+                        <span className="text-gray-600 font-bold">
                           Religious Beliefs:
                         </span>
                         <span className="font-medium capitalize">
-                          {profileData.religiousBeliefs.replace("-", " ")}
+                          {profileData.religiousBeliefs}
                         </span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600">Caste Preference:</span>
+                        <span className="text-gray-600 font-bold">
+                          Caste Preference:
+                        </span>
                         <span className="font-medium capitalize">
-                          {profileData.castPreferences.replace("-", " ")}
+                          {profileData.castPreferences}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">
-                      Interests
-                    </h4>
+                    <h4 className="font-bold text-gray-900 mb-3">Interests</h4>
                     <div className="space-y-3">
                       <div className="p-3 bg-blue-50 rounded-lg">
-                        <span className="text-gray-600 text-sm">Music:</span>
+                        <span className="text-gray-600 font-bold text-sm">
+                          Music:
+                        </span>
                         <p className="font-medium">
                           {profileData.musicPreferences}
                         </p>
                       </div>
                       <div className="p-3 bg-green-50 rounded-lg">
-                        <span className="text-gray-600 text-sm">Movies:</span>
+                        <span className="text-gray-600 font-bold text-sm">
+                          Movies:
+                        </span>
                         <p className="font-medium">
                           {profileData.moviePreferences}
                         </p>
                       </div>
                       <div className="p-3 bg-purple-50 rounded-lg">
-                        <span className="text-gray-600 text-sm">Reading:</span>
+                        <span className="text-gray-600 font-bold text-sm">
+                          Reading:
+                        </span>
                         <p className="font-medium">
                           {profileData.readingInterests}
                         </p>
@@ -712,7 +739,7 @@ const ViewProfileById = (props: any) => {
                   </div>
                 </div>
                 <div className="bg-yellow-50 p-4 rounded-lg mt-6">
-                  <h4 className="font-semibold text-gray-900 mb-2">
+                  <h4 className="font-bold text-gray-900 mb-2">
                     Travel Interests
                   </h4>
                   <p className="text-gray-700">{profileData.travelInterests}</p>
