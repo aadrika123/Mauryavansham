@@ -23,7 +23,8 @@ import {
   MessageSquare,
   Search,
   Camera,
-  Tv
+  Tv,
+  Tv2
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -37,6 +38,7 @@ export default function AdmindashboardLayout({ children, user }: { children: Rea
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
     { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
+    { title: "Ads Location Master", href: "/admin/ads-location-master", icon: Tv2 },
     // { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
     // { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
     // { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
@@ -72,7 +74,7 @@ export default function AdmindashboardLayout({ children, user }: { children: Rea
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
+                {/* <DropdownMenuItem asChild>
                   <Link href="/profile/edit">
                     <User className="w-4 h-4 mr-2" /> Edit Profile
                   </Link>
@@ -81,7 +83,7 @@ export default function AdmindashboardLayout({ children, user }: { children: Rea
                   <Link href="/settings">
                     <Settings className="w-4 h-4 mr-2" /> Settings
                   </Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setIsOpen(true)}

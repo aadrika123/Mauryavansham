@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create a session token (JWT)
-    const sessionToken = sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, {
+    const sessionToken = sign({ userId: user.id, email: user.email, role: user.role, name: user.name, photo: user.photo }, JWT_SECRET, {
       expiresIn: "7d", // Token expires in 7 days
     })
 

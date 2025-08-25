@@ -4,7 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/src/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu";
 import { cn } from "@/src/lib/utils";
 import {
   Crown,
@@ -23,24 +29,43 @@ import {
   MessageSquare,
   Search,
   Camera,
-  Tv
+  Tv,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
 
-export default function DashboardLayout({ children, user }: { children: React.ReactNode, user: NextAuthUser }) {
+export default function DashboardLayout({
+  children,
+  user,
+  data,
+}: {
+  children: React.ReactNode;
+  user: NextAuthUser;
+  data?: any;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   const sidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { title: "Create Matrimonial Profile", href: "/dashboard/create-profile", icon: LayoutDashboard },
-    { title: "My Profiles", href: "/dashboard/profile-list", icon: LayoutDashboard },
-    { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
+    {
+      title: "Create Matrimonial Profile",
+      href: "/dashboard/create-profile",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "My Matrimonial Profiles",
+      href: "/dashboard/profile-list",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Search Matrimonial Profiles",
+      href: "/dashboard/search-profile",
+      icon: Search,
+    },
     { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
     { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
-
   ];
 
   const handleSignOut = async () => {
@@ -48,7 +73,7 @@ export default function DashboardLayout({ children, user }: { children: React.Re
     await signOut({ callbackUrl: "/", redirect: false });
     window.location.href = "/";
   };
-
+  console.log(data);
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
@@ -57,23 +82,33 @@ export default function DashboardLayout({ children, user }: { children: React.Re
           <div className="flex items-center gap-4">
             <Crown className="w-8 h-8 text-orange-400" />
             <div>
-              <h1 className="text-2xl font-bold">Welcome back, {user?.name || ""}!</h1>
+              <h1 className="text-2xl font-bold">
+                Welcome back, {user?.name || ""}!
+              </h1>
               <p className="text-red-200">Your matrimonial journey continues</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-red-700"
+            >
               <Bell className="w-4 h-4 mr-2" /> Notifications
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-red-700"
+                >
                   <Settings className="w-4 h-4 mr-2" /> Account
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem asChild>
-                  <Link href="/profile/edit">
+                  <Link href={`/dashboard/user-profile/${user?.id}`}>
                     <User className="w-4 h-4 mr-2" /> Edit Profile
                   </Link>
                 </DropdownMenuItem>
@@ -101,10 +136,19 @@ export default function DashboardLayout({ children, user }: { children: React.Re
           {/* Sidebar */}
           <div className="">
             <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24  w-60 h-[calc(100vh-6rem)] ">
-
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {user?.name?.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                <div
+                  className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
+                  onClick={() =>
+                    (window.location.href =
+                      "/dashboard/user-profile/" + user?.id)
+                  }
+                >
+                  <img
+                    src={user?.photo || "/placeholder.svg"}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-semibold text-red-700">{user?.name}</h3>
@@ -132,9 +176,7 @@ export default function DashboardLayout({ children, user }: { children: React.Re
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3 -ml-32 px-8">
-            {children}
-          </div>
+          <div className="lg:col-span-3 -ml-32 px-8">{children}</div>
         </div>
       </div>
 

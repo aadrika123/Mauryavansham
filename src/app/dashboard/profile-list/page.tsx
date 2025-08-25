@@ -6,6 +6,8 @@ import { getAllProfiles } from "@/src/features/searchProfile/actions/getAllProfi
 import DashboardProfileList from "./dashboardProfileList";
 import DashboardLayout from "@/src/components/layout/dashboardLayout";
 import { updateProfileById } from "@/src/features/updateProfileById/actions/updateProfileById";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 // import { updateProfileById } from "@/src/features/updateProfile/actions/updateProfileById"; // ✅ import
 
 export default async function DashboardPage() {
@@ -19,6 +21,16 @@ export default async function DashboardPage() {
 
   return (
     <DashboardLayout user={session.user}>
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <ArrowLeft className="h-4 w-4 text-red-600" />
+          <Link href="/dashboard" className="text-red-600 hover:underline">
+            Dashboard
+          </Link>
+          <span>/</span>
+          <span>My Matrimonial Profiles</span>
+        </div>
+      </div>
       <DashboardProfileList
         profileList={profileList?.data || []}
         updateProfileById={updateProfileById} // ✅ pass function

@@ -46,13 +46,13 @@ export function Header() {
       if (!loginUser?.id) return;
 
       try {
-        const res = await fetch(`/api/profile/${loginUser.id}`);
+        const res = await fetch(`/api/users/getUserByid/${loginUser.id}`);
         const data = await res.json();
 
         if (res.ok) {
           setProfileData(data);
         } else {
-          console.error("Failed to fetch profile:", data?.error);
+          // console.error("Failed to fetch profile:", data?.error);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -127,7 +127,7 @@ export function Header() {
             ) : (
               <div className="flex items-center gap-4">
                 {/* Profile Image and Name */}
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md">
                     <img
                       src={userImage || "/placeholder.svg"}
@@ -137,6 +137,99 @@ export function Header() {
                   </div>
                   <span className="font-semibold text-lg text-orange-600 ">
                     <span className="font-medium italic"> Hello,</span>{" "}
+                    {userName}
+                  </span>
+                </div> */}
+                {/* Profile Image with Completion Circle */}
+                {/* Profile Image with Completion Circle */}
+                <div className="relative group flex items-center gap-3">
+                  <div className="flex flex-col items-center">
+                    {profileData?.data?.role !== "admin" ? (
+                    <Link href={`/dashboard/user-profile/${loginUser?.id}`}>
+                      <div className="relative w-16 h-16 cursor-pointer">
+                        {/* Circular progress ring */}
+                        <svg className="absolute top-0 left-0 w-full h-full -rotate-90">
+                          <circle
+                            className="text-gray-200"
+                            strokeWidth="4"
+                            stroke="currentColor"
+                            fill="transparent"
+                            r="28"
+                            cx="32"
+                            cy="32"
+                          />
+                          <circle
+                            className="text-green-500"
+                            strokeWidth="4"
+                            strokeDasharray={2 * Math.PI * 28}
+                            strokeDashoffset={
+                              2 *
+                              Math.PI *
+                              28 *
+                              (1 - (profileData?.profileCompletion || 0) / 100)
+                            }
+                            strokeLinecap="round"
+                            stroke="url(#gradient)"
+                            fill="transparent"
+                            r="28"
+                            cx="32"
+                            cy="32"
+                          />
+                          {/* Gradient definition */}
+                          <defs>
+                            <linearGradient
+                              id="gradient"
+                              x1="0%"
+                              y1="0%"
+                              x2="100%"
+                              y2="0%"
+                            >
+                              <stop offset="0%" stopColor="orange" />
+                              <stop offset="100%" stopColor="green" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+
+                        {/* User Image */}
+                        <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
+                          <img
+                            src={profileData?.data?.photo || "/placeholder.svg"}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    </Link>
+                    ) : (
+                      <div className="relative w-16 h-16">
+                        <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
+                          <img
+                            src={profileData?.data?.photo || "/placeholder.svg"}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Percentage text below image */}
+                    {(profileData?.profileCompletion !== 100 && profileData?.data?.role !== "admin") && (
+                      <span className="mt-1 text-xs font-bold text-orange-600">
+                        {profileData?.profileCompletion || 0}%
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Tooltip on hover */}
+                   {(profileData?.profileCompletion !== 100 && profileData?.data?.role !== "admin") && (
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow-md">
+                    Complete your profile for better experience
+                  </div>
+                    )}
+
+                  {/* User Name */}
+                  <span className="font-semibold text-lg text-orange-600">
+                    <span className="font-medium italic">Hello,</span>{" "}
                     {userName}
                   </span>
                 </div>

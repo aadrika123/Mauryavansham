@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Sparkles, Star, Crown, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
-
 // TypeScript interfaces
 interface CarouselImage {
   id: number;
@@ -15,34 +14,34 @@ interface ImageCarouselProps {
   images: CarouselImage[];
 }
 
-interface AdBannerProps {
-  className?: string;
+interface AdPlacement {
+  id: number;
+  bannerImageUrl: string;
+  link?: string;
 }
+
+// Sample carousel images
 const carouselImages: CarouselImage[] = [
   {
+    id: 1,
     src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754133157/Gemini_Generated_Image_pe53ibpe53ibpe53_ot4dkc.png",
     alt: "Ancient Maurya Empire Art",
-    id: 1,
   },
   {
+    id: 2,
     src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/chandragup_maur_vmo5vb.png",
     alt: "Lord Ram Temple Ayodhya",
-    id: 2,
   },
   {
+    id: 3,
     src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/samrat_ashoka_hekb0f.png",
     alt: "Ashoka Pillar in Ancient India",
-    id: 3,
   },
   {
+    id: 4,
     src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/mauras_kuswahas_rjabks.png",
     alt: "Indian Family Celebration",
-    id: 4,
   },
-  // {
-  //   src: "/images/indian-community-gathering.png",
-  //   alt: "Large Indian Community Gathering",
-  // },
 ];
 
 // Image Carousel Component
@@ -68,7 +67,6 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
   return (
     <div className="relative w-full max-w-4xl mx-auto bg-white/10 rounded-2xl overflow-hidden shadow-2xl">
-      {/* Image Container */}
       <div className="relative h-[400px] sm:h-[400px] md:h-[400px] lg:h-[450px] overflow-hidden">
         {images.map((image, index) => (
           <div
@@ -85,7 +83,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               src={image.src}
               alt={image.alt}
               fill
-              className=" object-center" // Ensures image is centered and not cut
+              className="object-cover object-center"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
               priority={index === 0}
             />
@@ -128,125 +126,70 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             />
           ))}
         </div>
-      </div>
 
-      {/* Image Counter */}
-      <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-        {currentIndex + 1} / {images.length}
+        {/* Image Counter */}
+        <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+          {currentIndex + 1} / {images.length}
+        </div>
       </div>
     </div>
   );
 };
 
-// Ad Banner Component
-const AdBanner: React.FC<AdBannerProps> = ({ className = "" }) => (
-  <div className={`sticky top-6 ${className}`}>
-    <div className="bg-gradient-to-b from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 h-96">
-      <div className="relative p-4 h-full">
-        {/* Decorative Elements */}
-        <div className="absolute top-3 left-3">
-          <Sparkles className="h-6 w-6 text-amber-500 animate-pulse" />
-        </div>
-        <div className="absolute top-3 right-3">
-          <Star className="h-6 w-6 text-amber-500 animate-pulse" />
-        </div>
-        <div className="absolute bottom-3 left-3">
-          <Star className="h-5 w-5 text-amber-400" />
-        </div>
-        <div className="absolute bottom-3 right-3">
-          <Sparkles className="h-5 w-5 text-amber-400" />
-        </div>
-
-        {/* Book Pages Effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white to-transparent opacity-20"></div>
-
-        {/* Content */}
-        <div className="relative z-10 h-full flex flex-col justify-center">
-          <div className="border-2 border-dashed border-amber-400 rounded-lg p-4 bg-gradient-to-br from-amber-50 to-yellow-100 h-full flex flex-col justify-center">
-            <h3 className="text-lg font-bold text-amber-800 mb-3 text-center">
-              Book Your Ad
-            </h3>
-
-            <div className="space-y-3 flex-1 flex flex-col justify-center">
-              <p className="text-xs text-amber-700 leading-relaxed text-center">
-                Premium vertical space for your business
-              </p>
-
-              <div className="space-y-2">
-                <button
-                  className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-bold py-2 px-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200 text-xs"
-                  type="button"
-                >
-                  Place Ad Here
-                </button>
-
-                <p className="text-xs text-amber-600 text-center">
-                  Contact us for this premium vertical space
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative Border Pattern */}
-        <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-amber-400 via-yellow-400 to-amber-400"></div>
-        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-amber-400 via-yellow-400 to-amber-400"></div>
-      </div>
-    </div>
-  </div>
-);
-
 // Mobile Ad Banner Component
-const MobileAdBanner: React.FC = () => (
-  <div className="lg:hidden mt-8">
-    <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-      <div className="relative p-6">
-        {/* Decorative Elements */}
-        <div className="absolute top-3 left-3">
-          <Sparkles className="h-6 w-6 text-amber-500 animate-pulse" />
-        </div>
-        <div className="absolute top-3 right-3">
-          <Star className="h-6 w-6 text-amber-500 animate-pulse" />
-        </div>
+const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({ adPlacements }) => {
+  const leftAd = adPlacements.find((ad) => ad.id === 1);
+  const rightAd = adPlacements.find((ad) => ad.id === 2);
 
-        {/* Book Pages Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
-
-        {/* Content */}
-        <div className="text-center relative z-10">
-          <div className="border-2 border-dashed border-amber-400 rounded-lg p-4 bg-gradient-to-br from-amber-50 to-yellow-100">
-            <h3 className="text-xl font-bold text-amber-800 mb-3">
-              Book Your Ad
-            </h3>
-
-            <div className="space-y-3">
-              <button
-                className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200 text-sm"
-                type="button"
-              >
-                Place Your Ad Here
-              </button>
-
-              <p className="text-xs text-amber-600">
-                Contact us to feature your message in this premium space
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative Border Pattern */}
-        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-        <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-      </div>
+  return (
+    <div className="lg:hidden mt-8 flex flex-col gap-4">
+      {leftAd && (
+        <a href={leftAd.link || "#"} target="_blank" rel="noopener noreferrer">
+          <Image
+            src={leftAd.bannerImageUrl}
+            alt="Left Mobile Ad"
+            className="w-full h-auto object-cover rounded-2xl shadow-lg"
+            width={400}
+            height={200}
+          />
+        </a>
+      )}
+      {rightAd && (
+        <a href={rightAd.link || "#"} target="_blank" rel="noopener noreferrer">
+          <Image
+            src={rightAd.bannerImageUrl}
+            alt="Right Mobile Ad"
+            className="w-full h-auto object-cover rounded-2xl shadow-lg"
+            width={400}
+            height={200}
+          />
+        </a>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 // Main Hero Section Component
 const HeroSection: React.FC = () => {
+  const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
+
+ useEffect(() => {
+  fetch("/api/ad-placements/approved")
+    .then((res) => res.json())
+    .then((data: AdPlacement[]) => {
+      // sirf approved ads le lo
+      setAdPlacements(data);
+    })
+    .catch(() => console.error("Failed to load ad placements"));
+}, []);
+
+
+  const leftAd = adPlacements.find((ad) => ad.id === 1);
+  const rightAd = adPlacements.find((ad) => ad.id === 2);
+
   return (
     <section className="relative text-white py-10 overflow-hidden">
-      {/* Background with Gradient */}
+      {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#8B0000] via-[#FF5C00] to-[#ffae00]" />
 
       {/* Crown Background Icons */}
@@ -259,43 +202,56 @@ const HeroSection: React.FC = () => {
         <Crown className="absolute top-1/3 right-1/3 w-10 h-10 text-white/20 transform -rotate-90" />
       </div>
 
-      {/* Main Content Container */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex gap-2 items-start">
           {/* Left Ad Banner */}
           <div className="hidden lg:block w-[18rem] flex-shrink-0">
-            {/* <AdBanner /> */}
-            {/* <Image
-              src={"https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755690017/ads-banners/ub1087xjrz7gbw6wrub5.png"}
-              alt="Advertisement Banner"
-              className="w-full h-auto object-cover shadow-lg rounded-2xl"
-              // sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-            /> */}
-            <img src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755690017/ads-banners/ub1087xjrz7gbw6wrub5.png" alt="" />
+            {leftAd ? (
+              <a href={leftAd.link || "#"} target="_blank" rel="noopener noreferrer">
+                <Image
+                  src={leftAd.bannerImageUrl}
+                  alt="Left Ad"
+                  className="w-full h-auto object-cover shadow-lg rounded-2xl"
+                  width={288}
+                  height={450}
+                  priority
+                />
+              </a>
+            ) : (
+              <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
+                Ad Space (1 )
+              </div>
+            )}
           </div>
 
-          {/* Main Content - Image Carousel */}
+          {/* Main Carousel */}
           <div className="flex-1 cover">
             <ImageCarousel images={carouselImages} />
           </div>
 
           {/* Right Ad Banner */}
           <div className="hidden lg:block w-[18rem] flex-shrink-0">
-            {/* <AdBanner /> */}
-            {/* <Image
-              src={"https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755680291/ads-banners/ncf2mrodjjthstwooqsu.png"}
-              alt="Advertisement Banner"
-              className="w-full h-auto object-cover shadow-lg rounded-2xl"
-              // sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-            /> */}
-            <img src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1755680291/ads-banners/ncf2mrodjjthstwooqsu.png" alt="" />
+            {rightAd ? (
+              <a href={rightAd.link || "#"} target="_blank" rel="noopener noreferrer">
+                <Image
+                  src={rightAd.bannerImageUrl}
+                  alt="Right Ad"
+                  className="w-full h-auto object-cover shadow-lg rounded-2xl"
+                  width={288}
+                  height={450}
+                  priority
+                />
+              </a>
+            ) : (
+              <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
+                Ad Space (2)
+              </div>
+            )}
           </div>
         </div>
 
         {/* Mobile Ad Banner */}
-        <MobileAdBanner />
+        <MobileAdBanner adPlacements={adPlacements} />
       </div>
     </section>
   );

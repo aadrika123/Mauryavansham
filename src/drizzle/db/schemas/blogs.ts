@@ -11,6 +11,7 @@ export const blogs = pgTable("blogs", {
   authorId: integer("author_id")
     .references(() => users.id)
     .notNull(),
+  imageUrl: text("image_url").notNull(),
   status: blogStatusEnum("status").default("draft").notNull(),
   rejectionReason: text("rejection_reason"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

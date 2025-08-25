@@ -2,6 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/src/components/theme-provider";
+import { Toaster } from "@/src/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
     "A comprehensive digital platform for the Hindu Maurya (Kushwaha) community fostering social connectivity, cultural preservation, and mutual support.",
 };
 
-export default function RootLayout({
+export default function Adminlayout({
   children,
 }: {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {/* <Toaster /> */}
+          <Toaster />
           {children}
         </ThemeProvider>
         {/* <Footer /> */}

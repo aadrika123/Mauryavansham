@@ -57,7 +57,7 @@ export default function AdminAdDetail({ adId }: AdminAdDetailProps) {
   const [actionLoading, setActionLoading] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectForm, setShowRejectForm] = useState(false);
-  const [userDetails, setUserDetails] = useState<any>(null);
+  const [userDetails, setUserDetails] = useState<{ name: string; email: string }>({ name: "", email: "" });
 
   useEffect(() => {
     fetchAd();
@@ -87,15 +87,17 @@ const fetchAd = async () => {
 const fetchUser = async (profileId: string) => {
   console.log("Fetching user details for profileId:", profileId);
   try {
-    const res = await fetch(`/api/users/${profileId}`);
+    const res = await fetch(`/api/users/profile/${profileId}`);
     if (res.ok) {
       const userData = await res.json();
+      console.log("User Data:", userData); // ✅ actual response body
       setUserDetails(userData);
     } else {
       toast.error("Failed to fetch user details");
     }
   } catch (err) {
     toast.error("Error fetching user details");
+    console.error(err);
   }
 };
 
@@ -361,6 +363,19 @@ const fetchUser = async (profileId: string) => {
                     Approve Ad
                   </Button>
 
+                  <Button
+                    variant="destructive"
+                    onClick={() => setShowRejectForm(true)}
+                    disabled={actionLoading}
+                    className="w-full"
+                  >
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Reject Ad
+                  </Button>
+                </div>
+              )}
+              {ad.status === "approved" && (
+                <div className="space-y-3">
                   <Button
                     variant="destructive"
                     onClick={() => setShowRejectForm(true)}

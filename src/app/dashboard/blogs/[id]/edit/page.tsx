@@ -20,7 +20,11 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
     redirect("/login")
   }
 
-  const [blog] = await db.select().from(blogs).where(eq(blogs.id, params.id))
+ const [blog] = await db
+  .select()
+  .from(blogs)
+  .where(eq(blogs.id, Number(params.id)));
+
 
   if (!blog) {
     redirect("/dashboard/blogs")

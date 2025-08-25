@@ -21,7 +21,7 @@ export async function GET(
 
     // Compare as string, do not convert to Number
     const user = await db.query.users.findFirst({
-      where: eq(users.profileId, profileId),
+      where: eq(users.profileId, Number(profileId)),
     });
     console.log("User from DB:", user);
     if (!user) {

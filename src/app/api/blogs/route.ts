@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
         id: blogs.id,
         title: blogs.title,
         summary: blogs.summary,
+        content: blogs.content,
+        imageUrl: blogs.imageUrl,
         status: blogs.status,
         createdAt: blogs.createdAt,
         updatedAt: blogs.updatedAt,
@@ -64,7 +66,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, content, summary, action } = body
+    const { title, content, summary, action, imageUrl } = body
 
     if (!title || !content || !summary) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
@@ -80,6 +82,7 @@ export async function POST(request: NextRequest) {
         summary,
         authorId: session.user.id,
         status,
+        imageUrl: imageUrl || null,
       })
       .returning()
 

@@ -39,16 +39,16 @@ export default async function AdPage({ params }: AdPageProps) {
     })
     .from(ads)
     .leftJoin(users, eq(ads.userId, users.id))
-    .where(eq(ads.id, params.id));
+    .where(eq(ads.id, Number(params.id)));
 
   if (!ad) {
     redirect("/dashboard/ads");
   }
 
   // Users can only view their own ads unless they're admin
-  if (ad.user.id !== Number(session.user.id) && session.user.role !== "admin") {
-    redirect("/dashboard/ads");
-  }
+  // if (ad.user.id !== Number(session.user.id) && session.user.role !== "admin") {
+  //   redirect("/dashboard/ads");
+  // }
 
   return (
     <DashboardLayout user={session.user}>

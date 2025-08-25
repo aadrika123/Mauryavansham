@@ -43,6 +43,7 @@ export const authOptions: AuthOptions = {
             email: user.email,
             name: user.name,
             role: user.role,
+            photo: user.photo,
             profileId: user.profileId,
           } as any
         } catch (error) {
@@ -53,21 +54,32 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role
-        token.sub = user.id // Add this line
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub!
-        session.user.role = token.role as string
-      }
-      return session
-    },
+  async jwt({ token, user }) {
+    if (user) {
+      token.id = user.id
+      token.email = user.email
+      token.name = user.name
+      token.role = user.role
+      token.photo = user.photo 
+      token.profileId = user.profileId
+    }
+    return token
   },
+  async session({ session, token }) {
+    if (token) {
+      session.user = {
+        id: token.id as string,
+        email: token.email as string,
+        name: token.name as string,
+        role: token.role as string,
+        photo: token.photo as string,
+        profileId: token.profileId as string,
+      }
+    }
+    return session
+  },
+},
+
   pages: {
     signIn: "/auth/signin",
   },

@@ -46,6 +46,7 @@ import {
 } from "@/src/components/ui/dropdown-menu"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
 
 export default function Dashboard(props: any) {
   const [isOpen, setIsOpen] = useState(false)
@@ -78,7 +79,7 @@ export default function Dashboard(props: any) {
     achievements: 0,
     helpRequests: 0
   }
-
+const MotionCard = motion(Card)
   return (
     <div className="min-h-screen bg-gray-50 mb-10 shadow-lg rounded-md">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -89,7 +90,7 @@ export default function Dashboard(props: any) {
         </div>
 
         {/* Overview Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
           <Card className="bg-gradient-to-br from-pink-500 to-pink-600 text-white border-0">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -161,6 +162,65 @@ export default function Dashboard(props: any) {
               </div>
             </CardContent>
           </Card>
+        </div> */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-12">
+          {[
+            {
+              title: "Matrimonial",
+              value: stats.totalProfiles,
+              icon: Heart,
+              gradient: "from-rose-500 via-pink-500 to-pink-600",
+            },
+            {
+              title: "Blog Posts",
+              value: stats.totalBlogs,
+              icon: Camera,
+              gradient: "from-indigo-500 via-blue-500 to-cyan-500",
+            },
+            {
+              title: "Active Ads",
+              value: stats.activeAds,
+              icon: Tv,
+              gradient: "from-green-500 via-emerald-500 to-teal-500",
+            },
+            {
+              title: "Messages",
+              value: stats.messages,
+              icon: MessageCircle,
+              gradient: "from-yellow-500 via-amber-500 to-orange-500",
+            },
+            {
+              title: "Donations",
+              value: stats.donations,
+              icon: HandHeart,
+              gradient: "from-purple-500 via-violet-500 to-indigo-500",
+            },
+            {
+              title: "Achievements",
+              value: stats.achievements,
+              icon: Award,
+              gradient: "from-cyan-500 via-sky-500 to-blue-500",
+            },
+          ].map((stat, idx) => (
+            <MotionCard
+              key={idx}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className={`bg-gradient-to-br ${stat.gradient} text-white rounded-2xl shadow-lg border-0`}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs opacity-80 tracking-wide">{stat.title}</p>
+                    <p className="text-3xl font-extrabold">{stat.value}</p>
+                  </div>
+                  <div className="bg-white/20 p-3 rounded-full">
+                    <stat.icon className="h-7 w-7" />
+                  </div>
+                </div>
+              </CardContent>
+            </MotionCard>
+          ))}
         </div>
 
         {/* Main Feature Sections */}

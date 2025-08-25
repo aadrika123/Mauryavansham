@@ -9,7 +9,7 @@ import { ArrowLeft, Calendar, User, AlertCircle, CheckCircle, Clock } from "luci
 import { format } from "date-fns"
 
 interface Ad {
-  id: string
+   id: string
   title: string
   bannerImageUrl: string
   fromDate: string
@@ -30,6 +30,7 @@ interface AdDetailProps {
   ad: Ad
   currentUserId: string
   userRole?: string
+
 }
 
 export default function AdDetail({ ad, currentUserId, userRole }: AdDetailProps) {

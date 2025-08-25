@@ -120,6 +120,48 @@
       "when": 1755679213030,
       "tag": "0016_odd_sunfire",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1755918319643,
+      "tag": "0017_oval_purple_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1755930005827,
+      "tag": "0018_glossy_speed",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1755930223250,
+      "tag": "0019_many_dexter_bennett",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1755932748320,
+      "tag": "0020_broken_warstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1755937264032,
+      "tag": "0021_omniscient_black_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1755937568604,
+      "tag": "0022_acoustic_ronan",
+      "breakpoints": true
     }
   ]
 }

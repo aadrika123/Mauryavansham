@@ -6,6 +6,8 @@ import { getProfileById } from "@/src/features/getProfile/actions/getProfileById
 import { getAllProfiles } from "@/src/features/searchProfile/actions/getAllProfiles";
 import DashboardLayout from "@/src/components/layout/dashboardLayout";
 import CreateProfileForm from "./createProfileForm";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   // 1. Session fetch karo
@@ -33,7 +35,17 @@ export default async function DashboardPage() {
   // 6. Dashboard ko profile data pass karo
   return (
     <DashboardLayout user={session.user}>
-     <CreateProfileForm  />
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <ArrowLeft className="h-4 w-4 text-red-600" />
+          <Link href="/dashboard" className="text-red-600 hover:underline">
+            Dashboard
+          </Link>
+          <span>/</span>
+          <span>Create Matrimonial Profile</span>
+        </div>
+      </div>
+      <CreateProfileForm />
     </DashboardLayout>
   );
 }

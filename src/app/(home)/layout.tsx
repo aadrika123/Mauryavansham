@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "A comprehensive digital platform for the Hindu Maurya (Kushwaha) community fostering social connectivity, cultural preservation, and mutual support.",
 };
 
-export default function RootLayout({
+export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -32,7 +32,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* <Toaster /> */}
+          <Toaster />
           {children}
         </ThemeProvider>
         <Footer />

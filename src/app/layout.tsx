@@ -23,8 +23,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             disableTransitionOnChange
           >
             <SessionTimeout>
-              <Toaster />
               {children}
+              <Toaster />
+
             </SessionTimeout>
           </ThemeProvider>
         </SessionProvider>
