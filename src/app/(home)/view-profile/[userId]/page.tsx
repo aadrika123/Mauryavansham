@@ -12,6 +12,8 @@ export default async function ProfilePage({
 
   const result = await getProfileById(userId);
 
+  console.log(result, "geteditprofilebyuser");
+
   if (!result.success || !result.data) {
     return <div className="p-4 text-red-500">Profile not found.</div>;
   }

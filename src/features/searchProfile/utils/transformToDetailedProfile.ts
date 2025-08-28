@@ -110,6 +110,8 @@ export function transformToDetailedProfile(dbProfile: DatabaseProfile): Detailed
       familyHistory: dbProfile.familyHistory || "Not specified",
       communityContributions: dbProfile.communityContributions || "Not specified",
       familyTraditions: dbProfile.familyTraditions || "Not specified",
+      brothersDetails: dbProfile.brothersDetails || "Not specified",
+      sistersDetails: dbProfile.sistersDetails || "Not specified",
     },
     preferences: {
       musicPreferences: dbProfile.musicPreferences || "Not specified",

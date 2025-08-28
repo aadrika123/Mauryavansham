@@ -31,7 +31,7 @@ export const users = pgTable("users", {
   // Matrimonial extra fields
   maritalStatus: varchar("marital_status", { length: 20 }),
   religion: varchar("religion", { length: 50 }),
-  caste: varchar("caste", { length: 50 }),
+  // caste: varchar("caste", { length: 50 }),
   motherTongue: varchar("mother_tongue", { length: 50 }),
   height: varchar("height", { length: 10 }),
   weight: varchar("weight", { length: 10 }),
@@ -42,10 +42,10 @@ export const users = pgTable("users", {
   company: varchar("company", { length: 100 }),
   income: varchar("income", { length: 50 }),
 
-  diet: varchar("diet", { length: 20 }),
-  smoking: varchar("smoking", { length: 10 }),
-  drinking: varchar("drinking", { length: 10 }),
-  hobbies: text("hobbies"),
+  // diet: varchar("diet", { length: 20 }),
+  // smoking: varchar("smoking", { length: 10 }),
+  // drinking: varchar("drinking", { length: 10 }),
+  // hobbies: text("hobbies"),
 
   // Location
   city: varchar("city", { length: 50 }),

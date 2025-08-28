@@ -47,11 +47,11 @@ console.log(formData);
 
     img.onload = async () => {
       // Check dimensions (350x500px)
-      if (img.width !== 350 || img.height !== 500) {
-        toast.error("Image dimensions must be exactly 350x500 pixels")
-        URL.revokeObjectURL(objectUrl)
-        return
-      }
+      // if (img.width !== 350 || img.height !== 500) {
+      //   toast.error("Image dimensions must be exactly 350x500 pixels")
+      //   URL.revokeObjectURL(objectUrl)
+      //   return
+      // }
 
       // Upload to Cloudinary
       setUploading(true)

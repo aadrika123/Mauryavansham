@@ -282,9 +282,9 @@ export function PersonalInfoTab({
           {hasError('name') && (
             <p className="text-xs text-red-500 mt-1">{getFieldError('name')}</p>
           )}
-          {isEmpty(data.name) && (
+          {/* {isEmpty(data.name) && (
             <p className="text-xs text-red-500 mt-1">Name is required</p>
-          )}
+          )} */}
         </div>
 
         <div className="space-y-2">
@@ -315,11 +315,11 @@ export function PersonalInfoTab({
           {hasError('dob') && (
             <p className="text-xs text-red-500 mt-1">{getFieldError('dob')}</p>
           )}
-          {isEmpty(data.dob) && (
+          {/* {isEmpty(data.dob) && (
             <p className="text-xs text-red-500 mt-1">
               Date of birth is required
             </p>
-          )}
+          )} */}
         </div>
 
         {/* add gender */}
@@ -368,10 +368,16 @@ export function PersonalInfoTab({
               }
             }}
           />
-          {hasError('phoneNo') && (
+          {hasError('phoneNo') ? (
             <p className="text-xs text-red-500 mt-1">{getFieldError('phoneNo')}</p>
+          ): (
+            data.phoneNo.length !== 10 && (
+              <p className="text-xs text-red-500 mt-1">
+                Phone number must be 10 digits
+              </p>
+            )
           )}
-          {isEmpty(data.phoneNo) ? (
+          {/* {isEmpty(data.phoneNo) ? (
             <p className="text-xs text-red-500 mt-1">
               Phone number is required
             </p>
@@ -381,7 +387,7 @@ export function PersonalInfoTab({
                 Phone number must be 10 digits
               </p>
             )
-          )}
+          )} */}
         </div>
 
         <div className="space-y-2">

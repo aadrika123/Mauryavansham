@@ -18,6 +18,7 @@ export default async function DashboardPage() {
   }
 
   const profileList = await getAllProfiles(Number(session.user.id));
+  console.log("profileList", profileList);
 
   return (
     <DashboardLayout user={session.user}>

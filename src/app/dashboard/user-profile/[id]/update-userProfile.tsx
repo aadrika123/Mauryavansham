@@ -17,7 +17,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     address: "",
     photo: "",
     maritalStatus: "",
-    religion: "",
+    religion: "Hindu", // ✅ default fix
     caste: "",
     motherTongue: "",
     height: "",
@@ -43,6 +43,7 @@ export default function UserProfilePage({ data }: { data: any }) {
         ...prev,
         ...data,
         country: data.country || "India", // ✅ overwrite fix
+        religion: data.religion || "Hindu", // ✅ overwrite fix
       }));
     }
   }, [data]);
@@ -136,8 +137,8 @@ export default function UserProfilePage({ data }: { data: any }) {
       "address",
       "photo",
       "maritalStatus",
-      "religion",
-      "caste",
+      // "religion",
+      // "caste",
       "motherTongue",
       "height",
       "weight",
@@ -146,10 +147,10 @@ export default function UserProfilePage({ data }: { data: any }) {
       "occupation",
       "company",
       "income",
-      "diet",
-      "smoking",
-      "drinking",
-      "hobbies",
+      // "diet",
+      // "smoking",
+      // "drinking",
+      // "hobbies",
       "city",
       "state",
       "country",
@@ -233,18 +234,19 @@ export default function UserProfilePage({ data }: { data: any }) {
             onChange={handleChange}
             options={["Single", "Married", "Divorced", "Widowed"]}
           />
-          <InputField
+          {/* <InputField
             label="Religion"
             name="religion"
             value={formData.religion}
             onChange={handleChange}
-          />
-          <InputField
+          /> */}
+          <InputField label="Religion" name="religion" value="Hindu" disabled />
+          {/* <InputField
             label="Caste"
             name="caste"
             value={formData.caste}
             onChange={handleChange}
-          />
+          /> */}
           <InputField
             label="Mother Tongue"
             name="motherTongue"
@@ -317,7 +319,7 @@ export default function UserProfilePage({ data }: { data: any }) {
             ]}
           />
 
-          <SelectField
+          {/* <SelectField
             label="Diet"
             name="diet"
             value={formData.diet}
@@ -343,7 +345,7 @@ export default function UserProfilePage({ data }: { data: any }) {
             name="hobbies"
             value={formData.hobbies}
             onChange={handleChange}
-          />
+          /> */}
 
           {/* ✅ Location */}
           <InputField

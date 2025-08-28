@@ -49,6 +49,8 @@ const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
       familyValues: flatData.familyValues || "",
       familyIncome: flatData.familyIncome || "",
       familyLocation: flatData.familyLocation || "",
+      brothersDetails: flatData.brothersDetails || [],
+      sistersDetails: flatData.sistersDetails || [],
     },
     educationCareer: {
       highestEducation: flatData.highestEducation || "",

@@ -165,9 +165,9 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
       </div>
 
       {/* Online Status Indicator */}
-      {profile.lastActive === "Online now" && (
+      {/* {profile.lastActive === "Online now" && (
         <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
-      )}
+      )} */}
     </div>
   );
 };
@@ -199,6 +199,7 @@ const ViewProfileById = (props: any) => {
     { id: "heritage", label: "Heritage", icon: TreePine },
     { id: "lifestyle", label: "Lifestyle", icon: Home },
   ];
+  console.log(profileData, "profileData");
 
   return (
     <div className="flex min-h-screen  relative">
@@ -214,9 +215,9 @@ const ViewProfileById = (props: any) => {
 
       {/* Main Content */}
       <div className="flex-1  px-4">
-         <h1 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-transparent bg-clip-text drop-shadow-lg">
-            Make sure to keep your profile 100% complete for better connections
-          </h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-transparent bg-clip-text drop-shadow-lg">
+          Make sure to keep your profile 100% complete for better connections
+        </h1>
         <div className=" mx-auto bg-gradient-to-br from-orange-50 via-red-50 to-amber-50 shadow-lg rounded-lg overflow-hidden mt-8 mb-8 relative">
           {/* Background Crown Icons */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-5">
@@ -235,10 +236,8 @@ const ViewProfileById = (props: any) => {
             <div className="absolute top-60 right-32 text-amber-400">
               <Crown className="w-20 h-20" />
             </div>
-
           </div>{" "}
           {/* Header Section */}
-         
           <div
             className="bg-[linear-gradient(125deg,#ffc733,#a30000,#ff7426)]
  text-white p-6 relative grid grid-cols-4 "
@@ -369,7 +368,7 @@ const ViewProfileById = (props: any) => {
           </nav>
         </div>
         {/* Tab Content */}
-        <div className="p-6 relative z-10 bg-white/80 backdrop-blur-sm mb-10 border border-gray-200 shadow-lg">
+        <div className="p-6 relative  bg-white/80 backdrop-blur-sm mb-10 border border-gray-200 shadow-lg">
           {activeTab === "about" && (
             <div className="space-y-6">
               <div>
@@ -698,14 +697,14 @@ const ViewProfileById = (props: any) => {
                           {profileData.religiousBeliefs}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      {/* <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                         <span className="text-gray-600 font-bold">
                           Caste Preference:
                         </span>
                         <span className="font-medium capitalize">
                           {profileData.castPreferences}
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div>
@@ -743,6 +742,115 @@ const ViewProfileById = (props: any) => {
                     Travel Interests
                   </h4>
                   <p className="text-gray-700">{profileData.travelInterests}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* Sibling Details */}
+          {activeTab === "family" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-bold mb-4 text-gray-900 mt-4">
+                  Sibling Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
+                  {/* Brothers */}
+                  <div className="space-y-3 bg-sky-50 p-4 rounded-lg">
+                    <h4 className="font-bold text-gray-900 mb-3">Brothers</h4>
+                    {profileData?.brothersDetails?.length > 0 ? (
+                      profileData.brothersDetails.map(
+                        (brother: any, index: number) => (
+                          <div key={index} className="mb-4 border-b pb-2">
+                            <p className="text-gray-700">
+                              Name:{" "}
+                              <span className="font-medium capitalize">
+                                {brother.name}
+                              </span>
+                            </p>
+                            <p className="text-gray-700">
+                              Occupation:{" "}
+                              <span className="font-medium capitalize">
+                                {brother.occupation}
+                              </span>
+                            </p>
+                            <p className="text-gray-700">
+                              Marital Status:{" "}
+                              <span className="font-medium capitalize">
+                                {brother.maritalStatus}
+                              </span>
+                            </p>
+                            {brother.maritalStatus === "married" && (
+                              <>
+                                <p className="text-gray-700">
+                                  Spouse Name:{" "}
+                                  <span className="font-medium capitalize">
+                                    {brother.spouseName}
+                                  </span>
+                                </p>
+                                <p className="text-gray-700">
+                                  Spouse Occupation:{" "}
+                                  <span className="font-medium capitalize">
+                                    {brother.spouseOccupation}
+                                  </span>
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        )
+                      )
+                    ) : (
+                      <p className="text-gray-500">No brothers added</p>
+                    )}
+                  </div>
+
+                  {/* Sisters */}
+                  <div className="space-y-3 bg-pink-50 p-4 rounded-lg">
+                    <h4 className="font-bold text-gray-900 mb-3">Sisters</h4>
+                    {profileData?.sistersDetails?.length > 0 ? (
+                      profileData.sistersDetails.map(
+                        (sister: any, index: number) => (
+                          <div key={index} className="mb-4 border-b pb-2">
+                            <p className="text-gray-700">
+                              Name:{" "}
+                              <span className="font-medium capitalize">
+                                {sister.name}
+                              </span>
+                            </p>
+                            <p className="text-gray-700">
+                              Occupation:{" "}
+                              <span className="font-medium capitalize">
+                                {sister.occupation}
+                              </span>
+                            </p>
+                            <p className="text-gray-700">
+                              Marital Status:{" "}
+                              <span className="font-medium capitalize">
+                                {sister.maritalStatus}
+                              </span>
+                            </p>
+                            {sister.maritalStatus === "married" && (
+                              <>
+                                <p className="text-gray-700">
+                                  Spouse Name:{" "}
+                                  <span className="font-medium capitalize">
+                                    {sister.spouseName}
+                                  </span>
+                                </p>
+                                <p className="text-gray-700">
+                                  Spouse Occupation:{" "}
+                                  <span className="font-medium capitalize">
+                                    {sister.spouseOccupation}
+                                  </span>
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        )
+                      )
+                    ) : (
+                      <p className="text-gray-500">No sisters added</p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

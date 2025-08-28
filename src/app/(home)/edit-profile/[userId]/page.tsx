@@ -1,6 +1,8 @@
+import { FlatProfileData, ProfileData } from "@/src/app/dashboard/edit-profile/[id]/editProfileForm";
 import { getProfileById } from "@/src/features/getProfile/actions/getProfileById";
-import CreateProfilePage, { FlatProfileData, ProfileData } from "../../create-profile/page";
+// import CreateProfilePage, { FlatProfileData, ProfileData } from "../../create-profile/page";
 import { Crown } from "lucide-react";
+import { CreateProfilePage } from "../../create-profile/page";
 const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
   return {
     id: flatData.id,
@@ -22,7 +24,10 @@ const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
       languagesKnown: flatData.languagesKnown || "",
       hobbies: flatData.hobbies || "",
       aboutMe: flatData.aboutMe || "",
-      profileImage: flatData.profileImage || "",
+      // profileImage: flatData.profileImage || "",
+      profileImage1: flatData.profileImage1 || "",
+      profileImage2: flatData.profileImage2 || "",
+      profileImage3: flatData.profileImage3 || "",
       facebook: flatData.facebook || "",
       instagram: flatData.instagram || "",
       linkedin: flatData.linkedin || "",
@@ -39,6 +44,8 @@ const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
       familyValues: flatData.familyValues || "",
       familyIncome: flatData.familyIncome || "",
       familyLocation: flatData.familyLocation || "",
+      brothersDetails: flatData.brothersDetails || [],
+      sistersDetails: flatData.sistersDetails || [],
     },
     educationCareer: {
       highestEducation: flatData.highestEducation || "",

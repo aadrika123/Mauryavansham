@@ -6,6 +6,7 @@ import {
   text,
   boolean,
   timestamp,
+  json,
 } from "drizzle-orm/pg-core";
 
 export const profiles = pgTable("profiles", {
@@ -16,7 +17,7 @@ export const profiles = pgTable("profiles", {
   customRelation: varchar("custom_relation", { length: 100 }),
   nickName: varchar("nick_name", { length: 100 }),
   phoneNo: varchar("phone_no", { length: 15 }),
-  gender: varchar("gender", { length: 10 }), 
+  gender: varchar("gender", { length: 10 }),
   email: varchar("email", { length: 100 }),
   website: varchar("website", { length: 100 }),
   dob: varchar("dob", { length: 10 }), // Assuming date format is YYYY-MM-DD
@@ -42,6 +43,11 @@ export const profiles = pgTable("profiles", {
   motherOccupation: varchar("mother_occupation", { length: 100 }),
   brothers: varchar("brothers", { length: 100 }),
   sisters: varchar("sisters", { length: 100 }),
+
+  // NEW: Store sibling details as JSON arrays
+  brothersDetails: json("brothers_details").default("[]"),
+  sistersDetails: json("sisters_details").default("[]"),
+
   familyIncome: varchar("family_income", { length: 100 }),
   gotraDetails: varchar("gotra_details", { length: 100 }),
   ancestralVillage: varchar("ancestral_village", { length: 100 }),
@@ -71,7 +77,21 @@ export const profiles = pgTable("profiles", {
   isVerified: boolean("is_verified").default(false),
   isActive: boolean("is_active").default(true),
   isDeleted: boolean("is_deleted").default(false),
+  deactivateReason: varchar("deactivate_reason", { length: 500 }),
+  deactivateReview: text("deactivate_review"),
 });
+
+// Type definitions for better type safety
+export type SiblingDetails = {
+  occupation: string;
+  maritalStatus: string;
+  spouseName?: string;
+  spouseOccupation?: string;
+  name?: string;
+};
+
+export type ProfileInsert = typeof profiles.$inferInsert;
+export type ProfileSelect = typeof profiles.$inferSelect;
 
 // If you want to ensure unique combinations, you could add a composite unique constraint
 // For example, to ensure unique email per user:

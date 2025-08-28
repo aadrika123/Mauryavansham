@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Sparkles, Star, Crown, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Loader from "../ui/loader";
 
 // TypeScript interfaces
 interface CarouselImage {
@@ -83,7 +84,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               src={image.src}
               alt={image.alt}
               fill
-              className="object-cover object-center"
+              className=" object-fill"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
               priority={index === 0}
             />
@@ -137,7 +138,9 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 };
 
 // Mobile Ad Banner Component
-const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({ adPlacements }) => {
+const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({
+  adPlacements,
+}) => {
   const leftAd = adPlacements.find((ad) => ad.id === 1);
   const rightAd = adPlacements.find((ad) => ad.id === 2);
 
@@ -172,17 +175,18 @@ const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({ adPlacement
 // Main Hero Section Component
 const HeroSection: React.FC = () => {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
-
- useEffect(() => {
-  fetch("/api/ad-placements/approved")
-    .then((res) => res.json())
-    .then((data: AdPlacement[]) => {
-      // sirf approved ads le lo
-      setAdPlacements(data);
-    })
-    .catch(() => console.error("Failed to load ad placements"));
-}, []);
-
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetch("/api/ad-placements/approved")
+      .then((res) => res.json())
+      .then((data: AdPlacement[]) => {
+        // sirf approved ads le lo
+        setAdPlacements(data);
+        setLoading(false);
+      })
+      .catch(() => console.error("Failed to load ad placements"));
+    setLoading(false);
+  }, []);
 
   const leftAd = adPlacements.find((ad) => ad.id === 1);
   const rightAd = adPlacements.find((ad) => ad.id === 2);
@@ -205,40 +209,52 @@ const HeroSection: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex gap-2 items-start">
           {/* Left Ad Banner */}
-          <div className="hidden lg:block w-[18rem] flex-shrink-0">
-            {leftAd ? (
-              <a href={leftAd.link || "#"} target="_blank" rel="noopener noreferrer">
+          <div className="hidden lg:block w-[20rem] flex-shrink-0">
+            {loading ? (
+              <Loader />
+            ) : leftAd ? (
+              <a
+                href={leftAd.link || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Image
                   src={leftAd.bannerImageUrl}
                   alt="Left Ad"
-                  className="w-full h-auto object-cover shadow-lg rounded-2xl"
-                  width={288}
-                  height={450}
+                  className="w-full h-auto object-fill shadow-lg rounded-2xl"
+                  width={350}
+                  height={500}
                   priority
                 />
               </a>
             ) : (
               <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
-                Ad Space (1 )
+                Ad Space (1)
               </div>
             )}
           </div>
 
           {/* Main Carousel */}
-          <div className="flex-1 cover">
+          <div className="flex-1 ">
             <ImageCarousel images={carouselImages} />
           </div>
 
           {/* Right Ad Banner */}
-          <div className="hidden lg:block w-[18rem] flex-shrink-0">
-            {rightAd ? (
-              <a href={rightAd.link || "#"} target="_blank" rel="noopener noreferrer">
+          <div className="hidden lg:block w-[20rem] flex-shrink-0">
+            {loading ? (
+              <Loader />
+            ) : rightAd ? (
+              <a
+                href={rightAd.link || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Image
                   src={rightAd.bannerImageUrl}
                   alt="Right Ad"
-                  className="w-full h-auto object-cover shadow-lg rounded-2xl"
-                  width={288}
-                  height={450}
+                  width={500}
+                  height={500}
+                  className="shadow-lg rounded-2xl object-contain bg-white"
                   priority
                 />
               </a>

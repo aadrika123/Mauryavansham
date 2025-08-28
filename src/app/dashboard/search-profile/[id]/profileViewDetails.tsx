@@ -43,146 +43,146 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
       .slice(0, 2);
   };
   const ProfileImageCarousel = ({ profile }: { profile: any }) => {
-  // Get all available images, prioritizing profileImage1 as primary
-  const images = [
-    profile.profileImage1,
-    profile.profileImage2,
-    profile.profileImage3,
-  ].filter(Boolean); // Remove empty/null images
+    // Get all available images, prioritizing profileImage1 as primary
+    const images = [
+      profile.profileImage1,
+      profile.profileImage2,
+      profile.profileImage3,
+    ].filter(Boolean); // Remove empty/null images
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const getInitials = (name: string): string => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
+    const getInitials = (name: string): string => {
+      return name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+    };
 
-  const goToPrevious = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? images.length - 1 : prev - 1
-    );
-  };
+    const goToPrevious = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent card click
+      setCurrentImageIndex((prev) =>
+        prev === 0 ? images.length - 1 : prev - 1
+      );
+    };
 
-  const goToNext = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
-    setCurrentImageIndex((prev) =>
-      prev === images.length - 1 ? 0 : prev + 1
-    );
-  };
+    const goToNext = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent card click
+      setCurrentImageIndex((prev) =>
+        prev === images.length - 1 ? 0 : prev + 1
+      );
+    };
 
-  const goToImage = (index: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
-    setCurrentImageIndex(index);
-  };
+    const goToImage = (index: number, e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent card click
+      setCurrentImageIndex(index);
+    };
 
-  return (
-    <div className="relative w-56 h-72 mx-auto bg-gradient-to-br from-orange-100 to-red-100 rounded-xl overflow-hidden group shadow-lg border-2 border-white flex items-center justify-center">
-      {/* Main Image Display */}
-      {images.length > 0 ? (
-        <>
-          <img
-            src={images[currentImageIndex]}
-            alt={`${profile.name}'s profile`}
-            className="max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-105"
-            onError={(e) => {
-              // Fallback to initials if image fails to load
-              const target = e.target as HTMLImageElement;
-              target.style.display = "none";
-              const parent = target.parentElement;
-              if (parent) {
-                parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${getInitials(
-                  profile.name
-                )}</div></div>`;
-              }
-            }}
-          />
+    return (
+      <div className="relative w-56 h-72 mx-auto bg-gradient-to-br from-orange-100 to-red-100 rounded-xl overflow-hidden group shadow-lg border-2 border-white flex items-center justify-center">
+        {/* Main Image Display */}
+        {images.length > 0 ? (
+          <>
+            <img
+              src={images[currentImageIndex]}
+              alt={`${profile.name}'s profile`}
+              className="max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-105"
+              onError={(e) => {
+                // Fallback to initials if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${getInitials(
+                    profile.name
+                  )}</div></div>`;
+                }
+              }}
+            />
 
-          {/* Navigation Controls - Only show if more than 1 image */}
-          {images.length > 1 && (
-            <>
-              {/* Previous Button */}
-              <button
-                onClick={goToPrevious}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
+            {/* Navigation Controls - Only show if more than 1 image */}
+            {images.length > 1 && (
+              <>
+                {/* Previous Button */}
+                <button
+                  onClick={goToPrevious}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
 
-              {/* Next Button */}
-              <button
-                onClick={goToNext}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+                {/* Next Button */}
+                <button
+                  onClick={goToNext}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
 
-              {/* Image Indicators */}
-              <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => goToImage(index, e)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      currentImageIndex === index
-                        ? "bg-white scale-110 shadow-lg"
-                        : "bg-white/60 hover:bg-white/80 hover:scale-105"
-                    }`}
-                    aria-label={`Go to image ${index + 1}`}
-                  />
-                ))}
+                {/* Image Indicators */}
+                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={(e) => goToImage(index, e)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                        currentImageIndex === index
+                          ? "bg-white scale-110 shadow-lg"
+                          : "bg-white/60 hover:bg-white/80 hover:scale-105"
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Image Counter */}
+                <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">
+                  {currentImageIndex + 1} / {images.length}
+                </div>
+              </>
+            )}
+
+            {/* Primary Image Badge */}
+            {currentImageIndex === 0 && images.length > 1 && (
+              <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium shadow-lg">
+                Primary
               </div>
+            )}
+          </>
+        ) : (
+          // Fallback when no images available
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
+            <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
+              {getInitials(profile.name)}
+            </div>
+          </div>
+        )}
 
-              {/* Image Counter */}
-              <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">
-                {currentImageIndex + 1} / {images.length}
-              </div>
-            </>
-          )}
-
-          {/* Primary Image Badge */}
-          {currentImageIndex === 0 && images.length > 1 && (
-            <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium shadow-lg">
-              Primary
+        {/* Profile Badges */}
+        <div className="absolute -top-3 -right-3 flex flex-col gap-1">
+          {profile.isPremium && (
+            <div className="bg-white rounded-full p-1 shadow-lg">
+              <Crown className="w-6 h-6 text-orange-500" />
             </div>
           )}
-        </>
-      ) : (
-        // Fallback when no images available
-        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
-          <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
-            {getInitials(profile.name)}
-          </div>
+          {profile.isVerified && (
+            <div className="bg-white rounded-full p-1 shadow-lg">
+              <Verified className="w-6 h-6 text-green-500" />
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Profile Badges */}
-      <div className="absolute -top-3 -right-3 flex flex-col gap-1">
-        {profile.isPremium && (
-          <div className="bg-white rounded-full p-1 shadow-lg">
-            <Crown className="w-6 h-6 text-orange-500" />
-          </div>
-        )}
-        {profile.isVerified && (
-          <div className="bg-white rounded-full p-1 shadow-lg">
-            <Verified className="w-6 h-6 text-green-500" />
-          </div>
+        {/* Online Status Indicator */}
+        {profile.lastActive === "Online now" && (
+          <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
         )}
       </div>
-
-      {/* Online Status Indicator */}
-      {profile.lastActive === "Online now" && (
-        <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
-      )}
-    </div>
-  );
-};
+    );
+  };
   const handleExpressInterest = () => {
     console.log("Express interest:", profile.id);
   };
@@ -215,8 +215,8 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                 <div className="text-center space-y-4">
                   <div className="relative mx-auto">
                     <div className="flex-shrink-0">
-                        <ProfileImageCarousel profile={profile} />
-                      </div>
+                      <ProfileImageCarousel profile={profile} />
+                    </div>
                     <div className="absolute -top-2 -right-2 flex flex-col gap-1">
                       {profile.isPremium && (
                         <Badge className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-2 py-1">
@@ -569,6 +569,110 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     </p>
                   </div>
                 )}
+                {/* Siblings Details */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900 mt-4">
+                    Sibling Details
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
+                    {/* Brothers */}
+                    <div className="space-y-3 bg-sky-50 p-4 rounded-lg">
+                      <h4 className="font-bold text-gray-900 mb-3">Brothers</h4>
+                      {Array.isArray(profile?.familyDetails?.brothersDetails) &&
+                      profile.familyDetails.brothersDetails.length > 0 ? (
+                        profile.familyDetails.brothersDetails.map(
+                          (brother: any, index: number) => (
+                            <div key={index} className="mb-4 border-b pb-2">
+                              <p className="text-gray-700">
+                                Name:{" "}
+                                <span className="font-medium capitalize">
+                                  {brother.name}
+                                </span>
+                              </p>
+                              <p className="text-gray-700">
+                                Occupation:{" "}
+                                <span className="font-medium capitalize">
+                                  {brother.occupation}
+                                </span>
+                              </p>
+                              <p className="text-gray-700">
+                                Marital Status:{" "}
+                                <span className="font-medium capitalize">
+                                  {brother.maritalStatus}
+                                </span>
+                              </p>
+                              {brother.maritalStatus === "married" && (
+                                <>
+                                  <p className="text-gray-700">
+                                    Spouse Name:{" "}
+                                    <span className="font-medium capitalize">
+                                      {brother.spouseName}
+                                    </span>
+                                  </p>
+                                  <p className="text-gray-700">
+                                    Spouse Occupation:{" "}
+                                    <span className="font-medium capitalize">
+                                      {brother.spouseOccupation}
+                                    </span>
+                                  </p>
+                                </>
+                              )}
+                            </div>
+                          )
+                        )
+                      ) : (
+                        <p className="text-gray-500">No brothers added</p>
+                      )}
+                    </div>
+
+                    {/* Sisters */}
+                    {Array.isArray(profile?.familyDetails?.sistersDetails) &&
+                    profile.familyDetails.sistersDetails.length > 0 ? (
+                      profile.familyDetails.sistersDetails.map(
+                        (sister: any, index: number) => (
+                          <div key={index} className="mb-4 border-b pb-2">
+                            <p className="text-gray-700">
+                              Name:{" "}
+                              <span className="font-medium capitalize">
+                                {sister.name}
+                              </span>
+                            </p>
+                            <p className="text-gray-700">
+                              Occupation:{" "}
+                              <span className="font-medium capitalize">
+                                {sister.occupation}
+                              </span>
+                            </p>
+                            <p className="text-gray-700">
+                              Marital Status:{" "}
+                              <span className="font-medium capitalize">
+                                {sister.maritalStatus}
+                              </span>
+                            </p>
+                            {sister.maritalStatus === "married" && (
+                              <>
+                                <p className="text-gray-700">
+                                  Spouse Name:{" "}
+                                  <span className="font-medium capitalize">
+                                    {sister.spouseName}
+                                  </span>
+                                </p>
+                                <p className="text-gray-700">
+                                  Spouse Occupation:{" "}
+                                  <span className="font-medium capitalize">
+                                    {sister.spouseOccupation}
+                                  </span>
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        )
+                      )
+                    ) : (
+                      <p className="text-gray-500">No sisters added</p>
+                    )}
+                  </div>
+                </div>
               </Card>
 
               {/* Preferences */}

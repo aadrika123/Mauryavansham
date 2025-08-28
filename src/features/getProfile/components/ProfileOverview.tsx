@@ -53,6 +53,9 @@ const ProfileOverview = (props: any) => {
     { id: "heritage", label: "Heritage", icon: TreePine },
     { id: "lifestyle", label: "Lifestyle", icon: Home },
   ];
+  {
+    console.log(profileData);
+  }
 
   return (
     <div
@@ -396,6 +399,7 @@ const ProfileOverview = (props: any) => {
                         </p>
                       </div>
                     </div>
+
                     <div className="space-y-4">
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <h4 className="font-semibold text-gray-900 mb-3">
@@ -526,14 +530,14 @@ const ProfileOverview = (props: any) => {
                             {profileData.religiousBeliefs.replace("-", " ")}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        {/* <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                           <span className="text-gray-600">
                             Caste Preference:
                           </span>
                           <span className="font-medium capitalize">
                             {profileData.castPreferences.replace("-", " ")}
                           </span>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                     <div>
@@ -581,7 +585,7 @@ const ProfileOverview = (props: any) => {
 
       {/* Right Sidebar */}
       <div className="hidden lg:block w-1/5 p-4">
-       <div className=" top-10 left-10 text-orange-400">
+        <div className=" top-10 left-10 text-orange-400">
           <Crown className="w-16 h-16" />
         </div>
         <div className="sticky top-4">

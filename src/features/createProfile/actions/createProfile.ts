@@ -115,6 +115,20 @@ export async function createProfile(
       workLocation: z.string().optional(),
       annualIncome: z.string().optional(),
       workExperience: z.string().optional(),
+      brothersDetails: z.array(z.object({
+        occupation: z.string().optional(),
+        maritalStatus: z.string().optional(),
+        spouseName: z.string().optional(),
+        spouseOccupation: z.string().optional(),
+        name: z.string().optional(),
+      })).optional(),
+      sistersDetails: z.array(z.object({
+        occupation: z.string().optional(),
+        maritalStatus: z.string().optional(),
+        spouseName: z.string().optional(),
+        spouseOccupation: z.string().optional(),
+        name: z.string().optional(),
+      }))
     });
 
     const formEntries = Object.fromEntries(formData.entries());

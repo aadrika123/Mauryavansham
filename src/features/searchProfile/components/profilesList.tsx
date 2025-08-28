@@ -27,6 +27,7 @@ import type React from "react";
 import type { Profile } from "../type";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface ProfilesListProps {
   profiles: Profile[];
@@ -41,7 +42,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
   sortBy,
   onSortChange,
 }) => {
-  console.log("ProfilesList received profiles:", profiles);
+  const { data: session } = useSession(); // ✅ logged in user
   const router = useRouter();
 
   const handleExpressInterest = (profileId: string) => {
@@ -56,17 +57,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
   const handleViewProfile = (profileId: string) => {
     console.log("View profile:", profileId);
-
-    // TODO: Implement view profile functionality - could navigate to profile detail page
-  };
-
-  const getInitials = (name: string): string => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    // TODO: Navigate to profile detail
   };
 
   const formatLastActive = (lastActive: string): string => {
@@ -74,47 +65,54 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
     if (lastActive === "Online now") return "Online now";
     return `Last seen ${lastActive}`;
   };
+
+  // ✅ Agar logged in user ke profiles hai to unko Online now mark karo
+  const enrichedProfiles = profiles.map((profile) => {
+    if (session?.user?.id && profile.userId === session.user.id) {
+      return { ...profile, lastActive: "Online now" };
+    }
+    return profile;
+  });
+
+  // Image Carousel Component
   const ProfileImageCarousel = ({ profile }: { profile: any }) => {
-    // Get all available images, prioritizing profileImage1 as primary
     const images = [
       profile.profileImage1,
       profile.profileImage2,
       profile.profileImage3,
-    ].filter(Boolean); // Remove empty/null images
+    ].filter(Boolean);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    const getInitials = (name: string): string => {
-      return name
+    const getInitials = (name: string): string =>
+      name
         .split(" ")
         .map((n) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2);
-    };
 
     const goToPrevious = (e: React.MouseEvent) => {
-      e.stopPropagation(); // Prevent card click
+      e.stopPropagation();
       setCurrentImageIndex((prev) =>
         prev === 0 ? images.length - 1 : prev - 1
       );
     };
 
     const goToNext = (e: React.MouseEvent) => {
-      e.stopPropagation(); // Prevent card click
+      e.stopPropagation();
       setCurrentImageIndex((prev) =>
         prev === images.length - 1 ? 0 : prev + 1
       );
     };
 
     const goToImage = (index: number, e: React.MouseEvent) => {
-      e.stopPropagation(); // Prevent card click
+      e.stopPropagation();
       setCurrentImageIndex(index);
     };
 
     return (
       <div className="relative w-32 h-32 lg:w-40 lg:h-40 bg-gradient-to-br from-orange-100 to-red-100 rounded-xl overflow-hidden group shadow-lg border-2 border-white">
-        {/* Main Image Display */}
         {images.length > 0 ? (
           <>
             <img
@@ -122,7 +120,6 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               alt={`${profile.name}'s profile`}
               className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
               onError={(e) => {
-                // Fallback to initials if image fails to load
                 const target = e.target as HTMLImageElement;
                 target.style.display = "none";
                 const parent = target.parentElement;
@@ -134,28 +131,22 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               }}
             />
 
-            {/* Navigation Controls - Only show if more than 1 image */}
             {images.length > 1 && (
               <>
-                {/* Previous Button */}
                 <button
                   onClick={goToPrevious}
                   className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                  aria-label="Previous image"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
 
-                {/* Next Button */}
                 <button
                   onClick={goToNext}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-                  aria-label="Next image"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
 
-                {/* Image Indicators */}
                 <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {images.map((_, index) => (
                     <button
@@ -166,27 +157,17 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                           ? "bg-white scale-110 shadow-lg"
                           : "bg-white/60 hover:bg-white/80 hover:scale-105"
                       }`}
-                      aria-label={`Go to image ${index + 1}`}
                     />
                   ))}
                 </div>
 
-                {/* Image Counter */}
                 <div className="absolute top-3 right-3 bg-black/70 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">
                   {currentImageIndex + 1} / {images.length}
                 </div>
               </>
             )}
-
-            {/* Primary Image Badge */}
-            {currentImageIndex === 0 && images.length > 1 && (
-              <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium shadow-lg">
-                Primary
-              </div>
-            )}
           </>
         ) : (
-          // Fallback when no images available
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
             <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
               {getInitials(profile.name)}
@@ -194,7 +175,6 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
           </div>
         )}
 
-        {/* Profile Badges */}
         <div className="absolute -top-3 -right-3 flex flex-col gap-1">
           {profile.isPremium && (
             <div className="bg-white rounded-full p-1 shadow-lg">
@@ -208,7 +188,6 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
           )}
         </div>
 
-        {/* Online Status Indicator */}
         {profile.lastActive === "Online now" && (
           <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
         )}
@@ -244,32 +223,13 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
       {/* Profiles */}
       <div className="space-y-4">
-        {profiles?.map((profile) => (
-          <Card
-            key={profile.id}
-            className="p-6 hover:shadow-md transition-shadow"
-          >
+        {enrichedProfiles?.map((profile) => (
+          <Card key={profile.id} className="p-6 hover:shadow-md transition-shadow">
             <div className="flex flex-col lg:flex-row gap-6">
-              {/* Profile Image */}
               <div className="flex-shrink-0">
-                <div className="w-24 h-24 lg:w-32 lg:h-32 bg-gray-200 rounded-lg flex items-center justify-center relative">
-                  <div className="flex-shrink-0">
-                    <ProfileImageCarousel profile={profile} />
-                  </div>
-
-                  {/* Badges */}
-                  <div className="absolute -top-6 -right-2 ">
-                    {profile.isPremium && (
-                      <Crown className="w-7 h-7 text-orange-600 text-" />
-                    )}
-                    {profile.isVerified && (
-                      <Verified className=" w-7 h-7 text-green-600" />
-                    )}
-                  </div>
-                </div>
+                <ProfileImageCarousel profile={profile} />
               </div>
 
-              {/* Profile Details */}
               <div className="flex-grow space-y-4">
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
                   <div className="space-y-3">
@@ -320,25 +280,19 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                       )}
                     </div>
 
-                    {/* Interests */}
                     {profile.interests.length > 0 && (
                       <div className="flex flex-wrap gap-2">
-                        {profile.interests
-                          .slice(0, 5)
-                          .map((interest, index) => (
-                            <Badge
-                              key={`${interest}-${index}`}
-                              variant="secondary"
-                              className="text-xs text-red-800"
-                            >
-                              {interest}
-                            </Badge>
-                          ))}
-                        {profile.interests.length > 5 && (
+                        {profile.interests.slice(0, 5).map((interest, index) => (
                           <Badge
-                            variant="outline"
+                            key={`${interest}-${index}`}
+                            variant="secondary"
                             className="text-xs text-red-800"
                           >
+                            {interest}
+                          </Badge>
+                        ))}
+                        {profile.interests.length > 5 && (
+                          <Badge variant="outline" className="text-xs text-red-800">
                             +{profile.interests.length - 5} more
                           </Badge>
                         )}
@@ -351,7 +305,6 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
                   <Button
                     variant="outline"
@@ -388,28 +341,24 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
         ))}
       </div>
 
-      {/* Empty State */}
-      {profiles?.length === 0 && (
+      {enrichedProfiles?.length === 0 && (
         <Card className="p-8 text-center">
           <div className="space-y-3">
             <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
               <Users className="w-8 h-8 text-gray-400" />
             </div>
-            <div>
-              <p className="text-gray-500 font-medium">
-                No profiles found matching your criteria
-              </p>
-              <p className="text-sm text-gray-400 mt-2">
-                Try adjusting your filters to see more results, or check back
-                later for new profiles.
-              </p>
-            </div>
+            <p className="text-gray-500 font-medium">
+              No profiles found matching your criteria
+            </p>
+            <p className="text-sm text-gray-400 mt-2">
+              Try adjusting your filters to see more results, or check back
+              later for new profiles.
+            </p>
           </div>
         </Card>
       )}
 
-      {/* Load More Section - Placeholder for future pagination */}
-      {profiles?.length > 0 && profiles.length >= 10 && (
+      {enrichedProfiles?.length > 0 && enrichedProfiles.length >= 10 && (
         <div className="text-center pt-6">
           <Button variant="outline" className="px-8 bg-transparent">
             Load More Profiles

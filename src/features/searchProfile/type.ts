@@ -57,6 +57,12 @@ export type DatabaseProfile = {
   profileImage1: string | null
   profileImage2: string | null
   profileImage3: string | null
+  brothersDetails?: string | null
+  sistersDetails?: string | null
+  isDeleted: boolean | null
+  deactivateReason?: string | null
+  deactivateReview?: string | null
+
   
   
 }
@@ -90,6 +96,11 @@ export type Profile = {
   profileRelation?: string
   customRelation?: string
   nickName?: string
+  brothersDetails?: string
+  sistersDetails?: string
+  deactivateReview?: string
+  deactivateReason?: string
+  
   
   
 }
@@ -146,6 +157,8 @@ export type DetailedProfile = {
     familyHistory: string
     communityContributions: string
     familyTraditions: string
+    brothersDetails: string
+    sistersDetails: string
   }
   preferences: {
     musicPreferences: string
@@ -158,4 +171,7 @@ export type DetailedProfile = {
   lastActive: string
   createdAt: string
   updatedAt: string
+  isDeleted: boolean
+  deactivateReason?: string | null
+  deactivateReview?: string | null
 }
