@@ -8,6 +8,7 @@ import {
   Scroll,
   Star,
   Sparkles,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
@@ -26,6 +27,8 @@ interface AdPlacement {
   id: number;
   bannerImageUrl: string;
   link?: string;
+  views: number;
+  placementId: number;
 }
 export default function HeritagePage() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
@@ -38,7 +41,10 @@ export default function HeritagePage() {
       })
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
-  const ad = adPlacements.find((ad) => ad.id === 4); // Assuming placement ID 4 is for the HeritagePage ad
+  const ad = adPlacements.find((ad) => ad.placementId === 4); // Assuming placement ID 4 is for the HeritagePage ad
+  useEffect(() => {
+    if (ad) fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
+  }, [ad]);
   return (
     <div className="min-h-screen px-12 bg-gradient-to-b from-yellow-50 to-orange-50">
       {/* Breadcrumb Navigation */}
@@ -197,6 +203,9 @@ export default function HeritagePage() {
                     height={500}
                     className="mx-auto rounded-xl shadow-lg"
                   />
+                  <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+                    {ad.views} <Eye className="w-4 h-4 inline" /> 
+                  </div>
               </div>
             </div>
           ) : (

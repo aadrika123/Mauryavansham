@@ -190,6 +190,48 @@
       "when": 1756301078904,
       "tag": "0026_oval_dakota_north",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1756386294723,
+      "tag": "0027_odd_jack_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1756386634037,
+      "tag": "0028_numerous_emma_frost",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1756397546528,
+      "tag": "0029_grey_rattler",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1756450267950,
+      "tag": "0030_tired_leader",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1756455035023,
+      "tag": "0031_curious_clint_barton",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1756462166784,
+      "tag": "0032_silly_moondragon",
+      "breakpoints": true
     }
   ]
 }

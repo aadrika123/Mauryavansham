@@ -17,7 +17,7 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
   
 
   if (!session?.user?.id) {
-    redirect("/login")
+    redirect("/sign-in")
   }
 
  const [blog] = await db

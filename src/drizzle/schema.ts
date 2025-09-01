@@ -11,4 +11,8 @@ export * from "./db/schemas/password_reset_otps";
 export * from "./db/schemas/ads";
 export * from "./db/schemas/blogs";
 export * from "./db/schemas/adPlacements";
+export * from "./db/schemas/discussions";
+export * from "./db/schemas/discussionReplies";
+export * from "./db/schemas/discussionLikes";
+export * from "./db/schemas/discussionCategories";
 

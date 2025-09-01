@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
-import { ArrowLeft, Crown, Heart, Sparkles, Star } from "lucide-react";
+import { ArrowLeft, Crown, Eye, Heart, Sparkles, Star } from "lucide-react";
 import Link from "next/link";
 import { Profile } from "@/src/features/searchProfile/type";
 import { useSession } from "next-auth/react";
@@ -17,6 +17,8 @@ interface AdPlacement {
   id: number;
   bannerImageUrl: string;
   link?: string;
+  views: number;
+  placementId: number;
 }
 
 export default function MatrimonialPage({ initialProfiles }: Props) {
@@ -33,8 +35,14 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
 
-  const leftTopAd = adPlacements.find((ad) => ad.id === 6);
-  const bottomAd = adPlacements.find((ad) => ad.id === 7);
+  const leftTopAd = adPlacements.find((ad) => ad.placementId === 6);
+  const bottomAd = adPlacements.find((ad) => ad.placementId === 7);
+  useEffect(() => {
+    if (leftTopAd)
+      fetch(`/api/ad-placements/${leftTopAd.id}`, { method: "POST" });
+    if (bottomAd)
+      fetch(`/api/ad-placements/${bottomAd.id}`, { method: "POST" });
+  }, [leftTopAd, bottomAd]);
 
   // ✅ Carousel Logic
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -72,11 +80,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       {/* Left Ad */}
       <div className="absolute top-96 left-16 z-50 hidden lg:block w-[18rem] flex-shrink-0">
         {leftTopAd ? (
-          <a
-            href={leftTopAd.link || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <>
             <Image
               src={leftTopAd.bannerImageUrl}
               alt="left top Ad"
@@ -85,7 +89,10 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
               height={450}
               priority
             />
-          </a>
+            <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+              {leftTopAd.views} <Eye className="w-4 h-4 " />
+            </div>
+          </>
         ) : (
           <div className="w-full text-center h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
             Ad Space (6) <br />
@@ -226,6 +233,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
                     height={500}
                     className="mx-auto rounded-xl shadow-lg"
                   />
+                  <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+                    {bottomAd.views} <Eye className="w-4 h-4 inline" />
+                  </div>
                 </div>
               </div>
             ) : (

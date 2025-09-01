@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Sparkles, Star, Crown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Sparkles, Star, Crown, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import Image from "next/image";
 import Loader from "../ui/loader";
 
@@ -19,6 +19,8 @@ interface AdPlacement {
   id: number;
   bannerImageUrl: string;
   link?: string;
+  views: number;
+  placementId: number;
 }
 
 // Sample carousel images
@@ -181,6 +183,7 @@ const HeroSection: React.FC = () => {
       .then((res) => res.json())
       .then((data: AdPlacement[]) => {
         // sirf approved ads le lo
+
         setAdPlacements(data);
         setLoading(false);
       })
@@ -188,8 +191,16 @@ const HeroSection: React.FC = () => {
     setLoading(false);
   }, []);
 
-  const leftAd = adPlacements.find((ad) => ad.id === 1);
-  const rightAd = adPlacements.find((ad) => ad.id === 2);
+  const leftAd = adPlacements.find((ad) => ad.placementId === 1);
+  const rightAd = adPlacements.find((ad) => ad.placementId === 2);
+  console.log("Ad leftAd:", leftAd);
+  console.log("Ad rightAd:", rightAd);
+  console.log("All adPlacements:", adPlacements);
+
+  useEffect(() => {
+    if (leftAd) fetch(`/api/ad-placements/${leftAd.id}`, { method: "POST" });
+    if (rightAd) fetch(`/api/ad-placements/${rightAd.id}`, { method: "POST" });
+  }, [leftAd, rightAd]);
 
   return (
     <section className="relative text-white py-10 overflow-hidden">
@@ -209,15 +220,11 @@ const HeroSection: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex gap-2 items-start">
           {/* Left Ad Banner */}
-          <div className="hidden lg:block w-[20rem] flex-shrink-0">
+          <div className="hidden lg:block w-[20rem] flex-shrink-0 relative">
             {loading ? (
               <Loader />
             ) : leftAd ? (
-              <a
-                href={leftAd.link || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <>
                 <Image
                   src={leftAd.bannerImageUrl}
                   alt="Left Ad"
@@ -226,8 +233,12 @@ const HeroSection: React.FC = () => {
                   height={500}
                   priority
                 />
-              </a>
+                <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
+                  {leftAd.views} <Eye className="w-4 h-4 "/>
+                </span>
+              </>
             ) : (
+              // </a>
               <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
                 Ad Space (1)
               </div>
@@ -244,11 +255,7 @@ const HeroSection: React.FC = () => {
             {loading ? (
               <Loader />
             ) : rightAd ? (
-              <a
-                href={rightAd.link || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <>
                 <Image
                   src={rightAd.bannerImageUrl}
                   alt="Right Ad"
@@ -257,7 +264,10 @@ const HeroSection: React.FC = () => {
                   className="shadow-lg rounded-2xl object-contain bg-white"
                   priority
                 />
-              </a>
+                <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
+                  {rightAd.views} <Eye className="w-4 h-4"/>
+                </span>
+              </>
             ) : (
               <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
                 Ad Space (2)

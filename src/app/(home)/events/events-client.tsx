@@ -23,6 +23,7 @@ import {
   User,
   Star,
   Sparkles,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
@@ -52,6 +53,8 @@ interface AdPlacement {
   id: number;
   bannerImageUrl: string;
   link?: string;
+  views: number;
+  placementId: number;
 }
 export default function EventsClient({ initialEvents }: EventsClientProps) {
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -82,7 +85,12 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
       })
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
-  const bottomAd = adPlacements.find((ad) => ad.id === 8);
+  const bottomAd = adPlacements.find((ad) => ad.placementId === 8);
+  // console.log("Ad for EventsClient:", bottomAd);
+  useEffect(() => {
+    if (bottomAd)
+      fetch(`/api/ad-placements/${bottomAd.id}`, { method: "POST" });
+  }, [bottomAd]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -312,6 +320,9 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                       height={500}
                       className="mx-auto rounded-xl shadow-lg"
                     />
+                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+                      {bottomAd.views} <Eye className="w-4 h-4 inline" />
+                    </div>
                     {/* </a> */}
                   </div>
                 </div>

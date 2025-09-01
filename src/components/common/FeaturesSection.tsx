@@ -17,6 +17,7 @@ import {
   Trophy,
   Sparkles,
   Star,
+  Eye,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -31,6 +32,8 @@ interface AdPlacement {
   id: number;
   bannerImageUrl: string;
   link?: string;
+  views: number;
+  placementId: number;
 }
 export function FeaturesSection() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
@@ -44,8 +47,12 @@ export function FeaturesSection() {
       })
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
-
-  const ad = adPlacements.find((ad) => ad.id === 3); // Assuming placement ID 3 is for the FeaturesSection ad
+  console.log(adPlacements, "Ad Placements for FeaturesSection");
+  const ad = adPlacements.find((ad) => ad.placementId === 3); // Assuming placement ID 3 is for the FeaturesSection ad
+  // console.log("Ad for FeaturesSection:", ad);
+  useEffect(() => {
+    if (ad) fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
+  }, [ad]);
   const features = [
     {
       icon: Users,
@@ -99,6 +106,9 @@ export function FeaturesSection() {
                   height={500}
                   className="mx-auto rounded-xl shadow-lg"
                 />
+                <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+                  {ad.views} <Eye className="w-4 h-4 inline" />
+                </div>
               </div>
             </div>
           ) : (

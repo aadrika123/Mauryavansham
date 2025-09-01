@@ -9,7 +9,7 @@ export default async function AdsLocationMasterIndex({ params }: { params: { id:
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
-    redirect("/login")
+    redirect("/sign-in")
   }
 
   if (session.user.role !== "admin") {

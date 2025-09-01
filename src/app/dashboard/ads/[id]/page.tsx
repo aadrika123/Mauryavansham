@@ -16,7 +16,7 @@ export default async function AdPage({ params }: AdPageProps) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/login");
+    redirect("/sign-in");
   }
 
   const [ad] = await db

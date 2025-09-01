@@ -8,9 +8,10 @@ export async function GET() {
   try {
     const placementsWithAds = await db
       .select({
-        id: adPlacements.id,
+        id: ads.id,
         bannerImageUrl: ads.bannerImageUrl,
-        // link: ads.link,
+        views: ads.views, // add views here
+        placementId: adPlacements.id, // add placementId here
       })
       .from(adPlacements)
       .leftJoin(ads, eq(adPlacements.id, ads.placementId))
@@ -21,3 +22,4 @@ export async function GET() {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+

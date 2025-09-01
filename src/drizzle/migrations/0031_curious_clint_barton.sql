@@ -1,0 +1,1 @@
+ALTER TABLE "discussions" ADD COLUMN "is_completed" boolean DEFAULT false NOT NULL;

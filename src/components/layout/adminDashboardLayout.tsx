@@ -39,6 +39,9 @@ export default function AdmindashboardLayout({ children, user }: { children: Rea
     { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
     { title: "Ads Location Master", href: "/admin/ads-location-master", icon: Tv2 },
+    { title: "Discussions Moderation", href: "/admin/discussions", icon: MessageSquare },
+    { title: "Discussion Category Master", href: "/admin/discussion-castegory-master", icon: Globe },
+
     // { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
     // { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
     // { title: "Book Ads", href: "/dashboard/ads", icon: Tv },

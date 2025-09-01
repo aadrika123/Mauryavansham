@@ -25,6 +25,7 @@ import {
   Share,
   Star,
   Sparkles,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
@@ -53,6 +54,8 @@ interface AdPlacement {
   id: number;
   bannerImageUrl: string;
   link?: string;
+  views: number;
+  placementId: number;
 }
 export default function DonationsClient({
   initialCampaigns,
@@ -85,7 +88,11 @@ export default function DonationsClient({
         })
         .catch(() => console.error("Failed to load ad placements"));
     }, []);
-    const bottomAd = adPlacements.find((ad) => ad.id === 9);
+    const bottomAd = adPlacements.find((ad) => ad.placementId === 9);
+    // console.log("Ad for DonationsClient:", bottomAd);
+    useEffect(() => {
+      if (bottomAd) fetch(`/api/ad-placements/${bottomAd.id}`, { method: "POST" });
+    }, [bottomAd]);
   const formatCurrency = (amount: number) => {
     if (amount >= 100000) {
       return `₹${(amount / 100000).toFixed(2)} L`;
@@ -337,6 +344,7 @@ export default function DonationsClient({
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 > */}
+
                     <Image
                       src={bottomAd.bannerImageUrl}
                       alt={"Ad Banner"}
@@ -344,6 +352,9 @@ export default function DonationsClient({
                       height={500}
                       className="mx-auto rounded-xl shadow-lg"
                     />
+                    <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+                      {bottomAd.views} <Eye className="w-4 h-4 inline" />
+                    </div>
                     {/* </a> */}
                   </div>
                 </div>

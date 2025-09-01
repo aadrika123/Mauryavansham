@@ -34,6 +34,7 @@ export const ads = pgTable("ads", {
   placementId: integer("placement_id")
     .references(() => adPlacements.id)
     .notNull(),
+  views: integer("views").default(0).notNull(),
 });
 
 export type Ad = typeof ads.$inferSelect;

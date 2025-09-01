@@ -11,7 +11,7 @@ export default async function BlogsPage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
-    redirect("/login")
+    redirect("/sign-in")
   }
 
   return (
