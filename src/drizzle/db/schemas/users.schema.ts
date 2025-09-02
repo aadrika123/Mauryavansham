@@ -39,8 +39,17 @@ export const users = pgTable("users", {
 
   education: varchar("education", { length: 100 }),
   occupation: varchar("occupation", { length: 100 }),
+
+  // 🆕 Occupation-specific fields
+  jobType: varchar("job_type", { length: 50 }), // Government / Non-Government
+  govSector: varchar("gov_sector", { length: 50 }), // Central / State / UT
+  department: varchar("department", { length: 100 }),
+  postingLocation: varchar("posting_location", { length: 100 }),
+  designation: varchar("designation", { length: 100 }),
   company: varchar("company", { length: 100 }),
-  income: varchar("income", { length: 50 }),
+  businessDetails: varchar("business_details", { length: 255 }),
+
+  // ❌ income removed (form me nahi hai ab)
 
   // diet: varchar("diet", { length: 20 }),
   // smoking: varchar("smoking", { length: 10 }),
@@ -62,3 +71,4 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+

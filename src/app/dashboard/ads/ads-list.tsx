@@ -24,6 +24,7 @@ interface Ad {
   daysLeft: number
   isActive: boolean
   isExpired: boolean
+  viewCount: number
   user: {
     id: string
     name: string
@@ -170,6 +171,9 @@ console.log(ads,"ads")
                   </div>
                   <Badge className={getStatusColor(ad.status, ad.isActive, ad.isExpired)}>
                     {getStatusText(ad.status, ad.isActive, ad.isExpired)}
+                  </Badge>
+                  <Badge className="bg-gray-100 text-gray-800 flex items-center gap-1">
+                    <Eye className="h-4 w-4" /> {ad.viewCount || 0}
                   </Badge>
                 </div>
               </CardHeader>

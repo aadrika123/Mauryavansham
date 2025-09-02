@@ -46,7 +46,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
 
   // ✅ Carousel Logic
   const [currentIndex, setCurrentIndex] = useState(0);
-  const hasMoreThanTwo = initialProfiles.length > 2;
+  const hasMoreThanTwo = initialProfiles.length > 3;
 
   const itemsPerSlide = 2;
   const totalSlides = Math.ceil(initialProfiles.length / itemsPerSlide);
@@ -78,15 +78,15 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       </div>
 
       {/* Left Ad */}
-      <div className="absolute top-96 left-16 z-50 hidden lg:block w-[18rem] flex-shrink-0">
+      <div className="absolute top-96 left-16 z-50 hidden lg:block w-[18rem] h- flex-shrink-0">
         {leftTopAd ? (
           <>
             <Image
               src={leftTopAd.bannerImageUrl}
               alt="left top Ad"
               className="w-full h-auto object-cover shadow-lg rounded-2xl"
-              width={288}
-              height={450}
+              width={350}
+              height={500}
               priority
             />
             <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
@@ -94,9 +94,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </div>
           </>
         ) : (
-          <div className="w-full text-center h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
+          <div className="w-full text-center h-[450px] -mt-10 -ml-8 bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
             Ad Space (6) <br />
-            (350x450 pixels)
+            (350x500 pixels)
           </div>
         )}
       </div>
@@ -117,7 +117,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       </div>
 
       {/* CTA */}
-      <div className="container mx-auto px-4 mb-12">
+      <div className="container mx-auto px-4 mb-12 ml-8">
         <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] shadow-xl shadow-orange-300 rounded-lg p-8 text-center text-white max-w-4xl mx-auto">
           <Heart className="h-16 w-16 mx-auto mb-4 text-white" />
           <h2 className="text-2xl font-bold mb-4">
@@ -159,13 +159,13 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
         <div className="text-center mb-8">
           <div className="relative">
             <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg"></div>
-            <h2 className="relative text-2xl font-bold text-red-700">
+            <h2 className="relative text-3xl md:text-4xl font-bold text-red-700">
               Success Stories
             </h2>
           </div>
         </div>
 
-        <div className="flex items-center justify-center max-w-4xl mx-auto relative">
+        <div className="flex items-center justify-center  mx-auto relative px-10">
           {/* Prev Button */}
           {hasMoreThanTwo && (
             <button
@@ -179,7 +179,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           {/* Cards */}
           <div
             className={`grid ${
-              hasMoreThanTwo ? "md:grid-cols-2" : "md:grid-cols-2"
+              hasMoreThanTwo ? "md:grid-cols-3" : "md:grid-cols-3"
             } gap-6 w-full px-10`}
           >
             {visibleProfiles.map((profile) => (

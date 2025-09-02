@@ -19,6 +19,7 @@ import {
   Landmark,
   House,
   User,
+  ShoppingBag,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
@@ -73,6 +74,7 @@ export function Header() {
     { title: "Community Forum", href: "/community", icon: Users },
     { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
     { title: "Events", href: "/events", icon: Calendar },
+    { title: "Business Forum", href: "/business", icon: ShoppingBag },
     { title: "Donation", href: "/donation", icon: HandHeart },
     { title: "Achievements", href: "/achievements", icon: Trophy },
   ];

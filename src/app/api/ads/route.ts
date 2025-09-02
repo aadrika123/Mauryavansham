@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
         updatedAt: ads.updatedAt,
         approvedAt: ads.approvedAt,
         rejectionReason: ads.rejectionReason,
+        viewCount: ads.views,
         user: {
           id: users.id,
           name: users.name,

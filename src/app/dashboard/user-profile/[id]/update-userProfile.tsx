@@ -17,7 +17,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     address: "",
     photo: "",
     maritalStatus: "",
-    religion: "Hindu", // ✅ default fix
+    religion: "Hindu",
     caste: "",
     motherTongue: "",
     height: "",
@@ -25,15 +25,18 @@ export default function UserProfilePage({ data }: { data: any }) {
     bloodGroup: "",
     education: "",
     occupation: "",
+    // 🆕 Occupation-specific fields
+    jobType: "", // Job → Government / Non-Government
+    govSector: "", // Central / State / UT
+    department: "",
+    postingLocation: "",
+    designation: "",
     company: "",
-    income: "",
-    diet: "",
-    smoking: "",
-    drinking: "",
-    hobbies: "",
+    businessDetails: "",
+
     city: "",
     state: "",
-    country: "India", // ✅ default fix
+    country: "India",
     zipCode: "",
   });
 
@@ -100,26 +103,71 @@ export default function UserProfilePage({ data }: { data: any }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // --- Validation ---
+    const errors: string[] = [];
+
+    if (!formData.name) errors.push("Name is required");
+    if (!formData.email) errors.push("Email is required");
+    if (!formData.phone) errors.push("Phone is required");
+    if (!formData.gender) errors.push("Gender is required");
+    if (!formData.dateOfBirth) errors.push("Date of Birth is required");
+    if (!formData.maritalStatus) errors.push("Marital Status is required");
+    if (!formData.motherTongue) errors.push("Mother Tongue is required");
+    if (!formData.education) errors.push("Education is required");
+    if (!formData.occupation) errors.push("Occupation is required");
+
+    // Occupation-specific validation
+    if (formData.occupation === "Job") {
+      if (!formData.jobType) errors.push("Job Type is required");
+
+      if (formData.jobType === "Government") {
+        if (!formData.govSector) errors.push("Gov Sector is required");
+        if (!formData.department) errors.push("Department is required");
+        if (!formData.postingLocation)
+          errors.push("Posting Location is required");
+        if (!formData.designation) errors.push("Designation is required");
+      } else if (formData.jobType === "Non-Government") {
+        if (!formData.company) errors.push("Company is required");
+        if (!formData.designation) errors.push("Designation is required");
+      }
+    }
+
+    if (formData.occupation === "Business") {
+      if (!formData.businessDetails)
+        errors.push("Business Details are required");
+    }
+
+    if (errors.length > 0) {
+      toast({
+        title: "Validation Error ❌",
+        description: errors.join(", "),
+        variant: "destructive",
+      });
+      return; // 🚫 stop submit if errors
+    }
+
+    // --- API call if validation passes ---
     setLoading(true);
     try {
       const result = await updateUserDtlsById(formData, data.id);
       if (result.success) {
         toast({
-          title: "Profile Updated",
+          title: "Profile Updated ✅",
           description: "Your profile has been updated successfully!",
         });
-        setTimeout(() => router.push(`/dashboard`), 1500);
+        // setTimeout(() => router.push(`/dashboard`), 1500);
       } else {
         toast({
-          title: "Update Failed",
+          title: "Update Failed ❌",
           description: result.message || "Failed to update profile",
           variant: "destructive",
         });
       }
     } catch (err) {
       toast({
-        title: "Error",
-        description: "Something went wrong while updating profile ❌",
+        title: "Error ❌",
+        description: "Something went wrong while updating profile",
         variant: "destructive",
       });
     }
@@ -128,7 +176,7 @@ export default function UserProfilePage({ data }: { data: any }) {
 
   // ✅ Profile completion calculation (fixed)
   const calculateCompletion = (user: any) => {
-    const fields = [
+    let fields = [
       "name",
       "email",
       "phone",
@@ -137,25 +185,37 @@ export default function UserProfilePage({ data }: { data: any }) {
       "address",
       "photo",
       "maritalStatus",
-      // "religion",
-      // "caste",
       "motherTongue",
       "height",
       "weight",
       "bloodGroup",
       "education",
       "occupation",
-      "company",
-      "income",
-      // "diet",
-      // "smoking",
-      // "drinking",
-      // "hobbies",
       "city",
       "state",
       "country",
       "zipCode",
     ];
+
+    // Occupation-based fields
+    if (user.occupation === "Job") {
+      fields.push("jobType");
+
+      if (user.jobType === "Government") {
+        fields.push(
+          "govSector",
+          "department",
+          "postingLocation",
+          "designation"
+        );
+      } else if (user.jobType === "Non-Government") {
+        fields.push("company", "designation");
+      }
+    }
+
+    if (user.occupation === "Business") {
+      fields.push("businessDetails");
+    }
 
     const filled = fields.filter(
       (f) => user[f] && user[f].toString().trim() !== ""
@@ -291,8 +351,88 @@ export default function UserProfilePage({ data }: { data: any }) {
               "Other",
             ]}
           />
+          {/* Occupation Section */}
+          <SelectField
+            label="Occupation"
+            name="occupation"
+            value={formData.occupation}
+            onChange={handleChange}
+            options={["Job", "Business"]}
+          />
 
-          <InputField
+          {/* If Occupation = Job */}
+          {formData.occupation === "Job" && (
+            <>
+              <SelectField
+                label="Job Type"
+                name="jobType"
+                value={formData.jobType}
+                onChange={handleChange}
+                options={["Government", "Non-Government"]}
+              />
+
+              {/* Government Fields */}
+              {formData.jobType === "Government" && (
+                <>
+                  <SelectField
+                    label="Gov Sector"
+                    name="govSector"
+                    value={formData.govSector}
+                    onChange={handleChange}
+                    options={["Central", "State", "UT"]}
+                  />
+                  <InputField
+                    label="Department"
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="Posting Location"
+                    name="postingLocation"
+                    value={formData.postingLocation}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="Designation"
+                    name="designation"
+                    value={formData.designation}
+                    onChange={handleChange}
+                  />
+                </>
+              )}
+
+              {/* Non-Government Fields */}
+              {formData.jobType === "Non-Government" && (
+                <>
+                  <InputField
+                    label="Company"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                  />
+                  <InputField
+                    label="Designation"
+                    name="designation"
+                    value={formData.designation}
+                    onChange={handleChange}
+                  />
+                </>
+              )}
+            </>
+          )}
+
+          {/* If Occupation = Business */}
+          {formData.occupation === "Business" && (
+            <InputField
+              label="Business Details"
+              name="businessDetails"
+              value={formData.businessDetails}
+              onChange={handleChange}
+            />
+          )}
+
+          {/* <InputField
             label="Occupation"
             name="occupation"
             value={formData.occupation}
@@ -303,8 +443,8 @@ export default function UserProfilePage({ data }: { data: any }) {
             name="company"
             value={formData.company}
             onChange={handleChange}
-          />
-          <SelectField
+          /> */}
+          {/* <SelectField
             label="Income"
             name="income"
             value={formData.income}
@@ -317,7 +457,7 @@ export default function UserProfilePage({ data }: { data: any }) {
               "₹20 - ₹50 Lakh",
               "₹50 Lakh+",
             ]}
-          />
+          /> */}
 
           {/* <SelectField
             label="Diet"

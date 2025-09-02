@@ -66,11 +66,17 @@ export function FeaturesSection() {
       description: "Find your perfect life partner within the community",
       href: "/matrimonial",
     },
+    // {
+    //   icon: ShoppingBag,
+    //   title: "Trading Platform",
+    //   description: "Buy and sell products/services within the community",
+    //   href: "/",
+    // },
     {
+      title: "Business Forum  ",
       icon: ShoppingBag,
-      title: "Trading Platform",
-      description: "Buy and sell products/services within the community",
-      href: "/",
+      description: "Promote your business and connect with potential clients",
+      href: "/business",
     },
     {
       icon: Calendar,
