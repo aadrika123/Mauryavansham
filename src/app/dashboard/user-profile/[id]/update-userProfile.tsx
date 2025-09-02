@@ -156,7 +156,7 @@ export default function UserProfilePage({ data }: { data: any }) {
           title: "Profile Updated ✅",
           description: "Your profile has been updated successfully!",
         });
-        // setTimeout(() => router.push(`/dashboard`), 1500);
+        setTimeout(() => router.push(`/dashboard`), 1500);
       } else {
         toast({
           title: "Update Failed ❌",
