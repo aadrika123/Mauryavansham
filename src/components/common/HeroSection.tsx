@@ -233,9 +233,9 @@ const HeroSection: React.FC = () => {
                   height={500}
                   priority
                 />
-                <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
+                {/* <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
                   {leftAd.views} <Eye className="w-4 h-4 "/>
-                </span>
+                </span> */}
               </>
             ) : (
               // </a>
@@ -264,9 +264,9 @@ const HeroSection: React.FC = () => {
                   className="shadow-lg rounded-2xl object-contain bg-white"
                   priority
                 />
-                <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
+                {/* <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
                   {rightAd.views} <Eye className="w-4 h-4"/>
-                </span>
+                </span> */}
               </>
             ) : (
               <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">

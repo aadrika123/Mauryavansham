@@ -7,7 +7,8 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "../components/theme-provider";
 import { Footer } from "../components/layout/footer";
 import { Toaster } from "../components/ui/toaster";
-import SessionTimeout from "../components/SessionTimeout"; // 👈 import
+import SessionTimeout from "../components/SessionTimeout"; 
+import Script from "next/script"; // 👈 import
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-Z35P4CZ619"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Z35P4CZ619');
+          `}
+        </Script>
+
         <SessionProvider>
           <ThemeProvider
             attribute="class"
@@ -25,7 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <SessionTimeout>
               {children}
               <Toaster />
-
+              <Footer />
             </SessionTimeout>
           </ThemeProvider>
         </SessionProvider>

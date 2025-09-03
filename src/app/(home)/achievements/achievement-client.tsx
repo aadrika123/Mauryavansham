@@ -850,9 +850,9 @@ export default function AchievementsClient({
                     height={500}
                     className="mx-auto rounded-xl shadow-lg"
                   />
-                  <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+                  {/* <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
                     {bottomAd.views} <Eye className="w-4 h-4 inline" />
-                  </div>
+                  </div> */}
                   {/* </a> */}
                 </div>
               </div>

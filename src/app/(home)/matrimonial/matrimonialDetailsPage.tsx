@@ -89,9 +89,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
               height={500}
               priority
             />
-            <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+            {/* <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
               {leftTopAd.views} <Eye className="w-4 h-4 " />
-            </div>
+            </div> */}
           </>
         ) : (
           <div className="w-full text-center h-[450px] -mt-10 -ml-8 bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
@@ -233,9 +233,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
                     height={500}
                     className="mx-auto rounded-xl shadow-lg"
                   />
-                  <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
+                  {/* <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
                     {bottomAd.views} <Eye className="w-4 h-4 inline" />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ) : (

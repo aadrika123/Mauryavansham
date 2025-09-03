@@ -5,10 +5,55 @@ import { users } from "@/src/drizzle/schema"; // path confirm kar lo
 
 // Helper function: profile completion %
 const calculateProfileCompletion = (user: any) => {
-  let fields = ["phone", "gender", "dateOfBirth", "address", "photo"];
-  let filled = fields.filter((f) => user[f]);
-  return Math.round((filled.length / fields.length) * 100);
+  let fields = [
+    "name",
+    "email",
+    "phone",
+    "gender",
+    "dateOfBirth",
+    "address",
+    "photo",
+    "maritalStatus",
+    "motherTongue",
+    "height",
+    "weight",
+    "bloodGroup",
+    "education",
+    "occupation",
+    "city",
+    "state",
+    "country",
+    "zipCode",
+  ];
+
+  // Occupation-based fields
+  if (user.occupation === "Job") {
+    fields.push("jobType");
+
+    if (user.jobType === "Government") {
+      fields.push("govSector", "department", "postingLocation", "designation");
+    } else if (user.jobType === "Non-Government") {
+      fields.push("company", "designation");
+    }
+  }
+
+  if (user.occupation === "Business") {
+    fields.push("businessDetails");
+  }
+
+  // Deduplicate fields (in case same field added twice)
+  fields = [...new Set(fields)];
+
+  // Count filled fields
+  const filled = fields.filter((f) => {
+    const val = user[f];
+    return val !== null && val !== undefined && val.toString().trim() !== "";
+  }).length;
+
+  return Math.round((filled / fields.length) * 100);
 };
+
+
 
 // GET /api/users/[id]
 export async function GET(
