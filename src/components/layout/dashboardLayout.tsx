@@ -30,6 +30,7 @@ import {
   Search,
   Camera,
   Tv,
+  Wallet2Icon,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -66,6 +67,9 @@ export default function DashboardLayout({
     },
     { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
     { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
+    {
+      title:"Register-business", href: "/dashboard/register-business", icon: Wallet2Icon
+    }
   ];
 
   const handleSignOut = async () => {
