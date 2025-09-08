@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/src/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu";
 import { cn } from "@/src/lib/utils";
 import {
   Crown,
@@ -24,28 +30,61 @@ import {
   Search,
   Camera,
   Tv,
-  Tv2
+  Tv2,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
 
-export default function AdmindashboardLayout({ children, user }: { children: React.ReactNode, user: NextAuthUser }) {
+import { io } from "socket.io-client";
+
+let socket: any;
+
+export default function AdmindashboardLayout({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: NextAuthUser;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (user?.role === "admin") {
+      fetch("/api/admin/notifications")
+        .then((res) => res.json())
+        .then((data) => setNotifications(data));
+    }
+  }, [user]);
 
   const sidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+    { title: "All Users", href: "/admin/manage-users", icon: Users },
+    { title: "Manage Users", href: "/admin/users", icon: Users },
+    { title: "Create Events", href: "/admin/events", icon: Calendar },
     { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
-    { title: "Ads Location Master", href: "/admin/ads-location-master", icon: Tv2 },
-    { title: "Discussions Moderation", href: "/admin/discussions", icon: MessageSquare },
-    { title: "Discussion Category Master", href: "/admin/discussion-castegory-master", icon: Globe },
+    {
+      title: "Ads Location Master",
+      href: "/admin/ads-location-master",
+      icon: Tv2,
+    },
+    {
+      title: "Discussions Moderation",
+      href: "/admin/discussions",
+      icon: MessageSquare,
+    },
+    {
+      title: "Discussion Category Master",
+      href: "/admin/discussion-castegory-master",
+      icon: Globe,
+    },
 
     // { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
     // { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
     // { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
-
   ];
 
   const handleSignOut = async () => {
@@ -62,17 +101,86 @@ export default function AdmindashboardLayout({ children, user }: { children: Rea
           <div className="flex items-center gap-4">
             <Crown className="w-8 h-8 text-orange-400" />
             <div>
-              <h1 className="text-2xl font-bold capitalize">Welcome back, {user?.name || ""} ({user?.role})</h1>
+              <h1 className="text-2xl font-bold capitalize">
+                Welcome back, {user?.name || ""} ({user?.role})
+              </h1>
               <p className="text-red-200">Your matrimonial journey continues</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
+            {/* <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
               <Bell className="w-4 h-4 mr-2" /> Notifications
-            </Button>
+            </Button> */}
+            {/* ✅ Notifications */}
+            {user?.role === "admin" && (
+              <DropdownMenu
+                onOpenChange={async (isOpen) => {
+                  if (isOpen) {
+                    const unreadNotifications = notifications.filter(
+                      (n) => n.isRead === 0
+                    );
+
+                    if (unreadNotifications.length > 0) {
+                      // Ek hi API call me sab mark read
+                      await fetch("/api/admin/notifications/mark-read", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          notificationIds: unreadNotifications.map(
+                            (n) => n.id
+                          ),
+                        }),
+                      });
+
+                      // UI update
+                      setNotifications((prev) =>
+                        prev.map((n) => ({ ...n, isRead: 1 }))
+                      );
+                    }
+                  }
+                }}
+              >
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:bg-red-700"
+                  >
+                    <Bell className="w-4 h-4 mr-2" />
+                    Notifications
+                    {notifications.filter((n) => n.isRead === 0).length > 0 && (
+                      <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
+                        {notifications.filter((n) => n.isRead === 0).length}
+                      </span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+
+                {notifications.length > 0 && (
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-72 max-h-96 overflow-y-auto"
+                  >
+                    {notifications.map((n) => (
+                      <DropdownMenuItem
+                        key={n.id}
+                        className="whitespace-normal text-sm"
+                      >
+                        {n.message}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                )}
+              </DropdownMenu>
+            )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-red-700"
+                >
                   <Settings className="w-4 h-4 mr-2" /> Account
                 </Button>
               </DropdownMenuTrigger>
@@ -106,15 +214,20 @@ export default function AdmindashboardLayout({ children, user }: { children: Rea
           {/* Sidebar */}
           <div className="">
             <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24  w-60 h-[calc(100vh-6rem)] ">
-
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {user?.name?.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                  {user?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()}
                 </div>
                 <div>
                   <h3 className="font-semibold text-red-700">{user?.name}</h3>
                   <p className="text-sm text-red-600">{user?.email}</p>
-                  <h3 className="font-semibold text-red-700 text-center capitalize">{user?.role}</h3>
+                  <h3 className="font-semibold text-red-700 text-center capitalize">
+                    {user?.role}
+                  </h3>
                 </div>
               </div>
               <nav className="space-y-2 h-screen">
@@ -138,9 +251,7 @@ export default function AdmindashboardLayout({ children, user }: { children: Rea
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3 -ml-32 px-8">
-            {children}
-          </div>
+          <div className="lg:col-span-3 -ml-32 px-8">{children}</div>
         </div>
       </div>
 

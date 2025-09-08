@@ -103,6 +103,7 @@ export default function SignUpForm() {
       })
 
       const data = await response.json()
+      console.log("Signup response:", data)
 
       if (!response.ok) {
         throw new Error(data.error || "Something went wrong")

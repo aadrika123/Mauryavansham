@@ -21,6 +21,7 @@ export const users = pgTable("users", {
   isVerified: boolean("is_verified").default(false),
   isActive: boolean("is_active").default(true),
   profileId: serial("profile_id"),
+  isApproved: boolean("is_approved").default(false),
 
   // Profile-related fields
   gender: varchar("gender", { length: 10 }),
@@ -48,6 +49,8 @@ export const users = pgTable("users", {
   designation: varchar("designation", { length: 100 }),
   company: varchar("company", { length: 100 }),
   businessDetails: varchar("business_details", { length: 255 }),
+  status: varchar("status", { length: 20 }).default("pending"),
+  // values: "pending" | "approved" | "rejected"
 
   // ❌ income removed (form me nahi hai ab)
 
@@ -70,5 +73,5 @@ export const users = pgTable("users", {
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  deactivatedReason: text("deactivated_reason"),
 });
-

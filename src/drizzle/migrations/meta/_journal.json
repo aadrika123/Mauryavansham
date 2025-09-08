@@ -239,6 +239,76 @@
       "when": 1756719163130,
       "tag": "0033_huge_harrier",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1757147145112,
+      "tag": "0034_dizzy_kylun",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1757148275571,
+      "tag": "0035_right_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1757149890337,
+      "tag": "0036_fat_vampiro",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1757237253478,
+      "tag": "0037_wandering_joystick",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1757240493008,
+      "tag": "0038_volatile_shotgun",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1757257461311,
+      "tag": "0039_faulty_felicia_hardy",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1757262066320,
+      "tag": "0040_tiresome_stepford_cuckoos",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1757298859899,
+      "tag": "0041_next_earthquake",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1757301240670,
+      "tag": "0042_wild_runaways",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1757313956895,
+      "tag": "0043_certain_rocket_raccoon",
+      "breakpoints": true
     }
   ]
 }

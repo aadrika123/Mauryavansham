@@ -5,6 +5,7 @@ import { users } from "@/src/drizzle/db/schemas/users.schema";
 import { eq } from "drizzle-orm";
 import { sendWelcomeEmail } from "@/src/lib/email";
 import { sendWhatsAppMessage } from "@/src/lib/whatsapp";
+import { notifications } from "@/src/drizzle/schema";
 
 export async function POST(request: NextRequest) {
   try {
@@ -54,6 +55,26 @@ export async function POST(request: NextRequest) {
         name: users.name,
         email: users.email,
       });
+
+    // ✅ Insert notification for admins
+    const [notification] = await db
+      .insert(notifications)
+      .values({
+        type: "signup",
+        message: `New user signed up: ${newUser[0].name} (${newUser[0].email})`,
+        userId: newUser[0].id,
+      })
+      .returning();
+
+    // ✅ Emit real-time notification to admins
+    const io = (request as any)?.socket?.server?.io;
+    if (io) {
+      io.emit("new-notification", {
+        id: notification.id,
+        message: notification.message,
+        type: notification.type,
+      });
+    }
 
     // Send welcome email
     try {

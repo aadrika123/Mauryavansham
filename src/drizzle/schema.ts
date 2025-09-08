@@ -15,4 +15,10 @@ export * from "./db/schemas/discussions";
 export * from "./db/schemas/discussionReplies";
 export * from "./db/schemas/discussionLikes";
 export * from "./db/schemas/discussionCategories";
+export * from "./db/schemas/user_approvals";
+export * from "./db/schemas/notifications";
+export * from "./db/schemas/notification_reads";
+export * from "./db/schemas/events";
+export * from "./db/schemas/event_attendees";
+
 

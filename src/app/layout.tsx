@@ -1,5 +1,4 @@
 'use client';
-// app/layout.tsx
 import "../../styles/globals.css";
 import { ReactNode } from "react";
 import { SessionProvider } from "next-auth/react";
@@ -8,15 +7,19 @@ import { ThemeProvider } from "../components/theme-provider";
 import { Footer } from "../components/layout/footer";
 import { Toaster } from "../components/ui/toaster";
 import SessionTimeout from "../components/SessionTimeout"; 
-import Script from "next/script"; // 👈 import
+import Script from "next/script"; 
+import { usePathname } from "next/navigation"; // ✅ import
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname(); // ✅ get current route
+
+  const hideFooter = pathname.startsWith("/admin"); // ✅ check if route starts with /admin
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-Z35P4CZ619"
           strategy="afterInteractive"
@@ -40,7 +43,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <SessionTimeout>
               {children}
               <Toaster />
-              <Footer />
             </SessionTimeout>
           </ThemeProvider>
         </SessionProvider>

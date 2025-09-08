@@ -219,7 +219,7 @@ const createHtmlContent = (name: string, email: string, password: string) => `
             
             <div class="success-message">
                 <div class="success-icon">✅</div>
-                <strong>Congratulations! Your account has been created successfully.</strong>
+                <strong>Congratulations! Your account has been created and sent for approval successfully.</strong>
             </div>
             
             <div class="community-message">
@@ -277,7 +277,7 @@ Welcome to Mauryavansh Community!
 
 Namaste ${name},
 
-Congratulations! Your account has been created successfully.
+Congratulations! Your account has been created and sent for approval successfully.
 
 Welcome to the distinguished Mauryavansh community! You are now connected to a proud legacy that honors the great Mauryan heritage.
 
@@ -324,7 +324,7 @@ export const sendWelcomeEmail = async (data: WelcomeEmailData) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "👑 Mauryavansh Community - Your Account is Successfully Created!",
+      subject: "👑 Mauryavansh Community - Your Account is Successfully Created ",
       text: textContent,
       html: htmlContent,
     };

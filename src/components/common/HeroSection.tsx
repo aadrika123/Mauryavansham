@@ -1,6 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Sparkles, Star, Crown, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import {
+  Sparkles,
+  Star,
+  Crown,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+} from "lucide-react";
 import Image from "next/image";
 import Loader from "../ui/loader";
 
@@ -233,14 +240,12 @@ const HeroSection: React.FC = () => {
                   height={500}
                   priority
                 />
-                {/* <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
-                  {leftAd.views} <Eye className="w-4 h-4 "/>
-                </span> */}
               </>
             ) : (
               // </a>
-              <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
-                Ad Space (1)
+              <div className="w-full h-[450px] text-center bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
+                Ad Space (1) <br />
+                Please select image size of (350 x 500 pixels)
               </div>
             )}
           </div>
@@ -269,8 +274,9 @@ const HeroSection: React.FC = () => {
                 </span> */}
               </>
             ) : (
-              <div className="w-full h-[450px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
-                Ad Space (2)
+              <div className="w-full h-[450px] text-center bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
+                Ad Space (2) <br />
+                 Please select image size of (350 x 500 pixels)
               </div>
             )}
           </div>
