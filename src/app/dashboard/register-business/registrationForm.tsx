@@ -93,7 +93,7 @@ export default function BusinessRegistrationForm() {
   const removeArrayItem = (arrayName : any, index : any) => {
     setFormData(prev => ({
       ...prev,
-      [arrayName]: prev[arrayName].filter((_: any, i: any) => i !== index)
+      [arrayName]: prev[arrayName].filter((_, i) => i !== index)
     }));
   };
 
