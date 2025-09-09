@@ -3,8 +3,12 @@ import { authOptions } from "@/src/lib/auth";
 import { redirect } from "next/navigation";
 import DashboardLayout from "@/src/components/layout/dashboardLayout";
 import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
-import ManageUsersPage from "./manageUsersPage";
+import dynamic from "next/dynamic";
+// import ManageUsersPage from "./manageUsersPage";
 // import UserManagement from "./userManagementList";
+const ManageUsersPage = dynamic(() => import("./manageUsersPage"), {
+  ssr: false,
+});
 
 export default async function AdminAdsPage() {
   const session = await getServerSession(authOptions);
