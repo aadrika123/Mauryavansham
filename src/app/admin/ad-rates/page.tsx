@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/lib/auth";
 import { redirect } from "next/navigation";
-import DashboardLayout from "@/src/components/layout/dashboardLayout";
 import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
 import AdRatePage from "./adRatesPage";
 

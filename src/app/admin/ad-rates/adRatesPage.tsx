@@ -9,7 +9,6 @@ import {
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Button } from "@/src/components/ui/button";
-import { toast } from "@/src/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +17,7 @@ import {
   DialogFooter,
 } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
-import { useToast } from "@/src/components/ui/toastProvidesr";
+import { useToast } from "@/src/components/ui/toastProvider";
 import Loader from "@/src/components/ui/loader";
 
 interface RateData {
@@ -55,7 +54,7 @@ const CustomToolbar = ({ label, onNavigate }: any) => (
   </div>
 );
 
-export default function RateFixationCalendar() {
+export default function AdRatePage() {
   const [rates, setRates] = useState<RateData[]>([]);
   const [events, setEvents] = useState<BigCalendarEvent[]>([]);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);

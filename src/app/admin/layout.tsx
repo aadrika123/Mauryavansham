@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/src/components/theme-provider";
 // import { ToastProvider } from "@/src/components/ui/ToastProvider"; // <-- import custom provider
 import { Toaster } from "@/src/components/ui/toaster";
-import { ToastProvider } from "@/src/components/ui/toastProvidesr";
+import { ToastProvider } from "@/src/components/ui/toastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
