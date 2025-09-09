@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Users can only view their own ads unless they're admin
-    if (ad.userId !== session.user.id && session.user.role !== "admin") {
+    if (ad.userId !== session.user.id && (session.user.role !== "admin" && session.user.role !== "superAdmin")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Only admin can approve/reject ads
-    if (session.user.role !== "admin") {
+    if ((session.user.role !== "admin" && session.user.role !== "superAdmin")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 

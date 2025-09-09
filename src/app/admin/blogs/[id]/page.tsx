@@ -12,8 +12,8 @@ export default async function AdminBlogDetailPage({ params }: { params: { id: st
     redirect("/sign-in")
   }
 
-  if (session.user.role !== "admin") {
-    redirect("/dashboard")
+  if ((session.user.role !== "admin" && session.user.role !== "superAdmin")) {
+    redirect("/admin")
   }
 
   return (

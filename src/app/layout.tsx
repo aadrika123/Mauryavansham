@@ -15,7 +15,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname(); // ✅ get current route
 
-  const hideFooter = pathname.startsWith("/admin"); // ✅ check if route starts with /admin
+  const hideFooter = pathname.startsWith("/admin"); 
 
   return (
     <html lang="en" suppressHydrationWarning>

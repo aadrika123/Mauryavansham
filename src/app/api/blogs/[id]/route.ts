@@ -5,7 +5,10 @@ import { blogs } from "@/src/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { authOptions } from "@/src/lib/auth";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -18,18 +21,28 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    if (blog.authorId !== session.user.id && session.user.role !== "admin") {
+    if (
+      String(blog.authorId) !== String(session.user.id) &&
+      session.user.role !== "admin" &&
+      session.user.role !== "superAdmin"
+    ) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     return NextResponse.json({ blog });
   } catch (error) {
     console.error("Error fetching blog:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -37,16 +50,30 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     const body = await request.json();
-    const { title, content, summary, action, status, rejectionReason, imageUrl } = body;
+    const {
+      title,
+      content,
+      summary,
+      action,
+      status,
+      rejectionReason,
+      imageUrl,
+    } = body;
 
-    const [existingBlog] = await db.select().from(blogs).where(eq(blogs.id, params.id));
+    const [existingBlog] = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.id, params.id));
 
     if (!existingBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
     // Admin actions (approve/reject)
-    if (session.user.role === "admin" && (status === "approved" || status === "rejected")) {
+    if (
+      session.user.role === "admin" &&
+      (status === "approved" || status === "rejected")
+    ) {
       const [updatedBlog] = await db
         .update(blogs)
         .set({
@@ -62,13 +89,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // User actions (edit their own blogs)
-   if (existingBlog.authorId.toString() !== session.user.id.toString()) {
-  return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-}
-
+    if (existingBlog.authorId.toString() !== session.user.id.toString()) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     if (existingBlog.status !== "draft" && existingBlog.status !== "rejected") {
-      return NextResponse.json({ error: "Cannot edit blog in current status" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Cannot edit blog in current status" },
+        { status: 400 }
+      );
     }
 
     const newStatus = action === "submit" ? "pending" : "draft";
@@ -90,6 +119,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ blog: updatedBlog });
   } catch (error) {
     console.error("Error updating blog:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

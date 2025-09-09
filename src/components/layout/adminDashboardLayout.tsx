@@ -17,27 +17,17 @@ import {
   Bell,
   Settings,
   LogOut,
-  User,
   LayoutDashboard,
   Users,
-  Heart,
-  ShoppingBag,
   Calendar,
-  HandHeart,
-  Trophy,
-  Globe,
-  MessageSquare,
-  Search,
-  Camera,
   Tv,
+  Camera,
   Tv2,
+  MessageSquare,
+  Globe,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
-
-import { io } from "socket.io-client";
-
-let socket: any;
 
 export default function AdmindashboardLayout({
   children,
@@ -58,14 +48,16 @@ export default function AdmindashboardLayout({
     }
   }, [user]);
 
-  const sidebarItems = [
+  // Sidebar items for regular admin
+  const adminSidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
-    { title: "All Users", href: "/admin/manage-users", icon: Users },
-    { title: "Manage Users", href: "/admin/users", icon: Users },
+    // { title: "All Users", href: "/admin/manage-users", icon: Users },
+    // { title: "Manage Users", href: "/admin/users", icon: Users },
     { title: "Create Events", href: "/admin/events", icon: Calendar },
     { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
+    // { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
     {
       title: "Ads Location Master",
       href: "/admin/ads-location-master",
@@ -81,11 +73,37 @@ export default function AdmindashboardLayout({
       href: "/admin/discussion-castegory-master",
       icon: Globe,
     },
-
-    // { title: "Search Profiles", href: "/dashboard/search-profile", icon: Search },
-    // { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
-    // { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
   ];
+
+  // Sidebar items for superAdmin
+  const superAdminSidebarItems = [
+    { title: "Home", href: "/", icon: LayoutDashboard },
+    { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+    { title: "All Users", href: "/admin/manage-users", icon: Users },
+    { title: "Manage Users", href: "/admin/users", icon: Users },
+    { title: "Create Events", href: "/admin/events", icon: Calendar },
+    { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
+    { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
+    { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
+    {
+      title: "Ads Location Master",
+      href: "/admin/ads-location-master",
+      icon: Tv2,
+    },
+    {
+      title: "Discussions Moderation",
+      href: "/admin/discussions",
+      icon: MessageSquare,
+    },
+    {
+      title: "Discussion Category Master",
+      href: "/admin/discussion-castegory-master",
+      icon: Globe,
+    },
+  ];
+
+  const sidebarItems =
+    user?.role === "superAdmin" ? superAdminSidebarItems : adminSidebarItems;
 
   const handleSignOut = async () => {
     setIsOpen(false);
@@ -108,10 +126,6 @@ export default function AdmindashboardLayout({
             </div>
           </div>
           <div className="flex items-center gap-4">
-            {/* <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
-              <Bell className="w-4 h-4 mr-2" /> Notifications
-            </Button> */}
-            {/* ✅ Notifications */}
             {user?.role === "admin" && (
               <DropdownMenu
                 onOpenChange={async (isOpen) => {
@@ -119,20 +133,14 @@ export default function AdmindashboardLayout({
                     const unreadNotifications = notifications.filter(
                       (n) => n.isRead === 0
                     );
-
                     if (unreadNotifications.length > 0) {
-                      // Ek hi API call me sab mark read
                       await fetch("/api/admin/notifications/mark-read", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                          notificationIds: unreadNotifications.map(
-                            (n) => n.id
-                          ),
+                          notificationIds: unreadNotifications.map((n) => n.id),
                         }),
                       });
-
-                      // UI update
                       setNotifications((prev) =>
                         prev.map((n) => ({ ...n, isRead: 1 }))
                       );
@@ -185,16 +193,6 @@ export default function AdmindashboardLayout({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                {/* <DropdownMenuItem asChild>
-                  <Link href="/profile/edit">
-                    <User className="w-4 h-4 mr-2" /> Edit Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings">
-                    <Settings className="w-4 h-4 mr-2" /> Settings
-                  </Link>
-                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setIsOpen(true)}
@@ -212,25 +210,30 @@ export default function AdmindashboardLayout({
       <div className="pt-24">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
-          <div className="">
-            <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24  w-60 h-[calc(100vh-6rem)] ">
+          <div>
+            <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24 w-60 h-[calc(100vh-6rem)] flex flex-col">
+              {/* Profile section */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {user?.name
-                    ?.split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()}
+                <div
+                  className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
+                  onClick={() =>
+                    (window.location.href = "/admin/user-profile/" + user?.id)
+                  }
+                >
+                  <img
+                    src={user?.photo || "/placeholder.svg"}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-semibold text-red-700">{user?.name}</h3>
-                  <p className="text-sm text-red-600">{user?.email}</p>
-                  <h3 className="font-semibold text-red-700 text-center capitalize">
-                    {user?.role}
-                  </h3>
+                  <p className="text-sm text-red-600">{user?.role}</p>
                 </div>
               </div>
-              <nav className="space-y-2 h-screen">
+
+              {/* Scrollable nav */}
+              <nav className="space-y-2 overflow-y-auto flex-1">
                 {sidebarItems.map((item) => (
                   <Link
                     key={item.href}

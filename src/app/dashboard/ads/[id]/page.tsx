@@ -46,7 +46,7 @@ export default async function AdPage({ params }: AdPageProps) {
   }
 
   // Users can only view their own ads unless they're admin
-  // if (ad.user.id !== Number(session.user.id) && session.user.role !== "admin") {
+  // if (ad.user.id !== Number(session.user.id) && (session.user.role !== "admin" && session.user.role !== "superAdmin")) {
   //   redirect("/dashboard/ads");
   // }
 

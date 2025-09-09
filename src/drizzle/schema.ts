@@ -20,5 +20,7 @@ export * from "./db/schemas/notifications";
 export * from "./db/schemas/notification_reads";
 export * from "./db/schemas/events";
 export * from "./db/schemas/event_attendees";
+export * from "./db/schemas/adRates";
+
 
 

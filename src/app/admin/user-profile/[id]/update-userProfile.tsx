@@ -154,7 +154,7 @@ export default function UserProfilePage({ data }: { data: any }) {
           title: "Profile Updated ✅",
           description: "Your profile has been updated successfully!",
         });
-         router.push(`/dashboard`);
+        router.push(`/admin`);
       } else {
         toast({
           title: "Update Failed ❌",

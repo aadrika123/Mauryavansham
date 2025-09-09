@@ -7,7 +7,7 @@ import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout"
 export default async function AdminOverviewPage() {
   const session = await getServerSession(authOptions)
 
-  if (!session?.user?.id || session.user.role !== "admin") {
+  if (!session?.user?.id || (session.user.role !== "admin" && session.user.role !== "superAdmin")) {
     redirect("/dashboard")
   }
 

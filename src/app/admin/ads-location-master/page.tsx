@@ -12,8 +12,8 @@ export default async function AdsLocationMasterIndex({ params }: { params: { id:
     redirect("/sign-in")
   }
 
-  if (session.user.role !== "admin") {
-    redirect("/dashboard")
+  if ((session.user.role !== "admin" && session.user.role !== "superAdmin")) {
+    redirect("/admin")
   }
 
   return (

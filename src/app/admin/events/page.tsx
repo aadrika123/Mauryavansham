@@ -8,8 +8,8 @@ import CreateEventForm from "./createEventForm";
 export default async function AdminAdsPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.id || session.user.role !== "admin") {
-    redirect("/dashboard");
+  if (!session?.user?.id || (session.user.role !== "admin" && session.user.role !== "superAdmin")) {
+    redirect("/admin");
   }
 
   return (

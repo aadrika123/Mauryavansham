@@ -1,10 +1,27 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-// import { authOptions } from "@/lib/auth"
 import { db } from "@/src/drizzle/db";
 import { ads, users } from "@/src/drizzle/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { authOptions } from "@/src/lib/auth";
+
+// helper function to safely parse DB date values
+function parseDbDate(val: any): Date {
+  if (!val) return new Date();
+  if (val instanceof Date) return val;
+  if (typeof val === "string" && val.includes("-")) {
+    // assume DB returns yyyy-mm-dd
+    const [year, month, day] = val.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+  return new Date(val);
+}
+
+// helper function to parse DD-MM-YYYY into Date
+function parseDate(dateStr: string): Date {
+  const [day, month, year] = dateStr.split("-");
+  return new Date(`${year}-${month}-${day}`); // safe format YYYY-MM-DD
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,7 +34,11 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status");
     const userId = searchParams.get("userId");
 
-    let query = db
+    let conditions = [];
+    if (userId) conditions.push(eq(ads.userId, userId));
+    if (status) conditions.push(eq(ads.status, status as any));
+
+    const query = db
       .select({
         id: ads.id,
         title: ads.title,
@@ -38,25 +59,24 @@ export async function GET(request: NextRequest) {
       })
       .from(ads)
       .leftJoin(users, eq(ads.userId, users.id))
+      .where(conditions.length > 0 ? and(...conditions) : undefined) // ✅ yahan fix
       .orderBy(desc(ads.createdAt));
 
-    // Filter by user if specified (for user's own ads)
-    if (userId) {
-      query = query.where(eq(ads.userId, userId));
-    }
-
-    // Filter by status if specified
-    if (status) {
-      query = query.where(eq(ads.status, status as any));
-    }
+    // combine filters
+    // const conditions = [];
+    // if (userId) conditions.push(eq(ads.userId, userId));
+    // if (status) conditions.push(eq(ads.status, status as any));
+    // if (conditions.length > 0) {
+    //   query = query.where(and(...conditions));
+    // }
 
     const result = await query;
 
     // Calculate days left for each ad
     const adsWithDaysLeft = result.map((ad) => {
       const today = new Date();
-      const toDate = new Date(ad.toDate);
-      const fromDate = new Date(ad.fromDate);
+      const fromDate = parseDbDate(ad.fromDate);
+      const toDate = parseDbDate(ad.toDate);
 
       let daysLeft = 0;
       let isActive = false;
@@ -116,9 +136,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert to Date objects
-    const from = new Date(fromDate);
-    const to = new Date(toDate);
+    // Parse DD-MM-YYYY format safely
+    const from = parseDate(fromDate);
+    const to = parseDate(toDate);
 
     // Normalize dates (ignore time part)
     const today = new Date();
@@ -142,17 +162,18 @@ export async function POST(request: NextRequest) {
 
     // Insert new Ad
     const [newAd] = await db
-      .insert(ads)
-      .values({
-        title,
-        bannerImageUrl,
-        fromDate: from,
-        toDate: to,
-        placementId,
-        userId: session.user.id,
-        status: "pending",
-      })
-      .returning();
+  .insert(ads)
+  .values({
+    title: String(title),
+    bannerImageUrl: String(bannerImageUrl),
+    fromDate: from,
+    toDate: to,
+    placementId: Number(placementId),
+    userId: Number(session.user.id),
+    status: "pending",
+  })
+  .returning();
+
 
     return NextResponse.json({ ad: newAd }, { status: 201 });
   } catch (error) {
