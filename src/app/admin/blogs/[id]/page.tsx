@@ -12,10 +12,6 @@ export default async function AdminBlogDetailPage({ params }: { params: { id: st
     redirect("/sign-in")
   }
 
-  if ((session.user.role !== "admin" && session.user.role !== "superAdmin")) {
-    redirect("/sign-in")
-  }
-
   return (
     <AdmindashboardLayout user={session.user}>
     <div className="container mx-auto px-4 py-8">
