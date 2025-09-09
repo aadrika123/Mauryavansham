@@ -22,7 +22,6 @@ interface User {
   role: "user" | "admin";
   isActive: boolean;
   status: string;
-  deactivationReason?: string;
   deactivatedReason?: string;
 }
 
