@@ -8,7 +8,7 @@ export default async function AdminOverviewPage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.user?.id || (session.user.role !== "admin" && session.user.role !== "superAdmin")) {
-    redirect("/dashboard")
+    redirect("/sign-in")
   }
 
   return (
