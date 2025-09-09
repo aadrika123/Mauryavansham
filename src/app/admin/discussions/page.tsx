@@ -7,7 +7,7 @@ import AdminDiscussionsPage from "./adminDiscussionPage"
 export default async function AdminAdsPage() {
   const session = await getServerSession(authOptions)
 
-  if (!session?.user?.id || (session.user.role !== "admin" && session.user.role !== "superAdmin")) {
+  if (!session?.user?.id) {
     redirect("/sign-in")
   }
 
