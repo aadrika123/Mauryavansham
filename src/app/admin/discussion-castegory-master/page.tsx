@@ -3,11 +3,7 @@ import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/src/lib/auth"
 import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout"
-import dynamic from "next/dynamic";
-// import CategoryMaster from "./discussionCategoryMater"
-const CategoryMaster = dynamic(() => import("./discussionCategoryMater"), {
-  ssr: false,
-});
+import CategoryMaster from "./discussionCategoryMater"
 // import AdsLocationMasterPage from "./adsLocationMaster"
 
 export default async function AdsLocationMasterIndex({ params }: { params: { id: string } }) {
