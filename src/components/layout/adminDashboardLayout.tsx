@@ -105,11 +105,14 @@ export default function AdmindashboardLayout({
   const sidebarItems =
     user?.role === "superAdmin" ? superAdminSidebarItems : adminSidebarItems;
 
-  const handleSignOut = async () => {
-    setIsOpen(false);
-    await signOut({ callbackUrl: "/", redirect: false });
+ const handleSignOut = async () => {
+  setIsOpen(false);
+  await signOut({ callbackUrl: "/", redirect: false });
+  if (typeof window !== "undefined") {
     window.location.href = "/";
-  };
+  }
+};
+
 
   return (
     <div className="bg-orange-50 min-h-screen">
@@ -216,9 +219,11 @@ export default function AdmindashboardLayout({
               <div className="flex items-center gap-3 mb-6">
                 <div
                   className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
-                  onClick={() =>
-                    (window.location.href = "/admin/user-profile/" + user?.id)
-                  }
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      window.location.href = "/admin/user-profile/" + user?.id;
+                    }
+                  }}
                 >
                   <img
                     src={user?.photo || "/placeholder.svg"}
