@@ -26,6 +26,7 @@ export default async function ViewUserProfile({
 
   const result = await getUserById(id);
   console.log("Fetched user data:", result);
+  console.log("Fetched user data:", session.user);
 
   return (
     <AdmindashboardLayout user={session.user} data={result.data}>

@@ -47,6 +47,7 @@ export default function AdmindashboardLayout({
         .then((data) => setNotifications(data));
     }
   }, [user]);
+  console.log(user, "user in admin dashboard");
 
   // Sidebar items for regular admin
   const adminSidebarItems = [

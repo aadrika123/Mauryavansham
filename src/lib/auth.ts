@@ -28,7 +28,7 @@ export const authOptions: AuthOptions = {
         if (!user) {
           throw new Error("Invalid email or password");
         }
-        // ✅ Check if account is active
+
         if (user.isActive === false) {
           throw new Error(
             "Your account has been suspended due to violation of community guidelines."
@@ -44,14 +44,12 @@ export const authOptions: AuthOptions = {
         }
 
         // 🚨 Only for normal users
-        // 🚨 Only for normal users
         if (user.role === "user") {
           const approvals = await db.query.userApprovals.findMany({
             where: eq(userApprovals.userId, user.id),
             with: { admin: true },
           });
 
-          // ✅ Split approvals
           const approved = approvals.filter((a) => a.status === "approved");
           const rejected = approvals.filter((a) => a.status === "rejected");
 
@@ -62,7 +60,6 @@ export const authOptions: AuthOptions = {
             (a) => a.admin?.name || a.adminName || "Unknown"
           );
 
-          // ❌ If any rejection exists
           if (rejected.length > 0 || user.status === "rejected") {
             const rejectedBy = rejected.map(
               (a) =>
@@ -76,7 +73,6 @@ export const authOptions: AuthOptions = {
             );
           }
 
-          // ⏳ Pending approvals
           if (approvedCount < requiredApprovals) {
             throw new Error(
               `Your account is pending approval (${approvedCount}/${requiredApprovals}).` +
@@ -92,7 +88,7 @@ export const authOptions: AuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
-          photo: user.photo,
+          photo: user.photo || "/default-avatar.png",
           profileId: user.profileId,
         } as any;
       },
@@ -105,21 +101,29 @@ export const authOptions: AuthOptions = {
         token.email = user.email;
         token.name = user.name;
         token.role = user.role;
-        token.photo = user.photo;
+        token.photo = user.photo || "/default-avatar.png";
         token.profileId = user.profileId;
       }
       return token;
     },
+
+    // ✅ Always fetch latest user from DB
     async session({ session, token }) {
-      if (token) {
-        session.user = {
-          id: token.id as string,
-          email: token.email as string,
-          name: token.name as string,
-          role: token.role as string,
-          photo: token.photo as string,
-          profileId: token.profileId as string,
-        };
+      if (token?.id) {
+        const freshUser = await db.query.users.findFirst({
+          where: eq(users.id, Number(token.id)),
+        });
+
+        if (freshUser) {
+          session.user = {
+            id: freshUser.id.toString(),
+            email: freshUser.email,
+            name: freshUser.name,
+            role: freshUser.role ?? "user", // fallback if null
+            photo: freshUser.photo || "/default-avatar.png",
+            profileId: freshUser.profileId?.toString() || "", // convert number → string
+          };
+        }
       }
       return session;
     },
