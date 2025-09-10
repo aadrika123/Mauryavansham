@@ -6,6 +6,7 @@ import { Badge } from "@/src/components/ui/badge"
 import { FileText, Eye, Clock, CheckCircle, XCircle } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/src/components/ui/button"
+import { useToast } from "@/src/components/ui/toastProvider"
 
 interface Stats {
   blogs: {
@@ -29,6 +30,7 @@ export default function AdminOverview() {
     ads: { total: 0, pending: 0, approved: 0, rejected: 0, active: 0 },
   })
   const [loading, setLoading] = useState(true)
+  const { addToast } = useToast();
 
   useEffect(() => {
     fetchStats()
@@ -58,9 +60,18 @@ export default function AdminOverview() {
         }
 
         setStats({ blogs: blogStats, ads: adStats })
+        addToast({
+          title: "Stats fetched successfully!",
+          variant: "success",
+
+        })
       }
     } catch (error) {
       console.error("Error fetching stats:", error)
+      addToast({
+        title: "Error fetching stats",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }

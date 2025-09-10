@@ -18,6 +18,7 @@ import {
 } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
 import Loader from "@/src/components/ui/loader";
+import { useToast } from "@/src/components/ui/toastProvider";
 
 interface RateData {
   date: string;
@@ -60,6 +61,7 @@ export default function AdRatePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentRate, setCurrentRate] = useState<number | "">("");
   const [loading, setLoading] = useState(false);
+  const { addToast } = useToast();
 
 
   // Fetch rates from API
@@ -78,14 +80,23 @@ export default function AdRatePage() {
           }))
         );
         // alert({ title: "Rates fetched successfully!", variant: "success" });
+        addToast({
+          title: "Rates fetched successfully!",
+          variant: "success",
+        });
+
       } catch {
         // alert({ title: "Failed to fetch rates", variant: "destructive" });
+         addToast({
+          title: "Failed to fetch rates",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
     };
     fetchRates();
-  }, []);
+  }, [ ]);
 
   const handleSelectSlot = (slotInfo: any) => {
     const dateStr = format(slotInfo.start, "yyyy-MM-dd");
@@ -117,7 +128,11 @@ export default function AdRatePage() {
 
   const handleSaveAll = async () => {
     if (rates.length === 0) {
-      alert({ title: "No rates to save", variant: "destructive" });
+      // alert({ title: "No rates to save", variant: "destructive" });
+      addToast({
+        title: "No rates to save",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -130,12 +145,24 @@ export default function AdRatePage() {
       });
 
       if (res.ok) {
-        alert({ title: "Rates saved successfully!", variant: "success" });
+        // alert({ title: "Rates saved successfully!", variant: "success" });
+        addToast({
+          title: "Rates saved successfully!",
+          variant: "success",
+        });
       } else {
-        alert({ title: "Failed to save rates", variant: "destructive" });
+        // alert({ title: "Failed to save rates", variant: "destructive" });
+        addToast({
+          title: "Failed to save rates",
+          variant: "destructive",
+        });
       }
     } catch {
-      alert({ title: "Error saving rates", variant: "destructive" });
+      // alert({ title: "Error saving rates", variant: "destructive" });
+      addToast({
+        title: "Error saving rates",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

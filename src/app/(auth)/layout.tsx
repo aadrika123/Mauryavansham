@@ -7,6 +7,7 @@ import "../../../styles/globals.css";
 import { Header } from "@/src/components/layout/header";
 import { Footer } from "@/src/components/layout/footer";
 import { ConditionalTopHeader } from "@/src/components/layout/conditionalTopHeader";
+import { ToastProvider } from "@/src/components/ui/toastProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -31,8 +32,10 @@ export default function AuthLayout({
           enableSystem
           disableTransitionOnChange
         >
+           <ToastProvider>
           <Toaster />
           {children}
+          </ToastProvider>
         </ThemeProvider>
         <Footer />
       </body>

@@ -14,14 +14,16 @@ import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { ImageIcon, Send } from "lucide-react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import Image from "next/image";
+import { useToast } from "@/src/components/ui/toastProvider";
 
 export default function CreateEventForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
+  const { addToast } = useToast();
 
   const today = new Date().toISOString().split("T")[0]; // 👈 min date today
 
@@ -55,9 +57,19 @@ export default function CreateEventForm() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/"))
-      return toast.error("Please select an image file");
+      // return toast.error("Please select an image file");
+      return addToast({
+        title: "Invalid File",
+        description: "Please select a valid image file.",
+        variant: "destructive",
+      });
     if (file.size > 5 * 1024 * 1024)
-      return toast.error("Image size should be less than 5MB");
+      // return toast.error("Image size should be less than 5MB");
+      return addToast({
+        title: "Image Size Limit Exceeded",
+        description: "Image size should be less than 5MB.",
+        variant: "destructive",
+      });
 
     setUploading(true);
     try {
@@ -73,13 +85,25 @@ export default function CreateEventForm() {
         const result = await response.json();
         setImagePreview(result.url);
         setFormData({ ...formData, bannerImageUrl: result.url });
-        toast.success("Image uploaded successfully");
+        // toast.success("Image uploaded successfully");
+        addToast({
+          title: "Image uploaded successfully",
+          variant: "success",
+        })
       } else {
         const error = await response.json();
-        toast.error(error.error || "Upload failed");
+        // toast.error(error.error || "Upload failed");
+        addToast({
+          title: error.error || "Upload failed",
+          variant: "destructive",
+        });
       }
     } catch {
-      toast.error("Error uploading image");
+      // toast.error("Error uploading image");
+      addToast({
+        title: "Error uploading image",
+        variant: "destructive",
+      })
     } finally {
       setUploading(false);
     }
@@ -91,19 +115,36 @@ export default function CreateEventForm() {
 
     // Validation
     if (!formData.title || !formData.description || !formData.date) {
-      return toast.error("Please fill in all required fields");
+      // return toast.error("Please fill in all required fields");
+     return addToast({
+        title: "Please fill in all required fields",
+        variant: "destructive",
+      })
+      
     }
 
     if (new Date(formData.date) < new Date(today)) {
-      return toast.error("Date cannot be in the past");
+      // return toast.error("Date cannot be in the past");
+      return addToast({
+        title: "Date cannot be in the past",
+        variant: "destructive",
+      })
     }
 
     if (!formData.fromTime || !formData.toTime) {
-      return toast.error("Please select event timings");
+      // return toast.error("Please select event timings");
+      return addToast({
+        title: "Please select event timings",
+        variant: "destructive",
+      })
     }
 
     if (formData.maxAttendees < "1") {
-      return toast.error("Max attendees must be at least 1");
+      // return toast.error("Max attendees must be at least 1");
+      return addToast({
+        title: "Max attendees must be at least 1",
+        variant: "destructive",
+      })
     }
 
     setLoading(true);
@@ -120,14 +161,26 @@ export default function CreateEventForm() {
       });
 
       if (response.ok) {
-        toast.success("Event created successfully!");
+        // toast.success("Event created successfully!");
+        addToast({
+          title: "Event created successfully!",
+          variant: "success",
+        })
         router.push("/events");
       } else {
         const error = await response.json();
-        toast.error(error.error || "Failed to create event");
+        // toast.error(error.error || "Failed to create event");
+        addToast({
+          title: error.error || "Failed to create event",
+          variant: "destructive",
+        })
       }
     } catch {
-      toast.error("Error creating event");
+      // toast.error("Error creating event");
+      addToast({
+        title: "Error creating event",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false);
     }

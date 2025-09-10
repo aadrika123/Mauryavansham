@@ -15,7 +15,13 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const [blog] = await db.select().from(blogs).where(eq(blogs.id, params.id));
+    // const [blog] = await db.select().from(blogs).where(eq(blogs.id, params.id));
+    const blogId = Number(params.id);
+    if (isNaN(blogId)) {
+      return NextResponse.json({ error: "Invalid blog id" }, { status: 400 });
+    }
+
+    const [blog] = await db.select().from(blogs).where(eq(blogs.id, blogId));
 
     if (!blog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
@@ -60,16 +66,21 @@ export async function PUT(
       imageUrl,
     } = body;
 
+    const blogId = Number(params.id);
+    if (isNaN(blogId)) {
+      return NextResponse.json({ error: "Invalid blog id" }, { status: 400 });
+    }
+
     const [existingBlog] = await db
       .select()
       .from(blogs)
-      .where(eq(blogs.id, params.id));
+      .where(eq(blogs.id, blogId));
 
     if (!existingBlog) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    // Admin actions (approve/reject)
+    // ✅ Admin actions (approve/reject)
     if (
       session.user.role === "admin" &&
       (status === "approved" || status === "rejected")
@@ -82,13 +93,13 @@ export async function PUT(
           approvedAt: status === "approved" ? new Date() : null,
           updatedAt: new Date(),
         })
-        .where(eq(blogs.id, params.id))
+        .where(eq(blogs.id, blogId)) // ✅ fix applied
         .returning();
 
       return NextResponse.json({ blog: updatedBlog });
     }
 
-    // User actions (edit their own blogs)
+    // ✅ User actions (edit their own blogs)
     if (existingBlog.authorId.toString() !== session.user.id.toString()) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -108,12 +119,12 @@ export async function PUT(
         title,
         content,
         summary,
-        imageUrl: imageUrl || existingBlog.imageUrl, // <-- Update image
+        imageUrl: imageUrl || existingBlog.imageUrl,
         status: newStatus,
-        rejectionReason: null, // Clear rejection reason when resubmitting
+        rejectionReason: null,
         updatedAt: new Date(),
       })
-      .where(eq(blogs.id, params.id))
+      .where(eq(blogs.id, blogId)) // ✅ fix applied
       .returning();
 
     return NextResponse.json({ blog: updatedBlog });

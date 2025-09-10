@@ -2,8 +2,9 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/src/components/theme-provider";
-// import { ToastProvider } from "@/src/components/ui/ToastProvider"; // <-- import custom provider
+// import { ToastProvider } from "@/src/components/ui/ToastProvider";
 import { Toaster } from "@/src/components/ui/toaster";
+import { ToastProvider } from "@/src/components/ui/toastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,8 +29,10 @@ export default function Adminlayout({
           disableTransitionOnChange
         >
           {/* Wrap children in ToastProvider */}
+          <ToastProvider>
             <Toaster /> {/* optional: your existing toaster */}
             {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

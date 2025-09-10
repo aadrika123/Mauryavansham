@@ -1,59 +1,80 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/src/lib/auth"
-import { db } from "@/src/drizzle/db"
-import { ads } from "@/src/drizzle/schema"
-import { eq } from "drizzle-orm"
+import { type NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/src/lib/auth";
+import { db } from "@/src/drizzle/db";
+import { ads } from "@/src/drizzle/schema";
+import { eq } from "drizzle-orm";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const [ad] = await db.select().from(ads).where(eq(ads.id, params.id))
+    // ✅ convert params.id to number
+    const adId = Number(params.id);
+    if (isNaN(adId)) {
+      return NextResponse.json({ error: "Invalid ad id" }, { status: 400 });
+    }
+
+    const [ad] = await db.select().from(ads).where(eq(ads.id, adId));
 
     if (!ad) {
-      return NextResponse.json({ error: "Ad not found" }, { status: 404 })
+      return NextResponse.json({ error: "Ad not found" }, { status: 404 });
     }
 
-    // Users can only view their own ads unless they're admin
-    if (ad.userId !== session.user.id && session.user.role !== "admin" ) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    // ✅ session.user.id is string, so convert before comparing
+    if (ad.userId !== Number(session.user.id) && session.user.role !== "admin" && session.user.role !== "superAdmin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    return NextResponse.json({ ad })
+    return NextResponse.json({ ad });
   } catch (error) {
-    console.error("Error fetching ad:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error fetching ad:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json()
-    const { status, rejectionReason } = body
+    const body = await request.json();
+    const { status, rejectionReason } = body;
+
+    // ✅ convert params.id to number
+    const adId = Number(params.id);
+    if (isNaN(adId)) {
+      return NextResponse.json({ error: "Invalid ad id" }, { status: 400 });
+    }
 
     // Check if ad exists
-    const [existingAd] = await db.select().from(ads).where(eq(ads.id, params.id))
+    const [existingAd] = await db.select().from(ads).where(eq(ads.id, adId));
 
     if (!existingAd) {
-      return NextResponse.json({ error: "Ad not found" }, { status: 404 })
+      return NextResponse.json({ error: "Ad not found" }, { status: 404 });
     }
 
     // Only admin can approve/reject ads
-    if ((session.user.role !== "admin")) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    if (session.user.role !== "admin" && session.user.role !== "superAdmin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     if (status !== "approved" && status !== "rejected") {
-      return NextResponse.json({ error: "Invalid status" }, { status: 400 })
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
     const [updatedAd] = await db
@@ -64,12 +85,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         approvedAt: status === "approved" ? new Date() : null,
         updatedAt: new Date(),
       })
-      .where(eq(ads.id, params.id))
-      .returning()
+      .where(eq(ads.id, adId)) // ✅ yaha number use karna zaruri tha
+      .returning();
 
-    return NextResponse.json({ ad: updatedAd })
+    return NextResponse.json({ ad: updatedAd });
   } catch (error) {
-    console.error("Error updating ad:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error updating ad:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
+

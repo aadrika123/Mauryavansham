@@ -10,7 +10,7 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Alert, AlertDescription } from "@/src/components/ui/alert";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
+// import { useToast } from "@/src/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -19,17 +19,20 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/src/components/ui/dialog"; // agar tum UI kit me dialog hai
+import { useToast } from "@/src/components/ui/toastProvider";
 
 export default function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   // const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const { toast } = useToast();
+  const callbackUrl = searchParams?.get("callbackUrl") ?? "/";
+
+  // const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [modalMessage, setModalMessage] = useState<string | null>(null);
+  const { addToast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -65,14 +68,20 @@ export default function SignInForm() {
       if (result?.error) {
         setModalMessage(result.error); // 🎯 yaha modal ke liye
       } else {
-        toast({
-          title: "Login Successful 🎉",
-          description: "Welcome back!",
-        });
+        addToast({
+          title: "Success",
+          description: "Login successful!",
+          variant: "success",
+        })
         router.push(callbackUrl);
       }
     } catch (error) {
-      console.error("Sign in error:", error);
+      // console.error("Sign in error:", error);
+      addToast({
+        title: "Error",
+        description: "Login failed. Please try again.",
+        variant: "destructive",
+      })
       setModalMessage("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);

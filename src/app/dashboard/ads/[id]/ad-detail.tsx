@@ -8,28 +8,31 @@ import { Badge } from "@/src/components/ui/badge"
 import { ArrowLeft, Calendar, User, AlertCircle, CheckCircle, Clock } from "lucide-react"
 import { format } from "date-fns"
 
-interface Ad {
-   id: string
-  title: string
-  bannerImageUrl: string
-  fromDate: string
-  toDate: string
-  status: "pending" | "approved" | "rejected" | "expired"
-  createdAt: string
-  updatedAt: string
-  approvedAt?: string
-  rejectionReason?: string
+export interface Ad {
+  id: number;  // 👈 yaha string → number
+  title: string;
+  bannerImageUrl: string;
+  fromDate: string;
+  toDate: string;
+  status: "pending" | "approved" | "rejected" | "expired";
+  createdAt: Date;
+  updatedAt: Date;
+  approvedAt: Date | null;
+  rejectionReason: string | null;
   user: {
-    id: string
-    name: string
-    email: string
-  }
+    id: number;   // 👈 ye bhi db me number hi hai
+    name: string;
+    email: string;
+  } | null;
 }
 
+
 interface AdDetailProps {
+  // ad: Ad
   ad: Ad
   currentUserId: string
   userRole?: string
+
 
 }
 
@@ -115,7 +118,7 @@ export default function AdDetail({ ad, currentUserId, userRole }: AdDetailProps)
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   <User className="h-4 w-4" />
-                  <span>{ad.user.name}</span>
+                  <span>{ad?.user?.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />

@@ -45,11 +45,6 @@ export default async function AdPage({ params }: AdPageProps) {
     redirect("/dashboard/ads");
   }
 
-  // Users can only view their own ads unless they're admin
-  // if (ad.user.id !== Number(session.user.id) && (session.user.role !== "admin")) {
-  //   redirect("/dashboard/ads");
-  // }
-
   return (
     <DashboardLayout user={session.user}>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
