@@ -119,9 +119,21 @@ export const authOptions: AuthOptions = {
             id: freshUser.id.toString(),
             email: freshUser.email,
             name: freshUser.name,
-            role: freshUser.role ?? "user", // fallback if null
+            role: freshUser.role ?? "user",
             photo: freshUser.photo || "/default-avatar.png",
-            profileId: freshUser.profileId?.toString() || "", // convert number → string
+            profileId: freshUser.profileId?.toString() || "",
+            phone: freshUser.phone || "",
+            fatherName: freshUser.fatherName || "",
+            motherName: freshUser.motherName || "",
+            address: freshUser.address || "",
+            city: freshUser.city || "",
+            state: freshUser.state || "",
+            country: freshUser.country || "",
+            zipCode: freshUser.zipCode || "",
+            currentAddress: freshUser.currentAddress || "",
+            currentCity: freshUser.currentCity || "",
+            currentState: freshUser.currentState || "",
+            currentZipCode: freshUser.currentZipCode || "",
           };
         }
       }

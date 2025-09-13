@@ -21,6 +21,9 @@ export * from "./db/schemas/notification_reads";
 export * from "./db/schemas/events";
 export * from "./db/schemas/event_attendees";
 export * from "./db/schemas/adRates";
+export * from "./db/schemas/user_siblings";
+export * from "./db/schemas/user_childrens";
+export * from "./db/schemas/businesses";
 
 
 

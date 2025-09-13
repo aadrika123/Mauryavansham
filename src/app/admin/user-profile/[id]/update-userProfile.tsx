@@ -17,7 +17,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     address: "",
     photo: "",
     maritalStatus: "",
-    religion: "Hindu",
+    // religion: "Hindu",
     caste: "",
     motherTongue: "",
     height: "",
@@ -46,7 +46,7 @@ export default function UserProfilePage({ data }: { data: any }) {
         ...prev,
         ...data,
         country: data.country || "India", // ✅ overwrite fix
-        religion: data.religion || "Hindu", // ✅ overwrite fix
+        // religion: data.religion || "Hindu", // ✅ overwrite fix
       }));
     }
   }, [data]);
@@ -292,7 +292,7 @@ export default function UserProfilePage({ data }: { data: any }) {
             onChange={handleChange}
             options={["Single", "Married", "Divorced", "Widowed"]}
           />
-          <InputField label="Religion" name="religion" value="Hindu" disabled />
+          {/* <InputField label="Religion" name="religion" value="Hindu" disabled /> */}
           <InputField
             label="Mother Tongue"
             name="motherTongue"

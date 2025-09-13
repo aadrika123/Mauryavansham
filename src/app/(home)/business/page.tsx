@@ -2,8 +2,14 @@ import { Button } from "@/src/components/ui/button";
 import BusinessDetailsPage from "./businessPage";
 import { ArrowLeft, Plus } from "lucide-react";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/src/lib/auth";
 
-export default function BusinessIndexPage() {
+export default async function BusinessIndexPage() {
+  const session = await getServerSession(authOptions);
+  // if (!session?.user?.id) {
+  //   return <BusinessDetailsPage />;
+  // }
   return (
     <>
       <div className="bg-yellow-50 p-4">
@@ -20,7 +26,7 @@ export default function BusinessIndexPage() {
           </div>
         </div>
       </div>
-      <BusinessDetailsPage />
+      <BusinessDetailsPage user={session?.user}/>
     </>
   );
 }

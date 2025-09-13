@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
@@ -68,16 +68,50 @@ export default function DashboardLayout({
     { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
     { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
     {
-      title:"Register-business", href: "/dashboard/register-business", icon: Wallet2Icon
-    }
+      title: "Register-business",
+      href: "/dashboard/register-business",
+      icon: Wallet2Icon,
+    },
   ];
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (user?.role === "user") {
+      fetch("/api/notifications")
+        .then((res) => res.json())
+        .then((data) => setNotifications(data));
+    }
+  }, [user]);
+
+  const handleNotificationsOpen = async () => {
+    const unreadNotifications = notifications.filter((n) => !n.isRead);
+    if (unreadNotifications.length > 0) {
+      await fetch("/api/notifications/mark-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          notificationIds: unreadNotifications.map((n) => n.id),
+        }),
+      });
+      // Update the local state
+      setNotifications((prev) =>
+        prev.map((n) =>
+          unreadNotifications.find((u) => u.id === n.id)
+            ? { ...n, isRead: true }
+            : n
+        )
+      );
+    }
+  };
+
+  console.log(notifications);
+  console.log(user);
 
   const handleSignOut = async () => {
     setIsOpen(false);
     await signOut({ callbackUrl: "/", redirect: false });
     window.location.href = "/";
   };
-  console.log(data);
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
@@ -93,43 +127,70 @@ export default function DashboardLayout({
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-red-700"
-            >
-              <Bell className="w-4 h-4 mr-2" /> Notifications
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-red-700"
+            <div className="flex items-center gap-4">
+              {user?.role === "user" && (
+                <DropdownMenu
+                  onOpenChange={async (open) => {
+                    if (open) {
+                      await handleNotificationsOpen();
+                    }
+                  }}
                 >
-                  <Settings className="w-4 h-4 mr-2" /> Account
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/user-profile/${user?.id}`}>
-                    <User className="w-4 h-4 mr-2" /> Edit Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings">
-                    <Settings className="w-4 h-4 mr-2" /> Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => setIsOpen(true)}
-                  className="text-red-600 focus:text-red-600"
-                >
-                  <LogOut className="w-4 h-4 mr-2" /> Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-white hover:bg-red-700"
+                    >
+                      <Bell className="w-4 h-4 mr-2" />
+                      Notifications
+                      {notifications.filter((n) => !n.isRead).length > 0 && (
+                        <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
+                          {notifications.filter((n) => !n.isRead).length}
+                        </span>
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+
+                  {notifications.length > 0 && (
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-72 max-h-96 overflow-y-auto"
+                    >
+                      {notifications.map((n) => (
+                        <DropdownMenuItem
+                          key={n.id}
+                          className="whitespace-normal text-sm"
+                        >
+                          {n.message}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  )}
+                </DropdownMenu>
+              )}
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-white hover:bg-red-700"
+                  >
+                    <Settings className="w-4 h-4 mr-2" /> Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setIsOpen(true)}
+                    className="text-red-600 focus:text-red-600"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>

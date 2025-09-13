@@ -41,7 +41,7 @@ export default function AdmindashboardLayout({
   const [notifications, setNotifications] = useState<any[]>([]);
 
   useEffect(() => {
-    if (user?.role === "admin") {
+    if (user?.role === "admin" || user?.role === "superAdmin") {
       fetch("/api/admin/notifications")
         .then((res) => res.json())
         .then((data) => setNotifications(data));

@@ -1,11 +1,13 @@
 import { Button } from "@/src/components/ui/button";
 import { ArrowLeft, Plus } from "lucide-react";
 import Link from "next/link";
-import BusinessRegistrationForm from "./registrationForm";
+// import BusinessRegistrationForm from "./registrationForm";
 import DashboardLayout from "@/src/components/layout/dashboardLayout";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/lib/auth";
 import { redirect } from "next/navigation";
+import BusinessRegistrationForm from "./BusinessRegistrationForm";
+// import BusinessRegistrationForm from "@/src/features/registerBusiness/components/BusinessRegistrationForm";
 
 export default async function BusinessIndexPage() {
   const session = await getServerSession(authOptions);

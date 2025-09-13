@@ -31,7 +31,7 @@ export const users = pgTable("users", {
 
   // Matrimonial extra fields
   maritalStatus: varchar("marital_status", { length: 20 }),
-  religion: varchar("religion", { length: 50 }),
+  // religion: varchar("religion", { length: 50 }),
   // caste: varchar("caste", { length: 50 }),
   motherTongue: varchar("mother_tongue", { length: 50 }),
   height: varchar("height", { length: 10 }),
@@ -50,6 +50,9 @@ export const users = pgTable("users", {
   company: varchar("company", { length: 100 }),
   businessDetails: varchar("business_details", { length: 255 }),
   status: varchar("status", { length: 20 }).default("pending"),
+  fatherName: varchar("father_name", { length: 100 }),
+  motherName: varchar("mother_name", { length: 100 }),
+
   // values: "pending" | "approved" | "rejected"
 
   // ❌ income removed (form me nahi hai ab)
@@ -74,4 +77,10 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
   deactivatedReason: text("deactivated_reason"),
+
+  currentAddress: text("current_address"),
+  currentCity: varchar("current_city", { length: 50 }),
+  currentState: varchar("current_state", { length: 50 }),
+  currentCountry: varchar("current_country", { length: 50 }),
+  currentZipCode: varchar("current_zip_code", { length: 15 }),
 });

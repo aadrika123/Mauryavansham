@@ -8,6 +8,8 @@ import { Header } from "@/src/components/layout/header";
 import { Footer } from "@/src/components/layout/footer";
 import { TopHeader } from "@/src/components/layout/topBar";
 import { ConditionalTopHeader } from "@/src/components/layout/conditionalTopHeader";
+import { ToastProvider } from "@/src/components/ui/toastProvider";
+// import { ToastProvider } from "@/src/components/ui/toastProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -32,8 +34,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster />
-          {children}
+          <ToastProvider>
+            <Toaster />
+
+            {children}
+          </ToastProvider>
         </ThemeProvider>
         {/* <Footer /> */}
       </body>

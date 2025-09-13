@@ -1,91 +1,149 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { signIn } from "next-auth/react"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
-import { Alert, AlertDescription } from "@/src/components/ui/alert"
-import { Eye, EyeOff, Loader2, User, Mail, Phone, Lock, CheckCircle } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
+import { Alert, AlertDescription } from "@/src/components/ui/alert";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  CheckCircle,
+} from "lucide-react";
 
 export default function SignUpForm() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const [emailSent, setEmailSent] = useState<boolean | null>(null)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [emailSent, setEmailSent] = useState<boolean | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
+    fatherName: "", // 🆕
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
-  })
+    address: "",
+    city: "",
+    state: "",
+    country: "India",
+    zipCode: "",
+    motherName: "",
+    // 🆕 Current Address
+    currentAddress: "",
+    currentCity: "",
+    currentState: "",
+    currentCountry: "India",
+    currentZipCode: "",
+    // 🆕 Checkbox state
+    sameAsPermanent: false,
+  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-    // Clear errors when user starts typing
-    if (error) setError("")
-  }
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    const capitalizeFirst = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1);
+
+    if (name === "name" || name === "fatherName" || name === "motherName") {
+      // ✅ Sirf alphabets aur spaces + first letter capital
+      const onlyAlphabets = value.replace(/[^A-Za-z\s]/g, "");
+      setFormData((prev) => ({
+        ...prev,
+        [name]: onlyAlphabets ? capitalizeFirst(onlyAlphabets) : "",
+      }));
+    } else if (name === "city") {
+      // ✅ City me alphabets + numbers + spaces + first letter capital
+      const cleanCity = value.replace(/[^A-Za-z0-9\s]/g, "");
+      setFormData((prev) => ({
+        ...prev,
+        [name]: cleanCity ? capitalizeFirst(cleanCity) : "",
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+
+    if (error) setError("");
+  };
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      setError("Name is required")
-      return false
+      setError("Name is required");
+      return false;
     }
 
     if (!formData.email.trim()) {
-      setError("Email is required")
-      return false
+      setError("Email is required");
+      return false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError("Please enter a valid email address")
-      return false
+      setError("Please enter a valid email address");
+      return false;
     }
 
     if (!formData.password) {
-      setError("Password is required")
-      return false
+      setError("Password is required");
+      return false;
     }
 
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long")
-      return false
+      setError("Password must be at least 6 characters long");
+      return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      return false
+      setError("Passwords do not match");
+      return false;
     }
 
     if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ""))) {
-      setError("Please enter a valid 10-digit phone number")
-      return false
+      setError("Please enter a valid 10-digit phone number");
+      return false;
+    }
+    if (formData.city.trim() === "") {
+      setError("City is required");
+      return false;
+    }
+    if (formData.state.trim() === "") {
+      setError("State is required");
+      return false;
+    }
+    if (formData.fatherName.trim() === "") {
+      setError("Father's Name is required");
+      return false;
     }
 
-    return true
-  }
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!validateForm()) return
+    if (!validateForm()) return;
 
-    setIsLoading(true)
-    setError("")
-    setSuccess("")
-    setEmailSent(null)
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+    setEmailSent(null);
 
     try {
       // Create account
@@ -99,22 +157,42 @@ export default function SignUpForm() {
           email: formData.email.trim().toLowerCase(),
           phone: formData.phone.trim() || null,
           password: formData.password,
-        }),
-      })
+          fatherName: formData.fatherName.trim(),
+          motherName: formData.motherName.trim(),
 
-      const data = await response.json()
-      console.log("Signup response:", data)
+          // Permanent Address
+          address: formData.address,
+          city: formData.city.trim(),
+          state: formData.state,
+          country: formData.country,
+          zipCode: formData.zipCode,
+
+          // Current Address
+          currentAddress: formData.currentAddress,
+          currentCity: formData.currentCity,
+          currentState: formData.currentState,
+          currentCountry: formData.currentCountry,
+          currentZipCode: formData.currentZipCode,
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Signup response:", data);
 
       if (!response.ok) {
-        throw new Error(data.error || "Something went wrong")
+        throw new Error(data.error || "Something went wrong");
       }
 
       // Set success message with email status
-      setEmailSent(data.emailSent)
+      setEmailSent(data.emailSent);
       if (data.emailSent) {
-        setSuccess("Account created successfully! Welcome email sent to your inbox. Signing you in...")
+        setSuccess(
+          "Account created successfully! Welcome email sent to your inbox. Signing you in..."
+        );
       } else {
-        setSuccess("Account created successfully! (Note: Welcome email could not be sent) Signing you in...")
+        setSuccess(
+          "Account created successfully! (Note: Welcome email could not be sent) Signing you in..."
+        );
       }
 
       // Auto sign in after successful registration
@@ -122,23 +200,25 @@ export default function SignUpForm() {
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
         redirect: false,
-      })
+      });
 
       if (signInResult?.error) {
-        setError("Account created but sign-in failed. Please try signing in manually.")
-        router.push("/sign-in")
+        setError(
+          "Account created but sign-in failed. Please try signing in manually."
+        );
+        router.push("/sign-in");
       } else {
         // Redirect to profile creation or dashboard
         // router.push("/create-profile")
-        router.push("/sign-in")
+        router.push("/sign-in");
       }
     } catch (error) {
-      console.error("Signup error:", error)
-      setError(error instanceof Error ? error.message : "Something went wrong")
+      console.error("Signup error:", error);
+      setError(error instanceof Error ? error.message : "Something went wrong");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -155,120 +235,412 @@ export default function SignUpForm() {
           <div className="flex items-start space-x-2">
             <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
             <div>
-              <AlertDescription className="text-green-700">{success}</AlertDescription>
+              <AlertDescription className="text-green-700">
+                {success}
+              </AlertDescription>
               {emailSent === false && (
                 <AlertDescription className="text-amber-600 text-sm mt-1">
-                  ⚠️ Welcome email could not be delivered. Please check your email settings or contact support if needed.
+                  ⚠️ Welcome email could not be delivered. Please check your
+                  email settings or contact support if needed.
                 </AlertDescription>
               )}
             </div>
           </div>
         </Alert>
       )}
-
-      {/* Name Field */}
-      <div className="space-y-2">
-        <Label htmlFor="name">Full Name *</Label>
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Enter full name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="pl-10 bg-white border-yellow-300 focus:border-red-500"
-            disabled={isLoading}
-            required
-          />
+      <div className="grid gap-4 grid-cols-2">
+        {/* Name Field */}
+        <div className="space-y-2">
+          <Label htmlFor="name" className="block font-medium mb-2 text-base">
+            Full Name *
+          </Label>
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Enter full name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="pl-10 bg-white border-yellow-300 focus:border-red-500 text-base "
+              disabled={isLoading}
+              required
+            />
+          </div>
         </div>
-      </div>
-
-      {/* Email Field */}
-      <div className="space-y-2">
-        <Label htmlFor="email">Email Address *</Label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Enter email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="pl-10 bg-white border-yellow-300 focus:border-red-500"
-            disabled={isLoading}
-            required
-          />
+        {/* Email Field */}
+        <div className="space-y-2">
+          <Label htmlFor="email" className="block font-medium mb-2 text-base">
+            Email Address *
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 " />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="pl-10 bg-white border-yellow-300 focus:border-red-500 text-base "
+              disabled={isLoading}
+              required
+            />
+          </div>
         </div>
-      </div>
-
-      {/* Phone Field */}
-      <div className="space-y-2">
-        <Label htmlFor="phone">Phone Number (Optional)</Label>
-        <div className="relative">
-          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="phone"
-            name="phone"
-            type="tel"
-            placeholder="Enter phone number"
-            value={formData.phone}
-            onChange={handleInputChange}
-            className="pl-10 bg-white border-yellow-300 focus:border-red-500"
-            disabled={isLoading}
-          />
+        {/* Phone Field */}
+        {/* <div className="space-y-2">
+          <Label htmlFor="phone">Phone Number (Optional)</Label>
+          <div className="relative">
+            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="Enter phone number"
+              value={formData.phone}
+              onChange={handleInputChange}
+              className="pl-10 bg-white border-yellow-300 focus:border-red-500 text-base"
+              disabled={isLoading}
+            />
+          </div>
+        </div> */}
+        {/* Phone Field */}
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="block font-medium mb-2 text-base">
+            Phone Number *
+          </Label>
+          <div className="relative">
+            {/* <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" /> */}
+            <PhoneField
+              value={formData.phone}
+              onChange={(val) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  phone: val,
+                }))
+              }
+              required
+            />
+          </div>
         </div>
-      </div>
-
-      {/* Password Field */}
-      <div className="space-y-2">
-        <Label htmlFor="password">Password *</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            placeholder="Create a password"
-            value={formData.password}
-            onChange={handleInputChange}
-            className="pl-10 pr-10 bg-white border-yellow-300 focus:border-red-500"
-            disabled={isLoading}
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            disabled={isLoading}
+        {/* Father's Name Field */}
+        <div className="space-y-2">
+          <Label
+            htmlFor="fatherName"
+            className="block font-medium mb-2 text-base"
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
+            Father's Name *
+          </Label>
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="fatherName"
+              name="fatherName"
+              type="text"
+              placeholder="Enter father's name"
+              value={formData.fatherName}
+              onChange={handleInputChange}
+              className="pl-10 bg-white border-yellow-300 focus:border-red-500 text-base"
+              disabled={isLoading}
+              required
+            />
+          </div>
         </div>
-        <p className="text-xs text-gray-600">Password must be at least 6 characters long</p>
-      </div>
-
-      {/* Confirm Password Field */}
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password *</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <div className="space-y-2">
+          <Label
+            htmlFor="motherName"
+            className="block font-medium mb-2 text-base"
+          >
+            Mother's Name *
+          </Label>
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="motherName"
+              name="motherName"
+              type="text"
+              placeholder="Enter mother's name"
+              value={formData.motherName}
+              onChange={handleInputChange}
+              className="pl-10 bg-white border-yellow-300 focus:border-red-500 text-base"
+              disabled={isLoading}
+              required
+            />
+          </div>
+        </div>
+        {/* City Field */}
+        {/* <div className="space-y-2">
+          <Label htmlFor="city">City *</Label>
           <Input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm your password"
-            value={formData.confirmPassword}
+            id="city"
+            name="city"
+            type="text"
+            placeholder="Enter your city"
+            value={formData.city}
             onChange={handleInputChange}
-            className="pl-10 bg-white border-yellow-300 focus:border-red-500"
+            className="bg-white border-yellow-300 focus:border-red-500"
             disabled={isLoading}
             required
           />
+        </div> */}
+        {/* State Field */}
+        {/* <div className="space-y-2">
+          <Label htmlFor="state">State *</Label>
+          <select
+            id="state"
+            name="state"
+            value={formData.state}
+            onChange={handleInputChange}
+            className="w-full rounded-md border border-yellow-300 bg-white px-3 py-2 focus:border-red-500"
+            disabled={isLoading}
+            required
+          >
+            <option value="">Select State</option>
+            {[
+              "Bihar",
+              "Uttar Pradesh",
+              "Delhi",
+              "Maharashtra",
+              "West Bengal",
+              "Madhya Pradesh",
+              "Rajasthan",
+              "Karnataka",
+              "Tamil Nadu",
+              "Kerala",
+              "Punjab",
+              "Haryana",
+              "Gujarat",
+              "Jharkhand",
+              "Odisha",
+              "Assam",
+            ].map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+        </div> */}
+        {/* Permanent Address Section */}
+        <div className="col-span-2 ">
+          <h3 className="font-semibold text-lg mb-4 text-gray-800 flex items-center gap-2">
+            🏠 Permanent Address
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              className="col-span-2"
+              placeholder="Enter your permanent address"
+              required
+            />
+            <InputField
+              label="City"
+              name="city"
+              value={formData.city}
+              onChange={handleInputChange}
+              required
+              placeholder="Enter your city"
+            />
+            <SelectField
+              label="State"
+              name="state"
+              value={formData.state}
+              onChange={handleInputChange}
+              required
+              options={[
+                "Bihar",
+                "Uttar Pradesh",
+                "Delhi",
+                "Maharashtra",
+                "West Bengal",
+                "Madhya Pradesh",
+                "Rajasthan",
+                "Karnataka",
+                "Tamil Nadu",
+                "Kerala",
+                "Punjab",
+                "Haryana",
+                "Gujarat",
+                "Jharkhand",
+                "Odisha",
+                "Assam",
+              ]}
+            />
+            <InputField label="Country" name="country" value="India" disabled />
+            <InputField
+              label="Zip Code"
+              name="zipCode"
+              value={formData.zipCode}
+              onChange={handleInputChange}
+              required
+              placeholder="Enter your zip code"
+            />
+          </div>
+        </div>
+
+        {/* Current Address Section */}
+        <div className="col-span-2  mt-6">
+          <div className="flex items-center justify-between mb-4">
+            {/* <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
+              📍 Current Address
+            </h3> */}
+            <label className="flex items-center gap-2 text-lg text-gray-600 italic">
+              <input
+                type="checkbox"
+                checked={formData.sameAsPermanent || false}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  if (checked) {
+                    setFormData((prev: any) => ({
+                      ...prev,
+                      sameAsPermanent: true,
+                      currentAddress: prev.address,
+                      currentCity: prev.city,
+                      currentState: prev.state,
+                      currentCountry: prev.country,
+                      currentZipCode: prev.zipCode,
+                    }));
+                  } else {
+                    setFormData((prev: any) => ({
+                      ...prev,
+                      sameAsPermanent: false,
+                      currentAddress: "",
+                      currentCity: "",
+                      currentState: "",
+                      currentCountry: "India",
+                      currentZipCode: "",
+                    }));
+                  }
+                }}
+                className="rounded w-4 h-4 border-gray-300 text-red-600 focus:ring-red-500"
+              />
+              Current Address Same as Permanent
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Address"
+              name="currentAddress"
+              value={formData.currentAddress}
+              onChange={handleInputChange}
+              disabled={formData.sameAsPermanent}
+              className="col-span-2"
+            />
+            <InputField
+              label="City"
+              name="currentCity"
+              value={formData.currentCity}
+              onChange={handleInputChange}
+              disabled={formData.sameAsPermanent}
+            />
+            <SelectField
+              label="State"
+              name="currentState"
+              value={formData.currentState}
+              onChange={handleInputChange}
+              options={[
+                "Bihar",
+                "Uttar Pradesh",
+                "Delhi",
+                "Maharashtra",
+                "West Bengal",
+                "Madhya Pradesh",
+                "Rajasthan",
+                "Karnataka",
+                "Tamil Nadu",
+                "Kerala",
+                "Punjab",
+                "Haryana",
+                "Gujarat",
+                "Jharkhand",
+                "Odisha",
+                "Assam",
+              ]}
+              disabled={formData.sameAsPermanent}
+            />
+            <InputField
+              label="Country"
+              name="currentCountry"
+              value={formData.currentCountry}
+              disabled
+            />
+            <InputField
+              label="Zip Code"
+              name="currentZipCode"
+              value={formData.currentZipCode}
+              onChange={handleInputChange}
+              disabled={formData.sameAsPermanent}
+            />
+          </div>
+        </div>
+
+        {/* Password Field */}
+        <div className="space-y-2">
+          <Label
+            htmlFor="password"
+            className="block font-medium mb-2 text-base"
+          >
+            Password *
+          </Label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Create a password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="pl-10 pr-10 bg-white border-yellow-300 focus:border-red-500"
+              disabled={isLoading}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              disabled={isLoading}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+          <p className="text-xs text-gray-600">
+            Password must be at least 6 characters long
+          </p>
+        </div>
+
+        {/* Confirm Password Field */}
+        <div className="space-y-2">
+          <Label
+            htmlFor="confirmPassword"
+            className="block font-medium mb-2 text-base"
+          >
+            Confirm Password *
+          </Label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="Confirm your password"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              className="pl-10 bg-white border-yellow-300 focus:border-red-500 text-base"
+              disabled={isLoading}
+              required
+            />
+          </div>
         </div>
       </div>
-
       {/* Submit Button */}
       <Button
         type="submit"
@@ -285,5 +657,93 @@ export default function SignUpForm() {
         )}
       </Button>
     </form>
-  )
+  );
+}
+function PhoneField({
+  value,
+  onChange,
+  required = false, // default false
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  required?: boolean;
+}) {
+  return (
+    <div className="relative w-full">
+      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+        <Phone className="h-4 w-4 text-gray-400" />
+      </span>
+      <input
+        type="tel"
+        maxLength={10}
+        pattern="[0-9]{10}"
+        value={value || ""}
+        onChange={(e) => {
+          const val = e.target.value.replace(/\D/g, "");
+          if (val.length <= 10) onChange(val);
+        }}
+        placeholder="Enter 10 digit phone number"
+        required={required}
+        className="w-full focus:ring-0 focus:outline-none border rounded bg-white border-yellow-300 focus:border-red-500 p-2 pl-10"
+      />
+    </div>
+  );
+}
+
+function InputField({
+  label,
+  name,
+  value,
+  onChange,
+  disabled = false,
+  type = "text",
+  placeholder,
+  required = false,
+}: any) {
+  return (
+    <div>
+      <label className="block font-medium mb-2">{label}</label>
+      <input
+        type={type}
+        name={name}
+        value={value || ""}
+        onChange={onChange}
+        disabled={disabled}
+        placeholder={placeholder}
+        required={required}
+        className="w-full border rounded p-2  border-yellow-300 focus:border-red-500"
+      />
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  disabled = false,
+  required = false,
+}: any) {
+  return (
+    <div>
+      <label className="block font-medium mb-2">{label}</label>
+      <select
+        name={name}
+        value={value || ""}
+        onChange={onChange}
+        className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
+        disabled={disabled}
+        required={required}
+      >
+        <option value="">Select</option>
+        {options.map((opt: string) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 }

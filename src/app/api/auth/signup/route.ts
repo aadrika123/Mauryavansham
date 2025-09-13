@@ -6,10 +6,29 @@ import { eq } from "drizzle-orm";
 import { sendWelcomeEmail } from "@/src/lib/email";
 import { sendWhatsAppMessage } from "@/src/lib/whatsapp";
 import { notifications } from "@/src/drizzle/schema";
+import { sendAdminSignupEmail } from "@/src/lib/sendAdminSignupEmail";
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password, phone } = await request.json();
+    // const { name, email, password, phone, fatherName, city, state } =
+    const {
+      name,
+      email,
+      password,
+      phone,
+      fatherName,
+      motherName,
+      address,
+      city,
+      state,
+      country,
+      zipCode,
+      currentAddress,
+      currentCity,
+      currentState,
+      currentCountry,
+      currentZipCode,
+    } = await request.json();
 
     // Validation
     if (!name || !email || !password) {
@@ -49,11 +68,32 @@ export async function POST(request: NextRequest) {
         email,
         password: hashedPassword,
         phone: phone || null,
+        fatherName,
+        motherName,
+        address,
+        city,
+        state,
+        country,
+        zipCode,
+        currentAddress,
+        currentCity,
+        currentState,
+        currentCountry,
+        currentZipCode,
       })
       .returning({
         id: users.id,
         name: users.name,
         email: users.email,
+        fatherName: users.fatherName,
+        motherName: users.motherName,
+        city: users.city,
+        state: users.state,
+        address: users.address,
+        currentAddress: users.currentAddress,
+        currentCity: users.currentCity,
+        currentState: users.currentState,
+        currentZipCode: users.currentZipCode,
       });
 
     // ✅ Insert notification for admins
@@ -88,16 +128,22 @@ export async function POST(request: NextRequest) {
     } catch (emailError) {
       console.error("Error sending welcome email:", emailError);
     }
-    // ✅ Send WhatsApp message
-    if (phone) {
-      try {
-        const whatsappResult = await sendWhatsAppMessage(
-          phone,
-          `Hi ${name},\nWelcome to our platform! 🎉\n\nYour login details:\nEmail: ${email}\nPassword: ${password}\n\nEnjoy! 🚀`
-        );
-        console.log("📱 WhatsApp send result:", whatsappResult);
-      } catch (waError) {
-        console.error("❌ Error sending WhatsApp message:", waError);
+    // ✅ Send WhatsApp & email message to all ADMINS & SUPERADMINS
+    const adminUsers = await db.query.users.findMany({
+      where: (u, { inArray }) => inArray(u.role, ["admin", "superAdmin"]),
+    });
+
+    for (const admin of adminUsers) {
+      // if (admin.phone) {
+      //   try {
+      //     await sendWhatsAppMessage(admin.phone, newUser[0]);
+      //     console.log(`📱 WhatsApp sent to admin ${admin.name}`);
+      //   } catch (waError) {
+      //     console.error("❌ Error sending WhatsApp to admin:", waError);
+      //   }
+      // }
+      if (admin.email) {
+        await sendAdminSignupEmail(admin.email, newUser[0]);
       }
     }
 
