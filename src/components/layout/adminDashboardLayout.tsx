@@ -25,6 +25,8 @@ import {
   Tv2,
   MessageSquare,
   Globe,
+  Wallet2Icon,
+  Search,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -54,11 +56,23 @@ export default function AdmindashboardLayout({
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
     // { title: "All Users", href: "/admin/manage-users", icon: Users },
-    // { title: "Manage Users", href: "/admin/users", icon: Users },
+    { title: "Manage Users", href: "/admin/users", icon: Users },
     { title: "Create Events", href: "/admin/events", icon: Calendar },
     { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
-    // { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
+    { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
+    {
+      title: "My Matrimonial Profiles",
+      href: "/admin/profile-list",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Search Matrimonial Profiles",
+      href: "/admin/search-profile",
+      icon: Search,
+    },
+    { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
+    { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
     {
       title: "Ads Location Master",
       href: "/admin/ads-location-master",
@@ -73,6 +87,11 @@ export default function AdmindashboardLayout({
       title: "Discussion Category Master",
       href: "/admin/discussion-castegory-master",
       icon: Globe,
+    },
+    {
+      title: "Register-business",
+      href: "/admin/register-business",
+      icon: Wallet2Icon,
     },
   ];
 
@@ -87,6 +106,18 @@ export default function AdmindashboardLayout({
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
     { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
     {
+          title: "My Matrimonial Profiles",
+          href: "/admin/profile-list",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Search Matrimonial Profiles",
+          href: "/admin/search-profile",
+          icon: Search,
+        },
+        { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
+        { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
+    {
       title: "Ads Location Master",
       href: "/admin/ads-location-master",
       icon: Tv2,
@@ -100,6 +131,11 @@ export default function AdmindashboardLayout({
       title: "Discussion Category Master",
       href: "/admin/discussion-castegory-master",
       icon: Globe,
+    },
+     {
+      title: "Register-business",
+      href: "/admin/register-business",
+      icon: Wallet2Icon,
     },
   ];
 
