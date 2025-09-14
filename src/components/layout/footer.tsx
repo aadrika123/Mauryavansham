@@ -41,9 +41,9 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#8B0000] text-white py-12">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-4 gap-8">
+    <footer className="bg-[#8B0000] text-white py-10 sm:py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -53,11 +53,11 @@ export function Footer() {
                 <p className="text-sm text-yellow-200">मौर्यवंश</p>
               </div>
             </div>
-            <p className="text-red-200 mb-4">
+            <p className="text-red-200 mb-4 text-sm sm:text-base">
               Connecting the global Maurya community and preserving our royal
               heritage for future generations.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3 sm:gap-4">
               <div className="w-8 h-8 bg-red-800 rounded flex items-center justify-center">
                 <span className="text-sm">f</span>
               </div>
@@ -78,7 +78,7 @@ export function Footer() {
             <h4 className="text-lg font-bold text-yellow-400 mb-4">
               Quick Links
             </h4>
-            <ul className="space-y-2 text-red-200">
+            <ul className="space-y-2 text-red-200 text-sm sm:text-base">
               <li>
                 <Link href="/" className="hover:text-white">
                   Home
@@ -110,7 +110,7 @@ export function Footer() {
           {/* Services */}
           <div>
             <h4 className="text-lg font-bold text-yellow-400 mb-4">Services</h4>
-            <ul className="space-y-2 text-red-200">
+            <ul className="space-y-2 text-red-200 text-sm sm:text-base">
               <li>
                 <Link href="/family-registration" className="hover:text-white">
                   Family Registration
@@ -144,7 +144,7 @@ export function Footer() {
             <h4 className="text-lg font-bold text-yellow-400 mb-4">
               Contact Us
             </h4>
-            <div className="space-y-3 text-red-200">
+            <div className="space-y-3 text-red-200 text-sm sm:text-base">
               <div className="flex items-center gap-2">
                 <span className="text-yellow-400">✉</span>
                 <span>Info.mauryavansham@gmail.com</span>
@@ -162,8 +162,8 @@ export function Footer() {
         </div>
 
         {/* Bottom Footer */}
-        <div className="border-t border-red-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-red-200 text-sm">
+        <div className="border-t border-red-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-red-200 text-xs sm:text-sm text-center md:text-left">
             © 2025 Mauryavansh.com. All rights reserved. | Developed &
             Maintained by{" "}
             <Link
@@ -176,7 +176,7 @@ export function Footer() {
             </Link>
           </p>
 
-          <div className="flex gap-6 text-sm text-red-200 mt-4 md:mt-0">
+          <div className="flex gap-4 sm:gap-6 text-xs sm:text-sm text-red-200">
             <Link href="/privacy" className="hover:text-white">
               Privacy Policy
             </Link>

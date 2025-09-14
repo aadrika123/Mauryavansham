@@ -130,11 +130,11 @@ export type ProfileData = {
   };
 };
 interface SiblingDetails {
-  occupation: string
-  maritalStatus: string
-  spouseName?: string
-  spouseOccupation?: string
-  name?: string
+  occupation: string;
+  maritalStatus: string;
+  spouseName?: string;
+  spouseOccupation?: string;
+  name?: string;
 }
 // Updated FlatProfileData type
 export type FlatProfileData = {
@@ -1172,18 +1172,18 @@ export default function CreateProfileForm({
         });
 
         // Add all other sections (family details, education/career, lifestyle, genealogy)
-      Object.entries(profileData.familyDetails).forEach(([key, value]) => {
-  if (value) {
-    // Agar value array ya object hai, to stringify karke bhejo
-    if (Array.isArray(value) || typeof value === "object") {
-      formData.append(key, JSON.stringify(value));
-      console.log(`Added ${key}:`, JSON.stringify(value));
-    } else {
-      formData.append(key, String(value));
-      console.log(`Added ${key}:`, value);
-    }
-  }
-});
+        Object.entries(profileData.familyDetails).forEach(([key, value]) => {
+          if (value) {
+            // Agar value array ya object hai, to stringify karke bhejo
+            if (Array.isArray(value) || typeof value === "object") {
+              formData.append(key, JSON.stringify(value));
+              console.log(`Added ${key}:`, JSON.stringify(value));
+            } else {
+              formData.append(key, String(value));
+              console.log(`Added ${key}:`, value);
+            }
+          }
+        });
 
         Object.entries(profileData.educationCareer).forEach(([key, value]) => {
           if (value) {
@@ -1368,13 +1368,14 @@ export default function CreateProfileForm({
         errors={validationErrors}
         currentStep={currentStep}
       />
-      <div className="min-h-screen bg-orange-50 mt-6  mr-16">
+      <div className="min-h-screen bg-orange-50 mt-6 px-4 sm:px-6 lg:px-12">
         <form onSubmit={handleCompleteProfile}>
           <div className="max-w-full mx-auto">
             {/* Progress Bar */}
             <div className="mb-6">
               <ProgressBar currentStep={currentStep} />
             </div>
+
             {/* Show Profile Relation Error */}
             {validationErrors.profileRelation && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
@@ -1383,9 +1384,10 @@ export default function CreateProfileForm({
                 </p>
               </div>
             )}
-            <div className="grid grid-cols-3 gap-6">
-              <div className="lg:col-span-1">
-                {/* Multiple Photo Upload Section */}
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Sidebar */}
+              <div className="order-2 lg:order-1 lg:col-span-1">
                 <Card className="p-4 mb-4">
                   <h3 className="text-lg font-semibold mb-4 text-center text-orange-800">
                     Profile Photos
@@ -1419,10 +1421,10 @@ export default function CreateProfileForm({
                     <h4 className="text-sm font-medium text-orange-700 mb-3">
                       Photo Guidelines
                     </h4>
-                    <div className="flex justify-center gap-2">
-                      {/* Image 1 - Valid */}
+                    <div className="flex flex-wrap justify-center gap-4">
+                      {/* Example Images */}
                       <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
                           <Image
                             src="https://img.shaadi.com/imgs/registration/male-closeup-v2.gif"
                             alt="Example 1"
@@ -1431,13 +1433,12 @@ export default function CreateProfileForm({
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
+                        <Check className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-green-500 bg-white rounded-full shadow" />
                         <p className="text-xs mt-1">Close Up</p>
                       </div>
 
-                      {/* Image 2 - Valid */}
                       <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
                           <Image
                             src="https://img.shaadi.com/imgs/registration/male-full-view-v2.gif"
                             alt="Example 2"
@@ -1446,13 +1447,12 @@ export default function CreateProfileForm({
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
+                        <Check className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-green-500 bg-white rounded-full shadow" />
                         <p className="text-xs mt-1">Full View</p>
                       </div>
 
-                      {/* Image 3 - Invalid */}
                       <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
                           <Image
                             src="https://img.shaadi.com/imgs/registration/male-face-blur-v2.gif"
                             alt="Invalid Example 1"
@@ -1461,13 +1461,12 @@ export default function CreateProfileForm({
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
+                        <X className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-red-500 bg-white rounded-full shadow" />
                         <p className="text-xs mt-1">Blur</p>
                       </div>
 
-                      {/* Image 4 - Invalid */}
                       <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
                           <Image
                             src="https://img.shaadi.com/imgs/registration/male-face-group.gif"
                             alt="Invalid Example 2"
@@ -1476,7 +1475,7 @@ export default function CreateProfileForm({
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
+                        <X className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-red-500 bg-white rounded-full shadow" />
                         <p className="text-xs mt-1">Group</p>
                       </div>
                     </div>
@@ -1489,8 +1488,8 @@ export default function CreateProfileForm({
                 />
               </div>
 
-              <div className="lg:col-span-2">
-                {/* Motivational Message */}
+              {/* Form Content */}
+              <div className="order-1 lg:order-2 lg:col-span-2">
                 {currentTabConfig && (
                   <MotivationalMessage
                     title={currentTabConfig.message.title}
@@ -1500,15 +1499,11 @@ export default function CreateProfileForm({
                   />
                 )}
 
-                <Card className="p-6">
-                  {renderActiveTab()}
-                  {/* </form> */}
-                </Card>
+                <Card className="p-4 sm:p-6">{renderActiveTab()}</Card>
 
                 <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 mb-10">
                   {/* Navigation Buttons */}
                   <div className="flex gap-2 w-full sm:w-auto">
-                    {/* Previous Button */}
                     {currentStep > 1 && (
                       <Button
                         onClick={handlePreviousStep}

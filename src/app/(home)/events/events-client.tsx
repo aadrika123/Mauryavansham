@@ -361,7 +361,7 @@ export default function EventsClient({
 
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Event */}
-        {latestFeaturedEvent  && activeTab === "upcoming" && (
+        {latestFeaturedEvent && activeTab === "upcoming" && (
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-red-700 mb-6">
               Featured Event
@@ -371,7 +371,7 @@ export default function EventsClient({
                 <div className="flex flex-col lg:flex-row">
                   <div className="lg:w-1/3">
                     <Image
-                      src={latestFeaturedEvent .image || "/placeholder.svg"}
+                      src={latestFeaturedEvent.image || "/placeholder.svg"}
                       alt={"Ad Banner"}
                       width={600}
                       height={500}
@@ -381,39 +381,39 @@ export default function EventsClient({
                   <div className="lg:w-2/3 p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-sm">
-                        {getTypeIcon(latestFeaturedEvent .type)}
+                        {getTypeIcon(latestFeaturedEvent.type)}
                       </span>
-                      <Badge className={getTypeColor(latestFeaturedEvent .type)}>
-                        {latestFeaturedEvent .type}
+                      <Badge className={getTypeColor(latestFeaturedEvent.type)}>
+                        {latestFeaturedEvent.type}
                       </Badge>
                     </div>
 
                     <h3 className="text-2xl font-bold text-red-700 mb-3">
-                      {latestFeaturedEvent .title}
+                      {latestFeaturedEvent.title}
                     </h3>
 
                     <p className="text-gray-600 mb-6 leading-relaxed">
-                      {latestFeaturedEvent .description}
+                      {latestFeaturedEvent.description}
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="w-4 h-4" />
                         <span>
-                          {formatDate(latestFeaturedEvent .date)} at{" "}
-                          {formatTimeTo12Hr(latestFeaturedEvent .fromTime)} to{" "}
-                          {formatTimeTo12Hr(latestFeaturedEvent .toTime)}
+                          {formatDate(latestFeaturedEvent.date)} at{" "}
+                          {formatTimeTo12Hr(latestFeaturedEvent.fromTime)} to{" "}
+                          {formatTimeTo12Hr(latestFeaturedEvent.toTime)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPin className="w-4 h-4" />
-                        <span>{latestFeaturedEvent .location}</span>
+                        <span>{latestFeaturedEvent.location}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <Users className="w-4 h-4" />
                         <span>
-                          {latestFeaturedEvent .attendees}/{latestFeaturedEvent .maxAttendees}{" "}
-                          attending
+                          {latestFeaturedEvent.attendees}/
+                          {latestFeaturedEvent.maxAttendees} attending
                         </span>
                       </div>
                       {/* <div className="flex items-center gap-2 text-gray-600">
@@ -425,7 +425,7 @@ export default function EventsClient({
                     <div className="flex gap-3 mx-auto">
                       <Button
                         className=" bg-orange-600 hover:bg-orange-700 text-white"
-                        onClick={() => handleRegister(latestFeaturedEvent )}
+                        onClick={() => handleRegister(latestFeaturedEvent)}
                       >
                         Register
                       </Button>
@@ -445,65 +445,70 @@ export default function EventsClient({
         )}
 
         <div className="mt-8 mb-12">
-          {/* <VerticalAdBanner /> */}
-          <div className="container mx-auto px-8 py-2 w-5/6">
+          <div className="container mx-auto px-4">
             <div className="relative">
               {bottomAd ? (
-                <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                  <div className="relative p-8 text-center">
+                <div
+                  className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
+            border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden 
+            transform hover:scale-105 transition-transform duration-300 w-full max-w-[900px] mx-auto"
+                >
+                  <div className="relative p-4 sm:p-6 md:p-8 text-center">
                     <Image
                       src={bottomAd.bannerImageUrl}
                       alt={"Ad Banner"}
-                      width={400}
-                      height={500}
-                      className="mx-auto rounded-xl shadow-lg"
+                      width={900}
+                      height={300}
+                      className="mx-auto rounded-xl shadow-lg w-full h-auto"
                     />
                   </div>
                 </div>
               ) : (
-                <div
-                  className="mx-auto relative"
-                  style={{ width: 900, height: 300 }}
-                >
+                <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
                   <div
                     className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
-                         border-4 border-amber-300 rounded-2xl shadow-2xl 
-                         overflow-hidden transform hover:scale-105 transition-transform duration-300
-                         w-full h-full"
+              border-4 border-amber-300 rounded-2xl shadow-2xl 
+              overflow-hidden transform hover:scale-105 transition-transform duration-300
+              w-full h-full"
                   >
-                    <div className="relative p-8 w-full h-full">
+                    <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
                       {/* Decorative Book Pages Effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
 
                       {/* Content */}
                       <div className="text-center relative z-10 flex flex-col justify-center items-center h-full">
                         <div
-                          className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 
-                               bg-gradient-to-br from-amber-50 to-yellow-100"
+                          className="relative border-2 border-dashed border-amber-400 rounded-lg p-4 sm:p-6 md:p-8 
+                    bg-gradient-to-br from-amber-50 to-yellow-100"
                         >
-                          <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
+                          <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-amber-800 mb-2 sm:mb-4">
                             Book Your Ad (8) <br />
-                            <p>Please select image size of (900x300 pixels)</p>
+                            <span className="text-sm md:text-base font-normal">
+                              Please select image size of (900x300 pixels)
+                            </span>
                           </h3>
 
-                          <div className="space-y-4 relative">
-                            <div className="absolute top-4 left-4">
-                              <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
+                          <div className="space-y-2 sm:space-y-4 relative">
+                            <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
+                              <svg
+                                className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.63a1 1 0 00.95.69h3.813c.969 0 1.371 1.24.588 1.81l-3.084 2.24a1 1 0 00-.364 1.118l1.18 3.63c.3.921-.755 1.688-1.54 1.118l-3.084-2.24a1 1 0 00-1.176 0l-3.084 2.24c-.784.57-1.838-.197-1.539-1.118l1.18-3.63a1 1 0 00-.364-1.118L2.318 9.057c-.783-.57-.38-1.81.588-1.81h3.813a1 1 0 00.95-.69l1.18-3.63z" />
+                              </svg>
                             </div>
-                            <div className="absolute top-4 right-4">
-                              <Star className="h-8 w-8 text-amber-500 animate-pulse" />
+                            <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
+                              <svg
+                                className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.63a1 1 0 00.95.69h3.813c.969 0 1.371 1.24.588 1.81l-3.084 2.24a1 1 0 00-.364 1.118l1.18 3.63c.3.921-.755 1.688-1.54 1.118l-3.084-2.24a1 1 0 00-1.176 0l-3.084 2.24c-.784.57-1.838-.197-1.539-1.118l1.18-3.63a1 1 0 00-.364-1.118L2.318 9.057c-.783-.57-.38-1.81.588-1.81h3.813a1 1 0 00.95-.69l1.18-3.63z" />
+                              </svg>
                             </div>
 
-                            {/* <button
-                                    className="bg-gradient-to-r from-amber-500 to-yellow-500 
-                                   hover:from-amber-600 hover:to-yellow-600 
-                                   text-white font-bold py-3 px-8 rounded-full shadow-lg 
-                                   transform hover:scale-105 transition-all duration-200"
-                                  >
-                                    
-                                  </button> */}
-
-                            <p className="text-sm text-amber-600 mt-2">
+                            <p className="text-xs sm:text-sm md:text-base text-amber-600 mt-2">
                               Go to your dashboard to create and manage ads.
                             </p>
                           </div>
@@ -511,8 +516,8 @@ export default function EventsClient({
                       </div>
 
                       {/* Decorative Borders */}
-                      <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-                      <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                      <div className="absolute inset-x-0 top-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                      <div className="absolute inset-x-0 bottom-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
                     </div>
                   </div>
                 </div>
@@ -520,6 +525,7 @@ export default function EventsClient({
             </div>
           </div>
         </div>
+
         {/* All Events */}
         <div>
           <h2 className="text-xl font-bold text-red-700 mb-4">All Events</h2>

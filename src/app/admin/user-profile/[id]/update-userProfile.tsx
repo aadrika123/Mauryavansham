@@ -451,7 +451,7 @@ export default function UserProfilePage({ data }: { data: any }) {
           />
           <InputField label="Country" name="country" value="India" disabled />
           <InputField
-            label="Zip Code"
+            label="pin Code"
             name="zipCode"
             value={formData.zipCode}
             onChange={handleChange}

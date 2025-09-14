@@ -414,10 +414,10 @@ export default function AchievementsClient({
               Community Achievements
             </h1>
           </div>
-          <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
+          {/* <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
             <Plus className="w-4 h-4 mr-2" />
             Nominate Achievement
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -487,7 +487,7 @@ export default function AchievementsClient({
             >
               By Category
             </button>
-            <button
+            {/* <button
               onClick={() => setActiveTab("nominations")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "nominations"
@@ -496,7 +496,7 @@ export default function AchievementsClient({
               }`}
             >
               Nominations
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
@@ -829,77 +829,54 @@ export default function AchievementsClient({
         )}
       </div>
       <div className="mt-8 mb-10">
-        {/* <VerticalAdBanner /> */}
-        <div className="container mx-auto px-8 py-2 w-5/6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 w-full md:w-5/6">
           <div className="relative">
             {bottomAd ? (
               <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                <div className="relative p-8 text-center">
-                  {/* <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
-                                  {rightAd.title}
-                                </h3>
-                                <a
-                                  href={ad.link || "#"}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                > */}
+                <div className="relative p-4 sm:p-6 md:p-8 text-center">
                   <Image
                     src={bottomAd.bannerImageUrl}
-                    alt={"Ad Banner"}
-                    width={400}
-                    height={500}
-                    className="mx-auto rounded-xl shadow-lg"
+                    alt="Ad Banner"
+                    width={900}
+                    height={300}
+                    className="mx-auto rounded-xl shadow-lg w-full h-auto max-w-[900px]"
                   />
-                  {/* <div className="absolute bottom-2 right-2 bg-black/30 text-white text-sm px-2 py-1 rounded">
-                    {bottomAd.views} <Eye className="w-4 h-4 inline" />
-                  </div> */}
-                  {/* </a> */}
                 </div>
               </div>
             ) : (
-              <div
-                className="mx-auto relative"
-                style={{ width: 900, height: 300 }}
-              >
+              <div className="mx-auto relative w-full max-w-[900px] h-[180px] sm:h-[220px] md:h-[300px]">
                 <div
                   className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
-                         border-4 border-amber-300 rounded-2xl shadow-2xl 
-                         overflow-hidden transform hover:scale-105 transition-transform duration-300
-                         w-full h-full"
+            border-4 border-amber-300 rounded-2xl shadow-2xl 
+            overflow-hidden transform hover:scale-105 transition-transform duration-300
+            w-full h-full"
                 >
-                  <div className="relative p-8 w-full h-full">
+                  <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
                     {/* Decorative Book Pages Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
 
                     {/* Content */}
                     <div className="text-center relative z-10 flex flex-col justify-center items-center h-full">
                       <div
-                        className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 
-                               bg-gradient-to-br from-amber-50 to-yellow-100"
+                        className="relative border-2 border-dashed border-amber-400 rounded-lg p-4 sm:p-6 md:p-8 
+                  bg-gradient-to-br from-amber-50 to-yellow-100"
                       >
-                        <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
+                        <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-amber-800 mb-2 sm:mb-4">
                           Book Your Ad (10) <br />
-                          <p>Please select image size of (900x300 pixels)</p>
+                          <p className="text-sm md:text-base">
+                            Please select image size of (900x300 pixels)
+                          </p>
                         </h3>
 
                         <div className="space-y-4 relative">
-                          <div className="absolute top-4 left-4">
-                            <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
+                          <div className="absolute top-2 left-2 sm:top-4 sm:left-4">
+                            <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
                           </div>
-                          <div className="absolute top-4 right-4">
-                            <Star className="h-8 w-8 text-amber-500 animate-pulse" />
+                          <div className="absolute top-2 right-2 sm:top-4 sm:right-4">
+                            <Star className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
                           </div>
 
-                          {/* <button
-                                    className="bg-gradient-to-r from-amber-500 to-yellow-500 
-                                   hover:from-amber-600 hover:to-yellow-600 
-                                   text-white font-bold py-3 px-8 rounded-full shadow-lg 
-                                   transform hover:scale-105 transition-all duration-200"
-                                  >
-                                    
-                                  </button> */}
-
-                          <p className="text-sm text-amber-600 mt-2">
+                          <p className="text-xs sm:text-sm text-amber-600 mt-2">
                             Go to your dashboard to create and manage ads.
                           </p>
                         </div>
@@ -907,8 +884,8 @@ export default function AchievementsClient({
                     </div>
 
                     {/* Decorative Borders */}
-                    <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-                    <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                    <div className="absolute inset-x-0 top-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                    <div className="absolute inset-x-0 bottom-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
                   </div>
                 </div>
               </div>

@@ -156,7 +156,8 @@ export default function BusinessDetailsPage({ user }: Props) {
   };
 
   return (
-    <div className="flex gap-6 p-6 bg-yellow-50 min-h-screen">
+    <div className="flex flex-col lg:flex-row gap-6 p-4 md:p-6 bg-yellow-50 min-h-screen">
+      {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
@@ -197,12 +198,12 @@ export default function BusinessDetailsPage({ user }: Props) {
       )}
 
       {/* Left Sidebar */}
-      <div className="hidden lg:block w-60">
-        <Card className="p-4 shadow-md hover:shadow-[#ffd500] hover:shadow-lg bg-[#FFF8DE] border border-[#FFF6D5]">
+      <div className="w-full lg:w-60">
+        <Card className="p-4 shadow-md hover:shadow-[#ffd500] hover:shadow-lg bg-[#FFF8DE] border border-[#FFF6D5] mb-6 lg:mb-0">
           <h2 className="text-lg font-bold mb-3 text-red-700">
             Top Categories
           </h2>
-          <ul className="space-y-2 text-gray-700">
+          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 text-gray-700">
             {categories.map((cat, i) => (
               <li
                 key={i}
@@ -221,11 +222,13 @@ export default function BusinessDetailsPage({ user }: Props) {
       {/* Main Content */}
       <div className="flex-1">
         {/* Banner / Hero */}
-        <div className="w-full h-56 bg-orange-200 rounded-2xl mb-6 flex items-center justify-center">
-          <h2 className="text-xl font-bold text-red-700">Hero Banner / Ads</h2>
+        <div className="w-full h-40 sm:h-56 bg-orange-200 rounded-2xl mb-6 flex items-center justify-center">
+          <h2 className="text-base sm:text-xl font-bold text-red-700">
+            Hero Banner / Ads
+          </h2>
         </div>
 
-        <h2 className="text-xl font-bold text-red-700 mb-6">
+        <h2 className="text-lg sm:text-xl font-bold text-red-700 mb-6">
           Premium Business Listings
         </h2>
 
@@ -237,9 +240,9 @@ export default function BusinessDetailsPage({ user }: Props) {
             return (
               <Card
                 key={i}
-                className="relative shadow-lg bg-white border border-yellow-200 "
+                className="relative shadow-lg bg-white border border-yellow-200"
               >
-                {/* Premium Badge at Card Top-Left */}
+                {/* Premium Badge */}
                 {biz.businesses?.premiumCategory && (
                   <div
                     className={`absolute top-2 left-2 px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1 z-10 ${
@@ -251,21 +254,21 @@ export default function BusinessDetailsPage({ user }: Props) {
                   </div>
                 )}
 
-                <CardContent className="p-6 grid grid-cols-3 ">
+                <CardContent className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Left Column */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex justify-center">
                     {images.length === 1 ? (
                       <img
                         src={images[0]}
                         alt="business"
-                        className="w-40 h-40 object-cover rounded border"
+                        className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded border"
                       />
                     ) : images.length > 1 ? (
-                      <div className="relative w-48 h-48">
+                      <div className="relative w-32 h-32 sm:w-48 sm:h-48">
                         <img
                           src={images[current]}
                           alt={`business-${current}`}
-                          className="w-48 h-48 object-cover rounded border"
+                          className="w-full h-full object-cover rounded border"
                         />
                         <button
                           onClick={() => prevSlide(i)}
@@ -281,7 +284,7 @@ export default function BusinessDetailsPage({ user }: Props) {
                         </button>
                       </div>
                     ) : (
-                      <div className="w-40 h-40 flex items-center justify-center border rounded bg-gray-100 text-xs text-gray-500">
+                      <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center border rounded bg-gray-100 text-xs text-gray-500">
                         No Image
                       </div>
                     )}
@@ -290,7 +293,7 @@ export default function BusinessDetailsPage({ user }: Props) {
                   {/* Middle Column */}
                   <div className="flex flex-col justify-between">
                     <div>
-                      <h3 className="font-semibold text-lg">
+                      <h3 className="font-semibold text-base sm:text-lg">
                         {biz.businesses?.organizationName}
                       </h3>
                       <p className="text-sm text-gray-600">{biz.users?.name}</p>
@@ -302,19 +305,12 @@ export default function BusinessDetailsPage({ user }: Props) {
                       </div>
                     </div>
                     <div className="flex gap-2 mt-4">
-                      {/* <Button className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-1">
-                        Enquiry
-                      </Button> */}
                       <Button
                         onClick={() => handleEnquiry(biz)}
-                        className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
+                        className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-sm px-4 py-2"
                       >
                         Enquire
                       </Button>
-
-                      {/* <Button className="bg-gray-600 hover:bg-gray-700 text-white text-xs px-4 py-1">
-                        Know More
-                      </Button> */}
                     </div>
                   </div>
 
@@ -335,28 +331,28 @@ export default function BusinessDetailsPage({ user }: Props) {
           })}
         </div>
 
-        {/* Company Information */}
+        {/* Company Info */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-6 mt-6 border border-[#FFF6D5]">
           <h3 className="text-lg font-semibold mb-3 text-red-700">
             Why Choose Our Platform?
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="text-center p-4">
-              <div className="text-3xl mb-2">🔒</div>
+              <div className="text-2xl sm:text-3xl mb-2">🔒</div>
               <h4 className="font-semibold mb-2">Verified Suppliers</h4>
               <p className="text-sm text-gray-600">
                 All suppliers are verified and trusted for quality assurance
               </p>
             </div>
             <div className="text-center p-4">
-              <div className="text-3xl mb-2">🚀</div>
+              <div className="text-2xl sm:text-3xl mb-2">🚀</div>
               <h4 className="font-semibold mb-2">Fast Delivery</h4>
               <p className="text-sm text-gray-600">
                 Quick processing and delivery across India
               </p>
             </div>
             <div className="text-center p-4">
-              <div className="text-3xl mb-2">💰</div>
+              <div className="text-2xl sm:text-3xl mb-2">💰</div>
               <h4 className="font-semibold mb-2">Best Prices</h4>
               <p className="text-sm text-gray-600">
                 Competitive pricing with bulk order discounts
@@ -367,7 +363,7 @@ export default function BusinessDetailsPage({ user }: Props) {
       </div>
 
       {/* Right Sidebar */}
-      <div className="hidden lg:block w-64 space-y-4">
+      <div className="w-full lg:w-64 space-y-4">
         <Card className="p-4 transition-shadow hover:shadow-[#ffd500] hover:shadow-lg bg-[#FFF8DE] border border-[#FFF6D5] shadow-lg">
           <h4 className="font-semibold text-red-700 mb-2">
             Looking for a Product?
@@ -375,7 +371,7 @@ export default function BusinessDetailsPage({ user }: Props) {
           <p className="text-xs text-gray-600 mb-3">
             Post your requirements and get quotes from verified suppliers
           </p>
-          <Button className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2">
+          <Button className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2" disabled>
             Post Buy Requirement
           </Button>
         </Card>
@@ -386,7 +382,7 @@ export default function BusinessDetailsPage({ user }: Props) {
           <p className="text-xs text-gray-600 mb-3">
             Join thousands of sellers on our platform
           </p>
-          <Button className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2">
+          <Button className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2" disabled>
             Sell on Platform
           </Button>
         </Card>

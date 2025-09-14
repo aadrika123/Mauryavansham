@@ -118,7 +118,7 @@ export default function DashboardLayout({
             <h1 className="text-xl md:text-2xl font-bold">
               Welcome back, {user?.name || ""}!
             </h1>
-            <p className="text-red-200 text-sm md:text-base">
+            <p className="text-red-200 text-sm md:text-base hidden sm:block">
               Your matrimonial journey continues
             </p>
           </div>
@@ -161,26 +161,29 @@ export default function DashboardLayout({
             </DropdownMenu>
           )}
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-red-700"
-              >
-                <Settings className="w-4 h-4 mr-2" /> Account
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setIsOpen(true)}
-                className="text-red-600 focus:text-red-600"
-              >
-                <LogOut className="w-4 h-4 mr-2" /> Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Desktop Settings Menu */}
+          <div className="hidden lg:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-red-700"
+                >
+                  <Settings className="w-4 h-4 mr-2" /> Account
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => setIsOpen(true)}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -193,6 +196,16 @@ export default function DashboardLayout({
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           )}
         >
+          {/* Mobile Close Button */}
+          <div className="lg:hidden flex justify-end mb-4">
+            <button
+              className="p-2 rounded-md hover:bg-red-200"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <X className="w-6 h-6 text-red-700" />
+            </button>
+          </div>
+
           <div className="flex items-center gap-3 mb-6">
             <div
               className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
@@ -231,37 +244,23 @@ export default function DashboardLayout({
                 <span>{item.title}</span>
               </Link>
             ))}
+
+            {/* Mobile-only Logout */}
+            <div className="lg:hidden mt-6 border-t pt-4">
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-100 w-full"
+              >
+                <LogOut className="w-5 h-5" />
+                Sign Out
+              </button>
+            </div>
           </nav>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 lg:ml-64 px-6">{children}</div>
       </div>
-
-      {/* Logout Confirmation */}
-      {isOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-40">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-bold mb-4">
-              Are you sure you want to sign out?
-            </h2>
-            <div className="flex justify-between space-x-4">
-              <Button
-                onClick={() => setIsOpen(false)}
-                className="w-full bg-gray-300 text-gray-700"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSignOut}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
-              >
-                Yes, Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

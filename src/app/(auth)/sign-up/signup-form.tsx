@@ -472,12 +472,12 @@ export default function SignUpForm() {
             />
             <InputField label="Country" name="country" value="India" disabled />
             <InputField
-              label="Zip Code"
+              label="Pin Code"
               name="zipCode"
               value={formData.zipCode}
               onChange={handleInputChange}
               required
-              placeholder="Enter your zip code"
+              placeholder="Enter your pin code"
             />
           </div>
         </div>
@@ -569,7 +569,7 @@ export default function SignUpForm() {
               disabled
             />
             <InputField
-              label="Zip Code"
+              label="Pin Code"
               name="currentZipCode"
               value={formData.currentZipCode}
               onChange={handleInputChange}

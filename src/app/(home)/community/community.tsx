@@ -352,11 +352,12 @@ export default function CommunityForumPage({ user }: Props) {
 
   console.log(selectedCategory, "categories");
   return (
-    <div className="px-12 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
+    <div className="px-4 sm:px-6 md:px-8 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            {/* same login modal content */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-red-700 flex items-center gap-2">
                 <Lock className="h-5 w-5" />
@@ -397,6 +398,7 @@ export default function CommunityForumPage({ user }: Props) {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            {/* same create discussion content */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-red-700">
                 Start New Discussion
@@ -504,9 +506,9 @@ export default function CommunityForumPage({ user }: Props) {
         </div>
       )}
 
-      {/* Breadcrumb Navigation */}
+      {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
           <ArrowLeft className="h-4 w-4 text-red-600" />
           <Link href="/" className="text-red-600 hover:underline">
             Home
@@ -516,27 +518,27 @@ export default function CommunityForumPage({ user }: Props) {
         </div>
       </div>
 
-      {/* Header Section */}
+      {/* Header */}
       <div className="container mx-auto px-4 py-8 text-center">
-        <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
+        <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto mb-6" />
         <div className="relative mb-6">
-          <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg transform"></div>
-          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">
+          <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg"></div>
+          <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-red-700">
             Community Forum
           </h1>
         </div>
-        <p className="text-lg text-red-600 max-w-3xl mx-auto leading-relaxed mb-8">
+        <p className="text-base sm:text-lg text-red-600 max-w-3xl mx-auto leading-relaxed mb-8 px-2">
           Connect, share, and help each other in our supportive Maurya community
         </p>
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 pb-12">
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-1">
-            {/* New Discussion Button */}
-            <Card className="mb-6 bg-yellow-50 border-yellow-200">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+          {/* Sidebar */}
+          <div className="order-2 lg:order-1 lg:col-span-1 space-y-6">
+            {/* New Discussion */}
+            <Card className="bg-yellow-50 border-yellow-200">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3 text-red-700">
                   <Plus className="h-4 w-4" />
@@ -554,6 +556,7 @@ export default function CommunityForumPage({ user }: Props) {
             {/* Categories */}
             <Card className="bg-yellow-50 border-yellow-200">
               <CardContent className="p-4">
+                {/* same categories content */}
                 <h3 className="font-bold text-red-700 mb-4">Categories</h3>
                 <div className="space-y-1">
                   {categories.map((category) => (
@@ -581,155 +584,154 @@ export default function CommunityForumPage({ user }: Props) {
             </Card>
           </div>
 
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            {/* Search Bar */}
+          {/* Main Discussion List */}
+          <div className="order-1 lg:order-2 lg:col-span-3">
+            {/* Search bar */}
             <div className="mb-6">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search discussions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-white border-gray-300 focus:border-red-500"
+                  className="pl-10 bg-white border-gray-300 focus:border-red-500 w-full"
                 />
               </div>
             </div>
 
             {/* Discussion Threads */}
-            {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
-                <p className="text-gray-600 mt-2">Loading discussions...</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {discussions.length === 0 ? (
-                  <div className="text-center py-12">
-                    <MessageCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-600 mb-2">
-                      No discussions found
-                    </h3>
-                    <p className="text-gray-500">
-                      {searchQuery || selectedCategory !== "All Discussions"
-                        ? "Try adjusting your search or category filter"
-                        : "Be the first to start a discussion!"}
-                    </p>
-                  </div>
-                ) : (
-                  discussions.map((discussion) => (
-                    <Card
-                      key={discussion.id}
-                      className="bg-yellow-50 border-yellow-200 hover:shadow-md transition-shadow hover:shadow-yellow-200"
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            {/* <Link
+            <div className="space-y-4">
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+                  <p className="text-gray-600 mt-2">Loading discussions...</p>
+                </div>
+              ) : discussions.length === 0 ? (
+                <div className="text-center py-12">
+                  <MessageCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-600 mb-2">
+                    No discussions found
+                  </h3>
+                  <p className="text-gray-500">
+                    {searchQuery || selectedCategory !== "All Discussions"
+                      ? "Try adjusting your search or category filter"
+                      : "Be the first to start a discussion!"}
+                  </p>
+                </div>
+              ) : (
+                discussions.map((discussion) => (
+                  <Card
+                    key={discussion.id}
+                    className="bg-yellow-50 border-yellow-200 hover:shadow-md transition-shadow"
+                  >
+                    <CardContent className="p-4 sm:p-6">
+                      {/* same discussion content */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          {/* <Link
                               href={`/community/discussions/${discussion.id}`}
                               className="text-xl font-semibold text-red-700 mb-2 hover:text-red-800 cursor-pointer block"
                             >
                               {discussion.title}
                             </Link> */}
-                            <h2
-                              className="text-xl font-semibold text-red-700 mb-2 hover:text-red-800 cursor-pointer"
-                              onClick={() => openModal(discussion)}
+                          <h2
+                            className="text-xl font-semibold text-red-700 mb-2 hover:text-red-800 cursor-pointer"
+                            onClick={() => openModal(discussion)}
+                          >
+                            {discussion.title}
+                          </h2>
+                          <p className="text-base  mb-1">
+                            <span className="text-red-500">
+                              {discussion.authorName} {""}
+                            </span>
+                            <span className="text-gray-600"> • </span>
+                            <span className="text-gray-600">
+                              {discussion.location}{" "}
+                            </span>
+                            <span className="text-gray-600">•</span>
+                            <span className="text-gray-600">
+                              {new Date(discussion.createdAt)
+                                .toLocaleDateString("en-GB")
+                                .replaceAll("/", "-")}
+                            </span>
+                          </p>
+                          <p className="text-gray-600 text-base mb-3 line-clamp-2">
+                            {discussion.content}
+                          </p>
+                          <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                            <span className="font-medium text-red-600">
+                              {discussion.author}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <button
+                              onClick={() => handleViewReplies(discussion.id)}
+                              className="flex items-center gap-1 hover:text-red-600 cursor-pointer"
                             >
-                              {discussion.title}
-                            </h2>
-                            <p className="text-base  mb-1">
-                              <span className="text-red-500">
-                                {discussion.authorName} {""}
-                              </span>
-                              <span className="text-gray-600"> • </span>
-                              <span className="text-gray-600">
-                                {discussion.location}{" "}
-                              </span>
-                              <span className="text-gray-600">•</span>
-                              <span className="text-gray-600">
-                                {new Date(discussion.createdAt)
-                                  .toLocaleDateString("en-GB")
-                                  .replaceAll("/", "-")}
-                              </span>
-                            </p>
-                            <p className="text-gray-600 text-base mb-3 line-clamp-2">
-                              {discussion.content}
-                            </p>
-                            <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                              <span className="font-medium text-red-600">
-                                {discussion.author}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
-                              <button
-                                onClick={() => handleViewReplies(discussion.id)}
-                                className="flex items-center gap-1 hover:text-red-600 cursor-pointer"
-                              >
-                                <MessageCircle className="h-4 w-4" />
-                                <span>{discussion.replyCount} replies</span>
-                              </button>
+                              <MessageCircle className="h-4 w-4" />
+                              <span>{discussion.replyCount} replies</span>
+                            </button>
 
-                              <button
-                                onClick={() =>
-                                  handleLikeDiscussion(discussion.id)
-                                }
-                                className={`flex items-center gap-1 hover:text-red-600 ${
-                                  discussion.isLiked ? "text-red-600" : ""
+                            <button
+                              onClick={() =>
+                                handleLikeDiscussion(discussion.id)
+                              }
+                              className={`flex items-center gap-1 hover:text-red-600 ${
+                                discussion.isLiked ? "text-red-600" : ""
+                              }`}
+                            >
+                              <Heart
+                                className={`h-4 w-4 ${
+                                  discussion.isLiked ? "fill-current" : ""
                                 }`}
-                              >
-                                <Heart
-                                  className={`h-4 w-4 ${
-                                    discussion.isLiked ? "fill-current" : ""
-                                  }`}
-                                />
-                                <span>{discussion.likeCount} likes</span>
-                              </button>
+                              />
+                              <span>{discussion.likeCount} likes</span>
+                            </button>
 
-                              {/* <div className="flex items-center gap-1">
+                            {/* <div className="flex items-center gap-1">
                                 <Eye className="h-4 w-4" />
                                 <span>View</span>
                               </div> */}
-                              {discussion.authorId === user?.id &&
-                                !discussion.isCompleted &&
-                                selectedCategory == "My Discussions" && (
-                                  <button
-                                    onClick={() =>
-                                      handleCloseDiscussion(discussion.id)
-                                    }
-                                    className="ml-4 px-2 py-1 bg-orange-500 text-white rounded hover:bg-red-600 text-sm"
-                                  >
-                                    Close Discussion
-                                  </button>
-                                )}
-                              {discussion.authorId === user?.id &&
-                                discussion.isCompleted && (
-                                  <span className="ml-4 px-2 py-1 bg-red-500 text-white rounded text-sm">
-                                    Closed
-                                  </span>
-                                )}
-                            </div>
+                            {discussion.authorId === user?.id &&
+                              !discussion.isCompleted &&
+                              selectedCategory == "My Discussions" && (
+                                <button
+                                  onClick={() =>
+                                    handleCloseDiscussion(discussion.id)
+                                  }
+                                  className="ml-4 px-2 py-1 bg-orange-500 text-white rounded hover:bg-red-600 text-sm"
+                                >
+                                  Close Discussion
+                                </button>
+                              )}
+                            {discussion.authorId === user?.id &&
+                              discussion.isCompleted && (
+                                <span className="ml-4 px-2 py-1 bg-red-500 text-white rounded text-sm">
+                                  Closed
+                                </span>
+                              )}
                           </div>
-                          <Badge
-                            className={`${getCategoryColor(
-                              discussion.category
-                            )} ml-4`}
-                          >
-                            {discussion.category}
-                          </Badge>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
-              </div>
-            )}
+                        <Badge
+                          className={`${getCategoryColor(
+                            discussion.category
+                          )} ml-4`}
+                        >
+                          {discussion.category}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
 
-            {/* Load More Button */}
+            {/* Load More */}
             {discussions.length > 0 && (
               <div className="text-center mt-8">
                 <Button
                   variant="outline"
-                  className="border-orange-500 text-orange-600 hover:bg-orange-50 bg-transparent px-8"
+                  className="border-orange-500 text-orange-600 hover:bg-orange-50 bg-transparent px-6 sm:px-8"
                 >
                   Load More Discussions
                 </Button>
@@ -737,67 +739,55 @@ export default function CommunityForumPage({ user }: Props) {
             )}
 
             {/* Ad Banner */}
-            <div className="mt-12">
-              <div className="container mx-auto px-8 py-2 w-5/6">
-                <div className="relative">
-                  {ad ? (
-                    <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                      <div className="relative p-8 text-center">
-                        <Image
-                          src={ad.bannerImageUrl}
-                          alt={ad.title}
-                          width={400}
-                          height={500}
-                          className="mx-auto rounded-xl shadow-lg"
-                        />
-                      </div>
+            <div className="mt-10 sm:mt-12">
+              <div className="w-full max-w-4xl mx-auto px-2 sm:px-6">
+                {ad ? (
+                  <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                    <div className="relative p-4 sm:p-8 text-center">
+                      <Image
+                        src={ad.bannerImageUrl}
+                        alt={ad.title}
+                        width={900}
+                        height={300}
+                        className="w-full h-auto rounded-xl shadow-lg"
+                      />
                     </div>
-                  ) : (
-                    <div
-                      className="mx-auto relative"
-                      style={{ width: 900, height: 300 }}
-                    >
-                      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 w-full h-full">
-                        <div className="relative p-8 w-full h-full">
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
-                          <div className="text-center relative z-10 flex flex-col justify-center items-center h-full">
-                            <div className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 bg-gradient-to-br from-amber-50 to-yellow-100">
-                              <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
-                                Book Your Ad (5) <br />
-                                <p>
-                                  Please select image size of (900x300 pixels)
-                                </p>
-                              </h3>
-                              <div className="space-y-4 relative">
-                                <div className="absolute top-4 left-4">
-                                  <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
-                                </div>
-                                <div className="absolute top-4 right-4">
-                                  <Star className="h-8 w-8 text-amber-500 animate-pulse" />
-                                </div>
-                                <p className="text-sm text-amber-600 mt-2">
-                                  Go to your dashboard to create and manage ads.
-                                </p>
-                              </div>
-                            </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-40 sm:h-60 md:h-72 lg:h-[300px] relative">
+                    <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4 sm:p-8">
+                      {/* same empty ad placeholder content */}
+                      <div className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 bg-gradient-to-br from-amber-50 to-yellow-100">
+                        <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
+                          Book Your Ad (5) <br />
+                          <p>Please select image size of (900x300 pixels)</p>
+                        </h3>
+                        <div className="space-y-4 relative">
+                          <div className="absolute top-4 left-4">
+                            <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
                           </div>
-                          <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-                          <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                          <div className="absolute top-4 right-4">
+                            <Star className="h-8 w-8 text-amber-500 animate-pulse" />
+                          </div>
+                          <p className="text-sm text-amber-600 mt-2">
+                            Go to your dashboard to create and manage ads.
+                          </p>
                         </div>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
       {/* Discussion Replies Modal */}
       {openDiscussionId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto p-6">
-            {/* Modal Header */}
+          <div className="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+            {/* same replies modal */}
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-red-700">
                 Discussion Replies
@@ -809,7 +799,6 @@ export default function CommunityForumPage({ user }: Props) {
                 <X className="h-5 w-5" />
               </button>
             </div>
-
             {/* Loading Spinner */}
             {repliesLoading ? (
               <div className="text-center py-4">
@@ -909,9 +898,12 @@ export default function CommunityForumPage({ user }: Props) {
           </div>
         </div>
       )}
+
+      {/* Selected Discussion Modal */}
       {isModalOpen && selectedDiscussion && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-yellow-50 border-yellow-200 border-4  rounded-lg w-11/12 max-w-2xl p-6 relative">
+          <div className="bg-yellow-50 border-yellow-200 border-4 rounded-lg w-11/12 max-w-2xl p-4 sm:p-6 relative">
+            {/* same modal content */}
             <button
               onClick={closeModal}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
