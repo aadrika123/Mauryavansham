@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/src/drizzle/db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { users, userApprovals } from "@/src/drizzle/schema";
 
 const REQUIRED_APPROVALS = 3;
@@ -12,26 +12,26 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     // 1️⃣ Check if this admin already acted
     const existing = await db.query.userApprovals.findFirst({
-      where: (ua) => eq(ua.userId, userId) && eq(ua.adminId, adminId),
+      where: (ua) =>
+        and(eq(ua.userId, userId), eq(ua.adminId, adminId)),
     });
 
     if (existing) {
-      // update decision to approved
-      await db
-        .update(userApprovals)
-        .set({ status: "approved", reason: null })
-        .where(eq(userApprovals.id, existing.id));
-    } else {
-      // insert new approval
-      await db.insert(userApprovals).values({
-        userId,
-        adminId,
-        adminName,
-        status: "approved",
+      return NextResponse.json({
+        success: false,
+        message: "You have already approved this user.",
       });
     }
 
-    // 2️⃣ Recalculate status
+    // 2️⃣ Insert new approval
+    await db.insert(userApprovals).values({
+      userId,
+      adminId,
+      adminName,
+      status: "approved",
+    });
+
+    // 3️⃣ Recalculate status
     const approvals = await db.query.userApprovals.findMany({
       where: (ua) => eq(ua.userId, userId),
     });

@@ -244,12 +244,15 @@ export default function AdminUserApprovalPage() {
                         <span className="text-gray-500">No approvals yet</span>
                       )}
                     </td>
+
                     <td className="p-3 border-b">
                       {u.rejectionReason ? (
                         <span
                           className="inline-block px-2 py-1 rounded text-sm font-medium bg-red-100 text-red-800"
                           title={u.rejectionReason}
-                        > {u.rejectionReason}</span>
+                        >
+                          {u.rejectionReason}
+                        </span>
                       ) : (
                         <span className="text-gray-500">No rejections</span>
                       )}

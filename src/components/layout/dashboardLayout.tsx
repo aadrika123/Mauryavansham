@@ -17,20 +17,13 @@ import {
   Bell,
   Settings,
   LogOut,
-  User,
   LayoutDashboard,
-  Users,
-  Heart,
-  ShoppingBag,
-  Calendar,
-  HandHeart,
-  Trophy,
-  Globe,
-  MessageSquare,
   Search,
   Camera,
   Tv,
   Wallet2Icon,
+  Menu,
+  X,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -38,13 +31,13 @@ import { signOut } from "next-auth/react";
 export default function DashboardLayout({
   children,
   user,
-  data,
 }: {
   children: React.ReactNode;
   user: NextAuthUser;
-  data?: any;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const pathname = usePathname();
 
   const sidebarItems = [
@@ -73,7 +66,6 @@ export default function DashboardLayout({
       icon: Wallet2Icon,
     },
   ];
-  const [notifications, setNotifications] = useState<any[]>([]);
 
   useEffect(() => {
     if (user?.role === "user") {
@@ -84,170 +76,171 @@ export default function DashboardLayout({
   }, [user]);
 
   const handleNotificationsOpen = async () => {
-    const unreadNotifications = notifications.filter((n) => !n.isRead);
-    if (unreadNotifications.length > 0) {
+    const unread = notifications.filter((n) => !n.isRead);
+    if (unread.length > 0) {
       await fetch("/api/notifications/mark-read", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          notificationIds: unreadNotifications.map((n) => n.id),
-        }),
+        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
       });
-      // Update the local state
       setNotifications((prev) =>
         prev.map((n) =>
-          unreadNotifications.find((u) => u.id === n.id)
-            ? { ...n, isRead: true }
-            : n
+          unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
         )
       );
     }
   };
-
-  console.log(notifications);
-  console.log(user);
 
   const handleSignOut = async () => {
     setIsOpen(false);
     await signOut({ callbackUrl: "/", redirect: false });
     window.location.href = "/";
   };
+
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
-      <div className="bg-red-800 text-white p-4 fixed top-0 left-0 right-0 z-10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Crown className="w-8 h-8 text-orange-400" />
-            <div>
-              <h1 className="text-2xl font-bold">
-                Welcome back, {user?.name || ""}!
-              </h1>
-              <p className="text-red-200">Your matrimonial journey continues</p>
-            </div>
+      <div className="bg-red-800 text-white p-4 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          {/* Hamburger (Mobile) */}
+          <button
+            className="lg:hidden p-2 rounded-md hover:bg-red-700"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            {sidebarOpen ? (
+              <X className="w-6 h-6 text-white" />
+            ) : (
+              <Menu className="w-6 h-6 text-white" />
+            )}
+          </button>
+          <Crown className="w-8 h-8 text-orange-400" />
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold">
+              Welcome back, {user?.name || ""}!
+            </h1>
+            <p className="text-red-200 text-sm md:text-base">
+              Your matrimonial journey continues
+            </p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4">
-              {user?.role === "user" && (
-                <DropdownMenu
-                  onOpenChange={async (open) => {
-                    if (open) {
-                      await handleNotificationsOpen();
-                    }
-                  }}
-                >
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-white hover:bg-red-700"
-                    >
-                      <Bell className="w-4 h-4 mr-2" />
-                      Notifications
-                      {notifications.filter((n) => !n.isRead).length > 0 && (
-                        <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
-                          {notifications.filter((n) => !n.isRead).length}
-                        </span>
-                      )}
-                    </Button>
-                  </DropdownMenuTrigger>
+        </div>
 
-                  {notifications.length > 0 && (
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-72 max-h-96 overflow-y-auto"
-                    >
-                      {notifications.map((n) => (
-                        <DropdownMenuItem
-                          key={n.id}
-                          className="whitespace-normal text-sm"
-                        >
-                          {n.message}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
+        {/* Right actions */}
+        <div className="flex items-center gap-4">
+          {user?.role === "user" && (
+            <DropdownMenu onOpenChange={handleNotificationsOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-red-700 relative"
+                >
+                  <Bell className="w-4 h-4 mr-2" />
+                  Notifications
+                  {notifications.filter((n) => !n.isRead).length > 0 && (
+                    <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
+                      {notifications.filter((n) => !n.isRead).length}
+                    </span>
                   )}
-                </DropdownMenu>
-              )}
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white hover:bg-red-700"
-                  >
-                    <Settings className="w-4 h-4 mr-2" /> Account
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => setIsOpen(true)}
-                    className="text-red-600 focus:text-red-600"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" /> Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Content with sidebar */}
-      <div className="pt-24">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar */}
-          <div className="">
-            <div className="bg-yellow-50 border-yellow-200 rounded-lg p-4 fixed top-24  w-60 h-[calc(100vh-6rem)] ">
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
-                  onClick={() =>
-                    (window.location.href =
-                      "/dashboard/user-profile/" + user?.id)
-                  }
+                </Button>
+              </DropdownMenuTrigger>
+              {notifications.length > 0 && (
+                <DropdownMenuContent
+                  align="end"
+                  className="w-72 max-h-96 overflow-y-auto"
                 >
-                  <img
-                    src={user?.photo || "/placeholder.svg"}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-red-700">{user?.name}</h3>
-                  <p className="text-sm text-red-600">{user?.email}</p>
-                </div>
-              </div>
-              <nav className="space-y-2 h-screen">
-                {sidebarItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      pathname === item.href
-                        ? "bg-orange-100 text-orange-700"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                    )}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.title}</span>
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </div>
+                  {notifications.map((n) => (
+                    <DropdownMenuItem
+                      key={n.id}
+                      className="whitespace-normal text-sm"
+                    >
+                      {n.message}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              )}
+            </DropdownMenu>
+          )}
 
-          {/* Main Content */}
-          <div className="lg:col-span-3 -ml-32 px-8">{children}</div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-red-700"
+              >
+                <Settings className="w-4 h-4 mr-2" /> Account
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setIsOpen(true)}
+                className="text-red-600 focus:text-red-600"
+              >
+                <LogOut className="w-4 h-4 mr-2" /> Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Sidebar + Main */}
+      <div className="pt-24 flex">
+        {/* Sidebar */}
+        <div
+          className={cn(
+            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-60 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
+            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          )}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div
+              className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.location.href = "/dashboard/user-profile/" + user?.id;
+                }
+              }}
+            >
+              <img
+                src={user?.photo || "/placeholder.svg"}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h3 className="font-semibold text-red-700">{user?.name}</h3>
+              <p className="text-sm text-red-600">{user?.email}</p>
+            </div>
+          </div>
+
+          <nav className="space-y-2 overflow-y-auto flex-1">
+            {sidebarItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={cn(
+                  "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  pathname === item.href
+                    ? "bg-orange-100 text-orange-700"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                <span>{item.title}</span>
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 lg:ml-64 px-6">{children}</div>
+      </div>
+
+      {/* Logout Confirmation */}
       {isOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-40">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
             <h2 className="text-lg font-bold mb-4">
               Are you sure you want to sign out?
