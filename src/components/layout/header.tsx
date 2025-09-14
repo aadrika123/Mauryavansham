@@ -139,94 +139,90 @@ export function Header() {
                   {/* Profile Image with Completion Circle */}
                   <div className="relative group flex items-center gap-3">
                     <div className="flex flex-col items-center">
-                      
-                        <Link
-                          href={
-                            profileData?.data?.role === "admin" ||
-                            profileData?.data?.role === "superAdmin"
-                              ? `/admin/user-profile/${loginUser?.id}`
-                              : `/dashboard/user-profile/${loginUser?.id}`
-                          }
-                        >
-                          <div className="relative w-16 h-16 cursor-pointer">
-                            {/* Circular progress ring */}
-                            <svg className="absolute top-0 left-0 w-full h-full -rotate-90">
-                              <circle
-                                className="text-gray-200"
-                                strokeWidth="4"
-                                stroke="currentColor"
-                                fill="transparent"
-                                r="28"
-                                cx="32"
-                                cy="32"
-                              />
-                              <circle
-                                className="text-green-500"
-                                strokeWidth="4"
-                                strokeDasharray={2 * Math.PI * 28}
-                                strokeDashoffset={
-                                  2 *
-                                  Math.PI *
-                                  28 *
-                                  (1 -
-                                    (profileData?.profileCompletion || 0) / 100)
-                                }
-                                strokeLinecap="round"
-                                stroke="url(#gradient)"
-                                fill="transparent"
-                                r="28"
-                                cx="32"
-                                cy="32"
-                              />
-                              {/* Gradient definition */}
-                              <defs>
-                                <linearGradient
-                                  id="gradient"
-                                  x1="0%"
-                                  y1="0%"
-                                  x2="100%"
-                                  y2="0%"
-                                >
-                                  <stop offset="0%" stopColor="orange" />
-                                  <stop offset="100%" stopColor="green" />
-                                </linearGradient>
-                              </defs>
-                            </svg>
+                      <Link
+                        href={
+                          profileData?.data?.role === "admin" ||
+                          profileData?.data?.role === "superAdmin"
+                            ? `/admin/user-profile/${loginUser?.id}`
+                            : `/dashboard/user-profile/${loginUser?.id}`
+                        }
+                      >
+                        <div className="relative w-16 h-16 cursor-pointer">
+                          {/* Circular progress ring */}
+                          <svg className="absolute top-0 left-0 w-full h-full -rotate-90">
+                            <circle
+                              className="text-gray-200"
+                              strokeWidth="4"
+                              stroke="currentColor"
+                              fill="transparent"
+                              r="28"
+                              cx="32"
+                              cy="32"
+                            />
+                            <circle
+                              className="text-green-500"
+                              strokeWidth="4"
+                              strokeDasharray={2 * Math.PI * 28}
+                              strokeDashoffset={
+                                2 *
+                                Math.PI *
+                                28 *
+                                (1 -
+                                  (profileData?.profileCompletion || 0) / 100)
+                              }
+                              strokeLinecap="round"
+                              stroke="url(#gradient)"
+                              fill="transparent"
+                              r="28"
+                              cx="32"
+                              cy="32"
+                            />
+                            {/* Gradient definition */}
+                            <defs>
+                              <linearGradient
+                                id="gradient"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="0%"
+                              >
+                                <stop offset="0%" stopColor="orange" />
+                                <stop offset="100%" stopColor="green" />
+                              </linearGradient>
+                            </defs>
+                          </svg>
 
-                            {/* User Image */}
-                            {loading ? (
-                              <Loader height={10} />
-                            ) : (
-                              <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
-                                <img
-                                  src={
-                                    profileData?.data?.photo ||
-                                    "/placeholder.svg"
-                                  }
-                                  alt="Profile"
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </Link>
+                          {/* User Image */}
+                          {loading ? (
+                            <Loader height={10} />
+                          ) : (
+                            <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
+                              <img
+                                src={
+                                  profileData?.data?.photo || "/placeholder.svg"
+                                }
+                                alt="Profile"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </Link>
 
                       {/* Percentage text below image */}
-                      {profileData?.profileCompletion !== 100 &&
-                        (
-                          <span className="mt-1 text-xs font-bold text-orange-600">
-                            {profileData?.profileCompletion || 0}%
-                          </span>
-                        )}
+                      {profileData?.profileCompletion !== 100 && (
+                        <span className="mt-1 text-xs font-bold text-orange-600">
+                          {profileData?.profileCompletion || 0}%
+                        </span>
+                      )}
                     </div>
 
                     {/* Tooltip on hover */}
-                    {profileData?.profileCompletion !== 100 &&
-                      (
-                        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow-md">
-                          Complete your profile for better experience
-                        </div>
-                      )}
+                    {profileData?.profileCompletion !== 100 && (
+                      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow-md">
+                        Complete your profile for better experience
+                      </div>
+                    )}
 
                     {/* User Name */}
                     <span className="font-semibold text-lg text-orange-600">
@@ -292,6 +288,7 @@ export function Header() {
         </nav>
 
         {/* Mobile Sidebar Menu */}
+        {/* Mobile Sidebar Menu */}
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 flex pointer-events-none">
             {/* Sidebar */}
@@ -300,6 +297,7 @@ export function Header() {
                 sidebarOpen ? "translate-x-0" : "-translate-x-full"
               } pointer-events-auto`}
             >
+              {/* Top Section */}
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xl font-bold text-white">Menu</span>
                 <button onClick={() => setSidebarOpen(false)}>
@@ -307,6 +305,73 @@ export function Header() {
                 </button>
               </div>
 
+              {/* 🔥 User Info (only if logged in) */}
+              {isAuthenticated && (
+                <div className="flex flex-col items-center text-center mb-4 border-b border-white/30 pb-4">
+                  <div className="relative w-20 h-20">
+                    {/* Circular progress ring */}
+                    <svg className="absolute top-0 left-0 w-full h-full -rotate-90">
+                      <circle
+                        className="text-gray-200"
+                        strokeWidth="4"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="36"
+                        cx="40"
+                        cy="40"
+                      />
+                      <circle
+                        className="text-green-500"
+                        strokeWidth="4"
+                        strokeDasharray={2 * Math.PI * 36}
+                        strokeDashoffset={
+                          2 *
+                          Math.PI *
+                          36 *
+                          (1 - (profileData?.profileCompletion || 0) / 100)
+                        }
+                        strokeLinecap="round"
+                        stroke="url(#gradientMobile)"
+                        fill="transparent"
+                        r="36"
+                        cx="40"
+                        cy="40"
+                      />
+                      <defs>
+                        <linearGradient
+                          id="gradientMobile"
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="0%"
+                        >
+                          <stop offset="0%" stopColor="orange" />
+                          <stop offset="100%" stopColor="green" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+
+                    {/* User Image */}
+                    <div className="w-18 h-18 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
+                      <img
+                        src={profileData?.data?.photo || "/placeholder.svg"}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Name + completion */}
+                  <span className="mt-3 font-semibold text-lg">{userName}</span>
+                  {profileData?.profileCompletion !== 100 && (
+                    <span className="text-xs text-yellow-200 mt-1">
+                      {profileData?.profileCompletion || 0}% Profile Complete
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Navigation Items */}
               {navigationItems
                 .filter((item) => item.title !== "Home")
                 .map((item) => (
@@ -314,46 +379,100 @@ export function Header() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 text-white hover:bg-orange-100 rounded"
+                    className="flex items-center gap-2 px-3 py-2 text-white hover:bg-orange-600 rounded"
                   >
                     {item.icon && <item.icon className="h-4 w-4" />}
                     {item.title}
                   </Link>
                 ))}
 
-              <div className="pt-4 border-t">
+              {/* Auth Buttons */}
+              <div className="pt-4 border-t border-white/30">
                 {!isAuthenticated ? (
                   <>
                     <Link href="/sign-in" onClick={() => setSidebarOpen(false)}>
-                      <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+                      <Button className="bg-white text-red-600  w-full">
                         Login
                       </Button>
                     </Link>
                     <Link href="/sign-up" onClick={() => setSidebarOpen(false)}>
-                      <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white mt-2">
+                      <Button className="bg-white text-red-600  w-full mt-2">
                         Sign Up
                       </Button>
                     </Link>
                   </>
                 ) : (
                   <>
-                    <Link href={`/view-profile/${loginUser?.id}`} passHref>
-                      <Button
-                        asChild
-                        className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
-                      >
-                        <a>View Profile</a>
-                      </Button>
-                    </Link>
-                    <Button
-                      onClick={() => {
-                        setSidebarOpen(false);
-                        setIsOpen(true);
-                      }}
-                      className="w-full mt-2 bg-white text-orange-500 hover:bg-gray-100"
-                    >
-                      Sign Out
-                    </Button>
+                    {/* Auth Buttons */}
+                    <div className="pt-4 border-t border-white/30 space-y-2">
+                      {!isAuthenticated ? (
+                        <>
+                          <Link
+                            href="/sign-in"
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <Button className="bg-white text-red-600 w-full">
+                              Login
+                            </Button>
+                          </Link>
+                          <Link
+                            href="/sign-up"
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full">
+                              Sign Up
+                            </Button>
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          {/* ✅ Main Panel / Admin Panel */}
+                          {userDetails?.role === "user" ? (
+                            <Link
+                              href={`/dashboard`}
+                              passHref
+                              onClick={() => setSidebarOpen(false)}
+                            >
+                              <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full">
+                                Main Panel
+                              </Button>
+                            </Link>
+                          ) : userDetails?.role === "admin" ||
+                            userDetails?.role === "superAdmin" ? (
+                            <Link
+                              href={`/admin/overview`}
+                              passHref
+                              onClick={() => setSidebarOpen(false)}
+                            >
+                              <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full">
+                                Admin Panel
+                              </Button>
+                            </Link>
+                          ) : null}
+
+                          {/* ✅ View Profile */}
+                          {/* <Link
+                            href={`/view-profile/${loginUser?.id}`}
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full">
+                              View Profile
+                            </Button>
+                          </Link> */}
+
+                          {/* ✅ Sign Out */}
+                          <Button
+                            onClick={() => {
+                              setSidebarOpen(false);
+                              setIsOpen(true);
+                            }}
+                            className="w-full bg-white text-orange-500 hover:bg-gray-100"
+                          >
+                            Sign Out
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </>
                 )}
               </div>
