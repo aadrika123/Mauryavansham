@@ -49,6 +49,9 @@ export default function SignUpForm() {
     currentZipCode: "",
     // 🆕 Checkbox state
     sameAsPermanent: false,
+
+    // ✅ Add this
+    declaration: false,
   });
 
   const handleInputChange = (
@@ -592,7 +595,7 @@ export default function SignUpForm() {
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Create a password"
+              placeholder="Create a password, ex. Abc@123"
               value={formData.password}
               onChange={handleInputChange}
               className="pl-10 pr-10 bg-white border-yellow-300 focus:border-red-500"
@@ -612,9 +615,32 @@ export default function SignUpForm() {
               )}
             </button>
           </div>
-          <p className="text-xs text-gray-600">
-            Password must be at least 6 characters long
-          </p>
+          <div className="mt-2 space-y-1">
+            <p className="text-xs text-gray-600">
+              ✅ Password must be at least{" "}
+              <span className="font-medium">6 characters</span> long
+            </p>
+            <p className="text-xs text-gray-600">
+              ✅ Include at least{" "}
+              <span className="font-medium">one uppercase letter (A–Z)</span>
+            </p>
+            <p className="text-xs text-gray-600">
+              ✅ Include at least{" "}
+              <span className="font-medium">one lowercase letter (a–z)</span>
+            </p>
+            <p className="text-xs text-gray-600">
+              ✅ Include at least{" "}
+              <span className="font-medium">one number (0–9)</span>
+            </p>
+            <p className="text-xs text-gray-600">
+              ✅ Include at least{" "}
+              <span className="font-medium">one special character</span>
+              (e.g. <code>@ # $ % ^ &amp; *</code>)
+            </p>
+            <p className="text-xs text-gray-600">
+              Example: <span className="font-mono">Password@123</span>
+            </p>
+          </div>
         </div>
 
         {/* Confirm Password Field */}
@@ -641,8 +667,68 @@ export default function SignUpForm() {
           </div>
         </div>
       </div>
+
+      {/* Declaration Checkbox */}
+      <div className="mt-4 flex items-start gap-2">
+        <input
+          type="checkbox"
+          id="declaration"
+          checked={formData.declaration || false}
+          onChange={(e) =>
+            setFormData((prev: any) => ({
+              ...prev,
+              declaration: e.target.checked,
+            }))
+          }
+          className="mt-1 w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+        />
+        <label
+          htmlFor="declaration"
+          className="text-xs sm:text-xs text-gray-700 leading-relaxed"
+        >
+          I hereby declare that I belong to the{" "}
+          <span className="font-semibold">
+            Kushwaha / Koiri / Maurya / Sakhya / Sainy
+          </span>{" "}
+          community and agree to abide by the{" "}
+          <a href="/terms" className="text-red-600 underline">
+            Terms of Use
+          </a>{" "}
+          and{" "}
+          <a href="/privacy" className="text-red-600 underline">
+            Privacy Policy
+          </a>{" "}
+          of <span className="font-semibold">Mauryavansham.com</span>. I
+          understand that my registration shall be subject to verification and
+          approval by{" "}
+          <span className="font-semibold">three (3) Admin Members</span>, and
+          access to the Portal will be granted only after such approval. I also
+          acknowledge that any misrepresentation of my community identity may
+          result in{" "}
+          <span className="font-semibold text-red-600">
+            permanent suspension
+          </span>{" "}
+          of my account.
+        </label>
+      </div>
+
       {/* Submit Button */}
       <Button
+        type="submit"
+        className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white py-3"
+        disabled={isLoading || !formData.declaration}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Creating Account...
+          </>
+        ) : (
+          "Create Account"
+        )}
+      </Button>
+      {/* Submit Button */}
+      {/* <Button
         type="submit"
         className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white py-3"
         disabled={isLoading}
@@ -655,7 +741,7 @@ export default function SignUpForm() {
         ) : (
           "Create Account"
         )}
-      </Button>
+      </Button> */}
     </form>
   );
 }
