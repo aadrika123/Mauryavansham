@@ -34,6 +34,11 @@ export default function BusinessDetailsPage({ user }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const Router = useRouter();
 
+  // 🔹 Image Modal State
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [modalImages, setModalImages] = useState<string[]>([]);
+  const [modalIndex, setModalIndex] = useState(0);
+
   useEffect(() => {
     if (session?.user) {
       setCurrentUser(session.user);
@@ -154,9 +159,58 @@ export default function BusinessDetailsPage({ user }: Props) {
       alert(data.error);
     }
   };
+   // 🔹 Open Image Modal
+  const openImageModal = (images: string[], index: number) => {
+    setModalImages(images);
+    setModalIndex(index);
+    setShowImageModal(true);
+  };
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 md:p-6 bg-yellow-50 min-h-screen">
+
+       {showImageModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <div className="relative w-full max-w-3xl">
+            <button
+              onClick={() => setShowImageModal(false)}
+              className="absolute top-2 right-2 bg-white rounded-full p-2 shadow"
+            >
+              <X className="h-5 w-5 text-black" />
+            </button>
+            <img
+              src={modalImages[modalIndex]}
+              alt="modal-img"
+              className="w-full max-h-[80vh] object-contain rounded"
+            />
+            {/* Carousel controls */}
+            {modalImages.length > 1 && (
+              <>
+                <button
+                  onClick={() =>
+                    setModalIndex(
+                      (modalIndex - 1 + modalImages.length) %
+                        modalImages.length
+                    )
+                  }
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() =>
+                    setModalIndex((modalIndex + 1) % modalImages.length)
+                  }
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded"
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -261,14 +315,16 @@ export default function BusinessDetailsPage({ user }: Props) {
                       <img
                         src={images[0]}
                         alt="business"
-                        className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded border"
+                        className="w-32 h-32 sm:w-40 sm:h-40 object-fill rounded border cursor-pointer"
+                        onClick={() => openImageModal(images, current)}
                       />
                     ) : images.length > 1 ? (
                       <div className="relative w-32 h-32 sm:w-48 sm:h-48">
                         <img
                           src={images[current]}
                           alt={`business-${current}`}
-                          className="w-full h-full object-cover rounded border"
+                          className="w-full h-full object-fill rounded border cursor-pointer"
+                          onClick={() => openImageModal(images, current)}
                         />
                         <button
                           onClick={() => prevSlide(i)}

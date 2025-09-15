@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/src/components/ui/use-toast";
 import { updateUserDtlsById } from "@/src/features/updateUserDtlsById/updateUserDtlsById";
+import { Phone } from "lucide-react";
+import { Label } from "@/src/components/ui/label";
 
 export default function UserProfilePage({ data }: { data: any }) {
   const router = useRouter();
@@ -38,6 +40,16 @@ export default function UserProfilePage({ data }: { data: any }) {
     state: "",
     country: "India",
     zipCode: "",
+    fatherName: "",
+    motherName: "",
+    // 🆕 Current Address
+    // currentAddress: "",
+    // currentCity: "",
+    // currentState: "",
+    // currentCountry: "India",
+    // currentZipCode: "",
+    siblings: [],
+    children: [],
   });
 
   useEffect(() => {
@@ -46,6 +58,7 @@ export default function UserProfilePage({ data }: { data: any }) {
         ...prev,
         ...data,
         country: data.country || "India", // ✅ overwrite fix
+        // currentCountry: data.currentCountry || "India", // ✅ overwrite fix
         // religion: data.religion || "Hindu", // ✅ overwrite fix
       }));
     }
@@ -109,15 +122,21 @@ export default function UserProfilePage({ data }: { data: any }) {
     // --- Validation ---
     const errors: string[] = [];
 
-    if (!formData.name) errors.push("Name is required");
-    if (!formData.email) errors.push("Email is required");
-    if (!formData.phone) errors.push("Phone is required");
+    // if (!formData.name) errors.push("Name is required");
+    // if (!formData.email) errors.push("Email is required");
+    // if (!formData.phone) errors.push("Phone is required");
     if (!formData.gender) errors.push("Gender is required");
     if (!formData.dateOfBirth) errors.push("Date of Birth is required");
     if (!formData.maritalStatus) errors.push("Marital Status is required");
     if (!formData.motherTongue) errors.push("Mother Tongue is required");
     if (!formData.education) errors.push("Education is required");
     if (!formData.occupation) errors.push("Occupation is required");
+    // if (!formData.address) errors.push("Address is required");
+    // if (!formData.city) errors.push("City is required");
+    // if (!formData.state) errors.push("State is required");
+    // if (!formData.zipCode) errors.push("Zip Code is required");
+    // if (!formData.fatherName) errors.push("Father's Name is required");
+    // if (!formData.motherName) errors.push("Mother's Name is required");
 
     // Occupation-specific validation
     if (formData.occupation === "Job") {
@@ -154,7 +173,7 @@ export default function UserProfilePage({ data }: { data: any }) {
           title: "Profile Updated ✅",
           description: "Your profile has been updated successfully!",
         });
-        router.push(`/admin/overview`);
+        router.push(`/dashboard`);
       } else {
         toast({
           title: "Update Failed ❌",
@@ -193,6 +212,7 @@ export default function UserProfilePage({ data }: { data: any }) {
       "state",
       "country",
       "zipCode",
+      "fatherName",
     ];
 
     // Occupation-based fields
@@ -225,7 +245,7 @@ export default function UserProfilePage({ data }: { data: any }) {
   const completion = calculateCompletion(formData);
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-xl">
+    <div className="max-w-3xl mx-auto p-6 bg-white  rounded-xl drop-shadow-[0_4px_10px_rgba(250,204,21,0.5)] mb-10 mt-4">
       <h2 className="text-2xl font-bold text-center mb-4">
         Complete Your Profile
       </h2>
@@ -243,247 +263,545 @@ export default function UserProfilePage({ data }: { data: any }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 border p-4 rounded-md">
-        <div className="grid grid-cols-2 gap-4">
-          {/* Basic Fields */}
-          <InputField
-            label="Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          <InputField
-            label="Email"
-            name="email"
-            value={formData.email}
-            disabled
-          />
-
-          <PhoneField
-            value={formData.phone}
-            onChange={(val: string) => setFormData({ ...formData, phone: val })}
-          />
-
-          <SelectField
-            label="Gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            options={["Male", "Female", "Other"]}
-          />
-          <InputField
-            type="date"
-            label="Date of Birth"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleChange}
-          />
-          <InputField
-            label="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-
-          <SelectField
-            label="Marital Status"
-            name="maritalStatus"
-            value={formData.maritalStatus}
-            onChange={handleChange}
-            options={["Single", "Married", "Divorced", "Widowed"]}
-          />
-          {/* <InputField label="Religion" name="religion" value="Hindu" disabled /> */}
-          <InputField
-            label="Mother Tongue"
-            name="motherTongue"
-            value={formData.motherTongue}
-            onChange={handleChange}
-          />
-
-          {/* ✅ Height & Weight */}
-          <HeightField
-            value={formData.height}
-            onChange={(val: string) =>
-              setFormData({ ...formData, height: val })
-            }
-          />
-          <InputField
-            type="number"
-            label="Weight (kg)"
-            name="weight"
-            value={formData.weight}
-            onChange={handleChange}
-          />
-
-          {/* ✅ Dropdowns */}
-          <SelectField
-            label="Blood Group"
-            name="bloodGroup"
-            value={formData.bloodGroup}
-            onChange={handleChange}
-            options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]}
-          />
-          <SelectField
-            label="Education"
-            name="education"
-            value={formData.education}
-            onChange={handleChange}
-            options={[
-              "High School",
-              "Intermediate",
-              "Graduate",
-              "Post Graduate",
-              "PhD",
-              "Other",
-            ]}
-          />
-          {/* Occupation Section */}
-          <SelectField
-            label="Occupation"
-            name="occupation"
-            value={formData.occupation}
-            onChange={handleChange}
-            options={["Job", "Business"]}
-          />
-
-          {/* If Occupation = Job */}
-          {formData.occupation === "Job" && (
-            <>
-              <SelectField
-                label="Job Type"
-                name="jobType"
-                value={formData.jobType}
-                onChange={handleChange}
-                options={["Government", "Non-Government"]}
-              />
-
-              {/* Government Fields */}
-              {formData.jobType === "Government" && (
-                <>
-                  <SelectField
-                    label="Gov Sector"
-                    name="govSector"
-                    value={formData.govSector}
-                    onChange={handleChange}
-                    options={["Central", "State", "UT"]}
-                  />
-                  <InputField
-                    label="Department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleChange}
-                  />
-                  <InputField
-                    label="Posting Location"
-                    name="postingLocation"
-                    value={formData.postingLocation}
-                    onChange={handleChange}
-                  />
-                  <InputField
-                    label="Designation"
-                    name="designation"
-                    value={formData.designation}
-                    onChange={handleChange}
-                  />
-                </>
-              )}
-
-              {/* Non-Government Fields */}
-              {formData.jobType === "Non-Government" && (
-                <>
-                  <InputField
-                    label="Company"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                  />
-                  <InputField
-                    label="Designation"
-                    name="designation"
-                    value={formData.designation}
-                    onChange={handleChange}
-                  />
-                </>
-              )}
-            </>
-          )}
-
-          {/* If Occupation = Business */}
-          {formData.occupation === "Business" && (
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 p-6 border rounded-lg shadow-sm bg-white"
+      >
+        {/* Basic Info */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
+          <div className="grid grid-cols-2 gap-4">
             <InputField
-              label="Business Details"
-              name="businessDetails"
-              value={formData.businessDetails}
+              label="Name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              disabled
+            />
+            <InputField
+              label="Email"
+              name="email"
+              value={formData.email}
+              disabled
+            />
+
+            {/* <PhoneField
+              value={formData.phone}
+              onChange={(val: string) =>
+                setFormData({ ...formData, phone: val })
+              }
+            /> */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="phone"
+                className="block font-medium mb-2 text-base"
+              >
+                Phone Number *
+              </Label>
+              <div className="relative">
+                {/* <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" /> */}
+                <PhoneField
+                  value={formData.phone}
+                  onChange={(val: string) =>
+                    setFormData({ ...formData, phone: val })
+                  }
+                  disabled
+                />
+              </div>
+            </div>
+
+            <SelectField
+              label="Gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              options={["Male", "Female", "Other"]}
+              disabled
+            />
+
+            <InputField
+              type="date"
+              label="Date of Birth"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
               onChange={handleChange}
             />
-          )}
+            <InputField
+              label="Father's Name"
+              name="fatherName"
+              value={formData.fatherName}
+              onChange={handleChange}
+              disabled
+            />
+            <InputField
+              label="Mother's Name"
+              name="motherName"
+              value={formData.motherName}
+              onChange={handleChange}
+              disabled
+            />
 
-          {/* ✅ Location */}
-          <InputField
-            label="City"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-          />
-          <SelectField
-            label="State"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            options={[
-              "Bihar",
-              "Uttar Pradesh",
-              "Delhi",
-              "Maharashtra",
-              "West Bengal",
-              "Madhya Pradesh",
-              "Rajasthan",
-              "Karnataka",
-              "Tamil Nadu",
-              "Kerala",
-              "Punjab",
-              "Haryana",
-              "Gujarat",
-              "Jharkhand",
-              "Odisha",
-              "Assam",
-            ]}
-          />
-          <InputField label="Country" name="country" value="India" disabled />
-          <InputField
-            label="pin Code"
-            name="zipCode"
-            value={formData.zipCode}
-            onChange={handleChange}
-          />
+            <SelectField
+              label="Marital Status"
+              name="maritalStatus"
+              value={formData.maritalStatus}
+              onChange={handleChange}
+              options={["Single", "Married", "Divorced", "Widowed"]}
+            />
+            {/* <InputField
+              label="Religion"
+              name="religion"
+              value="Hindu"
+              disabled
+            /> */}
+            <InputField
+              label="Mother Tongue"
+              name="motherTongue"
+              value={formData.motherTongue}
+              onChange={handleChange}
+            />
+
+            <HeightField
+              value={formData.height}
+              onChange={(val: string) =>
+                setFormData({ ...formData, height: val })
+              }
+            />
+
+            <InputField
+              type="number"
+              label="Weight (kg)"
+              name="weight"
+              value={formData.weight}
+              onChange={handleChange}
+            />
+
+            <SelectField
+              label="Blood Group"
+              name="bloodGroup"
+              value={formData.bloodGroup}
+              onChange={handleChange}
+              options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]}
+            />
+
+            <SelectField
+              label="Education"
+              name="education"
+              value={formData.education}
+              onChange={handleChange}
+              options={[
+                "High School",
+                "Intermediate",
+                "Graduate",
+                "Post Graduate",
+                "PhD",
+                "Other",
+              ]}
+            />
+          </div>
+        </div>
+
+        {/* Occupation */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Occupation</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <SelectField
+              label="Occupation"
+              name="occupation"
+              value={formData.occupation}
+              onChange={handleChange}
+              options={["Job", "Business"]}
+            />
+
+            {formData.occupation === "Job" && (
+              <>
+                <SelectField
+                  label="Job Type"
+                  name="jobType"
+                  value={formData.jobType}
+                  onChange={handleChange}
+                  options={["Government", "Non-Government"]}
+                />
+
+                {formData.jobType === "Government" && (
+                  <>
+                    <SelectField
+                      label="Gov Sector"
+                      name="govSector"
+                      value={formData.govSector}
+                      onChange={handleChange}
+                      options={["Central", "State", "UT"]}
+                    />
+                    <InputField
+                      label="Department"
+                      name="department"
+                      value={formData.department}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      label="Posting Location"
+                      name="postingLocation"
+                      value={formData.postingLocation}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      label="Designation"
+                      name="designation"
+                      value={formData.designation}
+                      onChange={handleChange}
+                    />
+                  </>
+                )}
+
+                {formData.jobType === "Non-Government" && (
+                  <>
+                    <InputField
+                      label="Company"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      label="Designation"
+                      name="designation"
+                      value={formData.designation}
+                      onChange={handleChange}
+                    />
+                  </>
+                )}
+              </>
+            )}
+
+            {formData.occupation === "Business" && (
+              <InputField
+                label="Business Details"
+                name="businessDetails"
+                value={formData.businessDetails}
+                onChange={handleChange}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Permanent Address */}
+        {/* <div className="">
+          <h3 className="font-semibold mb-4">Permanent Address</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="col-span-2"
+            />
+            <InputField
+              label="City"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+            />
+            <SelectField
+              label="State"
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              options={[
+                "Bihar",
+                "Uttar Pradesh",
+                "Delhi",
+                "Maharashtra",
+                "West Bengal",
+                "Madhya Pradesh",
+                "Rajasthan",
+                "Karnataka",
+                "Tamil Nadu",
+                "Kerala",
+                "Punjab",
+                "Haryana",
+                "Gujarat",
+                "Jharkhand",
+                "Odisha",
+                "Assam",
+              ]}
+            />
+            <InputField label="Country" name="country" value="India" disabled />
+            <InputField
+              label="Zip Code"
+              name="zipCode"
+              value={formData.zipCode}
+              onChange={handleChange}
+            />
+          </div>
+        </div> */}
+
+        {/* Current Address */}
+        {/* <div className="">
+          <h3 className="font-semibold mb-4">Current Address</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <input
+              type="checkbox"
+              checked={formData.sameAsPermanent || false}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                if (checked) {
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    sameAsPermanent: true,
+                    currentAddress: prev.address,
+                    currentCity: prev.city,
+                    currentState: prev.state,
+                    currentCountry: prev.country,
+                    currentZipCode: prev.zipCode,
+                  }));
+                } else {
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    sameAsPermanent: false,
+                    currentAddress: "",
+                    currentCity: "",
+                    currentState: "",
+                    currentCountry: "India",
+                    currentZipCode: "",
+                  }));
+                }
+              }}
+            />
+            <label>Same as Permanent Address</label>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Address"
+              name="currentAddress"
+              value={formData.currentAddress}
+              onChange={handleChange}
+              disabled={formData.sameAsPermanent}
+              className="col-span-2"
+            />
+            <InputField
+              label="City"
+              name="currentCity"
+              value={formData.currentCity}
+              onChange={handleChange}
+              disabled={formData.sameAsPermanent}
+            />
+            <SelectField
+              label="State"
+              name="currentState"
+              value={formData.currentState}
+              onChange={handleChange}
+              options={[
+                "Bihar",
+                "Uttar Pradesh",
+                "Delhi",
+                "Maharashtra",
+                "West Bengal",
+                "Madhya Pradesh",
+                "Rajasthan",
+                "Karnataka",
+                "Tamil Nadu",
+                "Kerala",
+                "Punjab",
+                "Haryana",
+                "Gujarat",
+                "Jharkhand",
+                "Odisha",
+                "Assam",
+              ]}
+              disabled={formData.sameAsPermanent}
+            />
+            <InputField
+              label="Country"
+              name="currentCountry"
+              value={formData.currentCountry}
+              disabled
+            />
+            <InputField
+              label="Zip Code"
+              name="currentZipCode"
+              value={formData.currentZipCode}
+              onChange={handleChange}
+              disabled={formData.sameAsPermanent}
+            />
+          </div>
+        </div> */}
+
+        {/* Siblings */}
+        <div className="border p-4 rounded-md">
+          <h3 className="font-semibold mb-2">Siblings</h3>
+          {formData.siblings.map((sibling: any, idx: number) => (
+            <div key={idx} className="flex items-center gap-4 mb-2">
+              <input
+                type="text"
+                placeholder="Name"
+                value={sibling.name}
+                onChange={(e) => {
+                  const updated = [...formData.siblings];
+                  updated[idx].name = e.target.value;
+                  setFormData({ ...formData, siblings: updated });
+                }}
+                className="border p-2 rounded flex-1 bg-white border-yellow-300 focus:border-red-500"
+              />
+              <select
+                value={sibling.gender}
+                onChange={(e) => {
+                  const updated = [...formData.siblings];
+                  updated[idx].gender = e.target.value;
+                  setFormData({ ...formData, siblings: updated });
+                }}
+                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+              >
+                <option value="">Gender</option>
+                <option value="Brother">Brother</option>
+                <option value="Sister">Sister</option>
+              </select>
+              <input
+                type="date"
+                value={sibling.dateOfBirth}
+                onChange={(e) => {
+                  const updated = [...formData.siblings];
+                  updated[idx].dateOfBirth = e.target.value;
+                  setFormData({ ...formData, siblings: updated });
+                }}
+                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = formData.siblings.filter(
+                    (_: any, i: number) => i !== idx
+                  );
+                  setFormData({ ...formData, siblings: updated });
+                }}
+                className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-sm"
+              >
+                X
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() =>
+              setFormData({
+                ...formData,
+                siblings: [
+                  ...formData.siblings,
+                  { name: "", gender: "", dateOfBirth: "", maritalStatus: "" },
+                ],
+              })
+            }
+            className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition duration-300 ease-in-out"
+          >
+            Add Sibling
+          </button>
+        </div>
+
+        {/* Children */}
+        <div className="border p-4 rounded-md">
+          <h3 className="font-semibold mb-2">Children</h3>
+          {formData.children.map((child: any, idx: number) => (
+            <div key={idx} className="flex items-center gap-4 mb-2">
+              <input
+                type="text"
+                placeholder="Name"
+                value={child.name}
+                onChange={(e) => {
+                  const updated = [...formData.children];
+                  updated[idx].name = e.target.value;
+                  setFormData({ ...formData, children: updated });
+                }}
+                className="border p-2 rounded flex-1 bg-white border-yellow-300 focus:border-red-500"
+              />
+              <select
+                value={child.gender}
+                onChange={(e) => {
+                  const updated = [...formData.children];
+                  updated[idx].gender = e.target.value;
+                  setFormData({ ...formData, children: updated });
+                }}
+                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+              >
+                <option value="">Gender</option>
+                <option value="Son">Son</option>
+                <option value="Daughter">Daughter</option>
+              </select>
+              <input
+                type="date"
+                value={child.dateOfBirth}
+                onChange={(e) => {
+                  const updated = [...formData.children];
+                  updated[idx].dateOfBirth = e.target.value;
+                  setFormData({ ...formData, children: updated });
+                }}
+                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = formData.children.filter(
+                    (_: any, i: number) => i !== idx
+                  );
+                  setFormData({ ...formData, children: updated });
+                }}
+                className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-sm"
+              >
+                X
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() =>
+              setFormData({
+                ...formData,
+                children: [
+                  ...formData.children,
+                  {
+                    name: "",
+                    gender: "",
+                    dateOfBirth: "",
+                    studyingOrWorking: "",
+                  },
+                ],
+              })
+            }
+            className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition duration-300 ease-in-out"
+          >
+            Add Child
+          </button>
         </div>
 
         {/* File Upload */}
-        <div>
-          <label className="block font-medium">Upload Photo</label>
+        <div className="border p-4 rounded-md">
+          <label className="block font-medium mb-2">Upload Photo</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleFileUpload}
-            className="w-full border rounded p-2"
+            className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
           />
-          {uploading && <p className="text-sm text-gray-500">Uploading...</p>}
+          {uploading && (
+            <p className="text-sm text-gray-500 mt-1">Uploading...</p>
+          )}
           {formData.photo && (
             <img
               src={formData.photo}
               alt="Profile Preview"
-              className="mt-2 w-24 h-24 rounded-full object-cover border"
+              className="mt-3 w-24 h-24 rounded-full object-cover border"
             />
           )}
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-        >
-          {loading ? "Updating..." : "Update Profile"}
-        </button>
+        {/* Submit */}
+        <div className="text-right">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow disabled:opacity-50"
+          >
+            {loading ? "Updating..." : "Update Profile"}
+          </button>
+        </div>
       </form>
 
       {/* 🆕 Validation Modal */}
@@ -536,31 +854,37 @@ function InputField({
   onChange,
   disabled = false,
   type = "text",
+  placeholder,
+  required = false,
 }: any) {
   return (
     <div>
-      <label className="block font-medium">{label}</label>
+      <label className="block font-medium mb-2">{label}</label>
       <input
         type={type}
         name={name}
         value={value || ""}
         onChange={onChange}
         disabled={disabled}
-        className="w-full border rounded p-2"
+        placeholder={placeholder}
+        required={required}
+        className="w-full border rounded p-2  border-yellow-300 focus:border-red-500"
       />
     </div>
   );
 }
 
-function SelectField({ label, name, value, onChange, options }: any) {
+function SelectField({ label, name, value, onChange, options, required, disabled }: any) {
   return (
     <div>
-      <label className="block font-medium">{label}</label>
+      <label className="block font-medium mb-2">{label}</label>
       <select
         name={name}
         value={value || ""}
         onChange={onChange}
-        className="w-full border rounded p-2"
+        className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
+        required={required}
+        disabled={disabled}
       >
         <option value="">Select</option>
         {options.map((opt: string) => (
@@ -576,13 +900,19 @@ function SelectField({ label, name, value, onChange, options }: any) {
 function PhoneField({
   value,
   onChange,
+  required = false,
+  disabled = false,
 }: {
   value: string;
   onChange: (val: string) => void;
+  required?: boolean;
+  disabled?: boolean;
 }) {
   return (
-    <div>
-      <label className="block font-medium">Phone</label>
+    <div className="relative w-full">
+      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+        <Phone className="h-4 w-4 text-gray-400" />
+      </span>
       <input
         type="tel"
         maxLength={10}
@@ -593,7 +923,9 @@ function PhoneField({
           if (val.length <= 10) onChange(val);
         }}
         placeholder="Enter 10 digit phone number"
-        className="w-full border rounded p-2"
+        required={required}
+        disabled={disabled}
+        className="w-full focus:ring-0 focus:outline-none border rounded bg-white border-yellow-300 focus:border-red-500 p-2 pl-10"
       />
     </div>
   );
@@ -611,12 +943,12 @@ function HeightField({
 
   return (
     <div>
-      <label className="block font-medium">Height</label>
+      <label className="block font-medium mb-2">Height</label>
       <div className="grid grid-cols-2 gap-2">
         <select
           value={feet}
           onChange={(e) => onChange(`${e.target.value}'${inches}"`)}
-          className="w-full border rounded p-2"
+          className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
         >
           <option value="">Feet</option>
           {Array.from({ length: 8 }, (_, i) => i + 4).map((ft) => (
@@ -628,7 +960,7 @@ function HeightField({
         <select
           value={inches}
           onChange={(e) => onChange(`${feet}'${e.target.value}"`)}
-          className="w-full border rounded p-2"
+          className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
         >
           <option value="">Inches</option>
           {Array.from({ length: 12 }, (_, i) => i).map((inch) => (

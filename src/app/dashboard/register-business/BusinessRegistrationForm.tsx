@@ -35,12 +35,21 @@ export default function BusinessRegistrationForm() {
     businessDescription: "",
     partners: [{ name: "" }],
     categories: [{ main: "", sub: "" }],
-    registeredAddress: { office: "", branch: "", location: "" },
+    registeredAddress: {
+      office: "",
+      branch: "",
+      location: "",
+      branchOffices: [] as string[], // ✅ new field for multiple addresses
+    },
+    cin: "", // ✅ new optional field
+    gst: "", // ✅ new optional field
+    udyam: "", // ✅ new optional field
     photos: {
       product: [] as { file: File; preview: string; url: string }[],
       office: [] as { file: File; preview: string; url: string }[],
     },
     premiumCategory: "General",
+    dateOfestablishment: "",
   });
 
   const organizationTypes = [
@@ -53,28 +62,31 @@ export default function BusinessRegistrationForm() {
   ];
 
   const businessCategories = [
-    "Manufacturing",
     "Dealer/Distributor",
+    "Manufacturing",
     "Retail",
     "Service",
   ];
 
   const mainCategories = [
-    "Health & Beauty",
+    "Agriculture",
     "Apparel & Fashion",
     "Chemicals",
-    "Machinery",
     "Construction & Real Estate",
-    "Electronics & Electrical",
-    "Hospital & Medical",
-    "Gifts & Crafts",
-    "Packaging & Paper",
-    "Agriculture",
-    "Home Supplies",
-    "Minerals & Metals",
-    "Industrial Supplies",
-    "Pipes, Tubes & Fittings",
+    "Consulting",
     "Education",
+    "Electronics & Electrical",
+    "Gifts & Crafts",
+    "Health & Beauty",
+    "Home Supplies",
+    "Hospital & Medical",
+    "Industrial Supplies",
+    "IT/ITES",
+    "Machinery",
+    "Minerals & Metals",
+    "Packaging & Paper",
+    "Pipes, Tubes & Fittings",
+    "Others",
   ];
 
   const handleInputChange = (field: any, value: any) => {
@@ -251,6 +263,9 @@ export default function BusinessRegistrationForm() {
       newErrors.photosProduct = "Upload at least one Product Photo";
     if (formData.photos.office.length === 0)
       newErrors.photosOffice = "Upload at least one Office Photo";
+
+    if(formData.dateOfestablishment === "" || formData.dateOfestablishment === null)
+      newErrors.dateOfestablishment = "Date of Establishment is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -466,7 +481,7 @@ export default function BusinessRegistrationForm() {
               {/* Business Category */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  3) Business Category *
+                  3) Type of Business *
                 </label>
                 <select
                   value={formData.businessCategory}
@@ -489,10 +504,30 @@ export default function BusinessRegistrationForm() {
                 )}
               </div>
 
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  4) Date Of Establishment *
+                </label>
+                <input
+                  type="date"
+                  value={formData.dateOfestablishment}
+                  onChange={(e) =>
+                    handleInputChange("dateOfestablishment", e.target.value)
+                  }
+                  max={new Date().toISOString().split("T")[0]} // future date disable
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                />
+                {errors.dateOfestablishment && (
+                  <p className="text-red-600 text-xs mt-1">
+                    {errors.dateOfestablishment}
+                  </p>
+                )}
+              </div>
+
               {/* Business Description */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  4) Describe your business *
+                  5) Describe your business *
                 </label>
                 <textarea
                   value={formData.businessDescription}
@@ -515,7 +550,7 @@ export default function BusinessRegistrationForm() {
               {/* Business Categories & Products */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  5) Business Categories & Products/Services *
+                  6) Business Categories & Products/Services *
                 </label>
                 {formData.categories.map((cat, idx) => (
                   <div
@@ -600,7 +635,7 @@ export default function BusinessRegistrationForm() {
               {/* Registered Address */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  6) Registered Address *
+                  7) Registered Address *
                 </label>
                 <textarea
                   value={formData.registeredAddress.office}
@@ -621,6 +656,118 @@ export default function BusinessRegistrationForm() {
                 )}
               </div>
 
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  8) Corporate/Branch Office Address (Optional, multiple
+                  allowed)
+                </label>
+                {formData.registeredAddress.branchOffices?.map((addr, idx) => (
+                  <div key={idx} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={addr}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          registeredAddress: {
+                            ...prev.registeredAddress,
+                            branchOffices:
+                              prev.registeredAddress.branchOffices.map((a, i) =>
+                                i === idx ? e.target.value : a
+                              ),
+                          },
+                        }))
+                      }
+                      className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      placeholder="Enter branch/corporate office address"
+                    />
+                    <Button
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          registeredAddress: {
+                            ...prev.registeredAddress,
+                            branchOffices:
+                              prev.registeredAddress.branchOffices.filter(
+                                (_, i) => i !== idx
+                              ),
+                          },
+                        }))
+                      }
+                      className="bg-red-600 hover:bg-red-700 text-white px-3"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                ))}
+
+                <Button
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      registeredAddress: {
+                        ...prev.registeredAddress,
+                        branchOffices: [
+                          ...(prev.registeredAddress.branchOffices || []),
+                          "",
+                        ],
+                      },
+                    }))
+                  }
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                >
+                  <Plus size={16} className="mr-1" /> Add Branch Office
+                </Button>
+              </div>
+
+              {/* CIN / GST / Udyam (Optional) */}
+              {[
+                "Limited Liability Partnership (LLP)",
+                "Private Limited",
+                "Private Limited (One Person)",
+                "Public Limited",
+              ].includes(formData.organizationType) && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      CIN (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.cin || ""}
+                      onChange={(e) => handleInputChange("cin", e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      placeholder="Enter CIN"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      GST (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.gst || ""}
+                      onChange={(e) => handleInputChange("gst", e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      placeholder="Enter GST"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      Udyam (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.udyam || ""}
+                      onChange={(e) =>
+                        handleInputChange("udyam", e.target.value)
+                      }
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      placeholder="Enter Udyam No."
+                    />
+                  </div>
+                </div>
+              )}
               {/* Premium Category */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -656,7 +803,7 @@ export default function BusinessRegistrationForm() {
               {/* Photos Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  7) Add Photos *
+                  9) Add Photos *
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Product */}

@@ -261,6 +261,30 @@ export default function DashboardLayout({
         {/* Main Content */}
         <div className="flex-1 lg:ml-64 px-6">{children}</div>
       </div>
+      {/* Confirmation Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 className="text-lg font-bold mb-4">
+              Are you sure you want to sign out?
+            </h2>
+            <div className="flex justify-between space-x-4">
+              <Button
+                onClick={() => setIsOpen(false)}
+                className="w-full bg-gray-300 text-gray-700"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSignOut}
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
+              >
+                Yes, Sign Out
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

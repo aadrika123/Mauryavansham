@@ -15,69 +15,20 @@ import {
   MessageSquare,
   Settings,
   User,
+  House,
+  Landmark,
+  HeartHandshake,
 } from "lucide-react"
 
 const sidebarItems = [
-  {
-    title: "Home",
-    href: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Community",
-    href: "/community",
-    icon: Users,
-  },
-  {
-    title: "Matrimonial",
-    href: "/matrimonial",
-    icon: Heart,
-  },
-  {
-    title: "Trading",
-    href: "/trading",
-    icon: ShoppingBag,
-  },
-  {
-    title: "Events",
-    href: "/events",
-    icon: Calendar,
-  },
-  {
-    title: "Help Exchange",
-    href: "/help",
-    icon: HandHeart,
-  },
-  {
-    title: "Achievements",
-    href: "/achievements",
-    icon: Trophy,
-  },
-  {
-    title: "Heritage",
-    href: "/heritage",
-    icon: Globe,
-  },
-  {
-    title: "Messages",
-    href: "/messages",
-    icon: MessageSquare,
-  },
-  {
-    title: "Profile",
-    href: "/profile",
-    icon: User,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
+  { title: "Home", href: "/", icon: House },
+    { title: "Heritage", href: "/heritage", icon: Landmark },
+    { title: "Community Forum", href: "/community", icon: Users },
+    { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
+    { title: "Events & Calendar", href: "/events", icon: Calendar },
+    { title: "Business Forum", href: "/business", icon: ShoppingBag },
+    { title: "Donation", href: "/donation", icon: HandHeart },
+    { title: "Achievements", href: "/achievements", icon: Trophy },
 ]
 
 export function Sidebar() {

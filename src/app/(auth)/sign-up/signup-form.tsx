@@ -18,6 +18,7 @@ import {
   Phone,
   Lock,
   CheckCircle,
+  XCircle,
 } from "lucide-react";
 
 export default function SignUpForm() {
@@ -33,6 +34,7 @@ export default function SignUpForm() {
     fatherName: "", // 🆕
     email: "",
     phone: "",
+    gender: "",
     password: "",
     confirmPassword: "",
     address: "",
@@ -53,6 +55,29 @@ export default function SignUpForm() {
     // ✅ Add this
     declaration: false,
   });
+
+  const passwordRules = [
+    {
+      label: "At least 6 characters",
+      test: (pwd: string) => pwd.length >= 6,
+    },
+    {
+      label: "One uppercase letter (A–Z)",
+      test: (pwd: string) => /[A-Z]/.test(pwd),
+    },
+    {
+      label: "One lowercase letter (a–z)",
+      test: (pwd: string) => /[a-z]/.test(pwd),
+    },
+    {
+      label: "One number (0–9)",
+      test: (pwd: string) => /[0-9]/.test(pwd),
+    },
+    {
+      label: "One special character (@ # $ % ^ & *)",
+      test: (pwd: string) => /[@#$%^&*!]/.test(pwd),
+    },
+  ];
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -134,6 +159,14 @@ export default function SignUpForm() {
       setError("Father's Name is required");
       return false;
     }
+    if (formData.motherName.trim() === "") {
+      setError("Mother's Name is required");
+      return false;
+    }
+    if (formData.gender.trim() === "" || formData.gender === "Select Gender") {
+      setError("Gender is required");
+      return false;
+    }
 
     return true;
   };
@@ -162,6 +195,7 @@ export default function SignUpForm() {
           password: formData.password,
           fatherName: formData.fatherName.trim(),
           motherName: formData.motherName.trim(),
+          gender: formData.gender,
 
           // Permanent Address
           address: formData.address,
@@ -328,6 +362,15 @@ export default function SignUpForm() {
             />
           </div>
         </div>
+        {/* {Gender} */}
+        <SelectField
+              label="Gender *"
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              options={["Male", "Female", "Other"]}
+            />
+
         {/* Father's Name Field */}
         <div className="space-y-2">
           <Label
@@ -565,18 +608,37 @@ export default function SignUpForm() {
               ]}
               disabled={formData.sameAsPermanent}
             />
-            <InputField
+            <SelectField
               label="Country"
               name="currentCountry"
               value={formData.currentCountry}
-              disabled
+              onChange={handleInputChange}
+              options={[
+                "India",
+                "United States",
+                "Canada",
+                "United Kingdom",
+                "Australia",
+                "Germany",
+                "France",
+                "Singapore",
+                "UAE",
+                "Nepal",
+                "Sri Lanka",
+                "Bangladesh",
+                "Other",
+              ]}
+              disabled={formData.sameAsPermanent}
             />
             <InputField
-              label="Pin Code"
+              label={
+                formData.currentCountry === "India" ? "Pin Code" : "Zip Code"
+              }
               name="currentZipCode"
               value={formData.currentZipCode}
               onChange={handleInputChange}
               disabled={formData.sameAsPermanent}
+              required={formData.currentCountry === "India"} // ✅ Required only for India
             />
           </div>
         </div>
@@ -616,27 +678,24 @@ export default function SignUpForm() {
             </button>
           </div>
           <div className="mt-2 space-y-1">
-            <p className="text-xs text-gray-600">
-              ✅ Password must be at least{" "}
-              <span className="font-medium">6 characters</span> long
-            </p>
-            <p className="text-xs text-gray-600">
-              ✅ Include at least{" "}
-              <span className="font-medium">one uppercase letter (A–Z)</span>
-            </p>
-            <p className="text-xs text-gray-600">
-              ✅ Include at least{" "}
-              <span className="font-medium">one lowercase letter (a–z)</span>
-            </p>
-            <p className="text-xs text-gray-600">
-              ✅ Include at least{" "}
-              <span className="font-medium">one number (0–9)</span>
-            </p>
-            <p className="text-xs text-gray-600">
-              ✅ Include at least{" "}
-              <span className="font-medium">one special character</span>
-              (e.g. <code>@ # $ % ^ &amp; *</code>)
-            </p>
+            {passwordRules.map((rule, i) => {
+              const passed = rule.test(formData.password);
+              return (
+                <p
+                  key={i}
+                  className={`text-xs flex items-center gap-2 ${
+                    passed ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {passed ? (
+                    <CheckCircle className="h-4 w-4" />
+                  ) : (
+                    <XCircle className="h-4 w-4" />
+                  )}
+                  {rule.label}
+                </p>
+              );
+            })}
             <p className="text-xs text-gray-600">
               Example: <span className="font-mono">Password@123</span>
             </p>
@@ -727,21 +786,6 @@ export default function SignUpForm() {
           "Create Account"
         )}
       </Button>
-      {/* Submit Button */}
-      {/* <Button
-        type="submit"
-        className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white py-3"
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Creating Account...
-          </>
-        ) : (
-          "Create Account"
-        )}
-      </Button> */}
     </form>
   );
 }

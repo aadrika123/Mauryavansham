@@ -36,7 +36,7 @@ export default function SignUpPage() {
         </Card>
 
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-gray-600">
+        {/* <div className="mt-8 text-center text-sm text-gray-600">
           <p>By signing up, you agree to our</p>
           <div className="flex justify-center gap-4 mt-1">
             <Link href="/terms" className="text-red-600 hover:underline">
@@ -47,7 +47,7 @@ export default function SignUpPage() {
               Privacy Policy
             </Link>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

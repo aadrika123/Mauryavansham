@@ -73,10 +73,12 @@ export function Header() {
     { title: "Heritage", href: "/heritage", icon: Landmark },
     { title: "Community Forum", href: "/community", icon: Users },
     { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
-    { title: "Events", href: "/events", icon: Calendar },
+    { title: "Events & Calendar", href: "/events", icon: Calendar },
     { title: "Business Forum", href: "/business", icon: ShoppingBag },
-    { title: "Donation", href: "/donation", icon: HandHeart },
-    { title: "Achievements", href: "/achievements", icon: Trophy },
+    { title: "Health & Wellness", href: "/", icon: HandHeart },
+    { title: "Education", href: "/", icon: Crown },
+    { title: "Donation", href: "/", icon: HandHeart },
+    { title: "Achievements", href: "/", icon: Trophy },
   ];
 
   const handleSignOut = () => {
@@ -274,16 +276,27 @@ export function Header() {
         {/* Navigation Bar (Desktop) */}
         <nav className="bg-gradient-to-r from-red-800 to-red-900 px-4 hidden md:block">
           <div className="container mx-auto flex">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-2 px-6 py-4 text-white hover:bg-red-700 transition-colors font-medium"
-              >
-                {item.icon && <item.icon className="h-4 w-4" />}
-                {item.title}
-              </Link>
-            ))}
+            {navigationItems.map((item) => {
+              const isDisabled = item.href === "/" && item.title !== "Home"; // disable only when href="/" but NOT Home
+              return (
+                <Link
+                  key={item.href + item.title}
+                  href={isDisabled ? "#" : item.href}
+                  className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors 
+            ${
+              isDisabled
+                ? "text-gray-300 cursor-not-allowed"
+                : "text-white hover:bg-red-700"
+            }`}
+                  onClick={(e) => {
+                    if (isDisabled) e.preventDefault(); // block navigation
+                  }}
+                >
+                  {item.icon && <item.icon className="h-4 w-4" />}
+                  {item.title}
+                </Link>
+              );
+            })}
           </div>
         </nav>
 
@@ -372,19 +385,27 @@ export function Header() {
               )}
 
               {/* Navigation Items */}
-              {navigationItems
-                .filter((item) => item.title !== "Home")
-                .map((item) => (
+              {navigationItems.map((item) => {
+                const isHome = item.title === "Home";
+                const isDisabled = !isHome && item.href === "/";
+
+                return (
                   <Link
                     key={item.href}
-                    href={item.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 text-white hover:bg-orange-600 rounded"
+                    href={isDisabled ? "#" : item.href} // disabled items won't navigate
+                    onClick={() => {
+                      if (!isDisabled) setSidebarOpen(false);
+                    }}
+                    className={`flex items-center gap-2 px-3 py-2 text-white rounded transition-colors
+          ${
+            isDisabled ? "cursor-not-allowed opacity-60" : "hover:bg-orange-600"
+          }`}
                   >
                     {item.icon && <item.icon className="h-4 w-4" />}
                     {item.title}
                   </Link>
-                ))}
+                );
+              })}
 
               {/* Auth Buttons */}
               <div className="pt-4 border-t border-white/30">

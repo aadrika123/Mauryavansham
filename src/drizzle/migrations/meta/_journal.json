@@ -351,6 +351,20 @@
       "when": 1757750159651,
       "tag": "0049_square_lilandra",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1757935194231,
+      "tag": "0050_thick_lockheed",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1757943896846,
+      "tag": "0051_watery_northstar",
+      "breakpoints": true
     }
   ]
 }

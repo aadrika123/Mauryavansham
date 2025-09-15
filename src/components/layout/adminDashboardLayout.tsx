@@ -59,16 +59,12 @@ export default function AdmindashboardLayout({
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
     { title: "Manage Users", href: "/admin/users", icon: Users },
     { title: "Create Events", href: "/admin/events", icon: Calendar },
-    { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
-    { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
     { title: "My Matrimonial Profiles", href: "/admin/profile-list", icon: LayoutDashboard },
     { title: "Search Matrimonial Profiles", href: "/admin/search-profile", icon: Search },
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
-    { title: "Ads Location Master", href: "/admin/ads-location-master", icon: Tv2 },
     { title: "Discussions Moderation", href: "/admin/discussions", icon: MessageSquare },
-    { title: "Discussion Category Master", href: "/admin/discussion-castegory-master", icon: Globe },
     { title: "Register-business", href: "/admin/register-business", icon: Wallet2Icon },
   ];
 
@@ -76,6 +72,10 @@ export default function AdmindashboardLayout({
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
     { title: "All Users", href: "/admin/manage-users", icon: Users },
+    { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
+    { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
+    { title: "Ads Location Master", href: "/admin/ads-location-master", icon: Tv2 },
+     { title: "Discussion Category Master", href: "/admin/discussion-castegory-master", icon: Globe },
     ...adminSidebarItems, // ✅ SuperAdmin gets all admin items + All Users
   ];
 
@@ -111,7 +111,7 @@ export default function AdmindashboardLayout({
         </div>
         <div className="flex items-center gap-4">
           {/* Notifications */}
-          {user?.role === "admin" && (
+          {(user?.role === "admin" || user?.role === "superAdmin") && (
             <DropdownMenu
               onOpenChange={async (isOpen) => {
                 if (isOpen) {

@@ -316,6 +316,7 @@ export default function UserProfilePage({ data }: { data: any }) {
               value={formData.gender}
               onChange={handleChange}
               options={["Male", "Female", "Other"]}
+              disabled
             />
 
             <InputField
@@ -873,7 +874,7 @@ function InputField({
   );
 }
 
-function SelectField({ label, name, value, onChange, options, required }: any) {
+function SelectField({ label, name, value, onChange, options, required, disabled }: any) {
   return (
     <div>
       <label className="block font-medium mb-2">{label}</label>
@@ -883,6 +884,7 @@ function SelectField({ label, name, value, onChange, options, required }: any) {
         onChange={onChange}
         className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
         required={required}
+        disabled={disabled}
       >
         <option value="">Select</option>
         {options.map((opt: string) => (

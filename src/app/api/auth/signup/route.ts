@@ -7,12 +7,14 @@ import { sendWelcomeEmail } from "@/src/lib/email";
 import { sendWhatsAppMessage } from "@/src/lib/whatsapp";
 import { notifications } from "@/src/drizzle/schema";
 import { sendAdminSignupEmail } from "@/src/lib/sendAdminSignupEmail";
+import { generateUserCode } from "@/src/utils/generateUserCode";
 
 export async function POST(request: NextRequest) {
   try {
     // const { name, email, password, phone, fatherName, city, state } =
     const {
       name,
+      gender,
       email,
       password,
       phone,
@@ -59,11 +61,12 @@ export async function POST(request: NextRequest) {
 
     // Hash password
     const hashedPassword = await hash(password, 12);
-
+    const userCode = await generateUserCode(state, gender);
     // Create user
     const newUser = await db
       .insert(users)
       .values({
+        userCode,
         name,
         email,
         password: hashedPassword,
@@ -80,6 +83,7 @@ export async function POST(request: NextRequest) {
         currentState,
         currentCountry,
         currentZipCode,
+        gender,
       })
       .returning({
         id: users.id,
@@ -94,6 +98,9 @@ export async function POST(request: NextRequest) {
         currentCity: users.currentCity,
         currentState: users.currentState,
         currentZipCode: users.currentZipCode,
+        currentCountry: users.currentCountry,
+        gender: users.gender,
+        userCode: users.userCode,
       });
 
     // ✅ Insert notification for admins
