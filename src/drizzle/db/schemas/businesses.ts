@@ -11,7 +11,7 @@ export const businesses = pgTable("businesses", {
   businessDescription: text("business_description").notNull(),
   partners: json("partners").default(JSON.stringify([])),
   categories: json("categories").default(JSON.stringify([])),
-  dateOfestablishment: json("date_of_establishment").notNull(),
+  dateOfestablishment: json("date_of_establishment").default(JSON.stringify(null)),
 
   // Registered + Branch addresses
   registeredAddress: json("registered_address").notNull(),
