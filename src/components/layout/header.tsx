@@ -301,14 +301,16 @@ export function Header() {
         </nav>
 
         {/* Mobile Sidebar Menu */}
-        {/* Mobile Sidebar Menu */}
         {sidebarOpen && (
           <div className="fixed inset-0 z-50 flex pointer-events-none">
             {/* Sidebar */}
             <div
-              className={`bg-gradient-to-r from-orange-500 to-red-600 text-white w-64 h-full shadow-lg p-4 space-y-4 transform transition-transform duration-300 ease-in-out ${
-                sidebarOpen ? "translate-x-0" : "-translate-x-full"
-              } pointer-events-auto`}
+              className={`sidebar bg-gradient-to-r from-orange-500 to-red-600 text-white 
+    w-64 sm:w-80 md:w-96 lg:w-64 
+    h-full shadow-lg p-4 space-y-4 
+    transform transition-transform duration-300 ease-in-out 
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+    pointer-events-auto overflow-y-auto`}
             >
               {/* Top Section */}
               <div className="flex justify-between items-center mb-4">

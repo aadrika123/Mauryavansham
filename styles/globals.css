@@ -103,3 +103,26 @@
   animation: slide-in 0.3s ease-out forwards;
 }
 
+/* Sidebar thin scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;  /* patla scrollbar */
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent; /* track background */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4); /* white translucent thumb */
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7); /* hover me zyada visible */
+}
+
+/* Firefox ke liye */
+.sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
