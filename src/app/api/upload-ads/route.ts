@@ -2,7 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/lib/auth";
-import sizeOf from "image-size";
 
 // ✅ Cloudinary Config
 cloudinary.config({
@@ -27,6 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    // ❌ Validate type
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
         { error: "Please select an image file" },
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ❌ Validate size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
         { error: "Image size should be less than 5MB" },
@@ -45,42 +46,15 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // 📏 Check dimensions
-    const dimensions = sizeOf(buffer);
-    if (!dimensions?.width || !dimensions?.height) {
-      return NextResponse.json(
-        { error: "Could not read image size" },
-        { status: 400 }
-      );
-    }
-
-    let folder = "ads-banners";
-    let transformation: any[] = [];
-
-    // 🖼 Decide based on aspect ratio
-    if (dimensions.width > dimensions.height) {
-      // Landscape → Large ad (900x300)
-      transformation = [
-        { width: 900, height: 300, crop: "fill" },
-        { quality: "auto" },
-        { format: "auto" },
-      ];
-      folder = "ads-banners/large";
-    } else {
-      // Portrait → Small ad (350x500)
-      transformation = [
-        { width: 350, height: 500, crop: "fill" },
-        { quality: "auto" },
-        { format: "auto" },
-      ];
-      folder = "ads-banners/small";
-    }
-
-    // ☁️ Upload to Cloudinary
+    // ☁️ Upload to Cloudinary (no dimension check, only upload)
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
-          { resource_type: "image", folder, transformation },
+          {
+            resource_type: "image",
+            folder: "ads-banners",
+            transformation: [{ quality: "auto" }, { format: "auto" }],
+          },
           (error, result) => {
             if (error) reject(error);
             else resolve(result);

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/src/drizzle/db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { users, userApprovals } from "@/src/drizzle/schema";
 
 const REQUIRED_APPROVALS = 3;
@@ -12,7 +12,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     // 1️⃣ Check if this admin already acted
     const existing = await db.query.userApprovals.findFirst({
-      where: (ua) => eq(ua.userId, userId) && eq(ua.adminId, adminId),
+      where: and(eq(userApprovals.userId, userId), eq(userApprovals.adminId, adminId)),
     });
 
     if (existing) {
@@ -34,13 +34,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     // 2️⃣ Recalculate status
     const approvals = await db.query.userApprovals.findMany({
-      where: (ua) => eq(ua.userId, userId),
+      where: eq(userApprovals.userId, userId),
     });
 
     const approvedCount = approvals.filter((a) => a.status === "approved").length;
     const rejectedCount = approvals.filter((a) => a.status === "rejected").length;
 
-    let newStatus = "pending";
+    let newStatus: "pending" | "approved" | "rejected" = "pending";
     let isApproved = false;
 
     if (rejectedCount > 0) {

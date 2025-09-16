@@ -264,9 +264,9 @@ const HeroSection: React.FC = () => {
                 <Image
                   src={rightAd.bannerImageUrl}
                   alt="Right Ad"
-                  width={500}
+                  width={350}
                   height={500}
-                  className="shadow-lg rounded-2xl object-contain bg-white"
+                  className="shadow-lg rounded-2xl object-fill bg-white"
                   priority
                 />
                 {/* <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">

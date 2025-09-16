@@ -45,7 +45,7 @@ export default function AdminUserApprovalPage() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState<"pending" | "approved" | "rejected">(
+  const [tab, setTab] = useState<"pending" | "approved" | "rejected" | "view">(
     "pending"
   );
   const [actionLoading, setActionLoading] = useState<number | null>(null);
@@ -55,6 +55,11 @@ export default function AdminUserApprovalPage() {
   const [rejectUserId, setRejectUserId] = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
+
+  // view modal
+  const [viewUser, setViewUser] = useState<User | null>(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  console.log(viewUser)
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -109,15 +114,16 @@ export default function AdminUserApprovalPage() {
 
   // open reject modal
   const openRejectModal = (userId: number) => {
-    setRejectUserId(userId);
+    setRejectUserId(userId); // yahi sahi userId set hoga
     setRejectReason("");
     setShowRejectModal(true);
   };
 
   // submit rejection with reason
   const submitReject = async () => {
-    if (!session?.user || !rejectUserId) return;
-    setActionLoading(rejectUserId);
+    if (!session?.user || rejectUserId === null) return;
+
+    setActionLoading(rejectUserId); // bas UI disable ke liye
     try {
       const res = await fetch(`/api/admin/reject-user/${rejectUserId}`, {
         method: "POST",
@@ -128,7 +134,9 @@ export default function AdminUserApprovalPage() {
           reason: rejectReason,
         }),
       });
+
       const json = await res.json();
+
       if (res.ok) {
         toast({
           title: "User Rejected ❌",
@@ -148,22 +156,28 @@ export default function AdminUserApprovalPage() {
     } finally {
       setActionLoading(null);
       setShowRejectModal(false);
-      setRejectUserId(null);
+      setRejectUserId(null); // modal close hote hi reset karo
     }
   };
 
-  const users = data[tab].filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase()) ||
-      (u.phone && u.phone.includes(search))
-  );
+  // users list based on tab
+  const users =
+    tab === "view"
+      ? [...data.pending, ...data.approved, ...data.rejected] // all users
+      : data[tab].filter(
+          (u) =>
+            u.name.toLowerCase().includes(search.toLowerCase()) ||
+            u.email.toLowerCase().includes(search.toLowerCase()) ||
+            (u.phone && u.phone.includes(search))
+        );
+
+  const rejectUser = users.find((u) => u.id === rejectUserId);
 
   return (
     <div className="max-w-6xl mx-auto py-2 space-y-2">
       {/* Tabs */}
       <div className="flex space-x-3 border-b pb-2">
-        {(["pending", "approved", "rejected"] as const).map((t) => (
+        {(["pending", "approved", "rejected", "view"] as const).map((t) => (
           <button
             key={t}
             className={`px-4 py-2 rounded-t-lg font-medium ${
@@ -173,27 +187,30 @@ export default function AdminUserApprovalPage() {
             }`}
             onClick={() => setTab(t)}
           >
-            {t.charAt(0).toUpperCase() + t.slice(1)} ({data[t].length})
+            {t.charAt(0).toUpperCase() + t.slice(1)}
+            {t !== "view" && ` (${data[t].length})`}
           </button>
         ))}
       </div>
 
       {/* Search */}
-      <div className="flex items-center gap-2">
-        <Input
-          placeholder="Search by name, email, or phone..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/2"
-        />
-        <Button
-          variant="outline"
-          onClick={() => setSearch("")}
-          disabled={!search}
-        >
-          Clear
-        </Button>
-      </div>
+      {tab !== "view" && (
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Search by name, email, or phone..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-1/2"
+          />
+          <Button
+            variant="outline"
+            onClick={() => setSearch("")}
+            disabled={!search}
+          >
+            Clear
+          </Button>
+        </div>
+      )}
 
       {/* Table */}
       {loading ? (
@@ -209,7 +226,9 @@ export default function AdminUserApprovalPage() {
                 <th className="p-3 border-b">Email</th>
                 <th className="p-3 border-b">Phone</th>
                 <th className="p-3 border-b">Approvals</th>
-                <th className="p-3 border-b">Rejections</th>
+                {tab === "rejected" && (
+                  <th className="p-3 border-b">Reasons</th>
+                )}
                 <th className="p-3 border-b">Actions</th>
               </tr>
             </thead>
@@ -245,18 +264,20 @@ export default function AdminUserApprovalPage() {
                       )}
                     </td>
 
-                    <td className="p-3 border-b">
-                      {u.rejectionReason ? (
-                        <span
-                          className="inline-block px-2 py-1 rounded text-sm font-medium bg-red-100 text-red-800"
-                          title={u.rejectionReason}
-                        >
-                          {u.rejectionReason}
-                        </span>
-                      ) : (
-                        <span className="text-gray-500">No rejections</span>
-                      )}
-                    </td>
+                    {tab === "rejected" && (
+                      <td className="p-3 border-b">
+                        {u.rejectionReason ? (
+                          <span
+                            className="inline-block px-2 py-1 rounded text-sm font-medium bg-red-100 text-red-800"
+                            title={u.rejectionReason}
+                          >
+                            {u.rejectionReason}
+                          </span>
+                        ) : (
+                          <span className="text-gray-500">No reason</span>
+                        )}
+                      </td>
+                    )}
 
                     <td className="p-3 border-b">
                       <div className="flex gap-2">
@@ -287,6 +308,17 @@ export default function AdminUserApprovalPage() {
                         )}
                       </div>
                     </td>
+                    <td className="p-3 border-b">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setViewUser(u);
+                          setShowViewModal(true);
+                        }}
+                      >
+                        View
+                      </Button>
+                    </td>
                   </tr>
                 );
               })}
@@ -299,13 +331,27 @@ export default function AdminUserApprovalPage() {
       <Dialog open={showRejectModal} onOpenChange={setShowRejectModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject User</DialogTitle>
+            <DialogTitle>
+              Reject User {rejectUser ? `– ${rejectUser.name}` : ""}
+            </DialogTitle>
           </DialogHeader>
+
+          {rejectUser && (
+            <p className="text-sm text-gray-600 mb-2">
+              Are you sure you want to reject{" "}
+              <span className="font-semibold">
+                {rejectUser.name} {rejectUser.email}
+              </span>
+              ?
+            </p>
+          )}
+
           <Input
             placeholder="Enter rejection reason..."
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
           />
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowRejectModal(false)}>
               Cancel
@@ -316,6 +362,81 @@ export default function AdminUserApprovalPage() {
               disabled={!rejectReason.trim()}
             >
               Submit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Modal */}
+      <Dialog open={showViewModal} onOpenChange={setShowViewModal}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>User Details</DialogTitle>
+          </DialogHeader>
+
+          {viewUser && (
+            <div className="space-y-2 text-sm">
+              <p>
+                <b>Name:</b> {viewUser.name}
+              </p>
+              <p>
+                <b>Email:</b> {viewUser.email}
+              </p>
+              <p>
+                <b>Phone:</b> {viewUser.phone || "-"}
+              </p>
+              <p>
+                <b>Father's name:</b> {viewUser?.fatherName}
+              </p>
+              <p>
+                <b>City:</b> {viewUser?.city}
+              </p>
+              {/* <p>
+                <b>Created At:</b> {viewUser.createdAt}
+              </p>
+              <p>
+                <b>Updated At:</b> {viewUser.updatedAt}
+              </p> */}
+              {viewUser.approvedAt && (
+                <p>
+                  <b>Approved At:</b> {viewUser.approvedAt}
+                </p>
+              )}
+              {viewUser.rejectedAt && (
+                <p>
+                  <b>Rejected At:</b> {viewUser.rejectedAt}
+                </p>
+              )}
+              {viewUser.rejectionReason && (
+                <p>
+                  <b>Rejection Reason:</b> {viewUser.rejectionReason}
+                </p>
+              )}
+              <div>
+                <b>Approvals:</b>{" "}
+                {viewUser.approvals?.length ? (
+                  viewUser.approvals.map((a, idx) => (
+                    <span
+                      key={idx}
+                      className={`inline-block px-2 py-1 rounded text-xs font-medium mr-1 ${
+                        a.action === "approved"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {a.adminName} ({a.action})
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-500">No approvals yet</span>
+                )}
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowViewModal(false)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
