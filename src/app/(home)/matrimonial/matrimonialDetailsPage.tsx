@@ -48,6 +48,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
   // ✅ Responsive Carousel Logic
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
+  const [showGuidePopup, setShowGuidePopup] = useState(false);
 
   useEffect(() => {
     const updateItemsPerSlide = () => {
@@ -77,6 +78,14 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
+      {/* Floating Guide Button */}
+      <button
+        onClick={() => setShowGuidePopup(true)}
+        className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-red-600 text-white px-3 py-2 rounded-r-lg shadow-lg hover:bg-red-700 z-50"
+      >
+        Guide
+      </button>
+
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 flex-wrap">
@@ -280,7 +289,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
         </div>
       </div>
 
-      <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
+      {/* <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
             Guide for Matrimony Service
@@ -349,9 +358,198 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             authentic, secure, and rooted in our cultural values.
           </p>
         </div>
-      </section>
+      </section> */}
 
-      <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
+      {showGuidePopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-yellow-50 w-11/12 sm:w-3/4 md:w-1/2 max-h-[90vh] overflow-y-auto rounded-lg shadow-xl p-6 relative">
+            {/* Close button */}
+            <button
+              onClick={() => setShowGuidePopup(false)}
+              className="absolute top-2 right-2 text-red-600 font-bold text-xl"
+            >
+              &times;
+            </button>
+
+            {/* Guide Section */}
+            <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+              Guide for Matrimony Service
+            </h2>
+            <h3 className="text-2xl sm:text-3xl font-semibold text-center text-red-700 mb-6">
+              How It Works – Mauryavansham Matrimony
+            </h3>
+
+            <ol className="list-decimal list-inside space-y-4 text-gray-700 mb-8">
+              <li>
+                <strong>Register</strong>
+                <p className="ml-4 mt-1">
+                  Sign up by creating your matrimonial profile. Basic details
+                  like name, age, family background, education, and preferences
+                  are required.
+                </p>
+              </li>
+              <li>
+                <strong>Community Verification</strong>
+                <p className="ml-4 mt-1">
+                  Your profile will undergo triple verification by 3 Admin
+                  Members to ensure authenticity and that you belong to the
+                  Kushwaha / Koiri / Maurya / Sakhya / Sainy community.
+                </p>
+              </li>
+              <li>
+                <strong>Profile Approval</strong>
+                <p className="ml-4 mt-1">
+                  Once approved, your profile becomes visible in the Matrimony
+                  Directory for other verified members to view.
+                </p>
+              </li>
+              <li>
+                <strong>Search & Connect</strong>
+                <p className="ml-4 mt-1">
+                  Browse verified profiles by filters such as age, education,
+                  profession, or location. Each search result is
+                  community-authenticated.
+                </p>
+              </li>
+              <li>
+                <strong>Express Interest</strong>
+                <p className="ml-4 mt-1">
+                  Send “Interest Requests” to families or individuals you would
+                  like to connect with. The other side can accept, decline, or
+                  request further details.
+                </p>
+              </li>
+              <li>
+                <strong>Secure & Respectful Communication</strong>
+                <p className="ml-4 mt-1">
+                  All communication is carried out respectfully through the
+                  platform. Members are reminded to follow community ethics,
+                  dignity, and mutual respect.
+                </p>
+              </li>
+            </ol>
+
+            {/* Matrimony Guidelines – Do’s & Don’ts */}
+            <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+              📌 Matrimony Guidelines – Do’s & Don’ts
+            </h2>
+
+            <p className="text-gray-700 mb-6 leading-relaxed text-justify">
+              The Mauryavansham Matrimony section has been created with the sole
+              aim of helping our community members find life partners in a safe
+              and respectful environment. To ensure fairness, authenticity, and
+              dignity, all members are requested to follow these guidelines:
+            </p>
+
+            {/* ✅ Do’s */}
+            <div className="mb-6">
+              <h3 className="text-2xl sm:text-3xl font-semibold text-red-700 mb-4">
+                ✅ Do’s
+              </h3>
+              <ol className="list-decimal list-inside space-y-4 text-gray-700">
+                <li>
+                  <strong>Provide Accurate Information</strong>
+                  <p className="ml-4 mt-1">
+                    Fill in your profile honestly with correct personal,
+                    educational, and professional details.
+                  </p>
+                </li>
+                <li>
+                  <strong>Respect Privacy</strong>
+                  <p className="ml-4 mt-1">
+                    Share sensitive details (like contact numbers, addresses)
+                    only after mutual trust and interest are established.
+                  </p>
+                </li>
+                <li>
+                  <strong>Parental/Family Involvement</strong>
+                  <p className="ml-4 mt-1">
+                    Wherever possible, involve your parents or elders in the
+                    process to ensure clarity and transparency.
+                  </p>
+                </li>
+                <li>
+                  <strong>Be Respectful</strong>
+                  <p className="ml-4 mt-1">
+                    Communicate politely with other members and their families.
+                    Mutual respect is the foundation of our community.
+                  </p>
+                </li>
+                <li>
+                  <strong>Report Misuse</strong>
+                  <p className="ml-4 mt-1">
+                    If you come across any suspicious or inappropriate activity,
+                    immediately report it to the Admin team for quick action.
+                  </p>
+                </li>
+              </ol>
+            </div>
+
+            {/* ❌ Don’ts */}
+            <div className="mb-6">
+              <h3 className="text-2xl sm:text-3xl font-semibold text-red-700 mb-4">
+                ❌ Don’ts
+              </h3>
+              <ol className="list-decimal list-inside space-y-4 text-gray-700">
+                <li>
+                  <strong>Do Not Create Fake Profiles</strong>
+                  <p className="ml-4 mt-1">
+                    Misrepresentation of age, education, profession, or
+                    community identity will lead to immediate removal.
+                  </p>
+                </li>
+                <li>
+                  <strong>Do Not Pressure or Harass</strong>
+                  <p className="ml-4 mt-1">
+                    Avoid sending repeated requests or offensive messages to
+                    other members.
+                  </p>
+                </li>
+                <li>
+                  <strong>Do Not Share Irrelevant Content</strong>
+                  <p className="ml-4 mt-1">
+                    The Matrimony section is strictly for matrimonial purposes
+                    only. Avoid business promotions, spam, or unrelated posts.
+                  </p>
+                </li>
+                <li>
+                  <strong>Do Not Circumvent the Platform</strong>
+                  <p className="ml-4 mt-1">
+                    Directly sharing personal details without consent is
+                    discouraged. Use the platform’s secure communication options
+                    first.
+                  </p>
+                </li>
+                <li>
+                  <strong>Do Not Misuse Community Trust</strong>
+                  <p className="ml-4 mt-1">
+                    Any attempt to exploit the platform for financial gain,
+                    fraud, or non-community purposes will lead to a permanent
+                    ban.
+                  </p>
+                </li>
+              </ol>
+            </div>
+
+            {/* Enforcement */}
+            <div className="mt-4 text-gray-700 font-medium">
+              <p>
+                ⚖ Enforcement: The Admin team reserves the right to verify,
+                monitor, and moderate all activities. Profiles violating these
+                guidelines may be suspended or permanently deleted without prior
+                notice.
+              </p>
+              <p className="mt-2">
+                🌿 Remember: Mauryavansham Matrimony is not just about finding a
+                partner, but about building families, preserving traditions, and
+                strengthening our community bonds.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
         <div className="container mx-auto max-w-4xl">
           <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
             📌 Matrimony Guidelines – Do’s & Don’ts
@@ -364,7 +562,6 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             dignity, all members are requested to follow these guidelines:
           </p>
 
-          {/* ✅ Do’s */}
           <div className="mb-6">
             <h3 className="text-2xl sm:text-3xl font-semibold text-red-700 mb-4">
               ✅ Do’s
@@ -408,7 +605,6 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </ol>
           </div>
 
-          {/* ❌ Don’ts */}
           <div className="mb-6">
             <h3 className="text-2xl sm:text-3xl font-semibold text-red-700 mb-4">
               ❌ Don’ts
@@ -453,7 +649,6 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </ol>
           </div>
 
-          {/* Enforcement */}
           <div className="mt-4 text-gray-700 font-medium">
             <p>
               ⚖ Enforcement: The Admin team reserves the right to verify,
@@ -468,7 +663,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
