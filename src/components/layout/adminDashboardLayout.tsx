@@ -60,12 +60,28 @@ export default function AdmindashboardLayout({
     { title: "Manage Users", href: "/admin/users", icon: Users },
     { title: "Create Events", href: "/admin/events", icon: Calendar },
     { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
-    { title: "My Matrimonial Profiles", href: "/admin/profile-list", icon: LayoutDashboard },
-    { title: "Search Matrimonial Profiles", href: "/admin/search-profile", icon: Search },
+    {
+      title: "My Matrimonial Profiles",
+      href: "/admin/profile-list",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Search Matrimonial Profiles",
+      href: "/admin/search-profile",
+      icon: Search,
+    },
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
-    { title: "Discussions Moderation", href: "/admin/discussions", icon: MessageSquare },
-    { title: "Register-business", href: "/admin/register-business", icon: Wallet2Icon },
+    {
+      title: "Discussions Moderation",
+      href: "/admin/discussions",
+      icon: MessageSquare,
+    },
+    {
+      title: "Register-business",
+      href: "/admin/register-business",
+      icon: Wallet2Icon,
+    },
     {
       title: "Create Matrimonial Profile",
       href: "/admin/create-profile",
@@ -79,12 +95,21 @@ export default function AdmindashboardLayout({
     { title: "All Users", href: "/admin/manage-users", icon: Users },
     { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
     { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
-    { title: "Ads Location Master", href: "/admin/ads-location-master", icon: Tv2 },
-     { title: "Discussion Category Master", href: "/admin/discussion-castegory-master", icon: Globe },
+    {
+      title: "Ads Location Master",
+      href: "/admin/ads-location-master",
+      icon: Tv2,
+    },
+    {
+      title: "Discussion Category Master",
+      href: "/admin/discussion-castegory-master",
+      icon: Globe,
+    },
     ...adminSidebarItems, // ✅ SuperAdmin gets all admin items + All Users
   ];
 
-  const sidebarItems = user?.role === "superAdmin" ? superAdminSidebarItems : adminSidebarItems;
+  const sidebarItems =
+    user?.role === "superAdmin" ? superAdminSidebarItems : adminSidebarItems;
 
   const handleSignOut = async () => {
     setIsOpen(false);
@@ -104,7 +129,11 @@ export default function AdmindashboardLayout({
             className="lg:hidden p-2 rounded hover:bg-red-700"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {sidebarOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
           <Crown className="w-8 h-8 text-orange-400" />
           <div>
@@ -120,7 +149,9 @@ export default function AdmindashboardLayout({
             <DropdownMenu
               onOpenChange={async (isOpen) => {
                 if (isOpen) {
-                  const unreadNotifications = notifications.filter((n) => n.isRead === 0);
+                  const unreadNotifications = notifications.filter(
+                    (n) => n.isRead === 0
+                  );
                   if (unreadNotifications.length > 0) {
                     await fetch("/api/admin/notifications/mark-read", {
                       method: "POST",
@@ -129,7 +160,9 @@ export default function AdmindashboardLayout({
                         notificationIds: unreadNotifications.map((n) => n.id),
                       }),
                     });
-                    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: 1 })));
+                    setNotifications((prev) =>
+                      prev.map((n) => ({ ...n, isRead: 1 }))
+                    );
                   }
                 }
               }}
@@ -155,14 +188,16 @@ export default function AdmindashboardLayout({
                   align="end"
                   className="w-72 max-h-96 overflow-y-auto"
                 >
-                  {notifications.map((n) => (
-                    <DropdownMenuItem
-                      key={n.id}
-                      className="whitespace-normal text-sm"
-                    >
-                      {n.message}
-                    </DropdownMenuItem>
-                  ))}
+                    {notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        className="bg-yellow-50 rounded-md border border-yellow-200 p-2 mb-2 hover:bg-yellow-100 shadow-sm"
+                      >
+                        <DropdownMenuItem className="whitespace-normal text-sm">
+                          {n.message}
+                        </DropdownMenuItem>
+                      </div>
+                    ))}
                 </DropdownMenuContent>
               )}
             </DropdownMenu>

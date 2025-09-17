@@ -149,12 +149,14 @@ export default function DashboardLayout({
                   className="w-72 max-h-96 overflow-y-auto"
                 >
                   {notifications.map((n) => (
-                    <DropdownMenuItem
+                    <div
                       key={n.id}
-                      className="whitespace-normal text-sm"
+                      className="bg-yellow-50 rounded-md border border-yellow-200 p-2 mb-2 hover:bg-yellow-100 shadow-sm"
                     >
-                      {n.message}
-                    </DropdownMenuItem>
+                      <DropdownMenuItem className="whitespace-normal text-sm">
+                        {n.message}
+                      </DropdownMenuItem>
+                    </div>
                   ))}
                 </DropdownMenuContent>
               )}
