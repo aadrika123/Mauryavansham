@@ -18,6 +18,7 @@ import {
   Sparkles,
   Star,
   Eye,
+  Crown,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -127,7 +128,7 @@ export function FeaturesSection() {
               "Support and grow together through peer-to-peer collaboration",
             ].map((point, idx) => (
               <div key={idx} className="flex items-start gap-3">
-                <span className="text-yellow-600 text-xl">👑</span>
+                <span className="text-yellow-600 text-xl"><Crown /></span>
                 <p className="text-gray-700">{point}</p>
               </div>
             ))}

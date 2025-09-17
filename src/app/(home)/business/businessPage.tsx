@@ -159,7 +159,7 @@ export default function BusinessDetailsPage({ user }: Props) {
       alert(data.error);
     }
   };
-   // 🔹 Open Image Modal
+  // 🔹 Open Image Modal
   const openImageModal = (images: string[], index: number) => {
     setModalImages(images);
     setModalIndex(index);
@@ -168,8 +168,7 @@ export default function BusinessDetailsPage({ user }: Props) {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 md:p-6 bg-yellow-50 min-h-screen">
-
-       {showImageModal && (
+      {showImageModal && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
           <div className="relative w-full max-w-3xl">
             <button
@@ -189,8 +188,7 @@ export default function BusinessDetailsPage({ user }: Props) {
                 <button
                   onClick={() =>
                     setModalIndex(
-                      (modalIndex - 1 + modalImages.length) %
-                        modalImages.length
+                      (modalIndex - 1 + modalImages.length) % modalImages.length
                     )
                   }
                   className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded"
@@ -386,6 +384,134 @@ export default function BusinessDetailsPage({ user }: Props) {
             );
           })}
         </div>
+        <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
+          <div className="container mx-auto max-w-4xl">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+              🌐 Mauryavansham Business Forum
+            </h2>
+            <p className="text-gray-700 mb-6 leading-relaxed text-justify">
+              The Business Forum is a dedicated platform to connect,
+              collaborate, and grow together as a community. It has been
+              designed exclusively for entrepreneurs, professionals, and
+              business owners from the Kushwaha / Koiri / Sakhya / Sainy
+              community to showcase their ventures, exchange opportunities, and
+              build partnerships.
+            </p>
+            <p className="text-gray-700 mb-4 leading-relaxed">
+              Through this forum, members can:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 mb-6 space-y-2">
+              <li>
+                List their businesses, products, and services for visibility
+                within the community.
+              </li>
+              <li>
+                Network with like-minded professionals and explore
+                collaborations.
+              </li>
+              <li>
+                Share resources, knowledge, and opportunities that benefit
+                fellow members.
+              </li>
+              <li>
+                Promote community entrepreneurship and strengthen economic
+                empowerment.
+              </li>
+            </ul>
+            <p className="text-gray-700 leading-relaxed">
+              💡 The motive is simple: “By the Community, For the Community.”
+              When we support each other’s businesses, we not only grow
+              individually but also uplift the entire community.
+            </p>
+          </div>
+        </section>
+        <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
+          <div className="container mx-auto max-w-4xl">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+              🛠️ How It Works – Business Forum
+            </h2>
+
+            <ol className="list-decimal list-inside space-y-6 text-gray-700">
+              <li>
+                <strong>Become a Verified Member</strong>
+                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                  <li>
+                    To register your business, you must first be a registered
+                    and approved member of MauryaVansham.com.
+                  </li>
+                  <li>
+                    Membership requires community verification by three Admins,
+                    confirming that you belong to the Kushwaha / Koiri / Sakhya
+                    / Sainy community.
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <strong>Register Your Business</strong>
+                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                  <li>
+                    Once you are an approved member, you can access the Business
+                    Forum section.
+                  </li>
+                  <li>
+                    Submit details about your business (name, sector,
+                    services/products, contact information, etc.).
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <strong>Listing Review & Approval</strong>
+                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                  <li>
+                    Your submitted business profile will be reviewed by
+                    Admins/Moderators to ensure compliance with forum
+                    guidelines.
+                  </li>
+                  <li>
+                    After approval, it will be added to the Community Business
+                    Directory.
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <strong>Visibility & Networking</strong>
+                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                  <li>
+                    Your business listing will be visible to other community
+                    members.
+                  </li>
+                  <li>
+                    You can connect, collaborate, and exchange opportunities
+                    with fellow entrepreneurs and professionals.
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <strong>Growth Together</strong>
+                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                  <li>
+                    Gain from mutual support, referrals, collaborations, and
+                    partnerships within the community.
+                  </li>
+                  <li>
+                    Participate in business networking meets, showcases, and
+                    community-driven initiatives aimed at collective growth.
+                  </li>
+                </ul>
+              </li>
+            </ol>
+
+            <p className="mt-6 text-gray-700 font-semibold">
+              💡 The Business Forum is exclusively for verified
+              MauryaVansham.com members — ensuring trust, authenticity, and
+              genuine community upliftment.
+            </p>
+          </div>
+        </section>
 
         {/* Company Info */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-6 mt-6 border border-[#FFF6D5]">
@@ -427,7 +553,10 @@ export default function BusinessDetailsPage({ user }: Props) {
           <p className="text-xs text-gray-600 mb-3">
             Post your requirements and get quotes from verified suppliers
           </p>
-          <Button className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2" disabled>
+          <Button
+            className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2"
+            disabled
+          >
             Post Buy Requirement
           </Button>
         </Card>
@@ -438,7 +567,10 @@ export default function BusinessDetailsPage({ user }: Props) {
           <p className="text-xs text-gray-600 mb-3">
             Join thousands of sellers on our platform
           </p>
-          <Button className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2" disabled>
+          <Button
+            className="w-full bg-red-700 text-white hover:bg-red-800 text-sm py-2"
+            disabled
+          >
             Sell on Platform
           </Button>
         </Card>

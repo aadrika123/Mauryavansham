@@ -10,7 +10,7 @@ export async function getAllProfiles(userId: number) {
   try {
     // ✅ Sare profiles (user ke sabhi)
     const allProfiles: DatabaseProfile[] = await db.query.profiles.findMany({
-      where: (fields, { eq }) => eq(fields.userId, String(userId)),
+      // where: (fields, { eq }) => eq(fields.userId, String(userId)),
       orderBy: (fields, { desc }) => [desc(fields.createdAt)],
     });
 

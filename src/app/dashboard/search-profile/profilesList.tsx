@@ -25,11 +25,12 @@ import {
   Phone,
 } from "lucide-react";
 import type React from "react";
-import type { Profile } from "../type";
+// import type { Profile } from "../type";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import Loader from "@/src/components/ui/loader";
+import { Profile } from "@/src/features/searchProfile/type";
 
 interface ProfilesListProps {
   profiles: Profile[];
@@ -492,16 +493,23 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               Select Your Profile
             </h2>
             <div className="space-y-2">
-              {userProfiles.map((profile) => (
-                <div
-                  key={profile.id}
-                  className="p-2 border rounded hover:bg-red-50 cursor-pointer"
-                  onClick={() => sendInterest(profile.id)}
-                >
-                  {profile.name} ({profile.profileRelation} )
-                </div>
-              ))}
+              {userProfiles.length === 0 ? (
+                <p className="text-gray-500 text-sm">
+                  Create at least one profile to express interest
+                </p>
+              ) : (
+                userProfiles.map((profile) => (
+                  <div
+                    key={profile.id}
+                    className="p-2 border rounded hover:bg-red-50 cursor-pointer"
+                    onClick={() => sendInterest(profile.id)}
+                  >
+                    {profile.name} ({profile.profileRelation})
+                  </div>
+                ))
+              )}
             </div>
+
             <Button
               type="button"
               variant="outline"

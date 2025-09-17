@@ -28,6 +28,11 @@ interface User {
   rejectionReason?: string;
   rejectedAt?: string;
   reason?: string;
+  rejectedBy?: string;
+  approvedBy?: string;
+  fatherName?: string;
+  motherName?: string;
+  city?: string;
 }
 
 export default function AdminUserApprovalPage() {
@@ -386,7 +391,7 @@ export default function AdminUserApprovalPage() {
                 <b>Phone:</b> {viewUser.phone || "-"}
               </p>
               <p>
-                <b>Father's name:</b> {viewUser?.fatherName}
+                <b>Father's name:</b> {viewUser?.fatherName || ""}
               </p>
               <p>
                 <b>City:</b> {viewUser?.city}

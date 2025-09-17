@@ -26,13 +26,20 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import Link from "next/link";
-import type { DetailedProfile } from "@/src/features/searchProfile/type";
+import type { DetailedProfile, Profile } from "@/src/features/searchProfile/type";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import Loader from "@/src/components/ui/loader";
 
 interface ProfileDetailViewProps {
   profile: DetailedProfile;
 }
-
+interface ProfilesListProps {
+  profiles: Profile[];
+  totalCount: number;
+  sortBy: string;
+  onSortChange: (sortBy: string) => void;
+}
 export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
   const getInitials = (name: string): string => {
     return name
@@ -42,6 +49,17 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
       .toUpperCase()
       .slice(0, 2);
   };
+  const { data: session } = useSession();
+  const [expressed, setExpressed] = useState<Record<string, boolean>>({});
+  const [showProfileSelectModal, setShowProfileSelectModal] = useState(false);
+  const [userProfiles, setUserProfiles] = useState<Profile[]>([]);
+  const [pendingReceiverProfile, setPendingReceiverProfile] = useState<
+    string | null
+  >(null);
+  const [pendingReceiverUser, setPendingReceiverUser] = useState<string | null>(
+    null
+  );
+  const [loading, setLoading] = useState(false);
   const ProfileImageCarousel = ({ profile }: { profile: any }) => {
     // Get all available images, prioritizing profileImage1 as primary
     const images = [
@@ -183,8 +201,79 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
       </div>
     );
   };
-  const handleExpressInterest = () => {
-    console.log("Express interest:", profile.id);
+  const handleExpressInterest = async (
+    receiverProfileId: string,
+    receiverUserId: string
+  ) => {
+    setPendingReceiverProfile(receiverProfileId);
+    setPendingReceiverUser(receiverUserId);
+
+    // fetch logged-in user's profiles from API
+    if (!userProfiles.length && session?.user?.id) {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/allProfiles/${session.user.id}`);
+        const data = await res.json();
+        if (data.success) {
+          setUserProfiles(data.data);
+        } else {
+          console.error("Failed to fetch user profiles:", data.error);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    setShowProfileSelectModal(true); // open popup
+  };
+
+  const sendInterest = async (profileId: string) => {
+    if (!pendingReceiverProfile || !pendingReceiverUser) return;
+
+    setLoading(true); // show loader for POST request
+    try {
+      const res = await fetch(
+        `/api/profile-interest/${pendingReceiverProfile}/interests`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            senderUserId: session?.user?.id, // correct field name
+            senderProfileId: profileId, // profile id of sender
+            receiverUserId: pendingReceiverUser, // correct field name
+            senderProfile: {
+              name: session?.user?.name,
+              email: session?.user?.email,
+              phone: (session?.user as any)?.phone,
+              city: (session?.user as any)?.city,
+              dob: (session?.user as any)?.dob,
+              address: (session?.user as any)?.address,
+              fatherName: (session?.user as any)?.fatherName,
+              state: (session?.user as any)?.state,
+            },
+          }),
+        }
+      );
+
+      const data = await res.json();
+      if (data.success) {
+        setExpressed((prev) => ({
+          ...prev,
+          [pendingReceiverProfile]: true,
+        }));
+      } else {
+        alert(data.message || "Failed to express interest");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false); // hide loader
+      setShowProfileSelectModal(false);
+      setPendingReceiverProfile(null);
+      setPendingReceiverUser(null);
+    }
   };
 
   const handleSendMessage = () => {
@@ -194,6 +283,11 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
   return (
     <div className="min-h-screen bg-orange-50 relative overflow-hidden">
       {/* Decorative Crown Icons */}
+       {loading && (
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30">
+                <Loader />
+              </div>
+            )}
       <div className="absolute inset-0 pointer-events-none z-0">
         <Crown className="absolute top-10 left-10 w-16 h-16 text-red-400 opacity-10 rotate-12" />
         <Crown className="absolute top-40 right-20 w-20 h-20 text-red-400 opacity-10 -rotate-12" />
@@ -255,11 +349,18 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                   </div>
                   <div className="flex flex-col gap-3 pt-4">
                     <Button
-                      onClick={handleExpressInterest}
-                      className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700"
+                      variant="outline"
+                      size="sm"
+                      disabled={expressed[profile.id]}
+                      onClick={() =>
+                        handleExpressInterest(profile.id, profile.userId)
+                      }
+                      className="flex items-center gap-2"
                     >
                       <Heart className="w-4 h-4" />
-                      Express Interest
+                      {expressed[profile.id]
+                        ? "Interest Sent"
+                        : "Express Interest"}
                     </Button>
                     <Button
                       onClick={handleSendMessage}
@@ -734,6 +835,44 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
           </div>
         </div>
       </div>
+      {showProfileSelectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white p-6 rounded-lg w-80 max-h-[80vh] overflow-y-auto space-y-4">
+            <h2 className="text-lg font-semibold text-red-900">
+              Select Your Profile
+            </h2>
+            <div className="space-y-2">
+              {userProfiles.length === 0 ? (
+                <p className="text-gray-500 text-sm">
+                  Create at least one profile to express interest
+                </p>
+              ) : (
+                userProfiles.map((profile) => (
+                  <div
+                    key={profile.id}
+                    className="p-2 border rounded hover:bg-red-50 cursor-pointer"
+                    onClick={() => sendInterest(profile.id)}
+                  >
+                    {profile.name} ({profile.profileRelation})
+                  </div>
+                ))
+              )}
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-4 w-full"
+              onClick={() => {
+                setShowProfileSelectModal(false);
+                window.location.reload(); // ✅ reload page
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

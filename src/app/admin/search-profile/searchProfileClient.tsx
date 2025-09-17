@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { SearchFilters } from "@/src/features/searchProfile/components/searchFilters";
 import type { Profile } from "@/src/features/searchProfile/type";
-import ProfilesList from "@/src/features/searchProfile/components/profilesList";
+// import ProfilesList from "@/src/features/searchProfile/components/profilesList";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import ProfilesList from "./profilesList";
 
 type Props = {
   initialProfiles: Profile[];

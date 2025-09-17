@@ -61,17 +61,19 @@ export function FamilyDetailsTab({ data, onUpdate }: FamilyDetailsTabProps) {
   };
 
   // Update sibling details when count changes
-  const updateSiblingCount = (type: "brothers" | "sisters", value: string) => {
-    const count = parseInt(value) || 0;
-    const detailsKey =
-      type === "brothers" ? "brothersDetails" : "sistersDetails";
-    const currentDetails = data[detailsKey] || [];
+  // Update sibling details when count changes
+const updateSiblingCount = (type: "brothers" | "sisters", value: string) => {
+  const count = parseInt(value) || 0;
+  const detailsKey =
+    type === "brothers" ? "brothersDetails" : "sistersDetails";
+  const currentDetails = data[detailsKey] || [];
 
-    onUpdate({
-      [type]: value,
-      [detailsKey]: initializeSiblingDetails(count, currentDetails),
-    });
-  };
+  onUpdate({
+    [type]: value,
+    [detailsKey]: initializeSiblingDetails(count, currentDetails), // ab 0 pe [] jayega
+  });
+};
+
 
   // Update individual sibling details
   const updateSiblingDetails = (

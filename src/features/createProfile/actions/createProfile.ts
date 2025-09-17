@@ -29,7 +29,7 @@ export async function createProfile(
   try {
     console.log("=== createProfile START ===");
     console.log("Incoming prevState:", prevState);
-    
+
     // Debug: Log all form data entries
     console.log("=== FORM DATA ENTRIES ===");
     for (const [key, value] of formData.entries()) {
@@ -38,8 +38,11 @@ export async function createProfile(
     console.log("=== END FORM DATA ENTRIES ===");
 
     const session = await getServerSession(authOptions);
-    console.log("Session:", session ? `User ID: ${session.user?.id}` : "No session");
-    
+    console.log(
+      "Session:",
+      session ? `User ID: ${session.user?.id}` : "No session"
+    );
+
     if (!session?.user?.id) {
       console.log("❌ Authentication failed");
       return {
@@ -115,26 +118,38 @@ export async function createProfile(
       workLocation: z.string().optional(),
       annualIncome: z.string().optional(),
       workExperience: z.string().optional(),
-      brothersDetails: z.array(z.object({
-        occupation: z.string().optional(),
-        maritalStatus: z.string().optional(),
-        spouseName: z.string().optional(),
-        spouseOccupation: z.string().optional(),
-        name: z.string().optional(),
-      })).optional(),
-      sistersDetails: z.array(z.object({
-        occupation: z.string().optional(),
-        maritalStatus: z.string().optional(),
-        spouseName: z.string().optional(),
-        spouseOccupation: z.string().optional(),
-        name: z.string().optional(),
-      }))
+      brothersDetails: z
+        .array(
+          z.object({
+            occupation: z.string().optional(),
+            maritalStatus: z.string().optional(),
+            spouseName: z.string().optional(),
+            spouseOccupation: z.string().optional(),
+            name: z.string().optional(),
+          })
+        )
+        .optional(),
+      sistersDetails: z.array(
+        z.object({
+          occupation: z.string().optional(),
+          maritalStatus: z.string().optional(),
+          spouseName: z.string().optional(),
+          spouseOccupation: z.string().optional(),
+          name: z.string().optional(),
+        })
+      ),
     });
 
     const formEntries = Object.fromEntries(formData.entries());
     const rawData = {
       ...formEntries,
       userId: session.user.id,
+      brothersDetails: formEntries.brothersDetails
+        ? JSON.parse(formEntries.brothersDetails as string)
+        : [],
+      sistersDetails: formEntries.sistersDetails
+        ? JSON.parse(formEntries.sistersDetails as string)
+        : [],
     };
 
     console.log("=== RAW DATA ===");
@@ -143,18 +158,24 @@ export async function createProfile(
     const parsed = profileSchema.safeParse(rawData);
     console.log("=== VALIDATION RESULT ===");
     console.log("Success:", parsed.success);
-    
+
     if (!parsed.success) {
       console.log("❌ Validation errors:", parsed.error.errors);
       return {
         success: false,
-        message: "Validation failed: " + parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', '),
+        message:
+          "Validation failed: " +
+          parsed.error.errors
+            .map((e) => `${e.path.join(".")}: ${e.message}`)
+            .join(", "),
         errors: parsed.error.errors,
         timestamp: Date.now(),
         toast: {
           type: "error",
           title: "Validation Error",
-          message: "Please check the form for errors: " + parsed.error.errors[0]?.message,
+          message:
+            "Please check the form for errors: " +
+            parsed.error.errors[0]?.message,
         },
       };
     }
@@ -166,7 +187,7 @@ export async function createProfile(
     // This prevents duplicate emails for the same user but allows multiple profiles
     console.log("=== CHECKING FOR EXISTING EMAIL ===");
     const existingProfile = await db.query.profiles.findFirst({
-      where: (fields, { eq, and }) => 
+      where: (fields, { eq, and }) =>
         and(
           eq(fields.email, parsed.data.email),
           eq(fields.userId, session.user.id),
@@ -178,32 +199,39 @@ export async function createProfile(
       console.log("❌ Profile with this email already exists for this user");
       return {
         success: false,
-        message: "You already have a profile with this email address. Please use a different email for additional profiles.",
+        message:
+          "You already have a profile with this email address. Please use a different email for additional profiles.",
         data: existingProfile,
         timestamp: Date.now(),
         toast: {
           type: "error",
           title: "Duplicate Email",
-          message: "You already have a profile with this email address. Please use a different email.",
+          message:
+            "You already have a profile with this email address. Please use a different email.",
         },
       };
     }
 
-    console.log("✅ No existing profile with this email found, proceeding with creation");
+    console.log(
+      "✅ No existing profile with this email found, proceeding with creation"
+    );
 
     // Insert the profile
     console.log("=== INSERTING PROFILE ===");
-    const result = await db.insert(profiles).values({
-      ...parsed.data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }).returning();
+    const result = await db
+      .insert(profiles)
+      .values({
+        ...parsed.data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
 
     console.log("✅ Profile created successfully:", result[0]);
 
     revalidatePath("/create-profile");
     revalidatePath("/dashboard");
-    
+
     return {
       success: true,
       message: "Profile created successfully.",
@@ -246,7 +274,10 @@ export async function updateProfileById(formData: FormData, userId: string) {
       };
     }
 
-    await db.update(profiles).set(updatedFields).where(eq(profiles.userId, userId));
+    await db
+      .update(profiles)
+      .set(updatedFields)
+      .where(eq(profiles.userId, userId));
 
     const updatedProfile = await db
       .select()

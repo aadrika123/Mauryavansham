@@ -24,6 +24,7 @@ export * from "./db/schemas/adRates";
 export * from "./db/schemas/user_siblings";
 export * from "./db/schemas/user_childrens";
 export * from "./db/schemas/businesses";
+export * from "./db/schemas/profileInterests";
 
 
 

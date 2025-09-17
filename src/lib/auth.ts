@@ -82,7 +82,10 @@ export const authOptions: AuthOptions = {
             );
           }
         }
-
+        await db
+          .update(users)
+          .set({ lastActive: new Date()})
+          .where(eq(users.id, user.id));
         return {
           id: user.id.toString(),
           email: user.email,

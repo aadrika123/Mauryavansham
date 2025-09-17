@@ -161,6 +161,32 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
         </div>
       </div>
 
+      <section className="py-8 bg-[#FFFDEF] px-4 sm:px-8">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+            💍 Mauryavansham Matrimony
+          </h2>
+          <p className="text-gray-700 mb-6 leading-relaxed text-justify">
+            Finding the right life partner within our own community has always
+            been a cherished tradition. The Maurya Vansham Matrimony section is
+            dedicated to helping families and individuals from the Kushwaha /
+            Koiri / Sakhya / Sainy community connect with trust and confidence.
+            This platform allows you to: ✅ Create and manage authentic
+            matrimonial profiles ✅ Search and connect with verified community
+            members ✅ Preserve cultural values while embracing modern
+            matchmaking ✅ Build lifelong bonds rooted in trust, respect, and
+            tradition.
+            <br />
+            <br />
+            Every profile is verified by our Admin panel to ensure authenticity
+            and community belonging. Our goal is not just to facilitate matches,
+            but to strengthen relationships that uphold our heritage and unity.
+            🌿 Begin your journey today — because marriages are not just between
+            individuals, but between families and traditions.
+          </p>
+        </div>
+      </section>
+
       {/* ✅ Success Stories */}
       <div className="container mx-auto px-4 pb-12 mt-12 sm:mt-20 relative">
         <div className="text-center mb-8">
@@ -253,6 +279,196 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           </div>
         </div>
       </div>
+
+      <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+            Guide for Matrimony Service
+          </h2>
+          <h3 className="text-2xl sm:text-3xl font-semibold text-center text-red-700 mb-6">
+            How It Works – Mauryavansham Matrimony
+          </h3>
+
+          <ol className="list-decimal list-inside space-y-6 text-gray-700">
+            <li>
+              <strong>Register</strong>
+              <p className="ml-4 mt-1">
+                Sign up by creating your matrimonial profile. Basic details like
+                name, age, family background, education, and preferences are
+                required.
+              </p>
+            </li>
+
+            <li>
+              <strong>Community Verification</strong>
+              <p className="ml-4 mt-1">
+                Your profile will undergo triple verification by 3 Admin Members
+                to ensure authenticity and that you belong to the Kushwaha /
+                Koiri / Maurya / Sakhya / Sainy community.
+              </p>
+            </li>
+
+            <li>
+              <strong>Profile Approval</strong>
+              <p className="ml-4 mt-1">
+                Once approved, your profile becomes visible in the Matrimony
+                Directory for other verified members to view.
+              </p>
+            </li>
+
+            <li>
+              <strong>Search & Connect</strong>
+              <p className="ml-4 mt-1">
+                Browse verified profiles by filters such as age, education,
+                profession, or location. Each search result is
+                community-authenticated.
+              </p>
+            </li>
+
+            <li>
+              <strong>Express Interest</strong>
+              <p className="ml-4 mt-1">
+                Send “Interest Requests” to families or individuals you would
+                like to connect with. The other side can accept, decline, or
+                request further details.
+              </p>
+            </li>
+
+            <li>
+              <strong>Secure & Respectful Communication</strong>
+              <p className="ml-4 mt-1">
+                All communication is carried out respectfully through the
+                platform. Members are reminded to follow community ethics,
+                dignity, and mutual respect.
+              </p>
+            </li>
+          </ol>
+
+          <p className="mt-6 text-gray-700 font-semibold text-center">
+            ✨ Mauryavansham Matrimony ensures that every connection is
+            authentic, secure, and rooted in our cultural values.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+            📌 Matrimony Guidelines – Do’s & Don’ts
+          </h2>
+
+          <p className="text-gray-700 mb-6 leading-relaxed text-justify">
+            The Mauryavansham Matrimony section has been created with the sole
+            aim of helping our community members find life partners in a safe
+            and respectful environment. To ensure fairness, authenticity, and
+            dignity, all members are requested to follow these guidelines:
+          </p>
+
+          {/* ✅ Do’s */}
+          <div className="mb-6">
+            <h3 className="text-2xl sm:text-3xl font-semibold text-red-700 mb-4">
+              ✅ Do’s
+            </h3>
+            <ol className="list-decimal list-inside space-y-4 text-gray-700">
+              <li>
+                <strong>Provide Accurate Information</strong>
+                <p className="ml-4 mt-1">
+                  Fill in your profile honestly with correct personal,
+                  educational, and professional details.
+                </p>
+              </li>
+              <li>
+                <strong>Respect Privacy</strong>
+                <p className="ml-4 mt-1">
+                  Share sensitive details (like contact numbers, addresses) only
+                  after mutual trust and interest are established.
+                </p>
+              </li>
+              <li>
+                <strong>Parental/Family Involvement</strong>
+                <p className="ml-4 mt-1">
+                  Wherever possible, involve your parents or elders in the
+                  process to ensure clarity and transparency.
+                </p>
+              </li>
+              <li>
+                <strong>Be Respectful</strong>
+                <p className="ml-4 mt-1">
+                  Communicate politely with other members and their families.
+                  Mutual respect is the foundation of our community.
+                </p>
+              </li>
+              <li>
+                <strong>Report Misuse</strong>
+                <p className="ml-4 mt-1">
+                  If you come across any suspicious or inappropriate activity,
+                  immediately report it to the Admin team for quick action.
+                </p>
+              </li>
+            </ol>
+          </div>
+
+          {/* ❌ Don’ts */}
+          <div className="mb-6">
+            <h3 className="text-2xl sm:text-3xl font-semibold text-red-700 mb-4">
+              ❌ Don’ts
+            </h3>
+            <ol className="list-decimal list-inside space-y-4 text-gray-700">
+              <li>
+                <strong>Do Not Create Fake Profiles</strong>
+                <p className="ml-4 mt-1">
+                  Misrepresentation of age, education, profession, or community
+                  identity will lead to immediate removal.
+                </p>
+              </li>
+              <li>
+                <strong>Do Not Pressure or Harass</strong>
+                <p className="ml-4 mt-1">
+                  Avoid sending repeated requests or offensive messages to other
+                  members.
+                </p>
+              </li>
+              <li>
+                <strong>Do Not Share Irrelevant Content</strong>
+                <p className="ml-4 mt-1">
+                  The Matrimony section is strictly for matrimonial purposes
+                  only. Avoid business promotions, spam, or unrelated posts.
+                </p>
+              </li>
+              <li>
+                <strong>Do Not Circumvent the Platform</strong>
+                <p className="ml-4 mt-1">
+                  Directly sharing personal details without consent is
+                  discouraged. Use the platform’s secure communication options
+                  first.
+                </p>
+              </li>
+              <li>
+                <strong>Do Not Misuse Community Trust</strong>
+                <p className="ml-4 mt-1">
+                  Any attempt to exploit the platform for financial gain, fraud,
+                  or non-community purposes will lead to a permanent ban.
+                </p>
+              </li>
+            </ol>
+          </div>
+
+          {/* Enforcement */}
+          <div className="mt-4 text-gray-700 font-medium">
+            <p>
+              ⚖ Enforcement: The Admin team reserves the right to verify,
+              monitor, and moderate all activities. Profiles violating these
+              guidelines may be suspended or permanently deleted without prior
+              notice.
+            </p>
+            <p className="mt-2">
+              🌿 Remember: Mauryavansham Matrimony is not just about finding a
+              partner, but about building families, preserving traditions, and
+              strengthening our community bonds.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

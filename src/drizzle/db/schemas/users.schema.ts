@@ -38,6 +38,7 @@ export const users = pgTable("users", {
   height: varchar("height", { length: 10 }),
   weight: varchar("weight", { length: 10 }),
   bloodGroup: varchar("blood_group", { length: 5 }),
+  lastActive: timestamp("last_active_at"),
 
   education: varchar("education", { length: 100 }),
   occupation: varchar("occupation", { length: 100 }),

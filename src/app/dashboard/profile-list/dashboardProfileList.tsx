@@ -118,7 +118,7 @@ export default function DashboardProfileList(props: any) {
   const [selectedProfileId, setSelectedProfileId] = useState<string | null>(
     null
   );
-
+  console.log(props?.user);
   const handleDeactivateProfileClick = (profileId: string) => {
     setSelectedProfileId(profileId);
     setShowDeactivateModal(true);
@@ -153,12 +153,11 @@ export default function DashboardProfileList(props: any) {
   };
 
   // ✅ enrich profiles to mark logged-in user's profiles as online
-  const enrichedProfiles = props?.profileList?.profiles?.map((profile: any) => {
-    if (session?.user?.id && profile.userId === session.user.id) {
+  const enrichedProfiles = props?.profileList?.profiles
+    ?.filter((profile: any) => profile.userId === session?.user?.id) // ✅ only current user's profiles
+    .map((profile: any) => {
       return { ...profile, lastActive: "Online now" };
-    }
-    return profile;
-  });
+    });
 
   return (
     <div className="space-y-6 w-[80%] mx-auto mb-10">
@@ -264,9 +263,20 @@ export default function DashboardProfileList(props: any) {
                 ? "Deactivating..."
                 : "Deactivate"}
             </Button>
+
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push(`/dashboard/profile-interests/${profile.id}`)
+              }
+              className="rounded-lg border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+            >
+              View Interests
+            </Button>
           </CardContent>
         </Card>
       ))}
+      {enrichedProfiles.length === 0 && <p>No profiles found.</p>}
 
       {/* Modal */}
       <DeactivateProfileModal

@@ -66,6 +66,11 @@ export default function AdmindashboardLayout({
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
     { title: "Discussions Moderation", href: "/admin/discussions", icon: MessageSquare },
     { title: "Register-business", href: "/admin/register-business", icon: Wallet2Icon },
+    {
+      title: "Create Matrimonial Profile",
+      href: "/admin/create-profile",
+      icon: LayoutDashboard,
+    },
   ];
 
   const superAdminSidebarItems = [
