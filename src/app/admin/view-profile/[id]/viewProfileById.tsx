@@ -341,7 +341,7 @@ const ViewProfileById = (props: any) => {
           </div>
           {/* Pencil Icon for Edit */}
           <Link
-            href={`/dashboard/edit-profile/${profileData.id}`}
+            href={`/admin/edit-profile/${profileData.id}`}
             className="absolute cursor-pointer top-4 right-4 text-white hover:text-gray-700 transition-colors"
           >
             <span className="sr-only">Edit Profile</span>
