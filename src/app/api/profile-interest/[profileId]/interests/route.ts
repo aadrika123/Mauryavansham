@@ -159,7 +159,6 @@ export async function POST(
             <p>Contact Details of ${senderProfileData?.name}:</p>
             <ul>
               <li><b>Email:</b> ${senderUser?.email}</li>
-              <li><b>Phone:</b> ${senderUser?.phone || "N/A"}</li>
               <li><b>City:</b> ${senderProfileData?.city || "N/A"}</li>
               <li><b>State:</b> ${senderProfileData?.state || "N/A"}</li>
             </ul>
