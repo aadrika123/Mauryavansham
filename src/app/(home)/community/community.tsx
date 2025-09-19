@@ -23,6 +23,7 @@ import Link from "next/link";
 import Image from "next/image";
 // import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Loader from "@/src/components/ui/loader";
 
 interface Ad {
   id: number;
@@ -66,11 +67,18 @@ export default function CommunityForumPage({ user }: Props) {
   const [selectedCategory, setSelectedCategory] = useState("All Discussions");
   const [searchQuery, setSearchQuery] = useState("");
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]); // Store all discussions
   const [loading, setLoading] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const Router = useRouter();
   const [categories, setCategories] = useState([] as any[]);
+  const [apiLoading, setApiLoading] = useState(false);
+
+  // Pagination state
+  const [displayCount, setDisplayCount] = useState(4); // Initially show 4 discussions
+  const ITEMS_PER_LOAD = 2; // Load 2 more discussions each time
+
   // Create Discussion Form State
   const [newDiscussion, setNewDiscussion] = useState({
     title: "",
@@ -106,6 +114,11 @@ export default function CommunityForumPage({ user }: Props) {
     setDiscussionReplies([]);
   };
 
+  // Load more discussions function
+  const handleLoadMore = () => {
+    setDisplayCount((prev) => prev + ITEMS_PER_LOAD);
+  };
+
   // Load ad placements
   useEffect(() => {
     fetch("/api/ad-placements/approved")
@@ -119,6 +132,11 @@ export default function CommunityForumPage({ user }: Props) {
   // Load discussions and categories
   useEffect(() => {
     loadDiscussions();
+  }, [selectedCategory, searchQuery]);
+
+  // Reset display count when category or search changes
+  useEffect(() => {
+    setDisplayCount(4);
   }, [selectedCategory, searchQuery]);
 
   // After fetching categories from API
@@ -153,34 +171,39 @@ export default function CommunityForumPage({ user }: Props) {
 
       const response = await fetch(`/api/discussions?${params}`);
       const data = await response.json();
-      const allDiscussions: Discussion[] = data.data || data || [];
+      const allDiscussionsData: Discussion[] = data.data || data || [];
 
       // Filter discussions for display
       let filteredDiscussions: Discussion[];
       if (selectedCategory === "All Discussions") {
-        filteredDiscussions = allDiscussions.filter((d) => !d.isCompleted);
+        filteredDiscussions = allDiscussionsData.filter((d) => !d.isCompleted);
       } else if (selectedCategory === "My Discussions") {
-        filteredDiscussions = allDiscussions.filter(
+        filteredDiscussions = allDiscussionsData.filter(
           (d) => String(d.authorId) === String(user?.id)
         );
       } else {
-        filteredDiscussions = allDiscussions.filter(
+        filteredDiscussions = allDiscussionsData.filter(
           (d) => d.category === selectedCategory && !d.isCompleted
         );
       }
 
-      setDiscussions(filteredDiscussions);
+      // Store all filtered discussions
+      setAllDiscussions(filteredDiscussions);
+
+      // Display only the first 'displayCount' discussions
+      setDiscussions(filteredDiscussions.slice(0, displayCount));
 
       // Update category counts
       const counts: Record<string, number> = {
-        "All Discussions": allDiscussions.filter((d) => !d.isCompleted).length,
-        "My Discussions": allDiscussions.filter(
+        "All Discussions": allDiscussionsData.filter((d) => !d.isCompleted)
+          .length,
+        "My Discussions": allDiscussionsData.filter(
           (d) => String(d.authorId) === String(user?.id)
         ).length,
       };
 
       // Only count incomplete discussions for other categories
-      allDiscussions.forEach((d) => {
+      allDiscussionsData.forEach((d) => {
         if (!d.isCompleted && d.category) {
           counts[d.category] = (counts[d.category] || 0) + 1;
         }
@@ -200,6 +223,11 @@ export default function CommunityForumPage({ user }: Props) {
     }
   };
 
+  // Update displayed discussions when displayCount changes
+  useEffect(() => {
+    setDiscussions(allDiscussions.slice(0, displayCount));
+  }, [displayCount, allDiscussions]);
+
   const handleStartDiscussion = () => {
     if (!user) {
       setShowLoginModal(true);
@@ -210,6 +238,7 @@ export default function CommunityForumPage({ user }: Props) {
 
   const handleCreateDiscussion = async () => {
     if (!user || !newDiscussion.title || !newDiscussion.content) return;
+    setApiLoading(true);
 
     try {
       const response = await fetch("/api/discussions", {
@@ -228,10 +257,13 @@ export default function CommunityForumPage({ user }: Props) {
           category: "Business Help",
           location: "",
         });
+        setDisplayCount(4); // Reset to initial count
         loadDiscussions(); // Reload discussions
       }
     } catch (error) {
       console.error("Failed to create discussion:", error);
+    }finally{
+      setApiLoading(false);
     }
   };
 
@@ -258,6 +290,7 @@ export default function CommunityForumPage({ user }: Props) {
       console.error("Failed to like discussion:", error);
     }
   };
+
   const handleCloseDiscussion = async (discussionId: number) => {
     try {
       const res = await fetch(`/api/discussions/${discussionId}/close`, {
@@ -353,6 +386,12 @@ export default function CommunityForumPage({ user }: Props) {
   console.log(selectedCategory, "categories");
   return (
     <div className="px-4 sm:px-6 md:px-8 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
+      {apiLoading && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          {/* <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> */}
+          <Loader />
+        </div>
+      )}
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -726,17 +765,30 @@ export default function CommunityForumPage({ user }: Props) {
               )}
             </div>
 
-            {/* Load More */}
-            {discussions.length > 0 && (
+            {/* Load More - Updated with functional logic */}
+            {allDiscussions.length > displayCount && (
               <div className="text-center mt-8">
                 <Button
+                  onClick={handleLoadMore}
                   variant="outline"
                   className="border-orange-500 text-orange-600 hover:bg-orange-50 bg-transparent px-6 sm:px-8"
                 >
-                  Load More Discussions
+                  Load More Discussions ({displayCount} of{" "}
+                  {allDiscussions.length})
                 </Button>
               </div>
             )}
+
+            {/* Show total count when all discussions are loaded */}
+            {allDiscussions.length > 0 &&
+              displayCount >= allDiscussions.length &&
+              allDiscussions.length > 4 && (
+                <div className="text-center mt-4">
+                  <p className="text-gray-600 text-sm">
+                    Showing all {allDiscussions.length} discussions
+                  </p>
+                </div>
+              )}
 
             {/* Ad Banner */}
             <div className="mt-10 sm:mt-12">

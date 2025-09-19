@@ -331,14 +331,14 @@ export default function UserProfilePage({ data }: { data: any }) {
               name="fatherName"
               value={formData.fatherName}
               onChange={handleChange}
-              disabled
+              // disabled
             />
             <InputField
               label="Mother's Name"
               name="motherName"
               value={formData.motherName}
               onChange={handleChange}
-              disabled
+              // disabled
             />
 
             <SelectField

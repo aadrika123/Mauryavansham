@@ -23,11 +23,11 @@ export default async function BusinessIndexPage() {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-1">
               <Link
-                href="/"
+                href="/admin/overview"
                 className="flex items-center  text-gray-600 hover:text-gray-900"
               >
                 <ArrowLeft className="w-4 h-4 text-red-700" />
-                <span className="text-red-700">Back to Home / </span>
+                <span className="text-red-700">Dashboard / </span>
               </Link>
               <h1 className="text-2xl font-bold text-red-700">
                 Registration Form

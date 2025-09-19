@@ -5,8 +5,7 @@ import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/src/hooks/use-toast";
-
-// shadcn/ui dialog components
+import Pagination from "@/src/components/common/Pagination";
 import {
   Dialog,
   DialogContent,
@@ -15,48 +14,46 @@ import {
   DialogFooter,
 } from "@/src/components/ui/dialog";
 
+interface Approval {
+  adminName: string;
+  action: "approved" | "rejected";
+}
+
 interface User {
   id: number;
   name: string;
   email: string;
   phone?: string;
   status: "pending" | "approved" | "rejected";
-  approvals: { adminName: string; action: "approved" | "rejected" }[];
+  approvals: Approval[];
   createdAt: string;
   updatedAt: string;
   approvedAt?: string;
-  rejectionReason?: string;
   rejectedAt?: string;
-  reason?: string;
-  rejectedBy?: string;
-  approvedBy?: string;
+  rejectionReason?: string;
   fatherName?: string;
-  motherName?: string;
   city?: string;
 }
+
+type Tab = "pending" | "approved" | "rejected" | "view";
 
 export default function AdminUserApprovalPage() {
   const { data: session } = useSession();
   const { toast } = useToast();
 
-  const [data, setData] = useState<{
-    pending: User[];
-    approved: User[];
-    rejected: User[];
-  }>({
+  const [data, setData] = useState<Record<Tab, User[]>>({
     pending: [],
     approved: [],
     rejected: [],
+    view: [],
   });
 
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState<"pending" | "approved" | "rejected" | "view">(
-    "pending"
-  );
-  const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [tab, setTab] = useState<Tab>("pending");
   const [search, setSearch] = useState("");
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
 
-  // reject modal states
+  // reject modal
   const [rejectUserId, setRejectUserId] = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -64,15 +61,33 @@ export default function AdminUserApprovalPage() {
   // view modal
   const [viewUser, setViewUser] = useState<User | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
-  console.log(viewUser)
 
-  const fetchUsers = async () => {
+  // pagination per tab
+  const [pagination, setPagination] = useState({
+    pending: { currentPage: 1, pageSize: 10, totalItems: 0, totalPages: 1 },
+    approved: { currentPage: 1, pageSize: 10, totalItems: 0, totalPages: 1 },
+    rejected: { currentPage: 1, pageSize: 10, totalItems: 0, totalPages: 1 },
+  });
+
+  // 🔹 Fetch users per tab with pagination
+  const fetchUsers = async (tab: "pending" | "approved" | "rejected") => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/users");
+      const { currentPage, pageSize } = pagination[tab];
+      const res = await fetch(
+        `/api/admin/users?tab=${tab}&page=${currentPage}&pageSize=${pageSize}`
+      );
       const json = await res.json();
-      console.log(json);
-      setData(json);
+
+      setData((prev) => ({ ...prev, [tab]: json.users }));
+      setPagination((prev) => ({
+        ...prev,
+        [tab]: {
+          ...prev[tab],
+          totalItems: json.totalItems,
+          totalPages: json.totalPages,
+        },
+      }));
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
@@ -81,9 +96,12 @@ export default function AdminUserApprovalPage() {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+  if (tab !== "view") fetchUsers(tab);
+}, [tab, pagination[tab as "pending" | "approved" | "rejected"].currentPage, 
+    pagination[tab as "pending" | "approved" | "rejected"].pageSize]);
 
+
+  // 🔹 Approve user
   const handleApprove = async (userId: number) => {
     if (!session?.user) return;
     setActionLoading(userId);
@@ -98,11 +116,8 @@ export default function AdminUserApprovalPage() {
       });
       const json = await res.json();
       if (res.ok) {
-        toast({
-          title: "User Approved ✅",
-          description: json.message,
-        });
-        fetchUsers();
+        toast({ title: "User Approved ✅", description: json.message });
+        if (tab !== "view") fetchUsers(tab);
       } else {
         toast({
           title: "Error",
@@ -111,24 +126,22 @@ export default function AdminUserApprovalPage() {
         });
       }
     } catch (err) {
-      console.error("approve error:", err);
+      console.error(err);
     } finally {
       setActionLoading(null);
     }
   };
 
-  // open reject modal
+  // 🔹 Reject user
   const openRejectModal = (userId: number) => {
-    setRejectUserId(userId); // yahi sahi userId set hoga
+    setRejectUserId(userId);
     setRejectReason("");
     setShowRejectModal(true);
   };
 
-  // submit rejection with reason
   const submitReject = async () => {
     if (!session?.user || rejectUserId === null) return;
-
-    setActionLoading(rejectUserId); // bas UI disable ke liye
+    setActionLoading(rejectUserId);
     try {
       const res = await fetch(`/api/admin/reject-user/${rejectUserId}`, {
         method: "POST",
@@ -139,16 +152,15 @@ export default function AdminUserApprovalPage() {
           reason: rejectReason,
         }),
       });
-
       const json = await res.json();
-
       if (res.ok) {
         toast({
           title: "User Rejected ❌",
           description: json.message,
           variant: "destructive",
         });
-        fetchUsers();
+        // fetchUsers(tab);
+        if (tab !== "view") fetchUsers(tab);
       } else {
         toast({
           title: "Error",
@@ -157,18 +169,62 @@ export default function AdminUserApprovalPage() {
         });
       }
     } catch (err) {
-      console.error("reject error:", err);
+      console.error(err);
     } finally {
       setActionLoading(null);
       setShowRejectModal(false);
-      setRejectUserId(null); // modal close hote hi reset karo
+      setRejectUserId(null);
     }
   };
+  useEffect(() => {
+    // First load: fetch all 3 tabs
+    const fetchAllTabs = async () => {
+      setLoading(true);
+      try {
+        const tabs: ("pending" | "approved" | "rejected")[] = [
+          "pending",
+          "approved",
+          "rejected",
+        ];
+        const allData: Partial<
+          Record<"pending" | "approved" | "rejected", User[]>
+        > = {};
 
-  // users list based on tab
+        await Promise.all(
+          tabs.map(async (t) => {
+            const { currentPage, pageSize } = pagination[t];
+            const res = await fetch(
+              `/api/admin/users?tab=${t}&page=${currentPage}&pageSize=${pageSize}`
+            );
+            const json = await res.json();
+            allData[t] = json.users;
+
+            setPagination((prev) => ({
+              ...prev,
+              [t]: {
+                ...prev[t],
+                totalItems: json.totalItems,
+                totalPages: json.totalPages,
+              },
+            }));
+          })
+        );
+
+        setData((prev) => ({ ...prev, ...allData }));
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllTabs();
+  }, []);
+
+  // 🔹 Filter users for search
   const users =
     tab === "view"
-      ? [...data.pending, ...data.approved, ...data.rejected] // all users
+      ? [...data.pending, ...data.approved, ...data.rejected]
       : data[tab].filter(
           (u) =>
             u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -179,10 +235,10 @@ export default function AdminUserApprovalPage() {
   const rejectUser = users.find((u) => u.id === rejectUserId);
 
   return (
-    <div className="max-w-6xl mx-auto py-2 space-y-2">
+    <div className="max-w-6xl mx-auto py-2 space-y-4">
       {/* Tabs */}
       <div className="flex space-x-3 border-b pb-2">
-        {(["pending", "approved", "rejected", "view"] as const).map((t) => (
+        {(["pending", "approved", "rejected"] as const).map((t) => (
           <button
             key={t}
             className={`px-4 py-2 rounded-t-lg font-medium ${
@@ -193,7 +249,7 @@ export default function AdminUserApprovalPage() {
             onClick={() => setTab(t)}
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
-            {t !== "view" && ` (${data[t].length})`}
+            {data[t].length > 0 && ` (${data[t].length})`}
           </button>
         ))}
       </div>
@@ -223,69 +279,60 @@ export default function AdminUserApprovalPage() {
       ) : users.length === 0 ? (
         <p className="text-gray-500">No {tab} users found.</p>
       ) : (
-        <div className="overflow-x-auto border rounded-lg">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-100 text-left text-sm font-semibold">
-                <th className="p-3 border-b">Name</th>
-                <th className="p-3 border-b">Email</th>
-                <th className="p-3 border-b">Phone</th>
-                <th className="p-3 border-b">Approvals</th>
-                {tab === "rejected" && (
-                  <th className="p-3 border-b">Reasons</th>
-                )}
-                <th className="p-3 border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => {
-                const currentAdminAction = u.approvals.find(
-                  (a) => a.adminName === session?.user?.name
-                );
+        <>
+          <div className="overflow-x-auto border rounded-lg">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100 text-left text-sm font-semibold">
+                  <th className="p-3 border-b">Name</th>
+                  <th className="p-3 border-b">Email</th>
+                  <th className="p-3 border-b">Phone</th>
+                  <th className="p-3 border-b">Approvals</th>
+                  {tab === "rejected" && (
+                    <th className="p-3 border-b">Reasons</th>
+                  )}
+                  <th className="p-3 border-b">Actions</th>
+                  <th className="p-3 border-b">View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u) => {
+                  const currentAdminAction = u.approvals.find(
+                    (a) => a.adminName === session?.user?.name
+                  );
 
-                return (
-                  <tr key={u.id} className="hover:bg-gray-50">
-                    <td className="p-3 border-b">{u.name}</td>
-                    <td className="p-3 border-b">{u.email}</td>
-                    <td className="p-3 border-b">{u.phone || "-"}</td>
-
-                    <td className="p-3 border-b">
-                      {u.approvals?.length ? (
-                        u.approvals.map((a, idx) => (
-                          <span
-                            key={idx}
-                            className={`inline-block px-2 py-1 rounded text-sm font-medium mr-1 ${
-                              a.action === "approved"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                            title={`${a.adminName} already ${a.action} this user`}
-                          >
-                            {a.adminName} ({a.action})
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-gray-500">No approvals yet</span>
-                      )}
-                    </td>
-
-                    {tab === "rejected" && (
+                  return (
+                    <tr key={u.id} className="hover:bg-gray-50">
+                      <td className="p-3 border-b">{u.name}</td>
+                      <td className="p-3 border-b">{u.email}</td>
+                      <td className="p-3 border-b">{u.phone || "-"}</td>
                       <td className="p-3 border-b">
-                        {u.rejectionReason ? (
-                          <span
-                            className="inline-block px-2 py-1 rounded text-sm font-medium bg-red-100 text-red-800"
-                            title={u.rejectionReason}
-                          >
-                            {u.rejectionReason}
-                          </span>
+                        {u.approvals?.length ? (
+                          u.approvals.map((a, idx) => (
+                            <span
+                              key={idx}
+                              className={`inline-block px-2 py-1 rounded text-sm font-medium mr-1 ${
+                                a.action === "approved"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                              title={`${a.adminName} ${a.action} this user`}
+                            >
+                              {a.adminName} ({a.action})
+                            </span>
+                          ))
                         ) : (
-                          <span className="text-gray-500">No reason</span>
+                          <span className="text-gray-500">
+                            No approvals yet
+                          </span>
                         )}
                       </td>
-                    )}
-
-                    <td className="p-3 border-b">
-                      <div className="flex gap-2">
+                      {tab === "rejected" && (
+                        <td className="p-3 border-b">
+                          {u.rejectionReason || "-"}
+                        </td>
+                      )}
+                      <td className="p-3 border-b flex gap-2">
                         {(tab === "pending" || tab === "rejected") && (
                           <Button
                             className="bg-green-600 hover:bg-green-700 text-white"
@@ -298,7 +345,6 @@ export default function AdminUserApprovalPage() {
                             {actionLoading === u.id ? "..." : "Approve"}
                           </Button>
                         )}
-
                         {(tab === "pending" || tab === "approved") && (
                           <Button
                             className="bg-red-600 hover:bg-red-700 text-white"
@@ -311,25 +357,47 @@ export default function AdminUserApprovalPage() {
                             {actionLoading === u.id ? "..." : "Reject"}
                           </Button>
                         )}
-                      </div>
-                    </td>
-                    <td className="p-3 border-b">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setViewUser(u);
-                          setShowViewModal(true);
-                        }}
-                      >
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      </td>
+                      <td className="p-3 border-b">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setViewUser(u);
+                            setShowViewModal(true);
+                          }}
+                        >
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {tab !== "view" && (
+            <Pagination
+              currentPage={pagination[tab].currentPage}
+              totalPages={pagination[tab].totalPages}
+              totalItems={pagination[tab].totalItems}
+              pageSize={pagination[tab].pageSize}
+              onPageChange={(page) =>
+                setPagination((prev) => ({
+                  ...prev,
+                  [tab]: { ...prev[tab], currentPage: page },
+                }))
+              }
+              onPageSizeChange={(size) =>
+                setPagination((prev) => ({
+                  ...prev,
+                  [tab]: { ...prev[tab], pageSize: size, currentPage: 1 },
+                }))
+              }
+            />
+          )}
+        </>
       )}
 
       {/* Reject Modal */}
@@ -344,10 +412,7 @@ export default function AdminUserApprovalPage() {
           {rejectUser && (
             <p className="text-sm text-gray-600 mb-2">
               Are you sure you want to reject{" "}
-              <span className="font-semibold">
-                {rejectUser.name} {rejectUser.email}
-              </span>
-              ?
+              <span className="font-semibold">{rejectUser.name}</span>?
             </p>
           )}
 
@@ -378,7 +443,6 @@ export default function AdminUserApprovalPage() {
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
           </DialogHeader>
-
           {viewUser && (
             <div className="space-y-2 text-sm">
               <p>
@@ -391,17 +455,11 @@ export default function AdminUserApprovalPage() {
                 <b>Phone:</b> {viewUser.phone || "-"}
               </p>
               <p>
-                <b>Father's name:</b> {viewUser?.fatherName || ""}
+                <b>Father's Name:</b> {viewUser.fatherName || "-"}
               </p>
               <p>
-                <b>City:</b> {viewUser?.city}
+                <b>City:</b> {viewUser.city || "-"}
               </p>
-              {/* <p>
-                <b>Created At:</b> {viewUser.createdAt}
-              </p>
-              <p>
-                <b>Updated At:</b> {viewUser.updatedAt}
-              </p> */}
               {viewUser.approvedAt && (
                 <p>
                   <b>Approved At:</b> {viewUser.approvedAt}
@@ -419,7 +477,7 @@ export default function AdminUserApprovalPage() {
               )}
               <div>
                 <b>Approvals:</b>{" "}
-                {viewUser.approvals?.length ? (
+                {viewUser.approvals.length ? (
                   viewUser.approvals.map((a, idx) => (
                     <span
                       key={idx}
@@ -438,7 +496,6 @@ export default function AdminUserApprovalPage() {
               </div>
             </div>
           )}
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowViewModal(false)}>
               Close

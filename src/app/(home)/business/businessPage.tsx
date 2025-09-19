@@ -33,6 +33,7 @@ export default function BusinessDetailsPage({ user }: Props) {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const Router = useRouter();
+  const [showGuidePopup, setShowGuidePopup] = useState(false);
 
   // 🔹 Image Modal State
   const [showImageModal, setShowImageModal] = useState(false);
@@ -168,6 +169,12 @@ export default function BusinessDetailsPage({ user }: Props) {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 md:p-6 bg-yellow-50 min-h-screen">
+      <button
+        onClick={() => setShowGuidePopup(true)}
+        className="fixed left-2 top-1/2 transform -translate-y-1/2 bg-red-600 text-white px-3 py-2 rounded-r-lg shadow-lg hover:bg-red-700 z-50"
+      >
+        Guide
+      </button>
       {showImageModal && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
           <div className="relative w-full max-w-3xl">
@@ -425,93 +432,105 @@ export default function BusinessDetailsPage({ user }: Props) {
             </p>
           </div>
         </section>
-        <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
-          <div className="container mx-auto max-w-4xl">
-            <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
-              🛠️ How It Works – Business Forum
-            </h2>
 
-            <ol className="list-decimal list-inside space-y-6 text-gray-700">
-              <li>
-                <strong>Become a Verified Member</strong>
-                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                  <li>
-                    To register your business, you must first be a registered
-                    and approved member of MauryaVansham.com.
-                  </li>
-                  <li>
-                    Membership requires community verification by three Admins,
-                    confirming that you belong to the Kushwaha / Koiri / Sakhya
-                    / Sainy community.
-                  </li>
-                </ul>
-              </li>
+        {showGuidePopup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-yellow-50 w-11/12 sm:w-3/4 md:w-1/2 max-h-[90vh] overflow-y-auto rounded-lg shadow-xl p-6 relative">
+              {/* Close button */}
+              <button
+                onClick={() => setShowGuidePopup(false)}
+                className="absolute top-2 right-2 text-red-600 font-bold text-xl"
+              >
+                &times;
+              </button>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+                    🛠️ How It Works – Business Forum
+                  </h2>
 
-              <li>
-                <strong>Register Your Business</strong>
-                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                  <li>
-                    Once you are an approved member, you can access the Business
-                    Forum section.
-                  </li>
-                  <li>
-                    Submit details about your business (name, sector,
-                    services/products, contact information, etc.).
-                  </li>
-                </ul>
-              </li>
+                  <ol className="list-decimal list-inside space-y-6 text-gray-700">
+                    <li>
+                      <strong>Become a Verified Member</strong>
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li>
+                          To register your business, you must first be a
+                          registered and approved member of MauryaVansham.com.
+                        </li>
+                        <li>
+                          Membership requires community verification by three
+                          Admins, confirming that you belong to the Kushwaha /
+                          Koiri / Sakhya / Sainy community.
+                        </li>
+                      </ul>
+                    </li>
 
-              <li>
-                <strong>Listing Review & Approval</strong>
-                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                  <li>
-                    Your submitted business profile will be reviewed by
-                    Admins/Moderators to ensure compliance with forum
-                    guidelines.
-                  </li>
-                  <li>
-                    After approval, it will be added to the Community Business
-                    Directory.
-                  </li>
-                </ul>
-              </li>
+                    <li>
+                      <strong>Register Your Business</strong>
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li>
+                          Once you are an approved member, you can access the
+                          Business Forum section.
+                        </li>
+                        <li>
+                          Submit details about your business (name, sector,
+                          services/products, contact information, etc.).
+                        </li>
+                      </ul>
+                    </li>
 
-              <li>
-                <strong>Visibility & Networking</strong>
-                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                  <li>
-                    Your business listing will be visible to other community
-                    members.
-                  </li>
-                  <li>
-                    You can connect, collaborate, and exchange opportunities
-                    with fellow entrepreneurs and professionals.
-                  </li>
-                </ul>
-              </li>
+                    <li>
+                      <strong>Listing Review & Approval</strong>
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li>
+                          Your submitted business profile will be reviewed by
+                          Admins/Moderators to ensure compliance with forum
+                          guidelines.
+                        </li>
+                        <li>
+                          After approval, it will be added to the Community
+                          Business Directory.
+                        </li>
+                      </ul>
+                    </li>
 
-              <li>
-                <strong>Growth Together</strong>
-                <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                  <li>
-                    Gain from mutual support, referrals, collaborations, and
-                    partnerships within the community.
-                  </li>
-                  <li>
-                    Participate in business networking meets, showcases, and
-                    community-driven initiatives aimed at collective growth.
-                  </li>
-                </ul>
-              </li>
-            </ol>
+                    <li>
+                      <strong>Visibility & Networking</strong>
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li>
+                          Your business listing will be visible to other
+                          community members.
+                        </li>
+                        <li>
+                          You can connect, collaborate, and exchange
+                          opportunities with fellow entrepreneurs and
+                          professionals.
+                        </li>
+                      </ul>
+                    </li>
 
-            <p className="mt-6 text-gray-700 font-semibold">
-              💡 The Business Forum is exclusively for verified
-              MauryaVansham.com members — ensuring trust, authenticity, and
-              genuine community upliftment.
-            </p>
-          </div>
-        </section>
+                    <li>
+                      <strong>Growth Together</strong>
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li>
+                          Gain from mutual support, referrals, collaborations,
+                          and partnerships within the community.
+                        </li>
+                        <li>
+                          Participate in business networking meets, showcases,
+                          and community-driven initiatives aimed at collective
+                          growth.
+                        </li>
+                      </ul>
+                    </li>
+                  </ol>
+
+                  <p className="mt-6 text-gray-700 font-semibold">
+                    💡 The Business Forum is exclusively for verified
+                    MauryaVansham.com members — ensuring trust, authenticity,
+                    and genuine community upliftment.
+                  </p>
+                </div>
+            </div>
+        )}
 
         {/* Company Info */}
         <div className="bg-white p-6 rounded-lg shadow-md mb-6 mt-6 border border-[#FFF6D5]">

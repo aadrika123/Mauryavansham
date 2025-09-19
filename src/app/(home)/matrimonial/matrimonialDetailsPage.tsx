@@ -150,7 +150,16 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
               disabled={!isAuthenticated}
             >
               {isAuthenticated ? (
-                <Link href="/dashboard/search-profile">Search Profile</Link>
+                <Link
+                  href={
+                    session?.user?.role === "admin" ||
+                    session?.user?.role === "superAdmin"
+                      ? "/admin/search-profile"
+                      : "/dashboard/search-profile"
+                  }
+                >
+                  Search Profile
+                </Link>
               ) : (
                 <Link href="/sign-in">Login To Search Profile</Link>
               )}
@@ -161,7 +170,16 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
               disabled={!isAuthenticated}
             >
               {isAuthenticated ? (
-                <Link href="/dashboard/create-profile">Create Profile Now</Link>
+                <Link
+                  href={
+                    session?.user?.role === "admin" ||
+                    session?.user?.role === "superAdmin"
+                      ? "/admin/create-profile"
+                      : "/dashboard/create-profile"
+                  }
+                >
+                  Create Profile Now
+                </Link>
               ) : (
                 <Link href="/sign-in">Login To Create Profile</Link>
               )}

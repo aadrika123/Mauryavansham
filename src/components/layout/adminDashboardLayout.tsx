@@ -29,6 +29,8 @@ import {
   Search,
   Menu,
   X,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react"; // ✅ Added Menu & X icons
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -44,6 +46,7 @@ export default function AdmindashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false); // ✅ Sidebar toggle state
   const pathname = usePathname();
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (user?.role === "admin" || user?.role === "superAdmin") {
@@ -59,7 +62,99 @@ export default function AdmindashboardLayout({
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
     { title: "Manage Users", href: "/admin/users", icon: Users },
     { title: "Create Events", href: "/admin/events", icon: Calendar },
-    { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
+    {
+      title: "Matrimonial",
+      href: "#",
+      icon: Camera,
+      subItems: [
+        {
+          title: "Create Matrimonial Profile",
+          href: "/admin/create-profile",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "My Matrimonial Profiles",
+          href: "/admin/profile-list",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Search Matrimonial Profiles",
+          href: "/admin/search-profile",
+          icon: Search,
+        },
+      ],
+    },
+    { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
+    { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
+    {
+      title: "Discussions Moderation",
+      href: "/admin/discussions",
+      icon: MessageSquare,
+    },
+    {
+      title: "Business",
+      href: "#",
+      icon: Tv,
+      subItems: [
+        {
+          title: "Register-business",
+          href: "/admin/register-business",
+          icon: Wallet2Icon,
+        },
+        {
+          title: "My Registered-business",
+          href: "/admin/view-business",
+          icon: Wallet2Icon,
+        },
+      ],
+    },
+  ];
+
+  const superAdminSidebarItems = [
+    { title: "Home", href: "/", icon: LayoutDashboard },
+    { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+    { title: "Manage Users", href: "/admin/users", icon: Users },
+    { title: "Create Events", href: "/admin/events", icon: Calendar },
+    { title: "All Users", href: "/admin/manage-users", icon: Users },
+    {
+      title: "Modarations",
+      href: "#",
+      icon: Tv,
+      subItems: [
+        { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
+        { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
+        {
+          title: "Discussions Moderation",
+          href: "/admin/discussions",
+          icon: MessageSquare,
+        },
+        {
+          title: "Register business Moderation",
+          href: "/admin/register-business",
+          icon: Wallet2Icon,
+        },
+      ],
+    },
+    {
+      title: "Business",
+      href: "#",
+      icon: Tv,
+      subItems: [
+        { title: "Register-business", href: "/admin/register-business" },
+        { title: "My Registered-business", href: "/admin/view-business" },
+      ],
+    },
+    { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv },
+    {
+      title: "Ads Location Master",
+      href: "/admin/ads-location-master",
+      icon: Tv2,
+    },
+    {
+      title: "Discussion Category Master",
+      href: "/admin/discussion-castegory-master",
+      icon: Globe,
+    },
     {
       title: "My Matrimonial Profiles",
       href: "/admin/profile-list",
@@ -78,34 +173,10 @@ export default function AdmindashboardLayout({
       icon: MessageSquare,
     },
     {
-      title: "Register-business",
-      href: "/admin/register-business",
-      icon: Wallet2Icon,
-    },
-    {
       title: "Create Matrimonial Profile",
       href: "/admin/create-profile",
       icon: LayoutDashboard,
     },
-  ];
-
-  const superAdminSidebarItems = [
-    { title: "Home", href: "/", icon: LayoutDashboard },
-    { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
-    { title: "All Users", href: "/admin/manage-users", icon: Users },
-    { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
-    { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv2 },
-    {
-      title: "Ads Location Master",
-      href: "/admin/ads-location-master",
-      icon: Tv2,
-    },
-    {
-      title: "Discussion Category Master",
-      href: "/admin/discussion-castegory-master",
-      icon: Globe,
-    },
-    ...adminSidebarItems, // ✅ SuperAdmin gets all admin items + All Users
   ];
 
   const sidebarItems =
@@ -118,11 +189,14 @@ export default function AdmindashboardLayout({
       window.location.href = "/";
     }
   };
+  const toggleMenu = (title: string) => {
+    setOpenMenus((prev) => ({ ...prev, [title]: !prev[title] }));
+  };
 
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
-      <div className="bg-red-800 text-white p-4 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
+      <div className="bg-red-800 text-white p-6 lg:p-4 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* ✅ Hamburger menu for mobile */}
           <button
@@ -136,7 +210,7 @@ export default function AdmindashboardLayout({
             )}
           </button>
           <Crown className="w-8 h-8 text-orange-400" />
-          <div>
+          <div className="hidden lg:block">
             <h1 className="text-2xl font-bold capitalize">
               Welcome back, {user?.name || ""} ({user?.role})
             </h1>
@@ -174,7 +248,8 @@ export default function AdmindashboardLayout({
                   className="text-white hover:bg-red-700 relative"
                 >
                   <Bell className="w-4 h-4 mr-2" />
-                  Notifications
+                  {/* ✅ Text sirf desktop pe */}
+                  <span className="hidden lg:inline">Notifications</span>
                   {notifications.filter((n) => n.isRead === 0).length > 0 && (
                     <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
                       {notifications.filter((n) => n.isRead === 0).length}
@@ -188,42 +263,57 @@ export default function AdmindashboardLayout({
                   align="end"
                   className="w-72 max-h-96 overflow-y-auto"
                 >
-                    {notifications.map((n) => (
-                      <div
-                        key={n.id}
-                        className="bg-yellow-50 rounded-md border border-yellow-200 p-2 mb-2 hover:bg-yellow-100 shadow-sm"
-                      >
-                        <DropdownMenuItem className="whitespace-normal text-sm">
-                          {n.message}
-                        </DropdownMenuItem>
-                      </div>
-                    ))}
+                  {notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className="bg-yellow-50 rounded-md border border-yellow-200 p-2 mb-2 hover:bg-yellow-100 shadow-sm"
+                    >
+                      <DropdownMenuItem className="whitespace-normal text-sm">
+                        {n.message}
+                      </DropdownMenuItem>
+                    </div>
+                  ))}
                 </DropdownMenuContent>
               )}
             </DropdownMenu>
           )}
 
           {/* Account Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-red-700"
-              >
-                <Settings className="w-4 h-4 mr-2" /> Account
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setIsOpen(true)}
-                className="text-red-600 focus:text-red-600"
-              >
-                <LogOut className="w-4 h-4 mr-2" /> Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* ✅ Mobile view: sirf logout icon */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-red-700"
+              onClick={() => setIsOpen(true)}
+            >
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </div>
+
+          {/* ✅ Desktop view: pura Account menu */}
+          <div className="hidden lg:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-red-700"
+                >
+                  <Settings className="w-4 h-4 mr-2" /> Account
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => setIsOpen(true)}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -232,7 +322,7 @@ export default function AdmindashboardLayout({
         {/* Sidebar */}
         <div
           className={cn(
-            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-60 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
+            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-70 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           )}
         >
@@ -259,23 +349,82 @@ export default function AdmindashboardLayout({
           </div>
 
           {/* Scrollable nav */}
+
           <nav className="space-y-2 overflow-y-auto flex-1">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  pathname === item.href
-                    ? "bg-orange-100 text-orange-700"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                )}
-                onClick={() => setSidebarOpen(false)} // ✅ Close on mobile click
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.title}</span>
-              </Link>
-            ))}
+            {sidebarItems.map((item) => {
+              const hasSubItems = item.subItems && item.subItems.length > 0;
+              const isOpen = openMenus[item.title] || false;
+
+              return (
+                <div key={item.href || item.title} className="space-y-1">
+                  {hasSubItems ? (
+                    <>
+                      {/* Parent button for submenus */}
+                      <button
+                        onClick={() => toggleMenu(item.title)}
+                        className={cn(
+                          "flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                          pathname === item.href
+                            ? "bg-orange-100 text-orange-700"
+                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        )}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </div>
+                        <span className="ml-2">
+                          {isOpen ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </span>
+                      </button>
+
+                      {/* Subitems */}
+                      {isOpen && (
+                        <div className="ml-6 space-y-1">
+                          {item.subItems!.map((sub) => (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              className={cn(
+                                "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                                pathname === sub.href
+                                  ? "bg-orange-50 text-orange-600"
+                                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                              )}
+                              onClick={() => setSidebarOpen(false)}
+                            >
+                              <sub.icon className="h-4 w-4" />
+                              <span className="whitespace-pre-wrap w-32">
+                                {sub.title}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    // ✅ Direct link for simple items
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        pathname === item.href
+                          ? "bg-orange-100 text-orange-700"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      )}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.title}</span>
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </div>
 

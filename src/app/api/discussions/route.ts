@@ -89,6 +89,7 @@ export async function POST(req: Request) {
         location,
         authorId: session.user.id,
         authorName: session.user.name || "Anonymous",
+        status: "approved",
       })
       .returning();
 

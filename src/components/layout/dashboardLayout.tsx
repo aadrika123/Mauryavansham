@@ -65,6 +65,7 @@ export default function DashboardLayout({
       href: "/dashboard/register-business",
       icon: Wallet2Icon,
     },
+     { title: "My Registered-business", href: "/dashboard/view-business" , icon: Wallet2Icon},
   ];
 
   useEffect(() => {
@@ -199,14 +200,14 @@ export default function DashboardLayout({
           )}
         >
           {/* Mobile Close Button */}
-          <div className="lg:hidden flex justify-end mb-4">
+          {/* <div className="lg:hidden flex justify-end mb-4">
             <button
               className="p-2 rounded-md hover:bg-red-200"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="w-6 h-6 text-red-700" />
             </button>
-          </div>
+          </div> */}
 
           <div className="flex items-center gap-3 mb-6">
             <div

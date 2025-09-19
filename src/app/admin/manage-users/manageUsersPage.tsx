@@ -12,7 +12,7 @@ import {
   DialogFooter,
 } from "@/src/components/ui/dialog";
 import { Textarea } from "@/src/components/ui/textarea";
-import { Switch } from "@/src/components/ui/switch";
+import Pagination from "@/src/components/common/Pagination";
 
 interface User {
   id: number;
@@ -31,30 +31,38 @@ export default function ManageUsersPage() {
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin">("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [reason, setReason] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pageSize, setPageSize] = useState(10); // ✅ FIX: pageSize ka state
 
   // fetch all users
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = 1, limit = pageSize) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/users");
+      const res = await fetch(
+        `/api/users?page=${page}&limit=${limit}&search=${search}&role=${roleFilter}`
+      );
       const json = await res.json();
-      console.log(json);
-      setUsers(json);
+
+      setUsers(json.data);
+      setTotalPages(json.totalPages);
+      setCurrentPage(json.page);
+      setTotalCount(json.total);
     } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch users",
-        variant: "destructive",
-      });
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
+
+  // ✅ FIX: dependencies add kiye (pageSize, search, roleFilter)
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers(currentPage, pageSize);
+  }, [currentPage, pageSize, search, roleFilter]);
 
   // update user
   const updateUser = async (
@@ -79,7 +87,7 @@ export default function ManageUsersPage() {
           description: json.message,
           variant: "default",
         });
-        fetchUsers();
+        fetchUsers(currentPage, pageSize); // ✅ update ke baad wahi page reload
       } else {
         toast({
           title: "Error",
@@ -96,24 +104,17 @@ export default function ManageUsersPage() {
     }
   };
 
-  // filtered users
-  const filteredUsers = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase()) ||
-      (u.phone && u.phone.includes(search))
-  );
-
   return (
     <div className="max-w-7xl mx-auto py-6 space-y-6">
       <h1 className="text-2xl font-bold">Manage Users</h1>
 
+      {/* Search + Filter */}
       <div className="flex items-center gap-2">
         <Input
           placeholder="Search by name, email, phone..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/2"
+          className="w-full md:w-1/3"
         />
         <Button
           variant="outline"
@@ -122,17 +123,29 @@ export default function ManageUsersPage() {
         >
           Clear
         </Button>
+
+        <select
+          value={roleFilter}
+          onChange={(e) =>
+            setRoleFilter(e.target.value as "all" | "user" | "admin")
+          }
+          className="border rounded-md px-3 py-2 text-sm"
+        >
+          <option value="all">All Roles</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
       </div>
 
       {loading ? (
         <p className="text-gray-500">Loading users...</p>
-      ) : filteredUsers.length === 0 ? (
+      ) : users.length === 0 ? (
         <p className="text-gray-500">No users found.</p>
       ) : (
-        <div className="overflow-x-auto border rounded-lg">
+        <div className="overflow-x-auto border rounded-lg bg-yellow-50 shadow-md">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-100 text-left text-sm font-semibold">
+              <tr className="bg-gray-200 text-left text-sm font-semibold">
                 <th className="p-3 border-b">Name</th>
                 <th className="p-3 border-b">Email</th>
                 <th className="p-3 border-b">Phone</th>
@@ -143,8 +156,8 @@ export default function ManageUsersPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((u) => (
-                <tr key={u.id} className="hover:bg-gray-50">
+              {users.map((u) => (
+                <tr key={u.id} className="hover:bg-gray-100">
                   <td className="p-3 border-b">{u.name}</td>
                   <td className="p-3 border-b">{u.email}</td>
                   <td className="p-3 border-b">{u.phone || "-"}</td>
@@ -154,6 +167,7 @@ export default function ManageUsersPage() {
                   </td>
                   <td className="p-3 border-b">{u.deactivatedReason || "-"}</td>
                   <td className="p-3 border-b flex gap-2">
+                    {/* Toggle Active/Inactive */}
                     <label className="inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
@@ -182,8 +196,13 @@ export default function ManageUsersPage() {
                       </div>
                     </label>
 
+                    {/* Role Change Button */}
                     <Button
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                      className={`${
+                        u.role === "user"
+                          ? "bg-green-600 hover:bg-green-700 text-white"
+                          : "bg-orange-500 hover:bg-orange-600 text-white"
+                      }`}
                       disabled={actionLoading === u.id}
                       onClick={() =>
                         updateUser(u.id, {
@@ -202,6 +221,17 @@ export default function ManageUsersPage() {
               ))}
             </tbody>
           </table>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalCount}
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)} 
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setCurrentPage(1); 
+            }}
+          />
         </div>
       )}
 

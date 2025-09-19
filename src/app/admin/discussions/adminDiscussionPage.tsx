@@ -2,13 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/button";
-import { Card, CardContent } from "@/src/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/src/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -17,16 +10,34 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Textarea } from "@/src/components/ui/textarea";
+import { Input } from "@/src/components/ui/input";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/src/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
 
 type Discussion = {
   id: number;
   title: string;
   content: string;
   category: string;
+  location: string;
+  authorName: string;
+  createdAt: string;
   status: "pending" | "approved" | "rejected";
-  userId: number;
-  rejectedBy?: string;
-  rejectedReason?: string;
+  likeCount: string;
+  rejectedBy?: string | null;
+  rejectedReason?: string | null;
+  approvedBy?: string | null;
 };
 
 export default function AdminDiscussionsPage() {
@@ -37,6 +48,10 @@ export default function AdminDiscussionsPage() {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [reason, setReason] = useState("");
+
+  // Search & Filter
+  const [search, setSearch] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
 
   // ✅ Fetch discussions
   const fetchDiscussions = async () => {
@@ -71,8 +86,6 @@ export default function AdminDiscussionsPage() {
       body: JSON.stringify({
         status: "rejected",
         rejectedReason: reason,
-        // ⚡️ rejectedBy backend me session user se fill karna best h
-        // yaha agar bhejna ho to frontend me bhi pass kar sakte ho
       }),
     });
 
@@ -82,106 +95,165 @@ export default function AdminDiscussionsPage() {
     fetchDiscussions();
   };
 
-  // ✅ Filter by status
-  const filterByStatus = (status: string) =>
-    discussions.filter((d) => d.status === status);
+  // ✅ Filter & Search logic
+  const filterData = (status: string) =>
+    discussions
+      .filter((d) => d.status === status)
+      .filter((d) =>
+        filterCategory === "all" ? true : d.category === filterCategory
+      )
+      .filter(
+        (d) =>
+          d.title.toLowerCase().includes(search.toLowerCase()) ||
+          d.content.toLowerCase().includes(search.toLowerCase()) ||
+          d.authorName.toLowerCase().includes(search.toLowerCase())
+      );
 
   if (loading) return <p className="p-6">Loading...</p>;
 
+  // Unique categories for filter
+  const categories = Array.from(new Set(discussions.map((d) => d.category)));
+
   return (
     <div className="p-6 space-y-6">
-      <Tabs defaultValue="pending">
+      {/* 🔎 Search + Filter */}
+      <div className="flex gap-4 items-center">
+        <Input
+          placeholder="Search by title, content, or author..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-1/2"
+        />
+        <Select value={filterCategory} onValueChange={setFilterCategory}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Filter by Category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Tabs for Active & Rejected */}
+      <Tabs defaultValue="active">
         <TabsList>
-          <TabsTrigger value="pending">
-            Pending ({filterByStatus("pending").length})
-          </TabsTrigger>
-          <TabsTrigger value="approved">
-            Approved ({filterByStatus("approved").length})
+          <TabsTrigger value="active">
+            Active ({filterData("approved").length})
           </TabsTrigger>
           <TabsTrigger value="rejected">
-            Rejected ({filterByStatus("rejected").length})
+            Rejected ({filterData("rejected").length})
           </TabsTrigger>
         </TabsList>
 
-        {/* Pending Discussions */}
-        <TabsContent value="pending">
-          <div className="grid md:grid-cols-2 gap-4">
-            {filterByStatus("pending").map((d) => (
-              <Card key={d.id}>
-                <CardContent className="p-4 space-y-2">
-                  <h2 className="font-bold">{d.title}</h2>
-                  <p className="text-sm text-gray-600">{d.content}</p>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => approveDiscussion(d.id)}
-                      className="bg-green-600"
+        {/* ✅ Active Discussions Table */}
+        <TabsContent value="active">
+          <div className="overflow-x-auto">
+            <table className="w-full border border-gray-200 text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-2 border">Title</th>
+                  <th className="p-2 border">Content</th>
+                  <th className="p-2 border">Category</th>
+                  <th className="p-2 border">Location</th>
+                  <th className="p-2 border">Author</th>
+                  <th className="p-2 border">Created At</th>
+                  <th className="p-2 border">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filterData("approved").map((d) => (
+                  <tr key={d.id} className="hover:bg-gray-50">
+                    <td className="p-2 border">{d.title}</td>
+                    <td className="p-2 border">{d.content}</td>
+                    <td className="p-2 border">{d.category}</td>
+                    <td className="p-2 border">{d.location}</td>
+                    <td className="p-2 border">{d.authorName}</td>
+                    <td className="p-2 border">
+                      {new Date(d.createdAt).toLocaleString()}
+                    </td>
+                    <td className="p-2 border">
+                      <Button
+                        onClick={() => {
+                          setSelectedId(d.id);
+                          setOpen(true);
+                        }}
+                        className="bg-red-600"
+                      >
+                        Reject
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {filterData("approved").length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="p-4 text-center text-gray-500 border"
                     >
-                      Approve
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setSelectedId(d.id);
-                        setOpen(true);
-                      }}
-                      className="bg-red-600"
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      No active discussions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </TabsContent>
 
-        {/* Approved Discussions */}
-        <TabsContent value="approved">
-          <div className="grid md:grid-cols-2 gap-4">
-            {filterByStatus("approved").map((d) => (
-              <Card key={d.id}>
-                <CardContent className="p-4 space-y-2">
-                  <h2 className="font-bold">{d.title}</h2>
-                  <p className="text-sm text-gray-600">{d.content}</p>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => {
-                        setSelectedId(d.id);
-                        setOpen(true);
-                      }}
-                      className="bg-red-600"
-                    >
-                      Move to Rejected
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Rejected Discussions */}
+        {/* ❌ Rejected Discussions Table */}
         <TabsContent value="rejected">
-          <div className="grid md:grid-cols-2 gap-4">
-            {filterByStatus("rejected").map((d) => (
-              <Card key={d.id}>
-                <CardContent className="p-4 space-y-2">
-                  <h2 className="font-bold">{d.title}</h2>
-                  <p className="text-sm text-gray-600">{d.content}</p>
-                  <p className="text-xs text-red-500">
-                    ❌ Rejected by: {d.rejectedBy || "Unknown"} <br />
-                    Reason: {d.rejectedReason || "No reason given"}
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => approveDiscussion(d.id)}
-                      className="bg-green-600"
+          <div className="overflow-x-auto">
+            <table className="w-full border border-gray-200 text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-2 border">Title</th>
+                  <th className="p-2 border">Content</th>
+                  <th className="p-2 border">Category</th>
+                  <th className="p-2 border">Location</th>
+                  <th className="p-2 border">Author</th>
+                  <th className="p-2 border">Rejected Reason</th>
+                  <th className="p-2 border">Rejected By</th>
+                  <th className="p-2 border">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filterData("rejected").map((d) => (
+                  <tr key={d.id} className="hover:bg-gray-50">
+                    <td className="p-2 border">{d.title}</td>
+                    <td className="p-2 border">{d.content}</td>
+                    <td className="p-2 border">{d.category}</td>
+                    <td className="p-2 border">{d.location}</td>
+                    <td className="p-2 border">{d.authorName}</td>
+                    <td className="p-2 border">
+                      {d.rejectedReason || "No reason"}
+                    </td>
+                    <td className="p-2 border">{d.rejectedBy || "Unknown"}</td>
+                    <td className="p-2 border">
+                      <Button
+                        onClick={() => approveDiscussion(d.id)}
+                        className="bg-green-600"
+                      >
+                        Approve
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {filterData("rejected").length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={8}
+                      className="p-4 text-center text-gray-500 border"
                     >
-                      Move to Approved
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      No rejected discussions found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </TabsContent>
       </Tabs>
