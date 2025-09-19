@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/src/drizzle/db";
 import { users } from "@/src/drizzle/schema";
 import { userApprovals } from "@/src/drizzle/db/schemas/user_approvals";
+import { eq, and } from "drizzle-orm";
 
 export async function GET(req: Request) {
   try {
@@ -18,7 +19,11 @@ export async function GET(req: Request) {
     const allUsers = await db.select().from(users);
 
     // 4️⃣ Filter users by tab
-    const filteredUsers = allUsers.filter((u) => u.status === tab);
+    // const filteredUsers = allUsers.filter((u) => u.status === tab);
+    const filteredUsers = await db
+  .select()
+  .from(users)
+  .where(and(eq(users.status, tab), eq(users.isActive, true)));
 
     const totalItems = filteredUsers.length;
     const totalPages = Math.ceil(totalItems / pageSize);
