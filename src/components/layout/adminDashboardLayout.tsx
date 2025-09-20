@@ -31,6 +31,7 @@ import {
   X,
   ChevronUp,
   ChevronDown,
+  HeartHandshakeIcon,
 } from "lucide-react"; // ✅ Added Menu & X icons
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -133,50 +134,74 @@ export default function AdmindashboardLayout({
           href: "/admin/register-business",
           icon: Wallet2Icon,
         },
+        {
+          title: "Discussions Moderation",
+          href: "/admin/discussions",
+          icon: MessageSquare,
+        },
       ],
     },
     {
       title: "Business",
       href: "#",
-      icon: Tv,
+      icon: Wallet2Icon,
       subItems: [
-        { title: "Register-business", href: "/admin/register-business" },
-        { title: "My Registered-business", href: "/admin/view-business" },
+        {
+          title: "Register-business",
+          href: "/admin/register-business",
+          icon: Wallet2Icon,
+        },
+        {
+          title: "My Registered-business",
+          href: "/admin/view-business",
+          icon: Wallet2Icon,
+        },
       ],
     },
-    { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv },
     {
-      title: "Ads Location Master",
-      href: "/admin/ads-location-master",
-      icon: Tv2,
+      title: "Matrimonial",
+      href: "#",
+      icon: HeartHandshakeIcon,
+      subItems: [
+        {
+          title: "Create Matrimonial Profile",
+          href: "/admin/create-profile",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "My Matrimonial Profiles",
+          href: "/admin/profile-list",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Search Matrimonial Profiles",
+          href: "/admin/search-profile",
+          icon: Search,
+        },
+      ],
     },
+
     {
-      title: "Discussion Category Master",
-      href: "/admin/discussion-castegory-master",
-      icon: Globe,
+      title: "All Masters",
+      href: "#",
+      icon: Wallet2Icon,
+      subItems: [
+        { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv },
+        {
+          title: "Ads Location Master",
+          href: "/admin/ads-location-master",
+          icon: Tv2,
+        },
+        {
+          title: "Discussion Category Master",
+          href: "/admin/discussion-castegory-master",
+          icon: Globe,
+        },
+      ],
     },
-    {
-      title: "My Matrimonial Profiles",
-      href: "/admin/profile-list",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Search Matrimonial Profiles",
-      href: "/admin/search-profile",
-      icon: Search,
-    },
+
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
-    {
-      title: "Discussions Moderation",
-      href: "/admin/discussions",
-      icon: MessageSquare,
-    },
-    {
-      title: "Create Matrimonial Profile",
-      href: "/admin/create-profile",
-      icon: LayoutDashboard,
-    },
   ];
 
   const sidebarItems =
@@ -322,7 +347,7 @@ export default function AdmindashboardLayout({
         {/* Sidebar */}
         <div
           className={cn(
-            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-70 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
+            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           )}
         >

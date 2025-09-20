@@ -40,6 +40,15 @@ export default function BusinessDetailsPage({ user }: Props) {
   const [modalImages, setModalImages] = useState<string[]>([]);
   const [modalIndex, setModalIndex] = useState(0);
 
+  // New state for Know More Modal
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
+
+  const handleKnowMore = (business: any) => {
+    setSelectedBusiness(business);
+    setShowDetailsModal(true);
+  };
+
   useEffect(() => {
     if (session?.user) {
       setCurrentUser(session.user);
@@ -372,6 +381,12 @@ export default function BusinessDetailsPage({ user }: Props) {
                       >
                         Enquire
                       </Button>
+                      <Button
+                        onClick={() => handleKnowMore(biz)}
+                        className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-sm px-4 py-2"
+                      >
+                        Know More
+                      </Button>
                     </div>
                   </div>
 
@@ -443,93 +458,154 @@ export default function BusinessDetailsPage({ user }: Props) {
               >
                 &times;
               </button>
-                  <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
-                    🛠️ How It Works – Business Forum
-                  </h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
+                🛠️ How It Works – Business Forum
+              </h2>
 
-                  <ol className="list-decimal list-inside space-y-6 text-gray-700">
+              <ol className="list-decimal list-inside space-y-6 text-gray-700">
+                <li>
+                  <strong>Become a Verified Member</strong>
+                  <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
                     <li>
-                      <strong>Become a Verified Member</strong>
-                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                        <li>
-                          To register your business, you must first be a
-                          registered and approved member of MauryaVansham.com.
-                        </li>
-                        <li>
-                          Membership requires community verification by three
-                          Admins, confirming that you belong to the Kushwaha /
-                          Koiri / Sakhya / Sainy community.
-                        </li>
-                      </ul>
+                      To register your business, you must first be a registered
+                      and approved member of MauryaVansham.com.
                     </li>
-
                     <li>
-                      <strong>Register Your Business</strong>
-                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                        <li>
-                          Once you are an approved member, you can access the
-                          Business Forum section.
-                        </li>
-                        <li>
-                          Submit details about your business (name, sector,
-                          services/products, contact information, etc.).
-                        </li>
-                      </ul>
+                      Membership requires community verification by three
+                      Admins, confirming that you belong to the Kushwaha / Koiri
+                      / Sakhya / Sainy community.
                     </li>
+                  </ul>
+                </li>
 
+                <li>
+                  <strong>Register Your Business</strong>
+                  <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
                     <li>
-                      <strong>Listing Review & Approval</strong>
-                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                        <li>
-                          Your submitted business profile will be reviewed by
-                          Admins/Moderators to ensure compliance with forum
-                          guidelines.
-                        </li>
-                        <li>
-                          After approval, it will be added to the Community
-                          Business Directory.
-                        </li>
-                      </ul>
+                      Once you are an approved member, you can access the
+                      Business Forum section.
                     </li>
-
                     <li>
-                      <strong>Visibility & Networking</strong>
-                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                        <li>
-                          Your business listing will be visible to other
-                          community members.
-                        </li>
-                        <li>
-                          You can connect, collaborate, and exchange
-                          opportunities with fellow entrepreneurs and
-                          professionals.
-                        </li>
-                      </ul>
+                      Submit details about your business (name, sector,
+                      services/products, contact information, etc.).
                     </li>
+                  </ul>
+                </li>
 
+                <li>
+                  <strong>Listing Review & Approval</strong>
+                  <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
                     <li>
-                      <strong>Growth Together</strong>
-                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                        <li>
-                          Gain from mutual support, referrals, collaborations,
-                          and partnerships within the community.
-                        </li>
-                        <li>
-                          Participate in business networking meets, showcases,
-                          and community-driven initiatives aimed at collective
-                          growth.
-                        </li>
-                      </ul>
+                      Your submitted business profile will be reviewed by
+                      Admins/Moderators to ensure compliance with forum
+                      guidelines.
                     </li>
-                  </ol>
+                    <li>
+                      After approval, it will be added to the Community Business
+                      Directory.
+                    </li>
+                  </ul>
+                </li>
 
-                  <p className="mt-6 text-gray-700 font-semibold">
-                    💡 The Business Forum is exclusively for verified
-                    MauryaVansham.com members — ensuring trust, authenticity,
-                    and genuine community upliftment.
-                  </p>
-                </div>
+                <li>
+                  <strong>Visibility & Networking</strong>
+                  <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li>
+                      Your business listing will be visible to other community
+                      members.
+                    </li>
+                    <li>
+                      You can connect, collaborate, and exchange opportunities
+                      with fellow entrepreneurs and professionals.
+                    </li>
+                  </ul>
+                </li>
+
+                <li>
+                  <strong>Growth Together</strong>
+                  <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li>
+                      Gain from mutual support, referrals, collaborations, and
+                      partnerships within the community.
+                    </li>
+                    <li>
+                      Participate in business networking meets, showcases, and
+                      community-driven initiatives aimed at collective growth.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <p className="mt-6 text-gray-700 font-semibold">
+                💡 The Business Forum is exclusively for verified
+                MauryaVansham.com members — ensuring trust, authenticity, and
+                genuine community upliftment.
+              </p>
             </div>
+          </div>
+        )}
+
+        {/* Know More Modal */}
+        {showDetailsModal && selectedBusiness && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+              {/* Close button */}
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              {/* Business Info */}
+              <h2 className="text-xl font-bold text-red-700 mb-4">
+                {selectedBusiness.businesses?.organizationName}
+              </h2>
+              <p className="text-gray-700 mb-4">
+                {selectedBusiness.businesses?.businessDescription}
+              </p>
+
+              {/* Category & Owner */}
+              <div className="mb-4">
+                <p>
+                  <strong>Category:</strong>{" "}
+                  {selectedBusiness.businesses?.businessCategory}
+                </p>
+                <p>
+                  <strong>Owner:</strong> {selectedBusiness.users?.name}
+                </p>
+                {/* <p>
+                  <strong>Email:</strong> {selectedBusiness.users?.email}
+                </p> */}
+                <p>
+                  <strong>Address:</strong>{" "}
+                  {selectedBusiness.businesses?.registeredAddress?.office}
+                </p>
+              </div>
+
+              {/* Images */}
+              {selectedBusiness.businesses?.photos?.product?.length > 0 && (
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {selectedBusiness.businesses.photos.product.map(
+                    (img: string, idx: number) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`biz-img-${idx}`}
+                        className="w-full h-40 object-cover rounded cursor-pointer"
+                        // onClick={() =>
+                        //   openImageModal(
+                        //     selectedBusiness.businesses.photos.product,
+                        //     idx
+                        //   )
+                        // }
+                      />
+                    )
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
         {/* Company Info */}
