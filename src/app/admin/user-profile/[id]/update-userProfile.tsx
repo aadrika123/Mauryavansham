@@ -50,6 +50,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     // currentZipCode: "",
     siblings: [],
     children: [],
+    aboutMe: "",
   });
 
   useEffect(() => {
@@ -173,7 +174,7 @@ export default function UserProfilePage({ data }: { data: any }) {
           title: "Profile Updated ✅",
           description: "Your profile has been updated successfully!",
         });
-        router.push(`/dashboard`);
+        router.push(`/admin/overview`);
       } else {
         toast({
           title: "Update Failed ❌",
@@ -213,6 +214,7 @@ export default function UserProfilePage({ data }: { data: any }) {
       "country",
       "zipCode",
       "fatherName",
+      "aboutMe",
     ];
 
     // Occupation-based fields
@@ -399,6 +401,27 @@ export default function UserProfilePage({ data }: { data: any }) {
               ]}
             />
           </div>
+        </div>
+        {/* About yourself */}
+        <div>
+          <InputField
+            label="About Yourself"
+            name="aboutMe"
+            value={formData.aboutMe}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              if (e.target.value.length <= 200) {
+                setFormData({ ...formData, aboutMe: e.target.value });
+              }
+            }}
+            type="textarea"
+            placeholder="Write something about yourself..."
+          />
+          <p
+            className="text-sm text-gray-500 mt-1 flex justify-end"
+            suppressHydrationWarning={true}
+          >
+            {(formData.aboutMe || "").length} / 200 characters
+          </p>
         </div>
 
         {/* Occupation */}
@@ -860,21 +883,42 @@ function InputField({
   return (
     <div>
       <label className="block font-medium mb-2">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={value || ""}
-        onChange={onChange}
-        disabled={disabled}
-        placeholder={placeholder}
-        required={required}
-        className="w-full border rounded p-2  border-yellow-300 focus:border-red-500"
-      />
+
+      {type === "textarea" ? (
+        <textarea
+          name={name}
+          value={value || ""}
+          onChange={onChange}
+          disabled={disabled}
+          placeholder={placeholder}
+          required={required}
+          className="w-full border rounded p-2 border-yellow-300 focus:border-red-500 min-h-[120px] resize-none"
+        />
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value || ""}
+          onChange={onChange}
+          disabled={disabled}
+          placeholder={placeholder}
+          required={required}
+          className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
+        />
+      )}
     </div>
   );
 }
 
-function SelectField({ label, name, value, onChange, options, required, disabled }: any) {
+function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  required,
+  disabled,
+}: any) {
   return (
     <div>
       <label className="block font-medium mb-2">{label}</label>

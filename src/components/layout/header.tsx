@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import Loader from "../ui/loader";
 
 type HeaderProps = {
   profileData: any; // ideally type it properly
@@ -75,10 +74,11 @@ export function Header() {
     { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
     { title: "Events & Calendar", href: "/events", icon: Calendar },
     { title: "Business Forum", href: "/business", icon: ShoppingBag },
+    { title: "Blogs", href: "/blogs", icon: ShoppingBag },
     { title: "Health & Wellness", href: "/", icon: HandHeart },
     { title: "Education", href: "/", icon: Crown },
-    { title: "Donation", href: "/", icon: HandHeart },
-    { title: "Achievements", href: "/", icon: Trophy },
+    // { title: "Donation", href: "/", icon: HandHeart },
+    // { title: "Achievements", href: "/", icon: Trophy },
   ];
 
   const handleSignOut = () => {
@@ -196,7 +196,7 @@ export function Header() {
 
                           {/* User Image */}
                           {loading ? (
-                            <Loader height={10} />
+                            <p className="w-14 h-14 rounded-full ">Loading...</p>
                           ) : (
                             <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
                               <img
@@ -282,7 +282,7 @@ export function Header() {
                 <Link
                   key={item.href + item.title}
                   href={isDisabled ? "#" : item.href}
-                  className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors 
+                  className={`flex items-center gap-2 px-6 py-4  transition-colors 
             ${
               isDisabled
                 ? "text-gray-300 cursor-not-allowed"

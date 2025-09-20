@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/src/components/ui/dialog";
+import { CheckCircle, Eye, XCircle } from "lucide-react";
 
 interface Approval {
   adminName: string;
@@ -96,10 +97,12 @@ export default function AdminUserApprovalPage() {
   };
 
   useEffect(() => {
-  if (tab !== "view") fetchUsers(tab);
-}, [tab, pagination[tab as "pending" | "approved" | "rejected"].currentPage, 
-    pagination[tab as "pending" | "approved" | "rejected"].pageSize]);
-
+    if (tab !== "view") fetchUsers(tab);
+  }, [
+    tab,
+    pagination[tab as "pending" | "approved" | "rejected"].currentPage,
+    pagination[tab as "pending" | "approved" | "rejected"].pageSize,
+  ]);
 
   // 🔹 Approve user
   const handleApprove = async (userId: number) => {
@@ -291,8 +294,10 @@ export default function AdminUserApprovalPage() {
                   {tab === "rejected" && (
                     <th className="p-3 border-b">Reasons</th>
                   )}
+                  <th className="p-3 border-b">Sign-up Date</th>
+
                   <th className="p-3 border-b">Actions</th>
-                  <th className="p-3 border-b">View</th>
+                  {/* <th className="p-3 border-b">View</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -309,9 +314,9 @@ export default function AdminUserApprovalPage() {
                       <td className="p-3 border-b">
                         {u.approvals?.length ? (
                           u.approvals.map((a, idx) => (
-                            <span
+                            <div
                               key={idx}
-                              className={`inline-block px-2 py-1 rounded text-sm font-medium mr-1 ${
+                              className={`px-2 py-1 rounded text-sm font-medium mb-1 ${
                                 a.action === "approved"
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
@@ -319,7 +324,7 @@ export default function AdminUserApprovalPage() {
                               title={`${a.adminName} ${a.action} this user`}
                             >
                               {a.adminName} ({a.action})
-                            </span>
+                            </div>
                           ))
                         ) : (
                           <span className="text-gray-500">
@@ -327,47 +332,61 @@ export default function AdminUserApprovalPage() {
                           </span>
                         )}
                       </td>
+
                       {tab === "rejected" && (
                         <td className="p-3 border-b">
                           {u.rejectionReason || "-"}
                         </td>
                       )}
-                      <td className="p-3 border-b flex gap-2">
+                      {/* Show only date */}
+                      <td className="p-3 border-b whitespace-nowrap">
+                        {(() => {
+                          const d = new Date(u.createdAt);
+                          const day = String(d.getDate()).padStart(2, "0");
+                          const month = String(d.getMonth() + 1).padStart(
+                            2,
+                            "0"
+                          ); // Months are 0-based
+                          const year = d.getFullYear();
+                          return `${day}-${month}-${year}`;
+                        })()}
+                      </td>
+
+                      {/* Actions with icons */}
+                      <td className="p-3 flex gap-2 border-t">
                         {(tab === "pending" || tab === "rejected") && (
-                          <Button
-                            className="bg-green-600 hover:bg-green-700 text-white"
+                          <button
                             disabled={
                               actionLoading === u.id ||
                               currentAdminAction?.action === "approved"
                             }
                             onClick={() => handleApprove(u.id)}
+                            className="p-1 rounded hover:bg-green-100 disabled:opacity-50 flex items-center justify-center"
                           >
-                            {actionLoading === u.id ? "..." : "Approve"}
-                          </Button>
+                            <CheckCircle className="text-green-600 w-6 h-6" />
+                          </button>
                         )}
                         {(tab === "pending" || tab === "approved") && (
-                          <Button
-                            className="bg-red-600 hover:bg-red-700 text-white"
+                          <button
                             disabled={
                               actionLoading === u.id ||
                               currentAdminAction?.action === "rejected"
                             }
                             onClick={() => openRejectModal(u.id)}
+                            className="p-1 rounded hover:bg-red-100 disabled:opacity-50 flex items-center justify-center"
                           >
-                            {actionLoading === u.id ? "..." : "Reject"}
-                          </Button>
+                            <XCircle className="text-red-600 w-6 h-6" />
+                          </button>
                         )}
-                      </td>
-                      <td className="p-3 border-b">
-                        <Button
-                          variant="outline"
+                        <button
                           onClick={() => {
                             setViewUser(u);
                             setShowViewModal(true);
                           }}
+                          className="p-1 rounded border hover:bg-gray-100 flex items-center justify-center"
                         >
-                          View
-                        </Button>
+                          <Eye className="w-6 h-6" />
+                        </button>
                       </td>
                     </tr>
                   );
@@ -459,6 +478,18 @@ export default function AdminUserApprovalPage() {
               </p>
               <p>
                 <b>City:</b> {viewUser.city || "-"}
+              </p>
+              <p>
+                <b>Sign-up Date: </b>{(() => {
+                          const d = new Date(viewUser.createdAt);
+                          const day = String(d.getDate()).padStart(2, "0");
+                          const month = String(d.getMonth() + 1).padStart(
+                            2,
+                            "0"
+                          ); // Months are 0-based
+                          const year = d.getFullYear();
+                          return `${day}-${month}-${year}`;
+                        })()}
               </p>
               {viewUser.approvedAt && (
                 <p>

@@ -15,6 +15,7 @@ export const users = pgTable("users", {
   userCode: varchar("user_code", { length: 50 }).unique(),
   email: varchar("email", { length: 100 }).notNull().unique(),
   password: varchar("password", { length: 255 }).notNull(),
+  aboutMe: text("about_me"),
 
   // Basic info
   phone: varchar("phone", { length: 15 }),

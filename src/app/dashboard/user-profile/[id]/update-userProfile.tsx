@@ -50,6 +50,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     // currentZipCode: "",
     siblings: [],
     children: [],
+    aboutMe: "",
   });
 
   useEffect(() => {
@@ -213,6 +214,7 @@ export default function UserProfilePage({ data }: { data: any }) {
       "country",
       "zipCode",
       "fatherName",
+      "aboutMe",
     ];
 
     // Occupation-based fields
@@ -400,6 +402,27 @@ export default function UserProfilePage({ data }: { data: any }) {
             />
           </div>
         </div>
+        {/* About yourself */}
+        <div>
+          <InputField
+            label="About Yourself"
+            name="aboutMe"
+            value={formData.aboutMe}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              if (e.target.value.length <= 200) {
+                setFormData({ ...formData, aboutMe: e.target.value });
+              }
+            }}
+            type="textarea"
+            placeholder="Write something about yourself..."
+          />
+          <p
+            className="text-sm text-gray-500 mt-1 flex justify-end"
+            suppressHydrationWarning={true}
+          >
+            {(formData.aboutMe || "").length} / 200 characters
+          </p>
+        </div>
 
         {/* Occupation */}
         <div>
@@ -482,150 +505,6 @@ export default function UserProfilePage({ data }: { data: any }) {
             )}
           </div>
         </div>
-
-        {/* Permanent Address */}
-        {/* <div className="">
-          <h3 className="font-semibold mb-4">Permanent Address</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              label="Address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="col-span-2"
-            />
-            <InputField
-              label="City"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-            />
-            <SelectField
-              label="State"
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              options={[
-                "Bihar",
-                "Uttar Pradesh",
-                "Delhi",
-                "Maharashtra",
-                "West Bengal",
-                "Madhya Pradesh",
-                "Rajasthan",
-                "Karnataka",
-                "Tamil Nadu",
-                "Kerala",
-                "Punjab",
-                "Haryana",
-                "Gujarat",
-                "Jharkhand",
-                "Odisha",
-                "Assam",
-              ]}
-            />
-            <InputField label="Country" name="country" value="India" disabled />
-            <InputField
-              label="Zip Code"
-              name="zipCode"
-              value={formData.zipCode}
-              onChange={handleChange}
-            />
-          </div>
-        </div> */}
-
-        {/* Current Address */}
-        {/* <div className="">
-          <h3 className="font-semibold mb-4">Current Address</h3>
-          <div className="flex items-center gap-2 mb-4">
-            <input
-              type="checkbox"
-              checked={formData.sameAsPermanent || false}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                if (checked) {
-                  setFormData((prev: any) => ({
-                    ...prev,
-                    sameAsPermanent: true,
-                    currentAddress: prev.address,
-                    currentCity: prev.city,
-                    currentState: prev.state,
-                    currentCountry: prev.country,
-                    currentZipCode: prev.zipCode,
-                  }));
-                } else {
-                  setFormData((prev: any) => ({
-                    ...prev,
-                    sameAsPermanent: false,
-                    currentAddress: "",
-                    currentCity: "",
-                    currentState: "",
-                    currentCountry: "India",
-                    currentZipCode: "",
-                  }));
-                }
-              }}
-            />
-            <label>Same as Permanent Address</label>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              label="Address"
-              name="currentAddress"
-              value={formData.currentAddress}
-              onChange={handleChange}
-              disabled={formData.sameAsPermanent}
-              className="col-span-2"
-            />
-            <InputField
-              label="City"
-              name="currentCity"
-              value={formData.currentCity}
-              onChange={handleChange}
-              disabled={formData.sameAsPermanent}
-            />
-            <SelectField
-              label="State"
-              name="currentState"
-              value={formData.currentState}
-              onChange={handleChange}
-              options={[
-                "Bihar",
-                "Uttar Pradesh",
-                "Delhi",
-                "Maharashtra",
-                "West Bengal",
-                "Madhya Pradesh",
-                "Rajasthan",
-                "Karnataka",
-                "Tamil Nadu",
-                "Kerala",
-                "Punjab",
-                "Haryana",
-                "Gujarat",
-                "Jharkhand",
-                "Odisha",
-                "Assam",
-              ]}
-              disabled={formData.sameAsPermanent}
-            />
-            <InputField
-              label="Country"
-              name="currentCountry"
-              value={formData.currentCountry}
-              disabled
-            />
-            <InputField
-              label="Zip Code"
-              name="currentZipCode"
-              value={formData.currentZipCode}
-              onChange={handleChange}
-              disabled={formData.sameAsPermanent}
-            />
-          </div>
-        </div> */}
-
         {/* Siblings */}
         <div className="border p-4 rounded-md">
           <h3 className="font-semibold mb-2">Siblings</h3>
@@ -860,21 +739,42 @@ function InputField({
   return (
     <div>
       <label className="block font-medium mb-2">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={value || ""}
-        onChange={onChange}
-        disabled={disabled}
-        placeholder={placeholder}
-        required={required}
-        className="w-full border rounded p-2  border-yellow-300 focus:border-red-500"
-      />
+
+      {type === "textarea" ? (
+        <textarea
+          name={name}
+          value={value || ""}
+          onChange={onChange}
+          disabled={disabled}
+          placeholder={placeholder}
+          required={required}
+          className="w-full border rounded p-2 border-yellow-300 focus:border-red-500 min-h-[120px] resize-none"
+        />
+      ) : (
+        <input
+          type={type}
+          name={name}
+          value={value || ""}
+          onChange={onChange}
+          disabled={disabled}
+          placeholder={placeholder}
+          required={required}
+          className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
+        />
+      )}
     </div>
   );
 }
 
-function SelectField({ label, name, value, onChange, options, required, disabled }: any) {
+function SelectField({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  required,
+  disabled,
+}: any) {
   return (
     <div>
       <label className="block font-medium mb-2">{label}</label>

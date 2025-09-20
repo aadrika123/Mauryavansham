@@ -137,6 +137,7 @@ export const authOptions: AuthOptions = {
             currentCity: freshUser.currentCity || "",
             currentState: freshUser.currentState || "",
             currentZipCode: freshUser.currentZipCode || "",
+            aboutMe: freshUser.aboutMe || "",
           };
         }
       }

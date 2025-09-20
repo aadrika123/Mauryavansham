@@ -25,7 +25,7 @@ interface User {
 interface Props {
   user?: User;
 }
-export default function BusinessDetailsPage({ user }: Props) {
+export default function BusinessDetailsPage({ user }: any) {
   const [loading, setLoading] = useState(false);
   const [businesses, setBusinesses] = useState<any[]>([]);
   const [carouselIndexes, setCarouselIndexes] = useState<number[]>([]);
@@ -391,11 +391,12 @@ export default function BusinessDetailsPage({ user }: Props) {
                   </div>
 
                   {/* Right Column */}
+                  {/* Right Column */}
                   <div>
                     {biz.businesses?.businessDescription && (
                       <>
                         <p className="text-sm font-medium">Description:</p>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-gray-700 line-clamp-4">
                           {biz.businesses.businessDescription}
                         </p>
                       </>

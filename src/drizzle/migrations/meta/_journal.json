@@ -386,6 +386,13 @@
       "when": 1758029499329,
       "tag": "0054_cynical_cobalt_man",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1758354656797,
+      "tag": "0055_glamorous_karnak",
+      "breakpoints": true
     }
   ]
 }
