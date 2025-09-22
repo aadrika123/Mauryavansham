@@ -59,16 +59,14 @@ export default function HeritagePage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-8 py-2 w-5/6">
-        <div className="relative"></div>
-      </div>
+      
       {/* <div className="absolute top-72 left-16 z-50">
         <LeftSideAddBanner />
       </div> */}
       {/* Hero Section */}
-      <div className="container mx-auto px-8 py-8 text-center">
-        <div className="mb-8">
-          <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
+      <div className="container mx-auto text-center">
+        <div className="mb-6">
+          <Crown className="h-20 w-20 text-yellow-500 mx-auto " />
           <div className="relative">
             <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg transform "></div>
             <h1 className="relative text-4xl md:text-5xl font-bold text-red-700 mb-6">

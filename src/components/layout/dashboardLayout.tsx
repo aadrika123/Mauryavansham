@@ -65,7 +65,11 @@ export default function DashboardLayout({
       href: "/dashboard/register-business",
       icon: Wallet2Icon,
     },
-     { title: "My Registered-business", href: "/dashboard/view-business" , icon: Wallet2Icon},
+    {
+      title: "My Registered-business",
+      href: "/dashboard/view-business",
+      icon: Wallet2Icon,
+    },
   ];
 
   useEffect(() => {
@@ -101,7 +105,7 @@ export default function DashboardLayout({
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
-      <div className="bg-red-800 text-white p-4 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
+      <div className="bg-red-800 text-white p-4 lg:p-6  fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* Hamburger (Mobile) */}
           <button
@@ -120,7 +124,7 @@ export default function DashboardLayout({
               Welcome back, {user?.name || ""}!
             </h1>
             <p className="text-red-200 text-sm md:text-base hidden sm:block">
-              Your matrimonial journey continues
+              {/* Your matrimonial journey continues */}
             </p>
           </div>
         </div>
@@ -194,8 +198,8 @@ export default function DashboardLayout({
       <div className="pt-24 flex">
         {/* Sidebar */}
         <div
-          className={cn(
-            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-60 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
+         className={cn(
+            "bg-yellow-50 -mt-3 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           )}
         >
@@ -208,10 +212,10 @@ export default function DashboardLayout({
               <X className="w-6 h-6 text-red-700" />
             </button>
           </div> */}
-
-          <div className="flex items-center gap-3 mb-6">
+          <div className="mb-2 border-b text-center flex flex-col items-center">
+            {/* Profile Image */}
             <div
-              className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
+              className="w-16 h-16 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
               onClick={() => {
                 if (typeof window !== "undefined") {
                   window.location.href = "/dashboard/user-profile/" + user?.id;
@@ -224,10 +228,10 @@ export default function DashboardLayout({
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <h3 className="font-semibold text-red-700">{user?.name}</h3>
-              <p className="text-sm text-red-600">{user?.email}</p>
-            </div>
+
+            {/* Name + Email */}
+            <h3 className="mt-1 font-semibold text-red-700">{user?.name}</h3>
+            <p className="text-xs text-red-600">{user?.email}</p>
           </div>
 
           <nav className="space-y-2 overflow-y-auto flex-1">

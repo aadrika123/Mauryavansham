@@ -34,6 +34,9 @@ interface User {
   rejectionReason?: string;
   fatherName?: string;
   city?: string;
+  motherName?: string;
+  address?: string;
+  state?: string;
 }
 
 type Tab = "pending" | "approved" | "rejected" | "view";
@@ -62,6 +65,11 @@ export default function AdminUserApprovalPage() {
   // view modal
   const [viewUser, setViewUser] = useState<User | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [counts, setCounts] = useState({
+    totalPending: 0,
+    totalApproved: 0,
+    totalRejected: 0,
+  });
 
   // pagination per tab
   const [pagination, setPagination] = useState({
@@ -89,6 +97,13 @@ export default function AdminUserApprovalPage() {
           totalPages: json.totalPages,
         },
       }));
+
+      // 🔹 counts update here
+      setCounts({
+        totalPending: json.totalPending,
+        totalApproved: json.totalApproved,
+        totalRejected: json.totalRejected,
+      });
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
@@ -238,7 +253,7 @@ export default function AdminUserApprovalPage() {
   const rejectUser = users.find((u) => u.id === rejectUserId);
 
   return (
-    <div className="max-w-6xl mx-auto py-2 space-y-4">
+    <div className="max-w-6xl mx-auto py-2 space-y-4 bg-yellow-50 px-4 rounded-md shadow-lg">
       {/* Tabs */}
       <div className="flex space-x-3 border-b pb-2">
         {(["pending", "approved", "rejected"] as const).map((t) => (
@@ -252,7 +267,9 @@ export default function AdminUserApprovalPage() {
             onClick={() => setTab(t)}
           >
             {t.charAt(0).toUpperCase() + t.slice(1)}
-            {data[t].length > 0 && ` (${data[t].length})`}
+            {t === "pending" && ` (${counts.totalPending})`}
+            {t === "approved" && ` (${counts.totalApproved})`}
+            {t === "rejected" && ` (${counts.totalRejected})`}
           </button>
         ))}
       </div>
@@ -283,18 +300,18 @@ export default function AdminUserApprovalPage() {
         <p className="text-gray-500">No {tab} users found.</p>
       ) : (
         <>
-          <div className="overflow-x-auto border rounded-lg">
+          <div className="overflow-x-auto border border-white rounded-lg">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-gray-100 text-left text-sm font-semibold">
-                  <th className="p-3 border-b">Name</th>
+                  <th className="p-3 border-b ">Name</th>
                   <th className="p-3 border-b">Email</th>
                   <th className="p-3 border-b">Phone</th>
                   <th className="p-3 border-b">Approvals</th>
                   {tab === "rejected" && (
                     <th className="p-3 border-b">Reasons</th>
                   )}
-                  <th className="p-3 border-b">Sign-up Date</th>
+                  {/* <th className="p-3 border-b">Sign-up Date</th> */}
 
                   <th className="p-3 border-b">Actions</th>
                   {/* <th className="p-3 border-b">View</th> */}
@@ -308,10 +325,10 @@ export default function AdminUserApprovalPage() {
 
                   return (
                     <tr key={u.id} className="hover:bg-gray-50">
-                      <td className="p-3 border-b">{u.name}</td>
-                      <td className="p-3 border-b">{u.email}</td>
-                      <td className="p-3 border-b">{u.phone || "-"}</td>
-                      <td className="p-3 border-b">
+                      <td className="p-3 border-b ">{u.name}</td>
+                      <td className="p-3 border-b ">{u.email}</td>
+                      <td className="p-3 border-b ">{u.phone || "-"}</td>
+                      <td className="p-3 border-b ">
                         {u.approvals?.length ? (
                           u.approvals.map((a, idx) => (
                             <div
@@ -334,12 +351,12 @@ export default function AdminUserApprovalPage() {
                       </td>
 
                       {tab === "rejected" && (
-                        <td className="p-3 border-b">
+                        <td className="p-3 border-b ">
                           {u.rejectionReason || "-"}
                         </td>
                       )}
                       {/* Show only date */}
-                      <td className="p-3 border-b whitespace-nowrap">
+                      {/* <td className="p-3 border-b whitespace-nowrap">
                         {(() => {
                           const d = new Date(u.createdAt);
                           const day = String(d.getDate()).padStart(2, "0");
@@ -350,7 +367,7 @@ export default function AdminUserApprovalPage() {
                           const year = d.getFullYear();
                           return `${day}-${month}-${year}`;
                         })()}
-                      </td>
+                      </td> */}
 
                       {/* Actions with icons */}
                       <td className="p-3 flex gap-2 border-t">
@@ -460,54 +477,62 @@ export default function AdminUserApprovalPage() {
       <Dialog open={showViewModal} onOpenChange={setShowViewModal}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>User Details</DialogTitle>
+            <DialogTitle className="text-xl text-red-800 text-center undreline">User Details</DialogTitle>
           </DialogHeader>
           {viewUser && (
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 font-medium">
               <p>
-                <b>Name:</b> {viewUser.name}
+                <b className="text-red-800">Name:</b> {viewUser.name}
               </p>
               <p>
-                <b>Email:</b> {viewUser.email}
+                <b  className="text-red-800">Email:</b> {viewUser.email}
               </p>
               <p>
-                <b>Phone:</b> {viewUser.phone || "-"}
+                <b  className="text-red-800">Phone:</b> {viewUser.phone || "-"}
               </p>
               <p>
-                <b>Father's Name:</b> {viewUser.fatherName || "-"}
+                <b  className="text-red-800">Father's Name:</b> {viewUser.fatherName || "-"}
               </p>
               <p>
-                <b>City:</b> {viewUser.city || "-"}
+                <b  className="text-red-800">Mother's Name:</b> {viewUser.motherName || "-"}
               </p>
               <p>
-                <b>Sign-up Date: </b>{(() => {
-                          const d = new Date(viewUser.createdAt);
-                          const day = String(d.getDate()).padStart(2, "0");
-                          const month = String(d.getMonth() + 1).padStart(
-                            2,
-                            "0"
-                          ); // Months are 0-based
-                          const year = d.getFullYear();
-                          return `${day}-${month}-${year}`;
-                        })()}
+                <b  className="text-red-800">Address:</b> {viewUser.address || "-"}
+              </p>
+              <p>
+                <b  className="text-red-800">City:</b> {viewUser.city || "-"}
+              </p>
+              <p>
+                <b  className="text-red-800">State:</b> {viewUser.state || "-"}
+              </p>
+
+              <p>
+                <b  className="text-red-800">Sign-up Date: </b>
+                {(() => {
+                  const d = new Date(viewUser.createdAt);
+                  const day = String(d.getDate()).padStart(2, "0");
+                  const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+                  const year = d.getFullYear();
+                  return `${day}-${month}-${year}`;
+                })()}
               </p>
               {viewUser.approvedAt && (
                 <p>
-                  <b>Approved At:</b> {viewUser.approvedAt}
+                  <b  className="text-red-800">Approved At:</b> {viewUser.approvedAt}
                 </p>
               )}
               {viewUser.rejectedAt && (
                 <p>
-                  <b>Rejected At:</b> {viewUser.rejectedAt}
+                  <b  className="text-red-800">Rejected At:</b> {viewUser.rejectedAt}
                 </p>
               )}
               {viewUser.rejectionReason && (
                 <p>
-                  <b>Rejection Reason:</b> {viewUser.rejectionReason}
+                  <b  className="text-red-800">Rejection Reason:</b> {viewUser.rejectionReason}
                 </p>
               )}
               <div>
-                <b>Approvals:</b>{" "}
+                <b  className="text-red-800">Approvals:</b>{" "}
                 {viewUser.approvals.length ? (
                   viewUser.approvals.map((a, idx) => (
                     <span

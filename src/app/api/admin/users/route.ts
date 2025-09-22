@@ -15,15 +15,23 @@ export async function GET(req: Request) {
     // 2️⃣ Tab filter
     const tab = (searchParams.get("tab") as "pending" | "approved" | "rejected") || "pending";
 
-    // 3️⃣ Fetch all users
-    const allUsers = await db.select().from(users);
+    // 3️⃣ Total counts for each status (whole table counts)
+    const [pendingUsers, approvedUsers, rejectedUsers] = await Promise.all([
+      db.select().from(users).where(and(eq(users.status, "pending"), eq(users.isActive, true))),
+      db.select().from(users).where(and(eq(users.status, "approved"), eq(users.isActive, true))),
+      db.select().from(users).where(and(eq(users.status, "rejected"), eq(users.isActive, true))),
+    ]);
 
-    // 4️⃣ Filter users by tab
-    // const filteredUsers = allUsers.filter((u) => u.status === tab);
-    const filteredUsers = await db
-  .select()
-  .from(users)
-  .where(and(eq(users.status, tab), eq(users.isActive, true)));
+    const totalPending = pendingUsers.length;
+    const totalApproved = approvedUsers.length;
+    const totalRejected = rejectedUsers.length;
+
+    // 4️⃣ Filter users by current tab
+    const filteredUsers = tab === "pending"
+      ? pendingUsers
+      : tab === "approved"
+      ? approvedUsers
+      : rejectedUsers;
 
     const totalItems = filteredUsers.length;
     const totalPages = Math.ceil(totalItems / pageSize);
@@ -59,6 +67,9 @@ export async function GET(req: Request) {
       page,
       pageSize,
       totalPages,
+      totalPending,
+      totalApproved,
+      totalRejected,
       users: usersWithApprovals,
     });
   } catch (error) {

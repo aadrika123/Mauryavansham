@@ -221,7 +221,7 @@ export default function AdmindashboardLayout({
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
-      <div className="bg-red-800 text-white p-6 lg:p-4 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
+      <div className="bg-red-800 text-white p-6 lg:p-6 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* ✅ Hamburger menu for mobile */}
           <button
@@ -239,7 +239,7 @@ export default function AdmindashboardLayout({
             <h1 className="text-2xl font-bold capitalize">
               Welcome back, {user?.name || ""} ({user?.role})
             </h1>
-            <p className="text-red-200">Your matrimonial journey continues</p>
+            {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
           </div>
         </div>
         <div className="flex items-center gap-4">

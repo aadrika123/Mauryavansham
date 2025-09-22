@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import { FaSpinner } from "react-icons/fa6";
 
 type HeaderProps = {
   profileData: any; // ideally type it properly
@@ -74,11 +75,12 @@ export function Header() {
     { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
     { title: "Events & Calendar", href: "/events", icon: Calendar },
     { title: "Business Forum", href: "/business", icon: ShoppingBag },
-    { title: "Blogs", href: "/blogs", icon: ShoppingBag },
     { title: "Health & Wellness", href: "/", icon: HandHeart },
     { title: "Education", href: "/", icon: Crown },
     // { title: "Donation", href: "/", icon: HandHeart },
-    // { title: "Achievements", href: "/", icon: Trophy },
+    { title: "Achievements", href: "/", icon: Trophy },
+    { title: "Blogs", href: "/blogs", icon: ShoppingBag },
+
   ];
 
   const handleSignOut = () => {
@@ -195,10 +197,8 @@ export function Header() {
                           </svg>
 
                           {/* User Image */}
-                          {loading ? (
-                            <p className="w-14 h-14 rounded-full ">Loading...</p>
-                          ) : (
-                            <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
+                          {!loading ? (
+                             <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
                               <img
                                 src={
                                   profileData?.data?.photo || "/placeholder.svg"
@@ -207,6 +207,9 @@ export function Header() {
                                 className="w-full h-full object-cover"
                               />
                             </div>
+                          ) : (
+                            <p className=""><FaSpinner className="animate-spin w-4 h-4" /></p>
+                           
                           )}
                         </div>
                       </Link>
@@ -282,7 +285,7 @@ export function Header() {
                 <Link
                   key={item.href + item.title}
                   href={isDisabled ? "#" : item.href}
-                  className={`flex items-center gap-2 px-6 py-4  transition-colors 
+                  className={`flex items-center  px-4 text-base py-6 gap-1  transition-colors 
             ${
               isDisabled
                 ? "text-gray-300 cursor-not-allowed"

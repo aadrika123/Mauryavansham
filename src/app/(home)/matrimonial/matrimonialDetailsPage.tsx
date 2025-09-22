@@ -21,7 +21,7 @@ interface AdPlacement {
   placementId: number;
 }
 
-export default function MatrimonialPage({ initialProfiles }: Props) {
+export default function MatrimonialPage({ initialProfiles  }: Props ) {
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);

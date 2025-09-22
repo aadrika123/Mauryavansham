@@ -39,11 +39,16 @@ export default function BusinessRegistrationForm() {
       office: "",
       branch: "",
       location: "",
-      branchOffices: [] as string[], // ✅ new field for multiple addresses
+      branchOffices: [] as {
+        address: string;
+        city: string;
+        state: string;
+        pincode: string;
+      }[],
     },
-    cin: "", // ✅ new optional field
-    gst: "", // ✅ new optional field
-    udyam: "", // ✅ new optional field
+    cin: "",
+    gst: "",
+    udyam: "",
     photos: {
       product: [] as { file: File; preview: string; url: string }[],
       office: [] as { file: File; preview: string; url: string }[],
@@ -241,6 +246,49 @@ export default function BusinessRegistrationForm() {
       });
     }
 
+    // CIN validation - mandatory for LLP and company types
+    if (
+      [
+        "Limited Liability Partnership (LLP)",
+        "Private Limited",
+        "Private Limited (One Person)",
+        "Public Limited",
+      ].includes(formData.organizationType)
+    ) {
+      if (!formData.cin || !formData.cin.trim()) {
+        newErrors.cin = "CIN is mandatory for this organization type";
+      }
+    }
+
+    // GST validation - mandatory for all organization types
+    if (!formData.gst || !formData.gst.trim()) {
+      newErrors.gst = "GST number is mandatory for all organizations";
+    }
+
+    if (
+      formData.registeredAddress.branchOffices &&
+      formData.registeredAddress.branchOffices.length > 0
+    ) {
+      formData.registeredAddress.branchOffices.forEach((branch, idx) => {
+        if (!branch.address.trim()) {
+          newErrors[`branchOffice.${idx}.address`] =
+            "Branch office address is required";
+        }
+        if (!branch.city.trim()) {
+          newErrors[`branchOffice.${idx}.city`] = "City is required";
+        }
+        if (!branch.state.trim()) {
+          newErrors[`branchOffice.${idx}.state`] = "State is required";
+        }
+        if (!branch.pincode.trim()) {
+          newErrors[`branchOffice.${idx}.pincode`] = "Pin code is required";
+        } else if (!/^\d{6}$/.test(branch.pincode)) {
+          newErrors[`branchOffice.${idx}.pincode`] =
+            "Pin code must be 6 digits";
+        }
+      });
+    }
+
     if (!formData.businessCategory.trim())
       newErrors.businessCategory = "Business Category is required";
     if (!formData.businessDescription.trim())
@@ -264,7 +312,10 @@ export default function BusinessRegistrationForm() {
     if (formData.photos.office.length === 0)
       newErrors.photosOffice = "Upload at least one Office Photo";
 
-    if(formData.dateOfestablishment === "" || formData.dateOfestablishment === null)
+    if (
+      formData.dateOfestablishment === "" ||
+      formData.dateOfestablishment === null
+    )
       newErrors.dateOfestablishment = "Date of Establishment is required";
 
     setErrors(newErrors);
@@ -296,7 +347,7 @@ export default function BusinessRegistrationForm() {
           description: "Business registered successfully!",
           variant: "success",
         });
-        router.push("/dashboard");
+        router.push("/admin/overview");
       } else {
         const error = await res.json();
         addToast({
@@ -365,10 +416,6 @@ export default function BusinessRegistrationForm() {
       </div>
     );
   };
-
-  // {
-  //   loading && <Loader />;
-  // }
 
   return (
     <>
@@ -661,45 +708,226 @@ export default function BusinessRegistrationForm() {
                   8) Corporate/Branch Office Address (Optional, multiple
                   allowed)
                 </label>
-                {formData.registeredAddress.branchOffices?.map((addr, idx) => (
-                  <div key={idx} className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={addr}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          registeredAddress: {
-                            ...prev.registeredAddress,
-                            branchOffices:
-                              prev.registeredAddress.branchOffices.map((a, i) =>
-                                i === idx ? e.target.value : a
-                              ),
-                          },
-                        }))
-                      }
-                      className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      placeholder="Enter branch/corporate office address"
-                    />
-                    <Button
-                      onClick={() =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          registeredAddress: {
-                            ...prev.registeredAddress,
-                            branchOffices:
-                              prev.registeredAddress.branchOffices.filter(
-                                (_, i) => i !== idx
-                              ),
-                          },
-                        }))
-                      }
-                      className="bg-red-600 hover:bg-red-700 text-white px-3"
+                {formData.registeredAddress.branchOffices?.map(
+                  (branch, idx) => (
+                    <div
+                      key={idx}
+                      className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50"
                     >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-                ))}
+                      <div className="grid grid-cols-1 gap-4">
+                        {/* Address */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Branch Office Address *
+                          </label>
+                          <textarea
+                            value={branch.address}
+                            onChange={(e) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                registeredAddress: {
+                                  ...prev.registeredAddress,
+                                  branchOffices:
+                                    prev.registeredAddress.branchOffices.map(
+                                      (b, i) =>
+                                        i === idx
+                                          ? { ...b, address: e.target.value }
+                                          : b
+                                    ),
+                                },
+                              }))
+                            }
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 h-20"
+                            placeholder="Enter complete branch office address"
+                            required
+                          />
+                          {errors[`branchOffice.${idx}.address`] && (
+                            <p className="text-red-600 text-xs mt-1">
+                              {errors[`branchOffice.${idx}.address`]}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* City, State, Pin code in a row */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                              City *
+                            </label>
+                            <input
+                              type="text"
+                              value={branch.city}
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  registeredAddress: {
+                                    ...prev.registeredAddress,
+                                    branchOffices:
+                                      prev.registeredAddress.branchOffices.map(
+                                        (b, i) =>
+                                          i === idx
+                                            ? { ...b, city: e.target.value }
+                                            : b
+                                      ),
+                                  },
+                                }))
+                              }
+                              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                              placeholder="Enter city"
+                              required
+                            />
+                            {errors[`branchOffice.${idx}.city`] && (
+                              <p className="text-red-600 text-xs mt-1">
+                                {errors[`branchOffice.${idx}.city`]}
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                              State *
+                            </label>
+                            <select
+                              value={branch.state}
+                              onChange={(e) =>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  registeredAddress: {
+                                    ...prev.registeredAddress,
+                                    branchOffices:
+                                      prev.registeredAddress.branchOffices.map(
+                                        (b, i) =>
+                                          i === idx
+                                            ? { ...b, state: e.target.value }
+                                            : b
+                                      ),
+                                  },
+                                }))
+                              }
+                              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                            >
+                              <option value="">Select State</option>
+                              {[
+                                "Andhra Pradesh",
+                                "Arunachal Pradesh",
+                                "Assam",
+                                "Bihar",
+                                "Chhattisgarh",
+                                "Goa",
+                                "Gujarat",
+                                "Haryana",
+                                "Himachal Pradesh",
+                                "Jharkhand",
+                                "Karnataka",
+                                "Kerala",
+                                "Madhya Pradesh",
+                                "Maharashtra",
+                                "Manipur",
+                                "Meghalaya",
+                                "Mizoram",
+                                "Nagaland",
+                                "Odisha",
+                                "Punjab",
+                                "Rajasthan",
+                                "Sikkim",
+                                "Tamil Nadu",
+                                "Telangana",
+                                "Tripura",
+                                "Uttar Pradesh",
+                                "Uttarakhand",
+                                "West Bengal",
+                              ].map((state) => (
+                                <option key={state} value={state}>
+                                  {state}
+                                </option>
+                              ))}
+                            </select>
+                            {errors[`branchOffice.${idx}.state`] && (
+                              <p className="text-red-600 text-xs mt-1">
+                                {errors[`branchOffice.${idx}.state`]}
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                              Pin Code *
+                            </label>
+                            <input
+                              type="number"
+                              value={branch.pincode}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (
+                                  value === "" ||
+                                  (/^\d+$/.test(value) && value.length <= 6)
+                                ) {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    registeredAddress: {
+                                      ...prev.registeredAddress,
+                                      branchOffices:
+                                        prev.registeredAddress.branchOffices.map(
+                                          (b, i) =>
+                                            i === idx
+                                              ? { ...b, pincode: value }
+                                              : b
+                                        ),
+                                    },
+                                  }));
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (
+                                  !/[0-9]/.test(e.key) &&
+                                  ![
+                                    "Backspace",
+                                    "Delete",
+                                    "ArrowLeft",
+                                    "ArrowRight",
+                                    "Tab",
+                                  ].includes(e.key)
+                                ) {
+                                  e.preventDefault();
+                                }
+                              }}
+                              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                              placeholder="Enter 6-digit pin code"
+                              maxLength={6}
+                              min="0"
+                              max="999999"
+                              required
+                            />
+                            {errors[`branchOffice.${idx}.pincode`] && (
+                              <p className="text-red-600 text-xs mt-1">
+                                {errors[`branchOffice.${idx}.pincode`]}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            registeredAddress: {
+                              ...prev.registeredAddress,
+                              branchOffices:
+                                prev.registeredAddress.branchOffices.filter(
+                                  (_, i) => i !== idx
+                                ),
+                            },
+                          }))
+                        }
+                        className="bg-red-600 hover:bg-red-700 text-white text-sm mt-3"
+                      >
+                        <Trash2 size={14} className="mr-1" /> Remove Branch
+                        Office
+                      </Button>
+                    </div>
+                  )
+                )}
 
                 <Button
                   onClick={() =>
@@ -709,7 +937,7 @@ export default function BusinessRegistrationForm() {
                         ...prev.registeredAddress,
                         branchOffices: [
                           ...(prev.registeredAddress.branchOffices || []),
-                          "",
+                          { address: "", city: "", state: "", pincode: "" },
                         ],
                       },
                     }))
@@ -720,17 +948,34 @@ export default function BusinessRegistrationForm() {
                 </Button>
               </div>
 
-              {/* CIN / GST / Udyam (Optional) */}
+              {/* GST - Mandatory for all organizations */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  GST Number *
+                </label>
+                <input
+                  type="text"
+                  value={formData.gst || ""}
+                  onChange={(e) => handleInputChange("gst", e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  placeholder="Enter GST Number"
+                />
+                {errors.gst && (
+                  <p className="text-red-600 text-xs mt-1">{errors.gst}</p>
+                )}
+              </div>
+
+              {/* CIN and Udyam for specific organization types */}
               {[
                 "Limited Liability Partnership (LLP)",
                 "Private Limited",
                 "Private Limited (One Person)",
                 "Public Limited",
               ].includes(formData.organizationType) && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
-                      CIN (Optional)
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      CIN *
                     </label>
                     <input
                       type="text"
@@ -739,21 +984,12 @@ export default function BusinessRegistrationForm() {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                       placeholder="Enter CIN"
                     />
+                    {errors.cin && (
+                      <p className="text-red-600 text-xs mt-1">{errors.cin}</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
-                      GST (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.gst || ""}
-                      onChange={(e) => handleInputChange("gst", e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      placeholder="Enter GST"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Udyam (Optional)
                     </label>
                     <input
@@ -768,6 +1004,31 @@ export default function BusinessRegistrationForm() {
                   </div>
                 </div>
               )}
+
+              {/* Udyam for other organization types (optional) */}
+              {![
+                "Limited Liability Partnership (LLP)",
+                "Private Limited",
+                "Private Limited (One Person)",
+                "Public Limited",
+              ].includes(formData.organizationType) &&
+                formData.organizationType && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Udyam (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.udyam || ""}
+                      onChange={(e) =>
+                        handleInputChange("udyam", e.target.value)
+                      }
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                      placeholder="Enter Udyam No."
+                    />
+                  </div>
+                )}
+
               {/* Premium Category */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -806,7 +1067,7 @@ export default function BusinessRegistrationForm() {
                   9) Add Photos *
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Product */}
+                  {/* Product Photos */}
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-500 transition-colors">
                     <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-600 mb-2">
@@ -828,7 +1089,7 @@ export default function BusinessRegistrationForm() {
                         document.getElementById("product-photos")?.click()
                       }
                       className="bg-blue-600 hover:bg-blue-700 text-white text-sm"
-                      disabled={loading.upload || loading.submit} // ✅ disable when uploading or submitting
+                      disabled={loading.upload || loading.submit}
                     >
                       {loading.upload ? "Uploading..." : "Upload"}
                     </Button>
@@ -857,7 +1118,7 @@ export default function BusinessRegistrationForm() {
                     </div>
                   </div>
 
-                  {/* Office */}
+                  {/* Office Photos */}
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-500 transition-colors">
                     <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-600 mb-2">
@@ -879,7 +1140,7 @@ export default function BusinessRegistrationForm() {
                         document.getElementById("office-photos")?.click()
                       }
                       className="bg-blue-600 hover:bg-blue-700 text-white text-sm"
-                      disabled={loading.upload || loading.submit} // ✅ disable when uploading or submitting
+                      disabled={loading.upload || loading.submit}
                     >
                       {loading.upload ? "Uploading..." : "Upload"}
                     </Button>
@@ -914,7 +1175,7 @@ export default function BusinessRegistrationForm() {
               <div className="text-center">
                 <Button
                   onClick={handleSubmit}
-                  disabled={loading.submit || loading.upload} // ✅ block submit while uploading too
+                  disabled={loading.submit || loading.upload}
                   className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
                 >
                   {loading.submit ? "Submitting..." : "Submit"}

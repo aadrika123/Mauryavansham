@@ -733,6 +733,13 @@ export default function CreateProfileForm({
         if (profileRelation === "other" && !customRelation.trim()) {
           errors.customRelation = "Please specify the relationship";
         }
+        if (
+          !profileData.personalInfo.profileImage1 &&
+          !selectedImages.image1 &&
+          !imagePreviews.preview1
+        ) {
+          errors.profileImage1 = "At least one profile photo is required";
+        }
         break;
 
       case 2: // Family Details
@@ -1000,10 +1007,12 @@ export default function CreateProfileForm({
     imageNumber,
     preview,
     isUploading,
+    hasError = false,
   }: {
     imageNumber: 1 | 2 | 3;
     preview: string;
     isUploading: boolean;
+    hasError?: boolean;
   }) => {
     const fileInputRef =
       imageNumber === 1
@@ -1017,7 +1026,11 @@ export default function CreateProfileForm({
         {/* Image Preview */}
         <div className="relative mb-3">
           {preview ? (
-            <div className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-orange-200">
+            <div
+              className={`relative w-24 h-24 rounded-lg overflow-hidden border-2 ${
+                hasError ? "border-red-300" : "border-orange-200"
+              }`}
+            >
               <Image
                 src={preview || "/placeholder.svg"}
                 alt={`Profile preview ${imageNumber}`}
@@ -1039,13 +1052,21 @@ export default function CreateProfileForm({
             </div>
           ) : (
             <div
-              className="w-24 h-24 rounded-lg bg-gray-100 border-2 border-dashed border-orange-200 flex items-center justify-center cursor-pointer hover:border-orange-400 transition-colors"
+              className={`w-24 h-24 rounded-lg bg-gray-100 border-2 border-dashed ${
+                hasError
+                  ? "border-red-300 bg-red-50"
+                  : "border-orange-200 hover:border-orange-400"
+              } flex items-center justify-center cursor-pointer transition-colors`}
               onClick={() => fileInputRef.current?.click()}
             >
               {isUploading ? (
                 <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
               ) : (
-                <Plus className="w-6 h-6 text-gray-400" />
+                <Plus
+                  className={`w-6 h-6 ${
+                    hasError ? "text-red-400" : "text-gray-400"
+                  }`}
+                />
               )}
             </div>
           )}
@@ -1067,7 +1088,11 @@ export default function CreateProfileForm({
             onClick={() => fileInputRef.current?.click()}
             size="sm"
             variant="outline"
-            className="text-[10px] border-orange-300 text-orange-600 hover:bg-orange-50"
+            className={`text-[10px] ${
+              hasError
+                ? "border-red-300 text-red-600 hover:bg-red-50"
+                : "border-orange-300 text-orange-600 hover:bg-orange-50"
+            }`}
             disabled={isUploading}
           >
             {isUploading ? (
@@ -1079,14 +1104,20 @@ export default function CreateProfileForm({
               <>
                 <Upload className="mr-1 h-3 w-3 " />
                 Add Photo {imageNumber}
+                {imageNumber === 1 && hasError && " *"}
               </>
             )}
           </Button>
         )}
 
         {/* Image Label */}
-        <p className="text-xs text-gray-500 mt-1 text-center">
+        <p
+          className={`text-xs mt-1 text-center ${
+            hasError ? "text-red-500" : "text-gray-500"
+          }`}
+        >
           {imageNumber === 1 ? "Primary Photo" : `Photo ${imageNumber}`}
+          {imageNumber === 1 && hasError && " (Required)"}
         </p>
       </div>
     );
@@ -1110,6 +1141,20 @@ export default function CreateProfileForm({
   // Updated handleCompleteProfile function
   const handleCompleteProfile = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const hasImage =
+      profileData.personalInfo.profileImage1 ||
+      selectedImages.image1 ||
+      imagePreviews.preview1;
+
+    if (!hasImage) {
+      setValidationErrors({
+        profileImage1:
+          "At least one profile photo is required before completing the profile",
+      });
+      setShowValidationPopup(true);
+      return;
+    }
 
     let hasErrors = false;
     for (let step = 1; step <= 5; step++) {
@@ -1403,7 +1448,9 @@ export default function CreateProfileForm({
                       imageNumber={1}
                       preview={imagePreviews.preview1}
                       isUploading={isUploadingImages.image1}
+                      hasError={!!validationErrors.profileImage1}
                     />
+
                     <ImageUploadSlot
                       imageNumber={2}
                       preview={imagePreviews.preview2}
@@ -1415,7 +1462,14 @@ export default function CreateProfileForm({
                       isUploading={isUploadingImages.image3}
                     />
                   </div>
-
+                  {/* Show validation error for images */}
+                  {validationErrors.profileImage1 && (
+                    <div className="mb-4 p-2 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-red-600 text-sm text-center">
+                        {validationErrors.profileImage1}
+                      </p>
+                    </div>
+                  )}
                   <p className="text-xs text-gray-500 text-center mb-4">
                     Upload up to 3 photos • Max 5MB each • JPG, PNG
                   </p>

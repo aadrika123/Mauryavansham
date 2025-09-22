@@ -26,5 +26,5 @@ export default async function MatrimonialSSR() {
     .limit(10);
     console.log("Initial Profiles:", initialProfiles);
 
-  return <MatrimonialPage initialProfiles={initialProfiles} />;
+  return <MatrimonialPage initialProfiles={initialProfiles as any} />;
 }

@@ -26,6 +26,7 @@ import {
   Eye,
   Lock,
   X,
+  Mic2Icon,
 } from "lucide-react";
 import Link from "next/link";
 import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
@@ -54,6 +55,7 @@ interface Event {
   isFeatured: boolean;
   toTime: string;
   fromTime: string;
+  attendeesCount: number;
 }
 
 interface EventsClientProps {
@@ -91,23 +93,63 @@ export default function EventsClient({
   const [showLoginModal, setShowLoginModal] = useState(false);
   const Router = useRouter();
   const [loadingEvents, setLoadingEvents] = useState<number[]>([]);
-  console.log("initialEvents:", user);
-  console.log(initialEvents, "initialEvents");
+  const [showAttendeesModal, setShowAttendeesModal] = useState(false);
+  const [selectedEventAttendees, setSelectedEventAttendees] = useState<
+    number[]
+  >([]);
 
   const featuredEvent = events.find((event) => event.isFeatured);
   const regularEvents = events.filter((event) => !event.isFeatured);
-  console.log("featuredEvent:", featuredEvent);
-  // ✅ Featured ka latest nikal lo (maan ke backend se createdAt / featuredAt aa raha hai)
   const latestFeaturedEvent = events
     .filter((ev) => ev.isFeatured)
     .sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() // agar featuredAt field hai to yahan use karo
     )[0];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const upcomingFeaturedEvent = events
+    .filter((ev) => {
+      // Only featured events
+      if (!ev.isFeatured) return false;
 
+      // Only upcoming events (today or future dates)
+      const eventDate = new Date(ev.date);
+      eventDate.setHours(0, 0, 0, 0);
+      return eventDate >= today;
+    })
+    .sort((a, b) => {
+      // Sort by date ascending (nearest first)
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateA.getTime() - dateB.getTime();
+    })[0];
   // ✅ All events me sabko rakho except latest featured
-  const allEvents = events.filter((ev) => ev.id !== latestFeaturedEvent?.id);
+  const allEvents = events.filter((ev) => ev.id !== upcomingFeaturedEvent?.id);
 
   const filteredEvents = allEvents.filter((event) => {
+    const matchesSearch =
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter =
+      filterType === "all" ||
+      event.type.toLowerCase() === filterType.toLowerCase();
+    return matchesSearch && matchesFilter;
+  });
+
+  const pastEvents = events
+    .filter((event) => {
+      const eventDate = new Date(event.date);
+      eventDate.setHours(0, 0, 0, 0);
+      return eventDate < today;
+    })
+    .sort((a, b) => {
+      // Sort past events by date descending (most recent first)
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+  const filteredPastEvents = pastEvents.filter((event) => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -209,6 +251,7 @@ export default function EventsClient({
           variant: "default",
           description: data.message || "Registered successfully!",
         });
+        window.location.reload();
       } else {
         toast({
           title: "❌ Error",
@@ -343,25 +386,15 @@ export default function EventsClient({
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
-              Calendar View
+              Past Events
             </button>
-            {/* <button
-              onClick={() => setActiveTab("my-events")}
-              className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "my-events"
-                  ? "border-orange-600 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              My Events
-            </button> */}
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Event */}
-        {latestFeaturedEvent && activeTab === "upcoming" && (
+        {upcomingFeaturedEvent && activeTab === "upcoming" && (
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-red-700 mb-6">
               Featured Event
@@ -371,70 +404,79 @@ export default function EventsClient({
                 <div className="flex flex-col lg:flex-row">
                   <div className="lg:w-1/3">
                     <Image
-                      src={latestFeaturedEvent.image || "/placeholder.svg"}
-                      alt={"Ad Banner"}
+                      src={upcomingFeaturedEvent.image || "/placeholder.svg"}
+                      alt={"Event Banner"}
                       width={600}
                       height={500}
-                      className=" object-cover  h-96 "
+                      className="object-fill h-96"
                     />
                   </div>
                   <div className="lg:w-2/3 p-6">
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-sm">
-                        {getTypeIcon(latestFeaturedEvent.type)}
+                        {getTypeIcon(upcomingFeaturedEvent.type)}
                       </span>
-                      <Badge className={getTypeColor(latestFeaturedEvent.type)}>
-                        {latestFeaturedEvent.type}
+                      <Badge
+                        className={getTypeColor(upcomingFeaturedEvent.type)}
+                      >
+                        {upcomingFeaturedEvent.type}
                       </Badge>
                     </div>
 
                     <h3 className="text-2xl font-bold text-red-700 mb-3">
-                      {latestFeaturedEvent.title}
+                      {upcomingFeaturedEvent.title}
                     </h3>
 
                     <p className="text-gray-600 mb-6 leading-relaxed">
-                      {latestFeaturedEvent.description}
+                      {upcomingFeaturedEvent.description}
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="w-4 h-4" />
                         <span>
-                          {formatDate(latestFeaturedEvent.date)} at{" "}
-                          {formatTimeTo12Hr(latestFeaturedEvent.fromTime)} to{" "}
-                          {formatTimeTo12Hr(latestFeaturedEvent.toTime)}
+                          {formatDate(upcomingFeaturedEvent.date)} at{" "}
+                          {formatTimeTo12Hr(upcomingFeaturedEvent.fromTime)} to{" "}
+                          {formatTimeTo12Hr(upcomingFeaturedEvent.toTime)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPin className="w-4 h-4" />
-                        <span>{latestFeaturedEvent.location}</span>
+                        <span>{upcomingFeaturedEvent.location}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <Users className="w-4 h-4" />
                         <span>
-                          {latestFeaturedEvent.attendees}/
-                          {latestFeaturedEvent.maxAttendees} attending
+                          {upcomingFeaturedEvent?.attendeesCount}/
+                          {upcomingFeaturedEvent.maxAttendees} attending
                         </span>
                       </div>
-                      {/* <div className="flex items-center gap-2 text-gray-600">
+                      <div className="flex items-center gap-2 text-gray-600">
                         <User className="w-4 h-4" />
-                        <span>By {latestFeaturedEvent .organizer}</span>
-                      </div> */}
+                        <span>By {upcomingFeaturedEvent.organizer}</span>
+                      </div>
                     </div>
 
                     <div className="flex gap-3 mx-auto">
                       <Button
-                        className=" bg-orange-600 hover:bg-orange-700 text-white"
-                        onClick={() => handleRegister(latestFeaturedEvent)}
+                        className="bg-orange-600 hover:bg-orange-700 text-white"
+                        onClick={() => handleRegister(upcomingFeaturedEvent)}
                       >
                         Register
                       </Button>
 
                       <Button
+                        size="sm"
                         variant="outline"
-                        className="border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
+                        className="border-gray-300 text-yellow-700 bg-transparent"
+                        onClick={() => {
+                          setSelectedEventAttendees(
+                            upcomingFeaturedEvent.attendees?.map((a) => a.name)
+                          );
+                          setShowAttendeesModal(true);
+                        }}
                       >
-                        Learn More
+                        View Attendees
                       </Button>
                     </div>
                   </div>
@@ -444,71 +486,181 @@ export default function EventsClient({
           </div>
         )}
 
+        {activeTab === "calendar" && (
+          <div>
+            <h2 className="text-xl font-bold text-red-700 mb-4">Past Events</h2>
+            {filteredPastEvents.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredPastEvents.map((event) => (
+                  <Card
+                    key={event.id}
+                    className="bg-gray-50 hover:shadow-md transition-shadow overflow-hidden max-h-[420px] opacity-75"
+                  >
+                    <CardContent className="p-0 flex flex-col h-full">
+                      {/* Image */}
+                      <div className="relative w-full h-36 bg-gray-100 overflow-hidden">
+                        <Image
+                          src={event.image || "/placeholder.svg"}
+                          alt="Event Banner"
+                          fill
+                          className="object-contain w-full h-full grayscale"
+                        />
+                        <div className="absolute top-2 left-2">
+                          <Badge className={getTypeColor(event.type)}>
+                            <span className="mr-1">
+                              {getTypeIcon(event.type)}
+                            </span>
+                            {event.type}
+                          </Badge>
+                        </div>
+                        {/* Past Event Indicator */}
+                        <div className="absolute top-2 right-2">
+                          <Badge className="bg-gray-600 text-white">
+                            Past Event
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-md font-semibold text-gray-700 mb-1 line-clamp-2">
+                            {event.title}
+                          </h3>
+                          <p className="text-gray-500 text-sm mb-2 line-clamp-2">
+                            {event.description}
+                          </p>
+
+                          <div className="space-y-1 text-gray-400 text-xs">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              <span>
+                                {formatDate(event.date)} at{" "}
+                                {formatTimeTo12Hr(event.fromTime)} to{" "}
+                                {formatTimeTo12Hr(event.toTime)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              <span className="truncate">{event.location}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Users className="w-3 h-3" />
+                              <span>
+                                {event.attendeesCount}/{event.maxAttendees}{" "}
+                                attended
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Buttons for Past Events */}
+                        <div className="flex gap-1 mt-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1 border-gray-300 text-gray-500 bg-transparent cursor-not-allowed"
+                            disabled
+                          >
+                            Event Ended
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1 border-gray-300 text-gray-600 bg-transparent"
+                            onClick={() => {
+                              setSelectedEventAttendees(
+                                event.attendees?.map((a) => a.name) || []
+                              );
+                              setShowAttendeesModal(true);
+                            }}
+                          >
+                            View Attendees
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card className="p-6 text-center">
+                <div className="space-y-2">
+                  <Calendar className="w-12 h-12 mx-auto text-gray-400" />
+                  <div>
+                    <p className="text-gray-500 font-medium">
+                      No past events found
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Past events will appear here once they have concluded.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            )}
+          </div>
+        )}
+
         <div className="mt-8 mb-12">
-          <div className="container mx-auto px-4">
+          {/* <VerticalAdBanner /> */}
+          <div className="container mx-auto px-8 py-2 w-5/6">
             <div className="relative">
               {bottomAd ? (
-                <div
-                  className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
-            border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden 
-            transform hover:scale-105 transition-transform duration-300 w-full max-w-[900px] mx-auto"
-                >
-                  <div className="relative p-4 sm:p-6 md:p-8 text-center">
+                <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                  <div className="relative p-8 text-center">
                     <Image
                       src={bottomAd.bannerImageUrl}
                       alt={"Ad Banner"}
-                      width={900}
-                      height={300}
-                      className="mx-auto rounded-xl shadow-lg w-full h-auto"
+                      width={400}
+                      height={500}
+                      className="mx-auto rounded-xl shadow-lg"
                     />
                   </div>
                 </div>
               ) : (
-                <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
+                <div
+                  className="mx-auto relative"
+                  style={{ width: 900, height: 300 }}
+                >
                   <div
                     className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
-              border-4 border-amber-300 rounded-2xl shadow-2xl 
-              overflow-hidden transform hover:scale-105 transition-transform duration-300
-              w-full h-full"
+                         border-4 border-amber-300 rounded-2xl shadow-2xl 
+                         overflow-hidden transform hover:scale-105 transition-transform duration-300
+                         w-full h-full"
                   >
-                    <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
+                    <div className="relative p-8 w-full h-full">
                       {/* Decorative Book Pages Effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
 
                       {/* Content */}
                       <div className="text-center relative z-10 flex flex-col justify-center items-center h-full">
                         <div
-                          className="relative border-2 border-dashed border-amber-400 rounded-lg p-4 sm:p-6 md:p-8 
-                    bg-gradient-to-br from-amber-50 to-yellow-100"
+                          className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 
+                               bg-gradient-to-br from-amber-50 to-yellow-100"
                         >
-                          <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-amber-800 mb-2 sm:mb-4">
+                          <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
                             Book Your Ad (8) <br />
-                            <span className="text-sm md:text-base font-normal">
-                              Please select image size of (900x300 pixels)
-                            </span>
+                            <p>Please select image size of (900x300 pixels)</p>
                           </h3>
 
-                          <div className="space-y-2 sm:space-y-4 relative">
-                            <div className="absolute top-2 sm:top-4 left-2 sm:left-4">
-                              <svg
-                                className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.63a1 1 0 00.95.69h3.813c.969 0 1.371 1.24.588 1.81l-3.084 2.24a1 1 0 00-.364 1.118l1.18 3.63c.3.921-.755 1.688-1.54 1.118l-3.084-2.24a1 1 0 00-1.176 0l-3.084 2.24c-.784.57-1.838-.197-1.539-1.118l1.18-3.63a1 1 0 00-.364-1.118L2.318 9.057c-.783-.57-.38-1.81.588-1.81h3.813a1 1 0 00.95-.69l1.18-3.63z" />
-                              </svg>
+                          <div className="space-y-4 relative">
+                            <div className="absolute top-4 left-4">
+                              <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
                             </div>
-                            <div className="absolute top-2 sm:top-4 right-2 sm:right-4">
-                              <svg
-                                className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.18 3.63a1 1 0 00.95.69h3.813c.969 0 1.371 1.24.588 1.81l-3.084 2.24a1 1 0 00-.364 1.118l1.18 3.63c.3.921-.755 1.688-1.54 1.118l-3.084-2.24a1 1 0 00-1.176 0l-3.084 2.24c-.784.57-1.838-.197-1.539-1.118l1.18-3.63a1 1 0 00-.364-1.118L2.318 9.057c-.783-.57-.38-1.81.588-1.81h3.813a1 1 0 00.95-.69l1.18-3.63z" />
-                              </svg>
+                            <div className="absolute top-4 right-4">
+                              <Star className="h-8 w-8 text-amber-500 animate-pulse" />
                             </div>
 
-                            <p className="text-xs sm:text-sm md:text-base text-amber-600 mt-2">
+                            {/* <button
+                                    className="bg-gradient-to-r from-amber-500 to-yellow-500 
+                                   hover:from-amber-600 hover:to-yellow-600 
+                                   text-white font-bold py-3 px-8 rounded-full shadow-lg 
+                                   transform hover:scale-105 transition-all duration-200"
+                                  >
+                                    
+                                  </button> */}
+
+                            <p className="text-sm text-amber-600 mt-2">
                               Go to your dashboard to create and manage ads.
                             </p>
                           </div>
@@ -516,8 +668,8 @@ export default function EventsClient({
                       </div>
 
                       {/* Decorative Borders */}
-                      <div className="absolute inset-x-0 top-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-                      <div className="absolute inset-x-0 bottom-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                      <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                      <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
                     </div>
                   </div>
                 </div>
@@ -525,7 +677,6 @@ export default function EventsClient({
             </div>
           </div>
         </div>
-
         {/* All Events */}
         <div>
           <h2 className="text-xl font-bold text-red-700 mb-4">All Events</h2>
@@ -556,13 +707,29 @@ export default function EventsClient({
                             : ev
                         )
                       );
-                      alert(data.message || "Registered successfully!");
+                      // alert(data.message || "Registered successfully!");
+                      toast({
+                        title: "✅ Success",
+                        variant: "default",
+                        description: data.message || "Registered successfully!",
+                      });
+                      window.location.reload();
                     } else {
-                      alert(data.error || "Failed to register");
+                      // alert(data.error || "Failed to register");
+                      toast({
+                        title: "❌ Error",
+                        variant: "destructive",
+                        description: data.error || "Failed to register",
+                      })
                     }
                   } catch (err) {
                     console.error(err);
-                    alert("Something went wrong");
+                    // alert("Something went wrong");
+                    toast({
+                      title: "❌ Error",
+                      variant: "destructive",
+                      description: "Something went wrong",
+                    })
                   } finally {
                     setLoading(false);
                   }
@@ -618,7 +785,15 @@ export default function EventsClient({
                             <div className="flex items-center gap-1">
                               <Users className="w-3 h-3" />
                               <span>
-                                {event.attendees}/{event.maxAttendees} attending
+                                {event.attendeesCount}/{event.maxAttendees}{" "}
+                                attending
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <User className="w-3 h-3" />
+                              {/* By: */}
+                              <span>
+                                {event.organizer}{" "}
                               </span>
                             </div>
                           </div>
@@ -642,12 +817,25 @@ export default function EventsClient({
                               ? "Registering..."
                               : "Register"}
                           </Button>
-                          <Button
+                          {/* <Button
                             size="sm"
                             variant="outline"
                             className="flex-1 border-gray-300 text-yellow-700 bg-transparent"
                           >
                             Details
+                          </Button> */}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex-1 border-gray-300 text-yellow-700 bg-transparent"
+                            onClick={() => {
+                              setSelectedEventAttendees(
+                                event.attendees.map((a) => a.name)
+                              );
+                              setShowAttendeesModal(true);
+                            }}
+                          >
+                            View Attendees
                           </Button>
                         </div>
                       </div>
@@ -672,7 +860,7 @@ export default function EventsClient({
         </div>
 
         {/* Calendar View Placeholder */}
-        {activeTab === "calendar" && (
+        {/* {activeTab === "calendar" && (
           <Card className="p-8 text-center">
             <Calendar className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-semibold text-red-700 mb-2">
@@ -682,7 +870,7 @@ export default function EventsClient({
               Calendar view will be implemented here
             </p>
           </Card>
-        )}
+        )} */}
 
         {/* My Events Placeholder */}
         {activeTab === "my-events" && (
@@ -697,6 +885,35 @@ export default function EventsClient({
           </Card>
         )}
       </div>
+      {showAttendeesModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-red-700">Attendees</h3>
+              <button
+                onClick={() => setShowAttendeesModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            {selectedEventAttendees.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                {selectedEventAttendees.map((name, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2 bg-orange-50 border border-orange-200 rounded shadow-sm text-sm text-gray-700"
+                  >
+                    {name}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500 text-sm">No attendees yet.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

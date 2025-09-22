@@ -205,6 +205,16 @@ export default function CreateEventForm() {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label>Organizer Name</Label>
+              <Input
+                value={formData.organizer}
+                onChange={(e) =>
+                  setFormData({ ...formData, organizer: e.target.value })
+                }
+                required
+              />
+            </div>
 
             {/* Description */}
             <div className="space-y-2">

@@ -558,15 +558,15 @@ export default function CommunityForumPage({ user }: Props) {
       </div>
 
       {/* Header */}
-      <div className="container mx-auto px-4 py-8 text-center">
-        <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto mb-6" />
-        <div className="relative mb-6">
+      <div className="container mx-auto  text-center">
+        <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto " />
+        <div className="relative ">
           <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg"></div>
-          <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-red-700">
+          <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-red-700 mb-4">
             Community Forum
           </h1>
         </div>
-        <p className="text-base sm:text-lg text-red-600 max-w-3xl mx-auto leading-relaxed mb-8 px-2">
+        <p className="text-base sm:text-lg text-red-600 max-w-3xl mx-auto leading-relaxed mb-4 px-2">
           Connect, share, and help each other in our supportive Maurya community
         </p>
       </div>
