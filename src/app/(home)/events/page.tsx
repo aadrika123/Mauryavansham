@@ -7,9 +7,14 @@ import { getServerSession } from "next-auth";
 import { eq } from "drizzle-orm";
 
 export default async function EventsPage() {
-  const allEvents = await db.select().from(events);
+  // ✅ Sirf approved events fetch karo
+  const approvedEvents = await db
+    .select()
+    .from(events)
+    .where(eq(events.status, "approved"));
+
   const eventsWithAttendees = await Promise.all(
-    allEvents.map(async (event) => {
+    approvedEvents.map(async (event) => {
       const attendees = await db
         .select({
           id: users.id,
@@ -28,10 +33,12 @@ export default async function EventsPage() {
       };
     })
   );
+
   const session = await getServerSession(authOptions);
 
-  console.log("allEvents:", allEvents);
-  console.log("allEvents:", eventsWithAttendees);
+  console.log("Approved Events:", eventsWithAttendees);
 
-  return <EventsClient initialEvents={eventsWithAttendees} user={session?.user} />;
+  return (
+    <EventsClient initialEvents={eventsWithAttendees} user={session?.user} />
+  );
 }

@@ -19,6 +19,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     address: "",
     photo: "",
     maritalStatus: "",
+    spouseName: "", // 🆕 Added spouse name field
     // religion: "Hindu",
     caste: "",
     motherTongue: "",
@@ -26,15 +27,9 @@ export default function UserProfilePage({ data }: { data: any }) {
     weight: "",
     bloodGroup: "",
     education: "",
-    occupation: "",
-    // 🆕 Occupation-specific fields
-    jobType: "", // Job → Government / Non-Government
-    govSector: "", // Central / State / UT
-    department: "",
-    postingLocation: "",
-    designation: "",
-    company: "",
-    businessDetails: "",
+    professionGroup: "", // 🆕 Profession group (parent)
+    profession: "", // 🆕 Specific profession (child)
+    // professionDetails: "", // 🆕 For additional profession details
 
     city: "",
     state: "",
@@ -51,6 +46,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     siblings: [],
     children: [],
     aboutMe: "",
+    facebookLink: "", // 🆕 Added Facebook link field
   });
 
   useEffect(() => {
@@ -129,36 +125,22 @@ export default function UserProfilePage({ data }: { data: any }) {
     if (!formData.gender) errors.push("Gender is required");
     if (!formData.dateOfBirth) errors.push("Date of Birth is required");
     if (!formData.maritalStatus) errors.push("Marital Status is required");
+
+    // 🆕 Spouse name validation when married
+    if (formData.maritalStatus === "Married" && !formData.spouseName) {
+      errors.push("Spouse Name is required for married status");
+    }
+
     if (!formData.motherTongue) errors.push("Mother Tongue is required");
     if (!formData.education) errors.push("Education is required");
-    if (!formData.occupation) errors.push("Occupation is required");
+    if (!formData.professionGroup) errors.push("Profession Group is required");
+    if (!formData.profession) errors.push("Profession is required"); // 🆕 Changed validation
     // if (!formData.address) errors.push("Address is required");
     // if (!formData.city) errors.push("City is required");
     // if (!formData.state) errors.push("State is required");
     // if (!formData.zipCode) errors.push("Zip Code is required");
     // if (!formData.fatherName) errors.push("Father's Name is required");
     // if (!formData.motherName) errors.push("Mother's Name is required");
-
-    // Occupation-specific validation
-    if (formData.occupation === "Job") {
-      if (!formData.jobType) errors.push("Job Type is required");
-
-      if (formData.jobType === "Government") {
-        if (!formData.govSector) errors.push("Gov Sector is required");
-        if (!formData.department) errors.push("Department is required");
-        if (!formData.postingLocation)
-          errors.push("Posting Location is required");
-        if (!formData.designation) errors.push("Designation is required");
-      } else if (formData.jobType === "Non-Government") {
-        if (!formData.company) errors.push("Company is required");
-        if (!formData.designation) errors.push("Designation is required");
-      }
-    }
-
-    if (formData.occupation === "Business") {
-      if (!formData.businessDetails)
-        errors.push("Business Details are required");
-    }
 
     if (errors.length > 0) {
       setValidationErrors(errors); // 🆕 open popup with errors
@@ -192,7 +174,7 @@ export default function UserProfilePage({ data }: { data: any }) {
     setLoading(false);
   };
 
-  // ✅ Profile completion calculation (fixed)
+  // ✅ Profile completion calculation (updated)
   const calculateCompletion = (user: any) => {
     let fields = [
       "name",
@@ -208,33 +190,20 @@ export default function UserProfilePage({ data }: { data: any }) {
       "weight",
       "bloodGroup",
       "education",
-      "occupation",
+      "professionGroup", // 🆕 Changed from occupation
+      "profession", // 🆕 Added specific profession
       "city",
       "state",
       "country",
       "zipCode",
       "fatherName",
       "aboutMe",
+      "facebookLink", // 🆕 Added Facebook link to completion calculation
     ];
 
-    // Occupation-based fields
-    if (user.occupation === "Job") {
-      fields.push("jobType");
-
-      if (user.jobType === "Government") {
-        fields.push(
-          "govSector",
-          "department",
-          "postingLocation",
-          "designation"
-        );
-      } else if (user.jobType === "Non-Government") {
-        fields.push("company", "designation");
-      }
-    }
-
-    if (user.occupation === "Business") {
-      fields.push("businessDetails");
+    // 🆕 Add spouse name to completion calculation if married
+    if (user.maritalStatus === "Married") {
+      fields.push("spouseName");
     }
 
     const filled = fields.filter(
@@ -350,6 +319,18 @@ export default function UserProfilePage({ data }: { data: any }) {
               onChange={handleChange}
               options={["Single", "Married", "Divorced", "Widowed"]}
             />
+
+            {/* 🆕 Spouse Name Field - Only show when married */}
+            {formData.maritalStatus === "Married" && (
+              <InputField
+                label="Spouse Name"
+                name="spouseName"
+                value={formData.spouseName}
+                onChange={handleChange}
+                placeholder="Enter spouse's name"
+              />
+            )}
+
             {/* <InputField
               label="Religion"
               name="religion"
@@ -402,162 +383,269 @@ export default function UserProfilePage({ data }: { data: any }) {
             />
           </div>
         </div>
-        {/* About yourself */}
+        {/* About yourself & Facebook Link */}
         <div>
-          <InputField
-            label="About Yourself"
-            name="aboutMe"
-            value={formData.aboutMe}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-              if (e.target.value.length <= 200) {
-                setFormData({ ...formData, aboutMe: e.target.value });
-              }
-            }}
-            type="textarea"
-            placeholder="Write something about yourself..."
-          />
-          <p
-            className="text-sm text-gray-500 mt-1 flex justify-end"
-            suppressHydrationWarning={true}
-          >
-            {(formData.aboutMe || "").length} / 200 characters
-          </p>
-        </div>
-
-        {/* Occupation */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Occupation</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <SelectField
-              label="Occupation"
-              name="occupation"
-              value={formData.occupation}
-              onChange={handleChange}
-              options={["Job", "Business"]}
+          <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
+          <div className="grid grid-cols-1 gap-4">
+            <InputField
+              label="About Yourself"
+              name="aboutMe"
+              value={formData.aboutMe}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                const words = e.target.value
+                  .trim()
+                  .split(/\s+/)
+                  .filter((word) => word.length > 0);
+                if (words.length <= 200 || e.target.value === "") {
+                  setFormData({ ...formData, aboutMe: e.target.value });
+                }
+              }}
+              type="textarea"
+              placeholder="Write something about yourself..."
             />
+            <p
+              className="text-sm text-gray-500 mt-1 flex justify-end"
+              suppressHydrationWarning={true}
+            >
+              {formData.aboutMe
+                ? formData.aboutMe
+                    .trim()
+                    .split(/\s+/)
+                    .filter((word: string) => word.length > 0).length
+                : 0}{" "}
+              / 200 words
+            </p>
 
-            {formData.occupation === "Job" && (
-              <>
-                <SelectField
-                  label="Job Type"
-                  name="jobType"
-                  value={formData.jobType}
-                  onChange={handleChange}
-                  options={["Government", "Non-Government"]}
-                />
-
-                {formData.jobType === "Government" && (
-                  <>
-                    <SelectField
-                      label="Gov Sector"
-                      name="govSector"
-                      value={formData.govSector}
-                      onChange={handleChange}
-                      options={["Central", "State", "UT"]}
-                    />
-                    <InputField
-                      label="Department"
-                      name="department"
-                      value={formData.department}
-                      onChange={handleChange}
-                    />
-                    <InputField
-                      label="Posting Location"
-                      name="postingLocation"
-                      value={formData.postingLocation}
-                      onChange={handleChange}
-                    />
-                    <InputField
-                      label="Designation"
-                      name="designation"
-                      value={formData.designation}
-                      onChange={handleChange}
-                    />
-                  </>
-                )}
-
-                {formData.jobType === "Non-Government" && (
-                  <>
-                    <InputField
-                      label="Company"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                    />
-                    <InputField
-                      label="Designation"
-                      name="designation"
-                      value={formData.designation}
-                      onChange={handleChange}
-                    />
-                  </>
-                )}
-              </>
-            )}
-
-            {formData.occupation === "Business" && (
-              <InputField
-                label="Business Details"
-                name="businessDetails"
-                value={formData.businessDetails}
-                onChange={handleChange}
-              />
-            )}
+            <InputField
+              label="Facebook Profile Link"
+              name="facebookLink"
+              value={formData.facebookLink}
+              onChange={handleChange}
+              placeholder="https://www.facebook.com/yourprofile"
+              type="url"
+            />
           </div>
         </div>
+
+        {/* 🆕 Profession Section */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Profession</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <ProfessionGroupField
+              label="Profession Group"
+              name="professionGroup"
+              value={formData.professionGroup}
+              onChange={(e: any) => {
+                // Reset specific profession when group changes
+                setFormData({
+                  ...formData,
+                  professionGroup: e.target.value,
+                  profession: "",
+                });
+              }}
+            />
+
+            <SpecificProfessionField
+              label="Specific Profession"
+              name="profession"
+              value={formData.profession}
+              onChange={handleChange}
+              professionGroup={formData.professionGroup}
+            />
+
+            {/* Additional details field for profession - full width */}
+            {/* <div className="col-span-2">
+              <InputField
+                label="Profession Details"
+                name="professionDetails"
+                value={formData.professionDetails}
+                onChange={handleChange}
+                placeholder="e.g., Company name, specialization, experience, etc."
+              />
+            </div> */}
+          </div>
+        </div>
+
         {/* Siblings */}
         <div className="border p-4 rounded-md">
           <h3 className="font-semibold mb-2">Siblings</h3>
-          {formData.siblings.map((sibling: any, idx: number) => (
-            <div key={idx} className="flex items-center gap-4 mb-2">
-              <input
-                type="text"
-                placeholder="Name"
-                value={sibling.name}
-                onChange={(e) => {
-                  const updated = [...formData.siblings];
-                  updated[idx].name = e.target.value;
-                  setFormData({ ...formData, siblings: updated });
-                }}
-                className="border p-2 rounded flex-1 bg-white border-yellow-300 focus:border-red-500"
-              />
-              <select
-                value={sibling.gender}
-                onChange={(e) => {
-                  const updated = [...formData.siblings];
-                  updated[idx].gender = e.target.value;
-                  setFormData({ ...formData, siblings: updated });
-                }}
-                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
-              >
-                <option value="">Gender</option>
-                <option value="Brother">Brother</option>
-                <option value="Sister">Sister</option>
-              </select>
-              <input
-                type="date"
-                value={sibling.dateOfBirth}
-                onChange={(e) => {
-                  const updated = [...formData.siblings];
-                  updated[idx].dateOfBirth = e.target.value;
-                  setFormData({ ...formData, siblings: updated });
-                }}
-                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  const updated = formData.siblings.filter(
-                    (_: any, i: number) => i !== idx
-                  );
-                  setFormData({ ...formData, siblings: updated });
-                }}
-                className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-sm"
-              >
-                X
-              </button>
-            </div>
-          ))}
+          {formData.siblings.map((sibling: any, idx: number) => {
+            // Calculate age based on date of birth
+            const calculateAge = (dateOfBirth: string) => {
+              if (!dateOfBirth) return 0;
+              const today = new Date();
+              const birthDate = new Date(dateOfBirth);
+              let age = today.getFullYear() - birthDate.getFullYear();
+              const monthDiff = today.getMonth() - birthDate.getMonth();
+              if (
+                monthDiff < 0 ||
+                (monthDiff === 0 && today.getDate() < birthDate.getDate())
+              ) {
+                age--;
+              }
+              return age;
+            };
+
+            const age = calculateAge(sibling.dateOfBirth);
+            const showMaritalStatus =
+              (sibling.gender === "Sister" && age >= 18) ||
+              (sibling.gender === "Brother" && age >= 21);
+
+            return (
+              <div key={idx} className="border p-3 rounded mb-3 bg-gray-50">
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  {/* Name */}
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={sibling.name}
+                    onChange={(e) => {
+                      const updated = [...formData.siblings];
+                      updated[idx].name = e.target.value;
+                      setFormData({ ...formData, siblings: updated });
+                    }}
+                    className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+                  />
+
+                  {/* DOB */}
+                  <input
+                    type="date"
+                    value={sibling.dateOfBirth}
+                    onChange={(e) => {
+                      const updated = [...formData.siblings];
+                      updated[idx].dateOfBirth = e.target.value;
+                      // Reset marital status when DOB changes
+                      updated[idx].maritalStatus = "";
+                      updated[idx].spouseName = "";
+                      setFormData({ ...formData, siblings: updated });
+                    }}
+                    className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+                  />
+
+                  {/* Age Display */}
+                  <div className="flex items-center px-2">
+                    <span className="text-sm text-gray-600">
+                      {age > 0 ? `${age} years old` : "Age: --"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Gender (radio buttons) */}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Gender:
+                    </label>
+                    <div className="flex gap-3">
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name={`sibling-gender-${idx}`}
+                          value="Brother"
+                          checked={sibling.gender === "Brother"}
+                          onChange={(e) => {
+                            const updated = [...formData.siblings];
+                            updated[idx].gender = e.target.value;
+                            // Reset marital fields when gender changes
+                            updated[idx].maritalStatus = "";
+                            updated[idx].spouseName = "";
+                            setFormData({ ...formData, siblings: updated });
+                          }}
+                        />
+                        Brother
+                      </label>
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name={`sibling-gender-${idx}`}
+                          value="Sister"
+                          checked={sibling.gender === "Sister"}
+                          onChange={(e) => {
+                            const updated = [...formData.siblings];
+                            updated[idx].gender = e.target.value;
+                            // Reset marital fields when gender changes
+                            updated[idx].maritalStatus = "";
+                            updated[idx].spouseName = "";
+                            setFormData({ ...formData, siblings: updated });
+                          }}
+                        />
+                        Sister
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Remove Button */}
+                  <div className="flex justify-end items-start">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = formData.siblings.filter(
+                          (_: any, i: number) => i !== idx
+                        );
+                        setFormData({ ...formData, siblings: updated });
+                      }}
+                      className="bg-red-500 text-white rounded-full h-8 w-8 flex items-center justify-center text-sm hover:bg-red-600"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+
+                {/* Conditional Marital Status Fields */}
+                {showMaritalStatus && (
+                  <div className="mt-3 grid grid-cols-2 gap-3 pt-3 border-t border-gray-300">
+                    {/* Marital Status */}
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Marital Status:
+                      </label>
+                      <select
+                        value={sibling.maritalStatus || ""}
+                        onChange={(e) => {
+                          const updated = [...formData.siblings];
+                          updated[idx].maritalStatus = e.target.value;
+                          // Reset spouse name when marital status changes
+                          if (e.target.value !== "Married") {
+                            updated[idx].spouseName = "";
+                          }
+                          setFormData({ ...formData, siblings: updated });
+                        }}
+                        className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
+                      >
+                        <option value="">Select</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                      </select>
+                    </div>
+
+                    {/* Spouse Name - Only show when married */}
+                    {sibling.maritalStatus === "Married" && (
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Spouse Name:
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter spouse name"
+                          value={sibling.spouseName || ""}
+                          onChange={(e) => {
+                            const updated = [...formData.siblings];
+                            updated[idx].spouseName = e.target.value;
+                            setFormData({ ...formData, siblings: updated });
+                          }}
+                          className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Add Sibling Button */}
           <button
             type="button"
             onClick={() =>
@@ -565,7 +653,13 @@ export default function UserProfilePage({ data }: { data: any }) {
                 ...formData,
                 siblings: [
                   ...formData.siblings,
-                  { name: "", gender: "", dateOfBirth: "", maritalStatus: "" },
+                  {
+                    name: "",
+                    gender: "",
+                    dateOfBirth: "",
+                    maritalStatus: "",
+                    spouseName: "",
+                  },
                 ],
               })
             }
@@ -578,56 +672,182 @@ export default function UserProfilePage({ data }: { data: any }) {
         {/* Children */}
         <div className="border p-4 rounded-md">
           <h3 className="font-semibold mb-2">Children</h3>
-          {formData.children.map((child: any, idx: number) => (
-            <div key={idx} className="flex items-center gap-4 mb-2">
-              <input
-                type="text"
-                placeholder="Name"
-                value={child.name}
-                onChange={(e) => {
-                  const updated = [...formData.children];
-                  updated[idx].name = e.target.value;
-                  setFormData({ ...formData, children: updated });
-                }}
-                className="border p-2 rounded flex-1 bg-white border-yellow-300 focus:border-red-500"
-              />
-              <select
-                value={child.gender}
-                onChange={(e) => {
-                  const updated = [...formData.children];
-                  updated[idx].gender = e.target.value;
-                  setFormData({ ...formData, children: updated });
-                }}
-                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
-              >
-                <option value="">Gender</option>
-                <option value="Son">Son</option>
-                <option value="Daughter">Daughter</option>
-              </select>
-              <input
-                type="date"
-                value={child.dateOfBirth}
-                onChange={(e) => {
-                  const updated = [...formData.children];
-                  updated[idx].dateOfBirth = e.target.value;
-                  setFormData({ ...formData, children: updated });
-                }}
-                className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  const updated = formData.children.filter(
-                    (_: any, i: number) => i !== idx
-                  );
-                  setFormData({ ...formData, children: updated });
-                }}
-                className="bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-sm"
-              >
-                X
-              </button>
-            </div>
-          ))}
+          {formData.children.map((child: any, idx: number) => {
+            // Calculate age based on date of birth
+            const calculateAge = (dateOfBirth: string) => {
+              if (!dateOfBirth) return 0;
+              const today = new Date();
+              const birthDate = new Date(dateOfBirth);
+              let age = today.getFullYear() - birthDate.getFullYear();
+              const monthDiff = today.getMonth() - birthDate.getMonth();
+              if (
+                monthDiff < 0 ||
+                (monthDiff === 0 && today.getDate() < birthDate.getDate())
+              ) {
+                age--;
+              }
+              return age;
+            };
+
+            const age = calculateAge(child.dateOfBirth);
+            const showMaritalStatus =
+              (child.gender === "Daughter" && age >= 18) ||
+              (child.gender === "Son" && age >= 21);
+
+            return (
+              <div key={idx} className="border p-3 rounded mb-3 bg-gray-50">
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  {/* Name */}
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={child.name}
+                    onChange={(e) => {
+                      const updated = [...formData.children];
+                      updated[idx].name = e.target.value;
+                      setFormData({ ...formData, children: updated });
+                    }}
+                    className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+                  />
+
+                  {/* DOB */}
+                  <input
+                    type="date"
+                    value={child.dateOfBirth}
+                    onChange={(e) => {
+                      const updated = [...formData.children];
+                      updated[idx].dateOfBirth = e.target.value;
+                      // Reset marital status when DOB changes
+                      updated[idx].maritalStatus = "";
+                      updated[idx].spouseName = "";
+                      setFormData({ ...formData, children: updated });
+                    }}
+                    className="border p-2 rounded bg-white border-yellow-300 focus:border-red-500"
+                  />
+
+                  {/* Age Display */}
+                  <div className="flex items-center px-2">
+                    <span className="text-sm text-gray-600">
+                      {age > 0 ? `${age} years old` : "Age: --"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Gender (radio buttons) */}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Gender:
+                    </label>
+                    <div className="flex gap-3">
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name={`child-gender-${idx}`}
+                          value="Son"
+                          checked={child.gender === "Son"}
+                          onChange={(e) => {
+                            const updated = [...formData.children];
+                            updated[idx].gender = e.target.value;
+                            // Reset marital fields when gender changes
+                            updated[idx].maritalStatus = "";
+                            updated[idx].spouseName = "";
+                            setFormData({ ...formData, children: updated });
+                          }}
+                        />
+                        Son
+                      </label>
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name={`child-gender-${idx}`}
+                          value="Daughter"
+                          checked={child.gender === "Daughter"}
+                          onChange={(e) => {
+                            const updated = [...formData.children];
+                            updated[idx].gender = e.target.value;
+                            // Reset marital fields when gender changes
+                            updated[idx].maritalStatus = "";
+                            updated[idx].spouseName = "";
+                            setFormData({ ...formData, children: updated });
+                          }}
+                        />
+                        Daughter
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Remove Button */}
+                  <div className="flex justify-end items-start">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = formData.children.filter(
+                          (_: any, i: number) => i !== idx
+                        );
+                        setFormData({ ...formData, children: updated });
+                      }}
+                      className="bg-red-500 text-white rounded-full h-8 w-8 flex items-center justify-center text-sm hover:bg-red-600"
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+
+                {/* Conditional Marital Status Fields */}
+                {showMaritalStatus && (
+                  <div className="mt-3 grid grid-cols-2 gap-3 pt-3 border-t border-gray-300">
+                    {/* Marital Status */}
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Marital Status:
+                      </label>
+                      <select
+                        value={child.maritalStatus || ""}
+                        onChange={(e) => {
+                          const updated = [...formData.children];
+                          updated[idx].maritalStatus = e.target.value;
+                          // Reset spouse name when marital status changes
+                          if (e.target.value !== "Married") {
+                            updated[idx].spouseName = "";
+                          }
+                          setFormData({ ...formData, children: updated });
+                        }}
+                        className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
+                      >
+                        <option value="">Select</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                      </select>
+                    </div>
+
+                    {/* Spouse Name - Only show when married */}
+                    {child.maritalStatus === "Married" && (
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Spouse Name:
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter spouse name"
+                          value={child.spouseName || ""}
+                          onChange={(e) => {
+                            const updated = [...formData.children];
+                            updated[idx].spouseName = e.target.value;
+                            setFormData({ ...formData, children: updated });
+                          }}
+                          className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
           <button
             type="button"
             onClick={() =>
@@ -639,7 +859,8 @@ export default function UserProfilePage({ data }: { data: any }) {
                     name: "",
                     gender: "",
                     dateOfBirth: "",
-                    studyingOrWorking: "",
+                    maritalStatus: "",
+                    spouseName: "",
                   },
                 ],
               })
@@ -721,6 +942,164 @@ function ValidationModal({
           Close
         </button>
       </div>
+    </div>
+  );
+}
+
+/* 🆕 Profession Group Field Component */
+function ProfessionGroupField({
+  label,
+  name,
+  value,
+  onChange,
+  required = false,
+}: any) {
+  const professionGroups = [
+    "Traditional Professions",
+    "Business & Commerce",
+    "Technology & Digital",
+    "Government & Public Service",
+    "Skilled Trades & Services",
+    "Creative & Media",
+    "Healthcare & Wellness",
+    "Agriculture & Allied Fields",
+    "Education & Research",
+    "Miscellaneous Modern Professions",
+  ];
+
+  return (
+    <div>
+      <label className="block font-medium mb-2">{label}</label>
+      <select
+        name={name}
+        value={value || ""}
+        onChange={onChange}
+        className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
+        required={required}
+      >
+        <option value="">Select Profession Group</option>
+        {professionGroups.map((group) => (
+          <option key={group} value={group}>
+            {group}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+/* 🆕 Specific Profession Field Component */
+function SpecificProfessionField({
+  label,
+  name,
+  value,
+  onChange,
+  professionGroup,
+  required = false,
+}: any) {
+  const professionsByGroup: { [key: string]: string[] } = {
+    "Traditional Professions": [
+      "Doctor",
+      "Engineer",
+      "Lawyer",
+      "Architect",
+      "Chartered Accountant / Company Secretary",
+    ],
+    "Business & Commerce": [
+      "Entrepreneur / Business Owner",
+      "Trader / Retailer / Wholesaler",
+      "Consultant",
+      "Banker / Finance Professional",
+      "Real Estate Developer",
+      "Stock Broker",
+    ],
+    "Technology & Digital": [
+      "Software Developer / IT Consultant",
+      "Data Scientist / Analyst",
+      "Cybersecurity Specialist",
+      "Web & App Developer",
+      "Digital Marketer / SEO Specialist",
+      "AI & Robotics Engineer",
+    ],
+    "Government & Public Service": [
+      "Civil Servant (IAS/IPS/IFS, etc.)",
+      "Defense Personnel (Army/Navy/Air Force)",
+      "Politician / Public Representative",
+      "Public Sector Professional",
+      "Judiciary / Judge",
+    ],
+    "Skilled Trades & Services": [
+      "Electrician / Plumber / Mechanic",
+      "Carpenter / Mason",
+      "Tailor / Artisan / Handicraft Worker",
+      "Driver / Transporter",
+      "Hospitality & Tourism Worker",
+    ],
+    "Creative & Media": [
+      "Artist / Designer",
+      "Writer / Author / Poet",
+      "Journalist / Editor",
+      "Actor / Musician / Filmmaker",
+      "Photographer / Videographer",
+      "Fashion Designer / Stylist",
+    ],
+    "Healthcare & Wellness": [
+      "Doctor (Specialists: Cardiologist, Surgeon, Dentist, etc.)",
+      "Nurse / Paramedic",
+      "Physiotherapist",
+      "Nutritionist / Dietician",
+      "Yoga & Wellness Coach",
+      "Psychologist / Counselor",
+    ],
+    "Agriculture & Allied Fields": [
+      "Farmer / Agri-entrepreneur",
+      "Horticulturist",
+      "Veterinary Doctor",
+      "Fisheries & Dairy Expert",
+    ],
+    "Education & Research": [
+      "School Teacher",
+      "University Professor",
+      "Scientist / Researcher",
+      "Education Consultant",
+      "Education Coach",
+      "Librarian",
+    ],
+    "Miscellaneous Modern Professions": [
+      "Social Media Influencer / Content Creator",
+      "Event Manager",
+      "Fitness Trainer",
+      "NGO Worker / Social Activist",
+      "Corporate Professional (HR, Marketing, Operations, etc.)",
+    ],
+  };
+
+  const availableProfessions = professionGroup
+    ? professionsByGroup[professionGroup] || []
+    : [];
+
+  return (
+    <div>
+      <label className="block font-medium mb-2">{label}</label>
+      <select
+        name={name}
+        value={value || ""}
+        onChange={onChange}
+        className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
+        required={required}
+        disabled={!professionGroup}
+      >
+        <option value="">
+          {professionGroup
+            ? "Select Specific Profession"
+            : "First select profession group"}
+        </option>
+        {availableProfessions.map((profession) => (
+          <option key={profession} value={profession}>
+            {profession}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

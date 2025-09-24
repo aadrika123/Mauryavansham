@@ -31,10 +31,7 @@ export const users = pgTable("users", {
   address: text("address"),
   photo: varchar("photo", { length: 255 }),
 
-  // Matrimonial extra fields
   maritalStatus: varchar("marital_status", { length: 20 }),
-  // religion: varchar("religion", { length: 50 }),
-  // caste: varchar("caste", { length: 50 }),
   motherTongue: varchar("mother_tongue", { length: 50 }),
   height: varchar("height", { length: 10 }),
   weight: varchar("weight", { length: 10 }),
@@ -55,15 +52,12 @@ export const users = pgTable("users", {
   status: varchar("status", { length: 20 }).default("pending"),
   fatherName: varchar("father_name", { length: 100 }),
   motherName: varchar("mother_name", { length: 100 }),
+  spouseName: varchar("spouse_name", { length: 100 }),
 
-  // values: "pending" | "approved" | "rejected"
-
-  // ❌ income removed (form me nahi hai ab)
-
-  // diet: varchar("diet", { length: 20 }),
-  // smoking: varchar("smoking", { length: 10 }),
-  // drinking: varchar("drinking", { length: 10 }),
-  // hobbies: text("hobbies"),
+  professionGroup: varchar("profession_group", { length: 100 }), // e.g., "Traditional Professions"
+  profession: varchar("profession", { length: 150 }), // e.g., "Doctor", "Engineer"
+  professionDetails: text("profession_details"),
+  facebookLink: varchar("facebook_link", { length: 255 }),
 
   // Location
   city: varchar("city", { length: 50 }),

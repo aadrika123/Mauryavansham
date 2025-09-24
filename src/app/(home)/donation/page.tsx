@@ -23,7 +23,7 @@ export default async function DonationsPage() {
       id: 1,
       title: "Heritage Temple Restoration",
       description:
-        "Restore the ancient Mauryavansh temple in Pataliputra to preserve our architectural heritage for future generations.",
+        "Restore the ancient Mauryavansham temple in Pataliputra to preserve our architectural heritage for future generations.",
       image: "/placeholder.svg?height=300&width=500&text=Heritage+Temple",
       goal: 500000,
       raised: 342500,

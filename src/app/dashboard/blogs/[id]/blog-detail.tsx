@@ -17,6 +17,7 @@ interface Blog {
   updatedAt: string
   approvedAt?: string
   rejectionReason?: string
+  imageUrl?: string
   author: {
     id: string
     name: string
@@ -62,6 +63,7 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
   }
 
   const canEdit = blog.author.id === currentUserId && (blog.status === "draft" || blog.status === "rejected")
+  console.log(blog);
 
   return (
     <div className="space-y-6">
@@ -102,6 +104,15 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div> 
+            {blog.imageUrl && (
+              <img
+                src={blog.imageUrl}
+                alt={blog.title}
+                className="w-full object-fill rounded-t-lg"
+              />
+            )}
+          </div>
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Summary</h3>
             <p className="text-gray-700 leading-relaxed">{blog.summary}</p>

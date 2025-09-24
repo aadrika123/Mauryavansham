@@ -10,10 +10,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // const session = await getServerSession(authOptions);
+    // if (!session?.user?.id) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
 
     // const [blog] = await db.select().from(blogs).where(eq(blogs.id, params.id));
     const blogId = Number(params.id);
@@ -27,13 +27,13 @@ export async function GET(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    if (
-      String(blog.authorId) !== String(session.user.id) &&
-      session.user.role !== "admin" &&
-      session.user.role !== "superAdmin"
-    ) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    // if (
+    //   String(blog.authorId) !== String(session.user.id) &&
+    //   session.user.role !== "admin" &&
+    //   session.user.role !== "superAdmin"
+    // ) {
+    //   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // }
 
     return NextResponse.json({ blog });
   } catch (error) {

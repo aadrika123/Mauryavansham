@@ -30,6 +30,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
       updatedAt: blogs.updatedAt,
       approvedAt: blogs.approvedAt,
       rejectionReason: blogs.rejectionReason,
+      imageUrl: blogs.imageUrl,
       author: {
         id: users.id,
         name: users.name,

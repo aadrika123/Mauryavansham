@@ -62,10 +62,24 @@ export default function AdmindashboardLayout({
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
     { title: "Manage Users", href: "/admin/users", icon: Users },
-    { title: "Create Events", href: "/admin/events", icon: Calendar },
+
+    // {
+    //   title: "Event Moderation",
+    //   href: "/admin/event-modaration",
+    //   icon: Calendar,
+    // },
+    {
+      title: "Events",
+      href: "",
+      icon: Camera,
+      subItems: [
+        { title: "Create Events", href: "/admin/events", icon: Calendar },
+        { title: "My Events", href: "/admin/my-events", icon: Calendar },
+      ],
+    },
     {
       title: "Matrimonial",
-      href: "#",
+      href: "",
       icon: Camera,
       subItems: [
         {
@@ -85,6 +99,7 @@ export default function AdmindashboardLayout({
         },
       ],
     },
+    // { title: "Create Events", href: "/admin/events", icon: Calendar },
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
     {
@@ -94,7 +109,7 @@ export default function AdmindashboardLayout({
     },
     {
       title: "Business",
-      href: "#",
+      href: "",
       icon: Tv,
       subItems: [
         {
@@ -115,11 +130,22 @@ export default function AdmindashboardLayout({
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
     { title: "Manage Users", href: "/admin/users", icon: Users },
-    { title: "Create Events", href: "/admin/events", icon: Calendar },
+    // { title: "Create Events", href: "/admin/events", icon: Calendar },
+    // { title: "My Events", href: "/admin/my-events", icon: Calendar },
+    {
+      title: "Events",
+      href: "",
+      icon: Camera,
+      subItems: [
+        { title: "Create Events", href: "/admin/events", icon: Calendar },
+        { title: "My Events", href: "/admin/my-events", icon: Calendar },
+      ],
+    },
     { title: "All Users", href: "/admin/manage-users", icon: Users },
+
     {
       title: "Modarations",
-      href: "#",
+      href: "",
       icon: Tv,
       subItems: [
         { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
@@ -128,6 +154,11 @@ export default function AdmindashboardLayout({
           title: "Discussions Moderation",
           href: "/admin/discussions",
           icon: MessageSquare,
+        },
+        {
+          title: "Event Moderation",
+          href: "/admin/event-moderation",
+          icon: Calendar,
         },
         {
           title: "Register business Moderation",
@@ -143,7 +174,7 @@ export default function AdmindashboardLayout({
     },
     {
       title: "Business",
-      href: "#",
+      href: "",
       icon: Wallet2Icon,
       subItems: [
         {
@@ -160,7 +191,7 @@ export default function AdmindashboardLayout({
     },
     {
       title: "Matrimonial",
-      href: "#",
+      href: "",
       icon: HeartHandshakeIcon,
       subItems: [
         {
@@ -183,7 +214,7 @@ export default function AdmindashboardLayout({
 
     {
       title: "All Masters",
-      href: "#",
+      href: "",
       icon: Wallet2Icon,
       subItems: [
         { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv },

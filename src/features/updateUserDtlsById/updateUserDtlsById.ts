@@ -54,6 +54,8 @@ export async function updateUserDtlsById(
           name: s.name,
           dateOfBirth: s.dateOfBirth || null,
           gender: s.gender || null,
+          maritalStatus: s.maritalStatus || null,
+          spouseName: s.spouseName || null,
         }))
       );
     }
@@ -67,6 +69,9 @@ export async function updateUserDtlsById(
           // dob: c.dateOfBirth ? new Date(c.dob) : null,
           dateOfBirth: c.dateOfBirth || null,
           gender: c.gender || null,
+          studyingOrWorking: c.studyingOrWorking || null,
+          maritalStatus: c.maritalStatus || null,
+          spouseName: c.spouseName || null,
         }))
       );
     }

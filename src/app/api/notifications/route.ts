@@ -43,7 +43,11 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
-  if (!body.businessOwnerId || !body.type || !body.message) {
+  // Normalization: koi bhi ek ID field aaye, usko userId me map kar do
+  const userId =
+    body.userId || body.businessOwnerId || body.profileId || body.customerId;
+
+  if (!userId || !body.type || !body.message) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 }
@@ -54,11 +58,12 @@ export async function POST(req: NextRequest) {
   const [notification] = await db
     .insert(notifications)
     .values({
-      type: body.type, // frontend se aaya hua type
-      message: body.message, // frontend se aaya hua message
-      userId: body.businessOwnerId, // notification kis ko jayega
+      type: body.type,
+      message: body.message,
+      userId: userId, // ab har jagah se koi bhi id aaye, yahan userId hi jayega
     })
-    .returning(); // returning() ka use kar ke naya insert hua row mil jaayega
+    .returning();
 
   return NextResponse.json(notification);
 }
+

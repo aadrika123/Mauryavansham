@@ -25,14 +25,14 @@ export interface WelcomeEmailData {
   password: string;
 }
 
-// Beautiful HTML template for Mauryavansh community
+// Beautiful HTML template for Mauryavansham community
 const createHtmlContent = (name: string, email: string, password: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Mauryavansh Community</title>
+    <title>Welcome to Mauryavansham Community</title>
     <style>
         body {
             margin: 0;
@@ -211,7 +211,7 @@ const createHtmlContent = (name: string, email: string, password: string) => `
         </div>
         
         <div class="content">
-            <h1 class="welcome-title">🏛️ Welcome to Mauryavansh Community! 🏛️</h1>
+            <h1 class="welcome-title">🏛️ Welcome to Mauryavansham Community! 🏛️</h1>
             
             <div class="greeting">
                 Namaste <strong>${name}</strong>,
@@ -224,7 +224,7 @@ const createHtmlContent = (name: string, email: string, password: string) => `
             
             <div class="community-message">
                 <p class="heritage-text">
-                    Welcome to the distinguished Mauryavansh community! You are now connected to a proud legacy that honors the great Mauryan heritage. Join us in celebrating our cultural traditions and building meaningful connections with fellow community members across the globe.
+                    Welcome to the distinguished Mauryavansham community! You are now connected to a proud legacy that honors the great Mauryan heritage. Join us in celebrating our cultural traditions and building meaningful connections with fellow community members across the globe.
                 </p>
             </div>
             
@@ -251,7 +251,7 @@ const createHtmlContent = (name: string, email: string, password: string) => `
             <div class="decorative-border"></div>
             
             <p style="text-align: center; color: #666; margin-top: 30px;">
-                <em>Please keep your credentials secure. We're honored to have you in the Mauryavansh community!</em>
+                <em>Please keep your credentials secure. We're honored to have you in the Mauryavansham community!</em>
             </p>
         </div>
         
@@ -260,7 +260,7 @@ const createHtmlContent = (name: string, email: string, password: string) => `
             <p>Explore our community platform:</p>
             <a href="https://mauryavansham.com" class="website-link">mauryavansham.com</a>
             <p style="margin-top: 15px; font-size: 14px; opacity: 0.8;">
-                © 2025 Mauryavansh Community. Honoring our heritage, strengthening our bonds.
+                © 2025 Mauryavansham Community. Honoring our heritage, strengthening our bonds.
             </p>
         </div>
     </div>
@@ -270,16 +270,16 @@ const createHtmlContent = (name: string, email: string, password: string) => `
 
 // Text content for email clients that don't support HTML
 const createTextContent = (name: string, email: string, password: string) => `
-👑 MAURYAVANSH COMMUNITY 👑
+👑 MAURYAVANSHAM COMMUNITY 👑
 मौर्यवंश - गौरवशाली परम्परा
 
-Welcome to Mauryavansh Community!
+Welcome to Mauryavansham Community!
 
 Namaste ${name},
 
 Congratulations! Your account has been created and sent for approval successfully.
 
-Welcome to the distinguished Mauryavansh community! You are now connected to a proud legacy that honors the great Mauryan heritage.
+Welcome to the distinguished Mauryavansham community! You are now connected to a proud legacy that honors the great Mauryan heritage.
 
 🔐 YOUR LOGIN CREDENTIALS:
 Email: ${email}
@@ -289,9 +289,9 @@ Password: ${password}
 
 Explore our community: https://mauryavansham.com
 
-Please keep your credentials secure. We're honored to have you in the Mauryavansh community!
+Please keep your credentials secure. We're honored to have you in the Mauryavansham community!
 
-© 2025 Mauryavansh Community
+© 2025 Mauryavansham Community
 Honoring our heritage, strengthening our bonds.
 `;
 
@@ -324,7 +324,7 @@ export const sendWelcomeEmail = async (data: WelcomeEmailData) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "👑 Mauryavansh Community - Your Account is Successfully Created ",
+      subject: "👑 Mauryavansham Community - Your Account is Successfully Created ",
       text: textContent,
       html: htmlContent,
     };

@@ -17,6 +17,7 @@ import { ImageIcon, Send } from "lucide-react";
 // import toast from "react-hot-toast";
 import Image from "next/image";
 import { useToast } from "@/src/components/ui/toastProvider";
+import { useSession } from "next-auth/react";
 
 export default function CreateEventForm() {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function CreateEventForm() {
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
   const { addToast } = useToast();
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
 
   const today = new Date().toISOString().split("T")[0]; // 👈 min date today
 
@@ -89,7 +92,7 @@ export default function CreateEventForm() {
         addToast({
           title: "Image uploaded successfully",
           variant: "success",
-        })
+        });
       } else {
         const error = await response.json();
         // toast.error(error.error || "Upload failed");
@@ -103,7 +106,7 @@ export default function CreateEventForm() {
       addToast({
         title: "Error uploading image",
         variant: "destructive",
-      })
+      });
     } finally {
       setUploading(false);
     }
@@ -116,11 +119,10 @@ export default function CreateEventForm() {
     // Validation
     if (!formData.title || !formData.description || !formData.date) {
       // return toast.error("Please fill in all required fields");
-     return addToast({
+      return addToast({
         title: "Please fill in all required fields",
         variant: "destructive",
-      })
-      
+      });
     }
 
     if (new Date(formData.date) < new Date(today)) {
@@ -128,7 +130,7 @@ export default function CreateEventForm() {
       return addToast({
         title: "Date cannot be in the past",
         variant: "destructive",
-      })
+      });
     }
 
     if (!formData.fromTime || !formData.toTime) {
@@ -136,7 +138,7 @@ export default function CreateEventForm() {
       return addToast({
         title: "Please select event timings",
         variant: "destructive",
-      })
+      });
     }
 
     if (formData.maxAttendees < "1") {
@@ -144,9 +146,16 @@ export default function CreateEventForm() {
       return addToast({
         title: "Max attendees must be at least 1",
         variant: "destructive",
-      })
+      });
     }
-
+    if (!userId) {
+      addToast({
+        title: "Not logged in",
+        description: "Please login to create event.",
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
     try {
       const response = await fetch("/api/events", {
@@ -154,6 +163,7 @@ export default function CreateEventForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          userId, // 👈 new
           image: formData.bannerImageUrl,
           fromTime: formatTimeTo12Hr(formData.fromTime),
           toTime: formatTimeTo12Hr(formData.toTime),
@@ -165,7 +175,7 @@ export default function CreateEventForm() {
         addToast({
           title: "Event created successfully!",
           variant: "success",
-        })
+        });
         router.push("/events");
       } else {
         const error = await response.json();
@@ -173,14 +183,14 @@ export default function CreateEventForm() {
         addToast({
           title: error.error || "Failed to create event",
           variant: "destructive",
-        })
+        });
       }
     } catch {
       // toast.error("Error creating event");
       addToast({
         title: "Error creating event",
         variant: "destructive",
-      })
+      });
     } finally {
       setLoading(false);
     }

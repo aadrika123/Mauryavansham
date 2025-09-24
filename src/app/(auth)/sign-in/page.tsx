@@ -13,7 +13,7 @@ export default function SignInPage() {
         <div className="text-center mb-8">
           <Crown className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-red-700 mb-2">Welcome Back</h1>
-          <p className="text-red-600">Sign in to your Mauryavansh account</p>
+          <p className="text-red-600">Sign in to your Mauryavansham account</p>
         </div>
 
         {/* Sign In Form */}

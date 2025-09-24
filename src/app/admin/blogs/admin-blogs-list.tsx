@@ -21,6 +21,7 @@ interface Blog {
   updatedAt: string
   approvedAt?: string
   rejectionReason?: string
+  imageUrl?: string
   author: {
     id: string
     name: string
@@ -134,9 +135,16 @@ export default function AdminBlogsList() {
     if (status === "all") return blogs
     return blogs.filter((blog) => blog.status === status)
   }
-
+console.log(blogs);
   const BlogCard = ({ blog }: { blog: Blog }) => (
     <Card key={blog.id} className="hover:shadow-lg transition-shadow">
+      {blog.imageUrl && (
+      <img
+        src={blog.imageUrl}
+        alt={blog.title}
+        className="w-full h-40 object-cover rounded-t-lg"
+      />
+    )}
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -169,7 +177,7 @@ export default function AdminBlogsList() {
           )}
 
           <div className="flex gap-2">
-            <Link href={`/admin/blogs/${blog.id}`} className="flex-1">
+            <Link href={`/admin/blogs/${blog?.id}`} className="flex-1">
               <Button variant="outline" size="sm" className="w-full bg-transparent">
                 <Eye className="h-4 w-4 mr-2" />
                 View Details

@@ -22,7 +22,15 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import "keen-slider/keen-slider.min.css";
+import { useKeenSlider } from "keen-slider/react";
+import { useSession } from "next-auth/react";
 
+interface User {
+  id: number;
+  name: string;
+  photo: string | null;
+}
 interface Ad {
   id: number;
   title: string;
@@ -38,6 +46,7 @@ interface AdPlacement {
 }
 export function FeaturesSection() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
+  
 
   useEffect(() => {
     fetch("/api/ad-placements/approved")
@@ -48,12 +57,14 @@ export function FeaturesSection() {
       })
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
-  console.log(adPlacements, "Ad Placements for FeaturesSection");
+
   const ad = adPlacements.find((ad) => ad.placementId === 3); // Assuming placement ID 3 is for the FeaturesSection ad
-  // console.log("Ad for FeaturesSection:", ad);
+  
+
   useEffect(() => {
     if (ad) fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
   }, [ad]);
+
   const features = [
     {
       icon: Users,
@@ -85,6 +96,7 @@ export function FeaturesSection() {
       description: "Stay updated with community events and celebrations",
       href: "/events",
     },
+    
     {
       icon: HandHeart,
       title: "Donation",
@@ -96,6 +108,24 @@ export function FeaturesSection() {
       title: "Achievements",
       description: "Showcase and celebrate community achievements",
       href: "/",
+    },
+    {
+      icon: Sparkles,
+      title: "Blogs",
+      description: "Read and share articles on community topics",
+      href: "/blogs",
+    },
+    {
+      icon: Sparkles,
+      title: "Educations",
+      description: "Explore educational resources and opportunities",
+      href: "/",
+    },
+    {
+      icon: Eye,
+      title: "Know your community members",
+      description: "See who is available in the community",
+      href: "/community-directory",
     },
   ];
 
@@ -128,7 +158,9 @@ export function FeaturesSection() {
               "Support and grow together through peer-to-peer collaboration",
             ].map((point, idx) => (
               <div key={idx} className="flex items-start gap-3">
-                <span className="text-yellow-600 text-xl"><Crown /></span>
+                <span className="text-yellow-600 text-xl">
+                  <Crown />
+                </span>
                 <p className="text-gray-700">{point}</p>
               </div>
             ))}
@@ -258,6 +290,9 @@ export function FeaturesSection() {
             ))}
           </div>
         </div>
+        {/* {session && ( */}
+         
+        {/* )} */}
       </section>
     </>
   );

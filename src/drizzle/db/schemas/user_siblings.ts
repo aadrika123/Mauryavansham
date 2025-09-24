@@ -12,6 +12,7 @@ export const userSiblings = pgTable("user_siblings", {
   gender: varchar("gender", { length: 10 }), // Brother / Sister
   dateOfBirth: date("date_of_birth"),        // optional
   occupation: varchar("occupation", { length: 100 }),
-  maritalStatus: varchar("marital_status", { length: 20 }), // Married / Unmarried
+  maritalStatus: varchar("marital_status", { length: 20 }), // Single / Married / Divorced / Widowed
+  spouseName: varchar("spouse_name", { length: 100 }), // 🆕 Added spouse name field
   details: text("details"), // extra info like "Settled in Mumbai"
 });

@@ -18,10 +18,12 @@ import {
   User,
   Lock,
   Eye,
+  Reply,
+  ThumbsUp,
+  Send,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-// import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Loader from "@/src/components/ui/loader";
 
@@ -32,6 +34,19 @@ interface Ad {
   link?: string;
   views: number;
   placementId: number;
+}
+
+interface Reply {
+  id: number;
+  content: string;
+  authorName: string;
+  authorId: string;
+  createdAt: string;
+  likeCount: number;
+  isLiked: boolean;
+  parentId?: number; // for nested replies
+  replies: Reply[]; // nested replies
+  userName: string;
 }
 
 interface Discussion {
@@ -51,6 +66,7 @@ interface Discussion {
   replyCount: number;
   authorId: string;
   isCompleted: boolean;
+  userName: string;
 }
 
 interface User {
@@ -63,11 +79,180 @@ interface Props {
   user?: User;
 }
 
+// Separate Reply Component for better organization
+function ReplyComponent({
+  reply,
+  user,
+  onReply,
+  onLike,
+  depth = 0,
+}: {
+  reply: Reply;
+  user?: User;
+  onReply: (parentId: number, content: string) => void;
+  onLike: (replyId: number) => void;
+  depth?: number;
+}) {
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [replyContent, setReplyContent] = useState("");
+  const [showReplies, setShowReplies] = useState(depth < 2); // Show nested replies by default for first 2 levels
+
+  const handleSubmitReply = () => {
+    if (!replyContent.trim()) return;
+    onReply(reply.id, replyContent);
+    setReplyContent("");
+    setShowReplyForm(false);
+    setShowReplies(true); // Show nested replies after posting
+  };
+
+  const handleMentionUser = (userName: string) => {
+    setReplyContent((prev) => prev + `@${userName} `);
+  };
+  console.log(reply);
+  return (
+    <div
+      className={`${depth > 0 ? "ml-6 border-l-2 border-gray-200 pl-4" : ""}`}
+    >
+      <div className="bg-white rounded-lg p-3 mb-2 border border-gray-100">
+        {/* Reply Header */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+              {reply?.userName ? reply.userName.charAt(0).toUpperCase() : "?"}
+            </div>
+
+            <span className="font-semibold text-red-600 text-sm cursor-pointer hover:underline">
+              {reply.authorName}
+            </span>
+          </div>
+          <span className="text-xs text-gray-500">
+            {new Date(reply.createdAt).toLocaleString("en-GB")}
+          </span>
+        </div>
+
+        {/* Reply Content */}
+        <div className="mb-3">
+          <p className="text-gray-700 text-sm leading-relaxed">
+            {reply.content}
+          </p>
+        </div>
+
+        {/* Reply Actions */}
+        <div className="flex items-center gap-4 text-xs text-gray-500">
+          <button
+            onClick={() => onLike(reply.id)}
+            className={`flex items-center gap-1 hover:text-blue-600 transition-colors ${
+              reply.isLiked ? "text-blue-600" : ""
+            }`}
+          >
+            <ThumbsUp
+              className={`h-3 w-3 ${reply.isLiked ? "fill-current" : ""}`}
+            />
+            <span>{reply.likeCount > 0 ? reply.likeCount : "Like"}</span>
+          </button>
+
+          {user && (
+            <button
+              onClick={() => setShowReplyForm(!showReplyForm)}
+              className="flex items-center gap-1 hover:text-red-600 transition-colors"
+            >
+              <Reply className="h-3 w-3" />
+              <span>Reply</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => handleMentionUser(reply.authorName)}
+            className="hover:text-red-600 transition-colors"
+          >
+            @{reply.authorName}
+          </button>
+
+          {reply.replies && reply.replies.length > 0 && (
+            <button
+              onClick={() => setShowReplies(!showReplies)}
+              className="hover:text-red-600 transition-colors font-medium"
+            >
+              {showReplies ? "Hide" : "Show"} {reply.replies.length}{" "}
+              {reply.replies.length === 1 ? "reply" : "replies"}
+            </button>
+          )}
+        </div>
+
+        {/* Reply Form */}
+        {showReplyForm && user && (
+          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+            <div className="flex gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                {user?.name ? user.name.charAt(0).toUpperCase() : "?"}
+              </div>
+              <div className="flex-1">
+                <textarea
+                  rows={2}
+                  placeholder={`Reply to ${reply.authorName}...`}
+                  className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                />
+                <div className="flex justify-end gap-2 mt-2">
+                  <button
+                    onClick={() => setShowReplyForm(false)}
+                    className="px-3 py-1 text-xs text-gray-600 hover:text-gray-800"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmitReply}
+                    disabled={!replyContent.trim()}
+                    className="px-3 py-1 bg-gradient-to-r from-orange-500 to-red-600 text-white text-xs rounded-md hover:from-orange-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                  >
+                    <Send className="h-3 w-3" />
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Nested Replies */}
+      {showReplies &&
+        reply.replies &&
+        reply.replies.length > 0 &&
+        depth < 3 && (
+          <div className="space-y-2">
+            {reply.replies.map((nestedReply) => (
+              <ReplyComponent
+                key={nestedReply.id}
+                reply={nestedReply}
+                user={user}
+                onReply={onReply}
+                onLike={onLike}
+                depth={depth + 1}
+              />
+            ))}
+          </div>
+        )}
+
+      {/* Show "View more replies" if depth limit reached */}
+      {reply.replies && reply.replies.length > 0 && depth >= 3 && (
+        <div className="ml-6 mt-2">
+          <button className="text-xs text-blue-600 hover:underline">
+            View {reply.replies.length} more{" "}
+            {reply.replies.length === 1 ? "reply" : "replies"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CommunityForumPage({ user }: Props) {
   const [selectedCategory, setSelectedCategory] = useState("All Discussions");
   const [searchQuery, setSearchQuery] = useState("");
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
-  const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]); // Store all discussions
+  const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -76,8 +261,8 @@ export default function CommunityForumPage({ user }: Props) {
   const [apiLoading, setApiLoading] = useState(false);
 
   // Pagination state
-  const [displayCount, setDisplayCount] = useState(4); // Initially show 4 discussions
-  const ITEMS_PER_LOAD = 2; // Load 2 more discussions each time
+  const [displayCount, setDisplayCount] = useState(4);
+  const ITEMS_PER_LOAD = 2;
 
   // Create Discussion Form State
   const [newDiscussion, setNewDiscussion] = useState({
@@ -88,15 +273,20 @@ export default function CommunityForumPage({ user }: Props) {
   });
 
   const [adPlacements, setAdPlacements] = useState<Ad[]>([]);
-  // Add to your CommunityForumPage component state
   const [openDiscussionId, setOpenDiscussionId] = useState<number | null>(null);
-  const [discussionReplies, setDiscussionReplies] = useState<any[]>([]);
+  const [discussionReplies, setDiscussionReplies] = useState<Reply[]>([]);
   const [repliesLoading, setRepliesLoading] = useState(false);
   const [newReplyContent, setNewReplyContent] = useState("");
-  const [showAllReplies, setShowAllReplies] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] =
     useState<Discussion | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Mock user mentions list (you can replace with real data)
+  const [availableUsers] = useState([
+    { id: "1", name: "John Doe" },
+    { id: "2", name: "Jane Smith" },
+    { id: "3", name: "Mike Johnson" },
+  ]);
 
   const openModal = (discussion: Discussion) => {
     setSelectedDiscussion(discussion);
@@ -108,13 +298,11 @@ export default function CommunityForumPage({ user }: Props) {
     setIsModalOpen(false);
   };
 
-  // Close modal
   const closeRepliesModal = () => {
     setOpenDiscussionId(null);
     setDiscussionReplies([]);
   };
 
-  // Load more discussions function
   const handleLoadMore = () => {
     setDisplayCount((prev) => prev + ITEMS_PER_LOAD);
   };
@@ -134,12 +322,10 @@ export default function CommunityForumPage({ user }: Props) {
     loadDiscussions();
   }, [selectedCategory, searchQuery]);
 
-  // Reset display count when category or search changes
   useEffect(() => {
     setDisplayCount(4);
   }, [selectedCategory, searchQuery]);
 
-  // After fetching categories from API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -148,12 +334,10 @@ export default function CommunityForumPage({ user }: Props) {
         if (data.success) {
           const allCategories = [
             { id: 0, name: "All Discussions", count: 0 },
-            { id: -1, name: "My Discussions", count: 0 }, // <-- New special category
+            { id: -1, name: "My Discussions", count: 0 },
             ...data.data.map((cat: any) => ({ ...cat, count: 0 })),
           ];
           setCategories(allCategories);
-
-          // Load discussions with updated categories
           loadDiscussions(allCategories);
         }
       } catch (err) {
@@ -173,7 +357,6 @@ export default function CommunityForumPage({ user }: Props) {
       const data = await response.json();
       const allDiscussionsData: Discussion[] = data.data || data || [];
 
-      // Filter discussions for display
       let filteredDiscussions: Discussion[];
       if (selectedCategory === "All Discussions") {
         filteredDiscussions = allDiscussionsData.filter((d) => !d.isCompleted);
@@ -187,13 +370,9 @@ export default function CommunityForumPage({ user }: Props) {
         );
       }
 
-      // Store all filtered discussions
       setAllDiscussions(filteredDiscussions);
-
-      // Display only the first 'displayCount' discussions
       setDiscussions(filteredDiscussions.slice(0, displayCount));
 
-      // Update category counts
       const counts: Record<string, number> = {
         "All Discussions": allDiscussionsData.filter((d) => !d.isCompleted)
           .length,
@@ -202,7 +381,6 @@ export default function CommunityForumPage({ user }: Props) {
         ).length,
       };
 
-      // Only count incomplete discussions for other categories
       allDiscussionsData.forEach((d) => {
         if (!d.isCompleted && d.category) {
           counts[d.category] = (counts[d.category] || 0) + 1;
@@ -223,7 +401,6 @@ export default function CommunityForumPage({ user }: Props) {
     }
   };
 
-  // Update displayed discussions when displayCount changes
   useEffect(() => {
     setDiscussions(allDiscussions.slice(0, displayCount));
   }, [displayCount, allDiscussions]);
@@ -257,12 +434,12 @@ export default function CommunityForumPage({ user }: Props) {
           category: "Business Help",
           location: "",
         });
-        setDisplayCount(4); // Reset to initial count
-        loadDiscussions(); // Reload discussions
+        setDisplayCount(4);
+        loadDiscussions();
       }
     } catch (error) {
       console.error("Failed to create discussion:", error);
-    }finally{
+    } finally {
       setApiLoading(false);
     }
   };
@@ -279,11 +456,8 @@ export default function CommunityForumPage({ user }: Props) {
       });
 
       if (response.ok) {
-        // Backend ab hamesha JSON return karega (success + liked)
         const data = await response.json();
         console.log("Like response:", data);
-
-        // ✅ Reload discussions to get updated likes count from DB
         loadDiscussions();
       }
     } catch (error) {
@@ -298,7 +472,7 @@ export default function CommunityForumPage({ user }: Props) {
       });
 
       if (res.ok) {
-        loadDiscussions(); // reload discussions
+        loadDiscussions();
       } else {
         console.error("Failed to close discussion");
       }
@@ -307,22 +481,92 @@ export default function CommunityForumPage({ user }: Props) {
     }
   };
 
-  // Function to open discussion modal and load replies
-  // Fetch replies
-  const fetchReplies = async (discussionId: number) => {
-    setRepliesLoading(true);
-    try {
-      const res = await fetch(`/api/discussions/${discussionId}/replies`);
-      const data = await res.json();
-      setDiscussionReplies(data.data || []);
-    } catch (error) {
-      console.error("Failed to load replies:", error);
-    } finally {
-      setRepliesLoading(false);
-    }
-  };
+  // Enhanced replies fetching with nested structure
+  // const fetchReplies = async (discussionId: number) => {
+  //   setRepliesLoading(true);
+  //   try {
+  //     const res = await fetch(`/api/discussions/${discussionId}/replies`);
+  //     const data = await res.json();
 
-  // Open modal
+  //     // Transform flat replies into nested structure
+  //     const replies = data.data || [];
+  //     const repliesMap = new Map();
+  //     const rootReplies: Reply[] = [];
+
+  //     // First pass: create map of all replies
+  //     replies.forEach((reply: any) => {
+  //       repliesMap.set(reply.id, {
+  //         ...reply,
+  //         replies: [],
+  //         likeCount: reply.likeCount || 0,
+  //         isLiked: reply.isLiked || false,
+  //       });
+  //     });
+
+  //     // Second pass: build nested structure
+  //     replies.forEach((reply: any) => {
+  //       if (reply.parentId) {
+  //         const parent = repliesMap.get(reply.parentId);
+  //         if (parent) {
+  //           parent.replies.push(repliesMap.get(reply.id));
+  //         }
+  //       } else {
+  //         rootReplies.push(repliesMap.get(reply.id));
+  //       }
+  //     });
+
+  //     setDiscussionReplies(rootReplies);
+  //   } catch (error) {
+  //     console.error("Failed to load replies:", error);
+  //   } finally {
+  //     setRepliesLoading(false);
+  //   }
+  // };
+  const fetchReplies = async (discussionId: number) => {
+  setRepliesLoading(true);
+  try {
+    const res = await fetch(`/api/discussions/${discussionId}/replies`);
+    const data = await res.json();
+    
+    // Debug: Check what API actually returns
+    console.log('API Response:', data.data);
+
+    const replies = data.data || [];
+    const repliesMap = new Map();
+    const rootReplies: Reply[] = [];
+
+    // ✅ FIXED: Don't override like data from API
+    replies.forEach((reply: any) => {
+      repliesMap.set(reply.id, {
+        ...reply, // This preserves likeCount and isLiked from API
+        replies: [], // Only add empty replies array
+        // ❌ REMOVE these lines:
+        // likeCount: reply.likeCount || 0,
+        // isLiked: reply.isLiked || false,
+      });
+    });
+
+    // Second pass: build nested structure (same as before)
+    replies.forEach((reply: any) => {
+      if (reply.parentId) {
+        const parent = repliesMap.get(reply.parentId);
+        if (parent) {
+          parent.replies.push(repliesMap.get(reply.id));
+        }
+      } else {
+        rootReplies.push(repliesMap.get(reply.id));
+      }
+    });
+
+    console.log('Final nested replies:', rootReplies); // Debug
+    setDiscussionReplies(rootReplies);
+  } catch (error) {
+    console.error("Failed to load replies:", error);
+  } finally {
+    setRepliesLoading(false);
+  }
+};
+
   const handleViewReplies = (discussionId: number) => {
     if (!user) {
       setShowLoginModal(true);
@@ -332,31 +576,58 @@ export default function CommunityForumPage({ user }: Props) {
     fetchReplies(discussionId);
   };
 
-  // Post a reply
-  const handlePostReply = async () => {
-    if (!newReplyContent.trim() || !openDiscussionId) return;
+  // Enhanced reply posting with parent support
+  const handlePostReply = async (parentId?: number, content?: string) => {
+    const replyContent = content || newReplyContent;
+    if (!replyContent.trim() || !openDiscussionId) return;
 
     try {
       const res = await fetch(`/api/discussions/${openDiscussionId}/replies`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          discussionId: openDiscussionId, // optional, server already has [id]
-          content: newReplyContent,
+          discussionId: openDiscussionId,
+          content: replyContent,
+          parentId: parentId || null,
         }),
       });
 
       const data = await res.json();
 
       if (data.success) {
-        // latest reply show kare
-        setDiscussionReplies((prev) => [data.data, ...prev]);
-        setNewReplyContent("");
+        // Refresh replies to maintain proper nesting
+        fetchReplies(openDiscussionId);
+        if (!parentId) {
+          setNewReplyContent("");
+        }
       } else {
         console.error("Failed to post reply:", data.message);
       }
     } catch (error) {
       console.error("Failed to post reply:", error);
+    }
+  };
+
+  // Handle reply likes
+  const handleLikeReply = async (replyId: number) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/discussions/replies/${replyId}/likes`, {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        // Refresh replies to get updated like counts
+        if (openDiscussionId) {
+          fetchReplies(openDiscussionId);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to like reply:", error);
     }
   };
 
@@ -383,20 +654,18 @@ export default function CommunityForumPage({ user }: Props) {
     }
   }, [ad]);
 
-  console.log(selectedCategory, "categories");
   return (
     <div className="px-4 sm:px-6 md:px-8 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
       {apiLoading && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          {/* <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> */}
           <Loader />
         </div>
       )}
+
       {/* Login Modal */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            {/* same login modal content */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-red-700 flex items-center gap-2">
                 <Lock className="h-5 w-5" />
@@ -437,7 +706,6 @@ export default function CommunityForumPage({ user }: Props) {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            {/* same create discussion content */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-red-700">
                 Start New Discussion
@@ -483,7 +751,11 @@ export default function CommunityForumPage({ user }: Props) {
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 >
                   {categories
-                    .filter((cat) => cat.name !== "All Discussions") // skip the special category
+                    .filter(
+                      (cat) =>
+                        cat.name !== "All Discussions" &&
+                        cat.name !== "My Discussions"
+                    )
                     .map((cat) => (
                       <option key={cat.id} value={cat.name}>
                         {cat.name}
@@ -491,6 +763,7 @@ export default function CommunityForumPage({ user }: Props) {
                     ))}
                 </select>
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Location
@@ -507,6 +780,7 @@ export default function CommunityForumPage({ user }: Props) {
                   className="w-full"
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Content
@@ -558,9 +832,9 @@ export default function CommunityForumPage({ user }: Props) {
       </div>
 
       {/* Header */}
-      <div className="container mx-auto  text-center">
-        <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto " />
-        <div className="relative ">
+      <div className="container mx-auto text-center">
+        <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto" />
+        <div className="relative">
           <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg"></div>
           <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-red-700 mb-4">
             Community Forum
@@ -595,7 +869,6 @@ export default function CommunityForumPage({ user }: Props) {
             {/* Categories */}
             <Card className="bg-yellow-50 border-yellow-200">
               <CardContent className="p-4">
-                {/* same categories content */}
                 <h3 className="font-bold text-red-700 mb-4">Categories</h3>
                 <div className="space-y-1">
                   {categories.map((category) => (
@@ -664,22 +937,15 @@ export default function CommunityForumPage({ user }: Props) {
                     className="bg-yellow-50 border-yellow-200 hover:shadow-md transition-shadow"
                   >
                     <CardContent className="p-4 sm:p-6">
-                      {/* same discussion content */}
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          {/* <Link
-                              href={`/community/discussions/${discussion.id}`}
-                              className="text-xl font-semibold text-red-700 mb-2 hover:text-red-800 cursor-pointer block"
-                            >
-                              {discussion.title}
-                            </Link> */}
                           <h2
                             className="text-xl font-semibold text-red-700 mb-2 hover:text-red-800 cursor-pointer"
                             onClick={() => openModal(discussion)}
                           >
                             {discussion.title}
                           </h2>
-                          <p className="text-base  mb-1">
+                          <p className="text-base mb-1">
                             <span className="text-red-500">
                               {discussion.authorName} {""}
                             </span>
@@ -727,10 +993,6 @@ export default function CommunityForumPage({ user }: Props) {
                               <span>{discussion.likeCount} likes</span>
                             </button>
 
-                            {/* <div className="flex items-center gap-1">
-                                <Eye className="h-4 w-4" />
-                                <span>View</span>
-                              </div> */}
                             {discussion.authorId === user?.id &&
                               !discussion.isCompleted &&
                               selectedCategory == "My Discussions" && (
@@ -765,7 +1027,7 @@ export default function CommunityForumPage({ user }: Props) {
               )}
             </div>
 
-            {/* Load More - Updated with functional logic */}
+            {/* Load More */}
             {allDiscussions.length > displayCount && (
               <div className="text-center mt-8">
                 <Button
@@ -808,7 +1070,6 @@ export default function CommunityForumPage({ user }: Props) {
                 ) : (
                   <div className="w-full h-40 sm:h-60 md:h-72 lg:h-[300px] relative">
                     <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4 sm:p-8">
-                      {/* same empty ad placeholder content */}
                       <div className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 bg-gradient-to-br from-amber-50 to-yellow-100">
                         <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
                           Book Your Ad (5) <br />
@@ -835,118 +1096,89 @@ export default function CommunityForumPage({ user }: Props) {
         </div>
       </div>
 
-      {/* Discussion Replies Modal */}
+      {/* Enhanced Discussion Replies Modal - Facebook Style */}
       {openDiscussionId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-            {/* same replies modal */}
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-red-700">
-                Discussion Replies
-              </h3>
-              <button
-                onClick={closeRepliesModal}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            {/* Loading Spinner */}
-            {repliesLoading ? (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600 mx-auto"></div>
-                <p className="text-gray-600 mt-2">Loading replies...</p>
+          <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 rounded-t-lg">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-red-700">
+                  Discussion Replies
+                </h3>
+                <button
+                  onClick={closeRepliesModal}
+                  className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-            ) : (
-              <>
-                {/* Replies List */}
-                <div className="space-y-4 mb-2">
-                  {discussionReplies.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4">
-                      No replies yet
-                    </p>
-                  ) : (
-                    <>
-                      {(showAllReplies
-                        ? discussionReplies
-                        : discussionReplies.slice(0, 3)
-                      ).map((reply, idx) => (
-                        <div
-                          key={reply.id}
-                          className={`p-3 rounded-md border ${
-                            idx === 0
-                              ? "border-red-500 bg-red-50"
-                              : "border-gray-200"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-semibold text-red-600">
-                              {reply.userName || reply.authorName}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {new Date(reply.createdAt)
-                                .toLocaleString("en-GB")
-                                .replaceAll("/", "-")}
-                            </span>
-                          </div>
-                          <p className="text-gray-700">{reply.content}</p>
-                        </div>
-                      ))}
+            </div>
 
-                      {/* Show info & toggle button if more than 3 replies */}
-                      {discussionReplies.length > 3 && (
-                        <div className="text-center mt-2">
-                          {!showAllReplies ? (
-                            <>
-                              <p className="text-sm text-gray-500">
-                                Showing latest 3 replies of{" "}
-                                {discussionReplies.length} total.
-                              </p>
-                              <button
-                                onClick={() => setShowAllReplies(true)}
-                                className="text-sm text-blue-600 hover:underline mt-1"
-                              >
-                                Show all
-                              </button>
-                            </>
-                          ) : (
-                            <button
-                              onClick={() => setShowAllReplies(false)}
-                              className="text-sm text-blue-600 hover:underline mt-1"
+            <div className="p-4">
+              {/* Loading Spinner */}
+              {repliesLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+                  <p className="text-gray-600 mt-2">Loading replies...</p>
+                </div>
+              ) : (
+                <>
+                  {/* Main Reply Input */}
+                  {user && (
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                      <div className="flex gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1">
+                          <textarea
+                            rows={3}
+                            placeholder="Write a reply..."
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
+                            value={newReplyContent}
+                            onChange={(e) => setNewReplyContent(e.target.value)}
+                          />
+                          <div className="flex justify-end mt-2">
+                            <Button
+                              onClick={() => handlePostReply()}
+                              disabled={!newReplyContent.trim()}
+                              className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white px-6"
                             >
-                              show less
-                            </button>
-                          )}
+                              <Send className="h-4 w-4 mr-2" />
+                              Post Reply
+                            </Button>
+                          </div>
                         </div>
-                      )}
-                    </>
+                      </div>
+                    </div>
                   )}
-                </div>
 
-                {/* Add Reply Form */}
-                <div className="mt-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                    Add a Reply
-                  </h4>
-                  <textarea
-                    rows={3}
-                    placeholder="Write your reply..."
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    value={newReplyContent}
-                    onChange={(e) => setNewReplyContent(e.target.value)}
-                  />
-                  <div className="flex justify-end mt-2">
-                    <Button
-                      onClick={handlePostReply}
-                      disabled={!newReplyContent.trim()}
-                      className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
-                    >
-                      Post Reply
-                    </Button>
+                  {/* Replies List */}
+                  <div className="space-y-3">
+                    {discussionReplies.length === 0 ? (
+                      <div className="text-center py-12">
+                        <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-500">
+                          No replies yet. Be the first to reply!
+                        </p>
+                      </div>
+                    ) : (
+                      discussionReplies.map((reply) => (
+                        <ReplyComponent
+                          key={reply.id}
+                          reply={reply}
+                          user={user}
+                          onReply={handlePostReply}
+                          onLike={handleLikeReply}
+                          depth={0}
+                        />
+                      ))
+                    )}
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -954,8 +1186,7 @@ export default function CommunityForumPage({ user }: Props) {
       {/* Selected Discussion Modal */}
       {isModalOpen && selectedDiscussion && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-yellow-50 border-yellow-200 border-4 rounded-lg w-11/12 max-w-2xl p-4 sm:p-6 relative">
-            {/* same modal content */}
+          <div className="bg-yellow-50 border-yellow-200 border-4 rounded-lg w-11/12 max-w-2xl p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"

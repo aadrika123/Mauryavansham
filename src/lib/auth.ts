@@ -8,7 +8,10 @@ import { eq } from "drizzle-orm";
 
 export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 120,
+  },
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -84,7 +87,7 @@ export const authOptions: AuthOptions = {
         }
         await db
           .update(users)
-          .set({ lastActive: new Date()})
+          .set({ lastActive: new Date() })
           .where(eq(users.id, user.id));
         return {
           id: user.id.toString(),
@@ -138,7 +141,7 @@ export const authOptions: AuthOptions = {
             currentState: freshUser.currentState || "",
             currentZipCode: freshUser.currentZipCode || "",
             aboutMe: freshUser.aboutMe || "",
-          };
+          } as any;
         }
       }
       return session;

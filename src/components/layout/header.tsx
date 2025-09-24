@@ -108,7 +108,7 @@ export function Header() {
                 </div>
                 <div>
                   <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-700 bg-clip-text text-transparent">
-                    Mauryavansh
+                    Mauryavansham
                   </h1>
                   <p className="text-md font-semibold text-red-700">
                     मौर्यवंश - गौरवशाली परंपरा

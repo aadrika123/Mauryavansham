@@ -34,6 +34,7 @@ interface Blog {
   updatedAt: string;
   approvedAt?: string;
   rejectionReason?: string;
+  imageUrl?: string;
   author: {
     id: string;
     name: string;
@@ -51,21 +52,29 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
   const [actionLoading, setActionLoading] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectForm, setShowRejectForm] = useState(false);
-  const [userDetails, setUserDetails] = useState<any>(null);
+  const [userDetails, setUserDetails] = useState<{
+    name: string;
+    email: string;
+  }>({ name: "", email: "" });
+  console.log(blogId);
 
   useEffect(() => {
     fetchBlog();
   }, [blogId]);
-
   const fetchBlog = async () => {
     try {
-      const response = await fetch(`/api/blogs/${blogId}`);
+      const response = await fetch(`/api/blogs/${blogId}`, {
+        method: "GET",
+        credentials: "include", // 👈 session cookies send karne ke liye
+      });
+
       if (response.ok) {
         const data = await response.json();
         setBlog(data.blog);
-        // Fetch user details if blog has authorId
+        console.log(data);
+
         if (data?.blog?.authorId) {
-          fetchUser(data.blog.authorId); // fix here
+          fetchUser(data.blog.authorId);
         }
       } else {
         toast.error("Failed to fetch blog details");
@@ -77,13 +86,14 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
     }
   };
 
-  const fetchUser = async (profileId: string) => {
-    console.log("Fetching user details for profileId:", profileId);
+  const fetchUser = async (userId: string) => {
+    console.log("Fetching user details for profileId:", userId);
     try {
-      const res = await fetch(`/api/users/${profileId}`);
+      const res = await fetch(`/api/profile/${userId}`);
       if (res.ok) {
         const userData = await res.json();
-        setUserDetails(userData);
+        console.log(userData?.data);
+        setUserDetails(userData?.data);
       } else {
         toast.error("Failed to fetch user details");
       }
@@ -232,6 +242,13 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
               </div>
             </CardContent>
           </Card>
+          {blog.imageUrl && (
+            <img
+              src={blog.imageUrl}
+              alt={blog.title}
+              className="w-full object-fill rounded-t-lg"
+            />
+          )}
 
           {blog.rejectionReason && (
             <Card className="border-red-200">
@@ -310,12 +327,12 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
               <CardTitle>Admin Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Link href={`/blogs/${blog.id}`}>
+              {/* <Link href={`/blogs/${blog.id}`}>
                 <Button variant="outline" className="w-full bg-transparent">
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View Public Page
                 </Button>
-              </Link>
+              </Link> */}
 
               {blog.status === "pending" && (
                 <div className="space-y-3">

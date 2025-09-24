@@ -7,6 +7,7 @@ import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout"
 
 export default async function AdminBlogDetailPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions)
+  console.log(params.id);
 
   if (!session?.user?.id) {
     redirect("/sign-in")
