@@ -61,13 +61,14 @@ export default function AdmindashboardLayout({
   const adminSidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+
+    {
+      title: "My Inbox",
+      href: "/admin/messenger-page",
+      icon: MessageSquare,
+    },
     { title: "Manage Users", href: "/admin/users", icon: Users },
 
-    // {
-    //   title: "Event Moderation",
-    //   href: "/admin/event-modaration",
-    //   icon: Calendar,
-    // },
     {
       title: "Events",
       href: "",
@@ -129,6 +130,11 @@ export default function AdmindashboardLayout({
   const superAdminSidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+    {
+      title: "My Inbox",
+      href: "/admin/messenger-page",
+      icon: MessageSquare,
+    },
     { title: "Manage Users", href: "/admin/users", icon: Users },
     // { title: "Create Events", href: "/admin/events", icon: Calendar },
     // { title: "My Events", href: "/admin/my-events", icon: Calendar },

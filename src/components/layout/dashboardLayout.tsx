@@ -24,6 +24,7 @@ import {
   Wallet2Icon,
   Menu,
   X,
+  MessageSquare,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -43,6 +44,11 @@ export default function DashboardLayout({
   const sidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    {
+      title: "My Inbox",
+      href: "/dashboard/messenger-page",
+      icon: MessageSquare,
+    },
     {
       title: "Create Matrimonial Profile",
       href: "/dashboard/create-profile",
@@ -198,7 +204,7 @@ export default function DashboardLayout({
       <div className="pt-24 flex">
         {/* Sidebar */}
         <div
-         className={cn(
+          className={cn(
             "bg-yellow-50 -mt-3 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           )}

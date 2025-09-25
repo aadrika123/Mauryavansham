@@ -2,6 +2,7 @@
 
 import { Button } from "@/src/components/ui/button";
 import Loader from "@/src/components/ui/loader";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
@@ -14,13 +15,15 @@ interface User {
   designation?: string;
   professionGroup?: string;
   profession?: string;
+  email: string;
+  phone?: string;
 }
 
 export default function CommunityMemberPage({ user }: { user: any }) {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(0);
   const pageSize = 12;
-  // const { data: session } = useSession();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [sending, setSending] = useState(false);
@@ -53,10 +56,10 @@ export default function CommunityMemberPage({ user }: { user: any }) {
   const currentUsers = users.slice(start, start + pageSize);
 
   const handleConnect = async () => {
-    // if (!selectedUser || !session?.user) return;
-    // const user = session.user as any;
-    const user = 12;
-    // const message = `${user.name} wants to connect with you .`;
+    if (!selectedUser || !session?.user) return;
+    const user = session.user as any;
+    // const user = 12;
+    const message = `${user.name} wants to connect with you .`;
 
     try {
       setSending(true);
@@ -64,9 +67,9 @@ export default function CommunityMemberPage({ user }: { user: any }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // userId: selectedUser.id, // owner id
+          userId: selectedUser.id, // owner id
           type: "profile_connect",
-          // message,
+          message,
           currentUser: user,
         }),
       });

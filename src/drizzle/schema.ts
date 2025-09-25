@@ -26,6 +26,7 @@ export * from "./db/schemas/user_childrens";
 export * from "./db/schemas/businesses";
 export * from "./db/schemas/profileInterests";
 export * from "./db/schemas/discussionReplyLikes";
-
+export * from "./db/schemas/messages";
+export * from "./db/schemas/connections";
 
 
