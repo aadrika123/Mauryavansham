@@ -7,38 +7,48 @@ import { getServerSession } from "next-auth";
 import { eq } from "drizzle-orm";
 
 export default async function EventsPage() {
-  // ✅ Sirf approved events fetch karo
-  const approvedEvents = await db
-    .select()
-    .from(events)
-    .where(eq(events.status, "approved"));
+  try {
+    // 🔹 Fetch only approved events
+    const approvedEvents = await db
+      .select()
+      .from(events)
+      .where(eq(events.status, "approved"));
 
-  const eventsWithAttendees = await Promise.all(
-    approvedEvents.map(async (event) => {
-      const attendees = await db
-        .select({
-          id: users.id,
-          name: users.name,
-          email: users.email,
-          // image: users.image,
-        })
-        .from(event_attendees)
-        .innerJoin(users, eq(event_attendees.userId, users.id))
-        .where(eq(event_attendees.eventId, event.id));
+    // 🔹 Fetch attendees for each event
+    const eventsWithAttendees = await Promise.all(
+      approvedEvents.map(async (event) => {
+        const attendees = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+          })
+          .from(event_attendees)
+          .innerJoin(users, eq(event_attendees.userId, users.id))
+          .where(eq(event_attendees.eventId, event.id));
 
-      return {
-        ...event,
-        attendees,
-        attendeesCount: attendees.length,
-      };
-    })
-  );
+        return {
+          ...event,
+          attendees,
+          attendeesCount: attendees.length,
+        };
+      })
+    );
 
-  const session = await getServerSession(authOptions);
+    // 🔹 Fetch session (will be null if not logged in)
+    let session = null;
+    try {
+      session = await getServerSession(authOptions);
+    } catch (err) {
+      console.warn("Session not available:", err);
+    }
 
-  console.log("Approved Events:", eventsWithAttendees);
-
-  return (
-    <EventsClient initialEvents={eventsWithAttendees} user={session?.user} />
-  );
+    return (
+      <EventsClient initialEvents={eventsWithAttendees} user={session?.user} />
+    );
+  } catch (err) {
+    console.error("Failed to fetch events:", err);
+    // fallback empty state
+    return <EventsClient initialEvents={[]} user={null} />;
+  }
 }
