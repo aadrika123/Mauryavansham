@@ -1,1 +1,0 @@
-ALTER TABLE "profiles" ALTER COLUMN "dob" SET DATA TYPE varchar(10);
