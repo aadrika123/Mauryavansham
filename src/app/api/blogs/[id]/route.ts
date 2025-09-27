@@ -104,7 +104,7 @@ export async function PUT(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    if (existingBlog.status !== "draft" && existingBlog.status !== "rejected") {
+    if (existingBlog.status !== "draft" && existingBlog.status !== "rejected" && existingBlog.status !== "pending") {
       return NextResponse.json(
         { error: "Cannot edit blog in current status" },
         { status: 400 }
@@ -152,6 +152,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid blog id" }, { status: 400 });
     }
 
+    const body = await request.json();
+    const removeReason = body.reason;
+
+    if (!removeReason) {
+      return NextResponse.json({ error: "Remove reason is required" }, { status: 400 });
+    }
+
     const [existingBlog] = await db
       .select()
       .from(blogs)
@@ -161,7 +168,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
-    // ✅ Only author or admin/superAdmin can "remove"
     if (
       existingBlog.authorId.toString() !== session.user.id.toString() &&
       session.user.role !== "admin" &&
@@ -170,11 +176,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // ✅ Update status to "removed"
     const [updatedBlog] = await db
       .update(blogs)
       .set({
         status: "removed",
+        removedBy: Number(session.user.id),
+        removeReason,
         updatedAt: new Date(),
       })
       .where(eq(blogs.id, blogId))
@@ -189,3 +196,4 @@ export async function DELETE(
     );
   }
 }
+

@@ -106,7 +106,7 @@ console.log(formData);
 
       if (res.ok) {
         toast.success("Blog submitted successfully");
-        router.push("/dashboard/blogs");
+        router.push("/admin/my-blogs");
       } else {
         const error = await res.json();
         toast.error(error.error || "Failed to submit blog");
@@ -121,7 +121,7 @@ console.log(formData);
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href="/dashboard/blogs">
+        <Link href="/admin/my-blogs">
           <Button variant="outline" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Blogs

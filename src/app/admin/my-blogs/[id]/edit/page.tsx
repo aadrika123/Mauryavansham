@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm"
 import EditBlogForm from "./edit-blog-form"
 import DashboardLayout from "@/src/components/layout/dashboardLayout"
 import { authOptions } from "@/src/lib/auth"
+import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout"
 
 interface EditBlogPageProps {
   params: { id: string }
@@ -27,7 +28,7 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
 
 
   if (!blog) {
-    redirect("/dashboard/blogs")
+    redirect("/admin/my-blogs")
   }
 
   // Users can only edit their own blogs
@@ -36,12 +37,12 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
   // }
 
   // Can only edit draft or rejected blogs
-  if (blog.status !== "draft" && blog.status !== "rejected") {
-    redirect(`/dashboard/blogs/${blog.id}`)
+  if (blog.status !== "draft" && blog.status !== "pending" && blog.status !== "rejected") {
+    redirect(`/admin/my-blogs/${blog.id}`)
   }
 
   return (
-    <DashboardLayout user={session.user}>
+    <AdmindashboardLayout user={session.user}>
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Edit Blog</h1>
@@ -50,6 +51,6 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
 
       <EditBlogForm blog={blog} />
     </div>
-    </DashboardLayout>
+    </AdmindashboardLayout>
   )
 }

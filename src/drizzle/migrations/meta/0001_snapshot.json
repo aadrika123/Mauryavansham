@@ -1,5 +1,5 @@
 {
-  "id": "8f3e79b0-79d8-4e0b-93b7-382660deadc6",
+  "id": "9eb1b842-d2a9-4879-9f5f-3f1e8dbef7e3",
   "prevId": "f5007168-bfbb-42a8-8b7a-d03775338e77",
   "version": "7",
   "dialect": "postgresql",
@@ -1336,6 +1336,18 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "remove_reason": {
+          "name": "remove_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "removed_by": {
+          "name": "removed_by",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -1346,6 +1358,19 @@
           "tableTo": "users",
           "columnsFrom": [
             "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "blogs_removed_by_users_id_fk": {
+          "name": "blogs_removed_by_users_id_fk",
+          "tableFrom": "blogs",
+          "tableTo": "users",
+          "columnsFrom": [
+            "removed_by"
           ],
           "columnsTo": [
             "id"

@@ -17,6 +17,8 @@ export const blogs = pgTable("blogs", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   approvedAt: timestamp("approved_at"),
+  removeReason: text("remove_reason"),
+  removedBy: integer("removed_by").references(() => users.id),
 })
 
 export type Blog = typeof blogs.$inferSelect

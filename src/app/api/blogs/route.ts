@@ -1,9 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-// import { authOptions } from "@/lib/auth"
 import { db } from "@/src/drizzle/db"
 import { blogs, users } from "@/src/drizzle/schema"
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, sql } from "drizzle-orm"
 import { authOptions } from "@/src/lib/auth"
 
 export async function GET(request: NextRequest) {
@@ -17,6 +16,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status")
     const userId = searchParams.get("userId")
 
+    // Build base select with subquery for removedByName
     let query = db
       .select({
         id: blogs.id,
@@ -29,6 +29,9 @@ export async function GET(request: NextRequest) {
         updatedAt: blogs.updatedAt,
         approvedAt: blogs.approvedAt,
         rejectionReason: blogs.rejectionReason,
+        removeReason: blogs.removeReason,
+        removedBy: blogs.removedBy,
+        removedByName: sql<string>`(SELECT name FROM users WHERE id = ${blogs.removedBy})`,
         author: {
           id: users.id,
           name: users.name,
@@ -39,15 +42,9 @@ export async function GET(request: NextRequest) {
       .leftJoin(users, eq(blogs.authorId, users.id))
       .orderBy(desc(blogs.createdAt))
 
-    // Filter by user if specified (for user's own blogs)
-    if (userId) {
-      query = query.where(eq(blogs.authorId, userId))
-    }
-
-    // Filter by status if specified
-    if (status) {
-      query = query.where(eq(blogs.status, status as any))
-    }
+    // Conditional filters
+    if (userId) query = query.where(eq(blogs.authorId, userId))
+    if (status) query = query.where(eq(blogs.status, status as any))
 
     const result = await query
 
@@ -57,6 +54,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
+
 
 export async function POST(request: NextRequest) {
   try {

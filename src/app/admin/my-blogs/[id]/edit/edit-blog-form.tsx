@@ -120,7 +120,7 @@ export default function EditBlogForm({ blog }: EditBlogFormProps) {
         toast.success(
           action === "draft" ? "Blog updated and saved as draft" : "Blog updated and submitted for approval"
         );
-        router.push(`/dashboard/blogs`);
+        router.push(`/admin/my-blogs`);
       } else {
         const error = await response.json();
         toast.error(error.message || "Failed to update blog");
@@ -135,7 +135,7 @@ export default function EditBlogForm({ blog }: EditBlogFormProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href={`/blogs/${blog.id}`}>
+        <Link href={`/admin/my-blogs/${blog.id}`}>
           <Button variant="outline" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Blog

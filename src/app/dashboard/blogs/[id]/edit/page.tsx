@@ -36,7 +36,7 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
   // }
 
   // Can only edit draft or rejected blogs
-  if (blog.status !== "draft" && blog.status !== "rejected") {
+  if (blog.status !== "draft" && blog.status !== "rejected" && blog.status !== "pending") {
     redirect(`/dashboard/blogs/${blog.id}`)
   }
 

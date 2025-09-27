@@ -61,22 +61,22 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
     }
   }
 
-  const canEdit = blog.author.id === currentUserId && (blog.status === "draft" || blog.status === "rejected")
+  const canEdit = blog.author.id == currentUserId && (blog.status === "draft" || blog.status === "pending" )
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Link href="/dashboard/blogs">
+        <Link href="/admin/my-blogs">
           <Button variant="outline" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Blogs
           </Button>
         </Link>
         {canEdit && (
-          <Link href={`/dashboard/blogs/${blog.id}/edit`}>
+          <Link href={`/admin/my-blogs/${blog.id}/edit`}>
             <Button size="sm">
               <Edit className="h-4 w-4 mr-2" />
-              Edit Blog
+              Edit Blogss
             </Button>
           </Link>
         )}

@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm"
 import BlogDetail from "./blog-detail"
 import DashboardLayout from "@/src/components/layout/dashboardLayout"
 import { authOptions } from "@/src/lib/auth"
+import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout"
 
 interface BlogPageProps {
   params: { id: string }
@@ -41,15 +42,15 @@ export default async function BlogPage({ params }: BlogPageProps) {
     .where(eq(blogs.id, Number(params.id)))
 
   if (!blog) {
-    redirect("/dashboard/blogs")
+    redirect("/admin/my-blogs")
   }
 
 
   return (
-    <DashboardLayout user={session.user}>
+    <AdmindashboardLayout user={session.user}>
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <BlogDetail blog={blog} currentUserId={session.user.id} userRole={session.user.role} />
     </div>
-    </DashboardLayout>
+    </AdmindashboardLayout>
   )
 }

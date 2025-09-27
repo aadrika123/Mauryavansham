@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
+import { Tooltip } from "@/src/components/ui/tooltip"; // Assuming you have a tooltip component
+
 import {
   Card,
   CardContent,
@@ -46,7 +48,7 @@ interface AdPlacement {
 }
 export function FeaturesSection() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
-  
+  const { data: session } = useSession();
 
   useEffect(() => {
     fetch("/api/ad-placements/approved")
@@ -59,7 +61,6 @@ export function FeaturesSection() {
   }, []);
 
   const ad = adPlacements.find((ad) => ad.placementId === 3); // Assuming placement ID 3 is for the FeaturesSection ad
-  
 
   useEffect(() => {
     if (ad) fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
@@ -96,7 +97,7 @@ export function FeaturesSection() {
       description: "Stay updated with community events and celebrations",
       href: "/events",
     },
-    
+
     {
       icon: HandHeart,
       title: "Donation",
@@ -251,47 +252,62 @@ export function FeaturesSection() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-[#ffd500] hover:shadow-lg bg-[#FFF8DE] border border-[#FFF6D5]"
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-orange-100 rounded-lg">
-                      <feature.icon className="h-6 w-6 text-orange-600" />
+            {features.map((feature, index) => {
+              const isCommunityDirectory =
+                feature.href === "/community-directory";
+              const isDisabled =
+                feature.href === "/" || (isCommunityDirectory && !session);
+
+              return (
+                <Card
+                  key={index}
+                  className="hover:shadow-[#ffd500] hover:shadow-lg bg-[#FFF8DE] border border-[#FFF6D5]"
+                >
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <feature.icon className="h-6 w-6 text-orange-600" />
+                      </div>
+                      <CardTitle className="text-lg text-[#8B0000]">
+                        {feature.title}
+                      </CardTitle>
                     </div>
-                    <CardTitle className="text-lg text-[#8B0000]">
-                      {feature.title}
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="mb-4">
-                    {feature.description}
-                  </CardDescription>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    asChild
-                    className={
-                      feature.href === "/"
-                        ? "cursor-not-allowed"
-                        : "text-orange-600"
-                    }
-                    disabled={feature.href === "/"} // Disable when href is "/"
-                  >
-                    <Link href={feature.href}>
-                      {feature.href === "/" ? "Coming Soon" : "Learn More"}
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="mb-4">
+                      {feature.description}
+                    </CardDescription>
+                    <div className="flex flex-col items-start gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className={
+                          isDisabled
+                            ? "cursor-not-allowed text-gray-400"
+                            : "text-orange-600"
+                        }
+                        disabled={isDisabled}
+                      >
+                        <Link href={isDisabled ? "#" : feature.href}>
+                          {feature.href === "/" ? "Coming Soon" : "Learn More"}
+                        </Link>
+                      </Button>
+                      {/* Hover text for login */}
+                      {isCommunityDirectory && !session && (
+                        <span className="text-xs text-red-600 mt-1">
+                          Please login first
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
         {/* {session && ( */}
-         
+
         {/* )} */}
       </section>
     </>

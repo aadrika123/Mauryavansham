@@ -62,7 +62,7 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
     }
   }
 
-  const canEdit = blog.author.id === currentUserId && (blog.status === "draft" || blog.status === "rejected")
+  const canEdit = blog.author.id == currentUserId && (blog.status == "draft" || blog.status == "rejected")
   console.log(blog);
 
   return (

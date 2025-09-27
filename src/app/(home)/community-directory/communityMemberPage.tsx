@@ -167,7 +167,8 @@ export default function CommunityMemberPage() {
             </div>
 
             {/* Prev / Next buttons */}
-            <div className="flex justify-center gap-4">
+            {/* Prev / Next buttons with page number */}
+            <div className="flex justify-center items-center gap-4 mt-4">
               <button
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 0}
@@ -175,6 +176,12 @@ export default function CommunityMemberPage() {
               >
                 ← Prev
               </button>
+
+              {/* Page number display */}
+              <span className="text-gray-700 font-medium">
+                Page {page + 1} of {Math.ceil(filteredUsers.length / pageSize)}
+              </span>
+
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={start + pageSize >= filteredUsers.length}
@@ -217,7 +224,7 @@ export default function CommunityMemberPage() {
                   <strong>City:</strong> {selectedUser.city}
                 </p>
               )}
-             
+
               {/* Profession or Designation */}
               {selectedUser.professionGroup || selectedUser.profession ? (
                 <p>

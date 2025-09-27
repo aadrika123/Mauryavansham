@@ -15,17 +15,30 @@ import { Plus, Calendar, User, AlertCircle, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import Loader from "@/src/components/ui/loader";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/src/components/ui/dialog";
+import { Input } from "@/src/components/ui/input";
 
 interface Blog {
   id: string;
   title: string;
   summary: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: "draft" | "pending" | "approved" | "rejected" | "removed";
   createdAt: string;
   updatedAt: string;
   approvedAt?: string;
   rejectionReason?: string;
   imageUrl?: string;
+  removeReason?: string;
+  removedBy?: string;
+  removedByName?: string;
+
 
   author: {
     id: string;
@@ -42,12 +55,17 @@ export default function BlogsList({ userId }: BlogsListProps) {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [deleteBlogId, setDeleteBlogId] = useState<string | null>(null);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     fetchBlogs();
   }, [userId]);
 
   const fetchBlogs = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`/api/blogs?userId=${userId}`);
       if (response.ok) {
         const data = await response.json();
@@ -62,24 +80,43 @@ export default function BlogsList({ userId }: BlogsListProps) {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this blog?")) return;
+  const handleDelete = async () => {
+    if (!deleteBlogId || !deleteReason.trim()) {
+      toast.error("Please provide a reason for removal");
+      return;
+    }
 
     try {
-      const res = await fetch(`/api/blogs/${id}`, {
+      setLoading(true);
+
+      const res = await fetch(`/api/blogs/${deleteBlogId}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reason: deleteReason }),
       });
 
       if (res.ok) {
-        setBlogs((prev) => prev.filter((b) => b.id !== id));
+        setBlogs((prev) => prev.filter((b) => b.id !== deleteBlogId));
         toast.success("Blog removed successfully");
       } else {
         const error = await res.json();
-        toast.error(error.message || "Failed to remove blog");
+        toast.error(error.error || "Failed to remove blog");
       }
     } catch (error) {
       toast.error("Error deleting blog");
+    } finally {
+      setLoading(false);
+      setIsModalOpen(false);
+      setDeleteBlogId(null);
+      setDeleteReason("");
     }
+  };
+
+  const openDeleteModal = (id: string) => {
+    setDeleteBlogId(id);
+    setIsModalOpen(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -112,29 +149,14 @@ export default function BlogsList({ userId }: BlogsListProps) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader>
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="h-3 bg-gray-200 rounded"></div>
-                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {loading && (
+        <div className="absolute inset-0 z-[999] flex items-center justify-center bg-white/70">
+          <Loader />
+        </div>
+      )}
+
       <div className="flex justify-end">
         <Link href="/dashboard/blogs/create">
           <Button className="flex items-center gap-2">
@@ -169,7 +191,6 @@ export default function BlogsList({ userId }: BlogsListProps) {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {blogs.map((blog) => (
             <Card key={blog.id} className="hover:shadow-lg transition-shadow">
-              {/* Featured Image */}
               {blog.imageUrl && (
                 <div className="relative w-full h-48">
                   <Image
@@ -219,6 +240,23 @@ export default function BlogsList({ userId }: BlogsListProps) {
                       </div>
                     </div>
                   )}
+                   {blog.status === "removed" && blog.removeReason && (
+                    <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg space-y-1">
+                      <p className="text-sm font-medium text-orange-800">
+                        Removal Reason:{" "}
+                        <span className="font-medium">{blog.removeReason}</span>
+                      </p>
+                      {/* <p className="text-sm text-orange-700">{blog.removeReason}</p> */}
+                      {blog.removedBy && (
+                        <p className="text-sm text-orange-700">
+                          Removed By:{" "}
+                          <span className="font-medium">
+                            {blog.removedByName}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div className="flex gap-2">
                     <Link
@@ -246,11 +284,10 @@ export default function BlogsList({ userId }: BlogsListProps) {
                       </Link>
                     )}
 
-                    {/* 🔥 Remove button */}
                     <Button
                       size="sm"
                       variant="destructive"
-                      onClick={() => handleDelete(blog.id)}
+                      onClick={() => openDeleteModal(blog.id)}
                       className="flex items-center gap-1"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -263,6 +300,31 @@ export default function BlogsList({ userId }: BlogsListProps) {
           ))}
         </div>
       )}
+
+      {/* 🔥 Delete reason modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Remove Blog</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2">
+            <p>Please provide a reason for removing this blog:</p>
+            <Input
+              value={deleteReason}
+              onChange={(e) => setDeleteReason(e.target.value)}
+              placeholder="Enter reason..."
+            />
+          </div>
+          <DialogFooter className="mt-4 flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Remove
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
