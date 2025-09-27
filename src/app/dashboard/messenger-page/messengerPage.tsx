@@ -193,9 +193,9 @@ export default function MessengerPage() {
   };
 
   return (
-    <div className="flex w-[900px] h-[500px] bg-white shadow-xl rounded-xl overflow-hidden">
+    <div className="flex flex-col md:flex-row w-full h-screen md:w-[900px] md:h-[500px] bg-white shadow-xl rounded-xl overflow-hidden">
       {/* LEFT SIDEBAR */}
-      <aside className="w-72 h-[700px] bg-red-800 border-r overflow-y-auto">
+      <aside className="w-full md:w-72 h-64 md:h-auto bg-red-800 border-r overflow-y-auto">
         <h2 className="p-4 font-bold text-lg border-b text-white">Chats</h2>
         {users.map((user) => (
           <div
@@ -226,8 +226,8 @@ export default function MessengerPage() {
       <main className="flex-1 flex flex-col bg-white">
         {selectedUserDetails ? (
           <>
-            {/* Profile Header (fixed height) */}
-            <div className="flex items-center gap-3 p-4 border-b bg-gray-50 h-28">
+            {/* Profile Header */}
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-3 p-4 border-b bg-gray-50">
               <Image
                 src={selectedUserDetails.photo || "/default-avatar.png"}
                 alt={selectedUserDetails.name}
@@ -235,7 +235,7 @@ export default function MessengerPage() {
                 height={80}
                 className="rounded-full"
               />
-              <div>
+              <div className="flex-1">
                 <h2 className="font-bold text-lg">
                   {selectedUserDetails.name}
                 </h2>
@@ -245,8 +245,6 @@ export default function MessengerPage() {
                 {selectedUserDetails.phone && (
                   <p>Phone: {selectedUserDetails.phone}</p>
                 )}
-              </div>
-              <div>
                 {selectedUserDetails.city && (
                   <p>City: {selectedUserDetails.city}</p>
                 )}
@@ -269,7 +267,7 @@ export default function MessengerPage() {
               )}
             </div>
 
-            {/* Chat Window (smaller height) */}
+            {/* Chat Window */}
             {isConnected ? (
               <>
                 <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[350px]">
@@ -296,7 +294,7 @@ export default function MessengerPage() {
                           {new Date(msg.createdAt).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
-                            hour12: false, // use 24-hour format; set to true for 12-hour
+                            hour12: false,
                           })}
                         </span>
                       </div>

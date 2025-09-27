@@ -17,16 +17,25 @@ interface User {
   profession?: string;
   email: string;
   phone?: string;
+  fatherName?: string;
+  motherName?: string;
+  spouseName?: string;
+  dob?: string;
+  maritalStatus?: string;
+  education?: string;
+  occupation?: string;
+  gender?: string;
 }
 
-export default function CommunityMemberPage({ user }: { user: any }) {
+export default function CommunityMemberPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(0);
-  const pageSize = 12;
+  const pageSize = 20; // 5x4 grid = 20 per page
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [sending, setSending] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -52,14 +61,22 @@ export default function CommunityMemberPage({ user }: { user: any }) {
 
     fetchUsers();
   }, []);
+
   const start = page * pageSize;
-  const currentUsers = users.slice(start, start + pageSize);
+
+  // 🔎 Filtered + Paginated users
+  const filteredUsers = users.filter((u) =>
+    [u.name, u.userCode, u.city, u.profession]
+      .filter(Boolean)
+      .some((field) => field?.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  const currentUsers = filteredUsers.slice(start, start + pageSize);
 
   const handleConnect = async () => {
     if (!selectedUser || !session?.user) return;
     const user = session.user as any;
-    // const user = 12;
-    const message = `${user.name} wants to connect with you .`;
+    const message = `${user.name} wants to connect with you.`;
 
     try {
       setSending(true);
@@ -67,7 +84,7 @@ export default function CommunityMemberPage({ user }: { user: any }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: selectedUser.id, // owner id
+          userId: selectedUser.id, // receiver
           type: "profile_connect",
           message,
           currentUser: user,
@@ -88,67 +105,60 @@ export default function CommunityMemberPage({ user }: { user: any }) {
     }
   };
 
-  const handleNext = () => {
-    if (start + pageSize < users.length) {
-      setPage(page + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (page > 0) {
-      setPage(page - 1);
-    }
-  };
   return (
     <section className="py-10 bg-[#FFFDEF]">
       <div className="container mx-auto">
-        <h2 className="text-4xl underline font-bold text-[#8B0000] mb-6 text-center">
-          Our Community Members
+        <h2 className="text-3xl font-bold text-[#8B0000] mb-6 text-center underline">
+          Know Your Community Members
         </h2>
+
+        {/* 🔎 Search */}
+        <div className="flex justify-center mb-6">
+          <input
+            type="text"
+            placeholder="Search by name, ID, city, or profession..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-1/2 px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+          />
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-40">
-            {/* <div className="animate-spin rounded-full h-10 w-10 border-4 border-[#8B0000] border-t-transparent"></div> */}
             <Loader />
           </div>
         ) : (
           <>
-            {/* Grid of 6 users */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+            {/* 5x4 Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
               {currentUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="cursor-pointer rounded-lg p-4 hover:shadow-[#ffd500] hover:shadow-lg bg-[#FFF8DE] border border-[#FFF6D5] transition text-center"
+                  className="cursor-pointer rounded-lg p-3 hover:shadow-[#ffd500] hover:shadow-lg bg-[#FFF8DE] border border-[#FFF6D5] transition text-center text-sm"
                 >
-                  <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden border">
+                  <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden border">
                     <Image
                       src={user.photo || "/default-avatar.png"}
                       alt={user.name}
-                      width={80}
-                      height={80}
+                      width={64}
+                      height={64}
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-800 truncate">
+                  <h3 className="font-semibold text-gray-800 truncate">
                     {user.name}
                   </h3>
-                  <p className="text-xs text-gray-600 truncate">
-                    {user.userCode}
-                  </p>
-                  <p className="text-xs text-gray-600 truncate">{user.city}</p>
-                  <p className="text-xs text-gray-600 truncate">
-                    (
+                  <p className="text-gray-600 truncate">{user.userCode}</p>
+                  <p className="text-gray-600 truncate">{user.city}</p>
+                  <p className="text-gray-600 truncate">
                     {user.profession
                       ? `${user.professionGroup} - ${user.profession}`
                       : user.designation}
-                    )
                   </p>
 
                   <Button
-                    //   onClick={handleConnect}
                     onClick={() => setSelectedUser(user)}
-                    //   disabled={sending}
-                    className="mt-2 text-orange-600 hover:text-orange-800 bg-transparent hover:bg-yellow-100 border border-yellow-300 hover:border-yellow-400 px-3 py-1 text-xs rounded"
+                    className="mt-2 text-orange-600 hover:text-orange-800 bg-transparent hover:bg-yellow-100 border border-yellow-300 hover:border-yellow-400 px-2 py-1 text-xs rounded"
                   >
                     Know More
                   </Button>
@@ -159,15 +169,15 @@ export default function CommunityMemberPage({ user }: { user: any }) {
             {/* Prev / Next buttons */}
             <div className="flex justify-center gap-4">
               <button
-                onClick={handlePrev}
+                onClick={() => setPage((p) => p - 1)}
                 disabled={page === 0}
                 className="px-4 py-2 bg-[#8B0000] text-white rounded disabled:opacity-50"
               >
                 ← Prev
               </button>
               <button
-                onClick={handleNext}
-                disabled={start + pageSize >= users.length}
+                onClick={() => setPage((p) => p + 1)}
+                disabled={start + pageSize >= filteredUsers.length}
                 className="px-4 py-2 bg-[#8B0000] text-white rounded disabled:opacity-50"
               >
                 Next →
@@ -180,14 +190,90 @@ export default function CommunityMemberPage({ user }: { user: any }) {
       {/* Popup modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">
-              Connect with {selectedUser.name}
-            </h2>
-            <p className="mb-4">Do you want to send a connection request?</p>
-            <div className="flex justify-end gap-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[500px] max-h-[90vh] overflow-y-auto">
+            {/* Profile Image */}
+            <div className="flex flex-col items-center mb-4">
+              <div className="w-24 h-24 rounded-full overflow-hidden border mb-2">
+                <Image
+                  src={selectedUser.photo || "/default-avatar.png"}
+                  alt={selectedUser.name}
+                  width={96}
+                  height={96}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              {selectedUser.name && (
+                <h2 className="text-xl font-bold">{selectedUser.name}</h2>
+              )}
+              {selectedUser.userCode && (
+                <p className="text-gray-500">{selectedUser.userCode}</p>
+              )}
+            </div>
+
+            {/* Details */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-700">
+              {selectedUser.city && (
+                <p>
+                  <strong>City:</strong> {selectedUser.city}
+                </p>
+              )}
+             
+              {/* Profession or Designation */}
+              {selectedUser.professionGroup || selectedUser.profession ? (
+                <p>
+                  <strong>Profession:</strong> {selectedUser.professionGroup}
+                  {selectedUser.profession && ` - ${selectedUser.profession}`}
+                </p>
+              ) : (
+                selectedUser.designation && (
+                  <p>
+                    <strong>Designation:</strong> {selectedUser.designation}
+                  </p>
+                )
+              )}
+
+              {selectedUser.gender && (
+                <p>
+                  <strong>Gender:</strong> {selectedUser.gender}
+                </p>
+              )}
+              {selectedUser.dob && (
+                <p>
+                  <strong>DOB:</strong>{" "}
+                  {new Date(selectedUser.dob).toLocaleDateString("en-GB")}
+                </p>
+              )}
+              {selectedUser.maritalStatus && (
+                <p>
+                  <strong>Marital Status:</strong> {selectedUser.maritalStatus}
+                </p>
+              )}
+              {selectedUser.education && (
+                <p>
+                  <strong>Education:</strong> {selectedUser.education}
+                </p>
+              )}
+              {selectedUser.fatherName && (
+                <p>
+                  <strong>Father’s Name:</strong> {selectedUser.fatherName}
+                </p>
+              )}
+              {selectedUser.motherName && (
+                <p>
+                  <strong>Mother’s Name:</strong> {selectedUser.motherName}
+                </p>
+              )}
+              {selectedUser.spouseName && (
+                <p>
+                  <strong>Spouse Name:</strong> {selectedUser.spouseName}
+                </p>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-4 mt-6">
               <Button variant="outline" onClick={() => setSelectedUser(null)}>
-                Cancel
+                Close
               </Button>
               <Button onClick={handleConnect} disabled={sending}>
                 {sending ? "Sending..." : "Connect"}

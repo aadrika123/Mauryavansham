@@ -9,6 +9,7 @@ import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Alert, AlertDescription } from "@/src/components/ui/alert";
+import { toast } from "@/src/components/ui/use-toast";
 import {
   Eye,
   EyeOff,
@@ -28,10 +29,11 @@ export default function SignUpForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [emailSent, setEmailSent] = useState<boolean | null>(null);
+  const [uploading, setUploading] = useState(false); // Added for photo upload
 
   const [formData, setFormData] = useState({
     name: "",
-    fatherName: "", // 🆕
+    fatherName: "",
     email: "",
     phone: "",
     gender: "",
@@ -43,16 +45,15 @@ export default function SignUpForm() {
     country: "India",
     zipCode: "",
     motherName: "",
-    // 🆕 Current Address
+    photo: "", // Added photo field
+    // Current Address
     currentAddress: "",
     currentCity: "",
     currentState: "",
     currentCountry: "India",
     currentZipCode: "",
-    // 🆕 Checkbox state
+    // Checkbox state
     sameAsPermanent: false,
-
-    // ✅ Add this
     declaration: false,
   });
 
@@ -88,14 +89,12 @@ export default function SignUpForm() {
       str.charAt(0).toUpperCase() + str.slice(1);
 
     if (name === "name" || name === "fatherName" || name === "motherName") {
-      // ✅ Sirf alphabets aur spaces + first letter capital
       const onlyAlphabets = value.replace(/[^A-Za-z\s]/g, "");
       setFormData((prev) => ({
         ...prev,
         [name]: onlyAlphabets ? capitalizeFirst(onlyAlphabets) : "",
       }));
     } else if (name === "city") {
-      // ✅ City me alphabets + numbers + spaces + first letter capital
       const cleanCity = value.replace(/[^A-Za-z0-9\s]/g, "");
       setFormData((prev) => ({
         ...prev,
@@ -109,6 +108,44 @@ export default function SignUpForm() {
     }
 
     if (error) setError("");
+  };
+
+  // Image Upload handler - Added from profile form
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const form = new FormData();
+    form.append("image", file);
+
+    try {
+      const res = await fetch("/api/upload-userImage", {
+        method: "POST",
+        body: form,
+      });
+      const result = await res.json();
+      if (result.imageUrl) {
+        setFormData((prev) => ({ ...prev, photo: result.imageUrl }));
+        toast({
+          title: "Image Uploaded ✅",
+          description: "Profile photo uploaded successfully!",
+        });
+      } else {
+        toast({
+          title: "Upload Failed ❌",
+          description: result.error || "Error uploading image",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Upload Error ❌",
+        description: "Something went wrong while uploading image",
+        variant: "destructive",
+      });
+    }
+    setUploading(false);
   };
 
   const validateForm = () => {
@@ -196,6 +233,7 @@ export default function SignUpForm() {
           fatherName: formData.fatherName.trim(),
           motherName: formData.motherName.trim(),
           gender: formData.gender,
+          photo: formData.photo || "", // Include photo in signup
 
           // Permanent Address
           address: formData.address,
@@ -245,8 +283,6 @@ export default function SignUpForm() {
         );
         router.push("/sign-in");
       } else {
-        // Redirect to profile creation or dashboard
-        // router.push("/create-profile")
         router.push("/sign-in");
       }
     } catch (error) {
@@ -285,6 +321,7 @@ export default function SignUpForm() {
           </div>
         </Alert>
       )}
+
       <div className="grid gap-4 grid-cols-2">
         {/* Name Field */}
         <div className="space-y-2">
@@ -306,6 +343,7 @@ export default function SignUpForm() {
             />
           </div>
         </div>
+
         {/* Email Field */}
         <div className="space-y-2">
           <Label htmlFor="email" className="block font-medium mb-2 text-base">
@@ -326,30 +364,13 @@ export default function SignUpForm() {
             />
           </div>
         </div>
-        {/* Phone Field */}
-        {/* <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number (Optional)</Label>
-          <div className="relative">
-            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="Enter phone number"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="pl-10 bg-white border-yellow-300 focus:border-red-500 text-base"
-              disabled={isLoading}
-            />
-          </div>
-        </div> */}
+
         {/* Phone Field */}
         <div className="space-y-2">
           <Label htmlFor="phone" className="block font-medium mb-2 text-base">
             Phone Number *
           </Label>
           <div className="relative">
-            {/* <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" /> */}
             <PhoneField
               value={formData.phone}
               onChange={(val) =>
@@ -362,14 +383,15 @@ export default function SignUpForm() {
             />
           </div>
         </div>
-        {/* {Gender} */}
+
+        {/* Gender */}
         <SelectField
-              label="Gender *"
-              name="gender"
-              value={formData.gender}
-              onChange={handleInputChange}
-              options={["Male", "Female", "Other"]}
-            />
+          label="Gender *"
+          name="gender"
+          value={formData.gender}
+          onChange={handleInputChange}
+          options={["Male", "Female", "Other"]}
+        />
 
         {/* Father's Name Field */}
         <div className="space-y-2">
@@ -394,6 +416,7 @@ export default function SignUpForm() {
             />
           </div>
         </div>
+
         <div className="space-y-2">
           <Label
             htmlFor="motherName"
@@ -416,58 +439,43 @@ export default function SignUpForm() {
             />
           </div>
         </div>
-        {/* City Field */}
-        {/* <div className="space-y-2">
-          <Label htmlFor="city">City *</Label>
-          <Input
-            id="city"
-            name="city"
-            type="text"
-            placeholder="Enter your city"
-            value={formData.city}
-            onChange={handleInputChange}
-            className="bg-white border-yellow-300 focus:border-red-500"
-            disabled={isLoading}
-            required
+
+        {/* Photo Upload Section - Added here */}
+        <div className="col-span-2 border p-4 rounded-md bg-gray-50">
+          <label className="block font-medium mb-2">
+            Upload Profile Photo (Optional)
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
+            disabled={uploading || isLoading}
           />
-        </div> */}
-        {/* State Field */}
-        {/* <div className="space-y-2">
-          <Label htmlFor="state">State *</Label>
-          <select
-            id="state"
-            name="state"
-            value={formData.state}
-            onChange={handleInputChange}
-            className="w-full rounded-md border border-yellow-300 bg-white px-3 py-2 focus:border-red-500"
-            disabled={isLoading}
-            required
-          >
-            <option value="">Select State</option>
-            {[
-              "Bihar",
-              "Uttar Pradesh",
-              "Delhi",
-              "Maharashtra",
-              "West Bengal",
-              "Madhya Pradesh",
-              "Rajasthan",
-              "Karnataka",
-              "Tamil Nadu",
-              "Kerala",
-              "Punjab",
-              "Haryana",
-              "Gujarat",
-              "Jharkhand",
-              "Odisha",
-              "Assam",
-            ].map((state) => (
-              <option key={state} value={state}>
-                {state}
-              </option>
-            ))}
-          </select>
-        </div> */}
+          {uploading && (
+            <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Uploading...
+            </p>
+          )}
+          {formData.photo && (
+            <div className="mt-3 flex items-center gap-3">
+              <img
+                src={formData.photo}
+                alt="Profile Preview"
+                className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
+              />
+              <div className="text-sm text-green-600 flex items-center gap-1">
+                <CheckCircle className="h-4 w-4" />
+                Photo uploaded successfully!
+              </div>
+            </div>
+          )}
+          <p className="text-xs text-gray-500 mt-1">
+            Supported formats: JPG, PNG. Max size: 5MB
+          </p>
+        </div>
+
         {/* Permanent Address Section */}
         <div className="col-span-2 ">
           <h3 className="font-semibold text-lg mb-4 text-gray-800 flex items-center gap-2">
@@ -531,9 +539,6 @@ export default function SignUpForm() {
         {/* Current Address Section */}
         <div className="col-span-2  mt-6">
           <div className="flex items-center justify-between mb-4">
-            {/* <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
-              📍 Current Address
-            </h3> */}
             <label className="flex items-center gap-2 text-lg text-gray-600 italic">
               <input
                 type="checkbox"
@@ -638,7 +643,7 @@ export default function SignUpForm() {
               value={formData.currentZipCode}
               onChange={handleInputChange}
               disabled={formData.sameAsPermanent}
-              required={formData.currentCountry === "India"} // ✅ Required only for India
+              required={formData.currentCountry === "India"}
             />
           </div>
         </div>
@@ -775,12 +780,17 @@ export default function SignUpForm() {
       <Button
         type="submit"
         className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white py-3"
-        disabled={isLoading || !formData.declaration}
+        disabled={isLoading || !formData.declaration || uploading}
       >
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Creating Account...
+          </>
+        ) : uploading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Uploading Photo...
           </>
         ) : (
           "Create Account"
@@ -789,10 +799,11 @@ export default function SignUpForm() {
     </form>
   );
 }
+
 function PhoneField({
   value,
   onChange,
-  required = false, // default false
+  required = false,
 }: {
   value: string;
   onChange: (val: string) => void;

@@ -88,7 +88,6 @@ export default function MyEvents() {
       Father_Name: attendee.fatherName,
       City: attendee.city,
       Profession: attendee.profession || attendee.designation || "-",
-
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -109,7 +108,7 @@ export default function MyEvents() {
       <h1 className="text-2xl font-bold mb-6">My Events</h1>
 
       {/* Tabs */}
-      <div className="flex gap-3 mb-4">
+      <div className="flex flex-wrap gap-3 mb-4">
         {["pending", "approved", "rejected"].map((tab) => {
           const count = events.filter((e) => e.status === tab).length;
           return (
@@ -127,64 +126,66 @@ export default function MyEvents() {
       {filteredEvents.length === 0 ? (
         <p className="text-gray-600 mt-4">No {activeTab} events found.</p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Sl No.</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredEvents.map((event, index) => (
-              <TableRow key={event.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{event.title}</TableCell>
-                <TableCell>{event.date}</TableCell>
-                <TableCell
-                  className={`font-medium ${
-                    event.status === "pending"
-                      ? "text-yellow-600"
-                      : event.status === "approved"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {event.status}
-                </TableCell>
-                <TableCell className="flex gap-2">
-                  <Link href={`/admin/my-events/${event.id}`}>
-                    <Button size="sm" variant="outline">
-                      View
-                    </Button>
-                  </Link>
-
-                  {event.status === "pending" && (
-                    <Link href={`/admin/my-events/${event.id}/edit`}>
-                      <Button
-                        size="sm"
-                        className="bg-yellow-500 text-white hover:bg-yellow-600"
-                      >
-                        Edit
+        <div className="overflow-x-auto max-w-full">
+          <Table className="min-w-[600px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Sl No.</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredEvents.map((event, index) => (
+                <TableRow key={event.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{event.title}</TableCell>
+                  <TableCell>{event.date}</TableCell>
+                  <TableCell
+                    className={`font-medium ${
+                      event.status === "pending"
+                        ? "text-yellow-600"
+                        : event.status === "approved"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {event.status}
+                  </TableCell>
+                  <TableCell className="flex flex-wrap gap-2">
+                    <Link href={`/admin/my-events/${event.id}`}>
+                      <Button size="sm" variant="outline">
+                        View
                       </Button>
                     </Link>
-                  )}
 
-                  {event.status === "approved" && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleViewAttendees(event)}
-                    >
-                      View Attendees
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                    {event.status === "pending" && (
+                      <Link href={`/admin/my-events/${event.id}/edit`}>
+                        <Button
+                          size="sm"
+                          className="bg-yellow-500 text-white hover:bg-yellow-600"
+                        >
+                          Edit
+                        </Button>
+                      </Link>
+                    )}
+
+                    {event.status === "approved" && (
+                      <Button
+                        size="sm"
+                        onClick={() => handleViewAttendees(event)}
+                      >
+                        View Attendees
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
 
       {/* Attendees Modal */}
@@ -199,7 +200,7 @@ export default function MyEvents() {
             </DialogHeader>
 
             <div className="mt-4 overflow-x-auto max-h-[500px]">
-              <Table>
+              <Table className="min-w-[700px]">
                 <TableHeader className="bg-gray-100">
                   <TableRow>
                     <TableHead>Sl No.</TableHead>
@@ -211,7 +212,7 @@ export default function MyEvents() {
                     <TableHead>Profession / Designation</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className="max-h-96 overflow-y-auto">
+                <TableBody>
                   {selectedAttendees.map((attendee, index) => (
                     <TableRow key={attendee.id}>
                       <TableCell>{index + 1}</TableCell>

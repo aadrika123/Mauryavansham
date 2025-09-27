@@ -999,101 +999,125 @@ export default function EditProfileForm({
   };
 
   // Image Upload Component
-  const ImageUploadSlot = ({
-    imageNumber,
-    preview,
-    isUploading,
-  }: {
-    imageNumber: 1 | 2 | 3;
-    preview: string;
-    isUploading: boolean;
-  }) => {
-    const fileInputRef =
-      imageNumber === 1
-        ? fileInputRef1
-        : imageNumber === 2
-        ? fileInputRef2
-        : fileInputRef3;
-
-    return (
-      <div className="flex flex-col items-center">
-        {/* Image Preview */}
-        <div className="relative mb-3">
-          {preview ? (
-            <div className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-orange-200">
-              <Image
-                src={preview || "/placeholder.svg"}
-                alt={`Profile preview ${imageNumber}`}
-                fill
-                className="object-cover"
-              />
-              <button
-                onClick={() => handleImageRemove(imageNumber)}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
-                type="button"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              {imageNumber === 1 && (
-                <div className="absolute bottom-0 left-0 bg-orange-600 text-white text-xs px-2 py-1 rounded-tr-md">
-                  Primary
-                </div>
-              )}
-            </div>
-          ) : (
-            <div
-              className="w-24 h-24 rounded-lg bg-gray-100 border-2 border-dashed border-orange-200 flex items-center justify-center cursor-pointer hover:border-orange-400 transition-colors"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {isUploading ? (
-                <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
-              ) : (
-                <Plus className="w-6 h-6 text-gray-400" />
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Upload Input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleImageSelect(imageNumber, e)}
-          className="hidden"
-        />
-
-        {/* Upload Button */}
-        {!preview && (
-          <Button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            size="sm"
-            variant="outline"
-            className="text-[10px] border-orange-300 text-orange-600 hover:bg-orange-50"
-            disabled={isUploading}
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                Uploading
-              </>
-            ) : (
-              <>
-                <Upload className="mr-1 h-3 w-3 " />
-                Add Photo {imageNumber}
-              </>
-            )}
-          </Button>
-        )}
-
-        {/* Image Label */}
-        <p className="text-xs text-gray-500 mt-1 text-center">
-          {imageNumber === 1 ? "Primary Photo" : `Photo ${imageNumber}`}
-        </p>
-      </div>
-    );
-  };
+    const ImageUploadSlot = ({
+       imageNumber,
+       preview,
+       isUploading,
+       hasError = false,
+     }: {
+       imageNumber: 1 | 2 | 3;
+       preview: string;
+       isUploading: boolean;
+       hasError?: boolean;
+     }) => {
+       const fileInputRef =
+         imageNumber === 1
+           ? fileInputRef1
+           : imageNumber === 2
+           ? fileInputRef2
+           : fileInputRef3;
+   
+       return (
+         <div className="flex flex-col items-center">
+           {/* Image Preview */}
+           <div className="relative mb-3">
+             {preview ? (
+               <div
+                 className={`relative w-24 h-24 rounded-lg overflow-hidden border-2 ${
+                   hasError ? "border-red-300" : "border-orange-200"
+                 }`}
+               >
+                 <Image
+                   src={preview || "/placeholder.svg"}
+                   alt={`Profile preview ${imageNumber}`}
+                   fill
+                   className="object-cover"
+                 />
+                 <button
+                   onClick={() => handleImageRemove(imageNumber)}
+                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                   type="button"
+                 >
+                   <X className="w-4 h-4" />
+                 </button>
+                 {imageNumber === 1 && (
+                   <div className="absolute bottom-0 left-0 bg-orange-600 text-white text-xs px-2 py-1 rounded-tr-md">
+                     Primary
+                   </div>
+                 )}
+               </div>
+             ) : (
+               <div
+                 className={`w-24 h-24 rounded-lg bg-gray-100 border-2 border-dashed ${
+                   hasError
+                     ? "border-red-300 bg-red-50"
+                     : "border-orange-200 hover:border-orange-400"
+                 } flex items-center justify-center cursor-pointer transition-colors`}
+                 onClick={() => fileInputRef.current?.click()}
+               >
+                 {isUploading ? (
+                   <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+                 ) : (
+                   <Plus
+                     className={`w-6 h-6 ${
+                       hasError ? "text-red-400" : "text-gray-400"
+                     }`}
+                   />
+                 )}
+               </div>
+             )}
+           </div>
+   
+           {/* Upload Input */}
+           <input
+             ref={fileInputRef}
+             type="file"
+             accept="image/*"
+             onChange={(e) => handleImageSelect(imageNumber, e)}
+             className="hidden"
+           />
+   
+           {/* Upload Button */}
+           {!preview && (
+             <Button
+               type="button"
+               onClick={() => fileInputRef.current?.click()}
+               size="sm"
+               variant="outline"
+               className={`text-[10px] ${
+                 hasError
+                   ? "border-red-300 text-red-600 hover:bg-red-50"
+                   : "border-orange-300 text-orange-600 hover:bg-orange-50"
+               }`}
+               disabled={isUploading}
+             >
+               {isUploading ? (
+                 <>
+                   <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                   Uploading
+                 </>
+               ) : (
+                 <>
+                   <Upload className="mr-1 h-3 w-3 " />
+                   Add Photo {imageNumber}
+                   {imageNumber === 1 && hasError && " *"}
+                 </>
+               )}
+             </Button>
+           )}
+   
+           {/* Image Label */}
+           <p
+             className={`text-xs mt-1 text-center ${
+               hasError ? "text-red-500" : "text-gray-500"
+             }`}
+           >
+             {imageNumber === 1 ? "Primary Photo" : `Photo ${imageNumber}`}
+             {imageNumber === 1 && hasError && " (Required)"}
+           </p>
+         </div>
+       );
+     };
 
   const handleNextStep = () => {
     if (!validateCurrentStep(currentStep)) {
@@ -1360,215 +1384,219 @@ export default function EditProfileForm({
 
   return (
     <>
-      {isPending && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-          <Loader />
-        </div>
-      )}
-      <ValidationPopup
-        isOpen={showValidationPopup}
-        onClose={() => setShowValidationPopup(false)}
-        errors={validationErrors}
-        currentStep={currentStep}
-      />
-      <div className="min-h-screen bg-orange-50 mt-6  mr-16">
-        <form onSubmit={handleCompleteProfile}>
-          <div className="max-w-full mx-auto">
-            {/* Progress Bar */}
-            <div className="mb-6">
-              <ProgressBar currentStep={currentStep} />
-            </div>
-            {/* Show Profile Relation Error */}
-            {validationErrors.profileRelation && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-600 text-sm">
-                  {validationErrors.profileRelation}
-                </p>
-              </div>
-            )}
-            <div className="grid grid-cols-3 gap-6">
-              <div className="lg:col-span-1">
-                {/* Multiple Photo Upload Section */}
-                <Card className="p-4 mb-4">
-                  <h3 className="text-lg font-semibold mb-4 text-center text-orange-800">
-                    Profile Photos
-                  </h3>
-
-                  {/* Multiple Image Upload Grid */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    <ImageUploadSlot
-                      imageNumber={1}
-                      preview={imagePreviews.preview1}
-                      isUploading={isUploadingImages.image1}
-                    />
-                    <ImageUploadSlot
-                      imageNumber={2}
-                      preview={imagePreviews.preview2}
-                      isUploading={isUploadingImages.image2}
-                    />
-                    <ImageUploadSlot
-                      imageNumber={3}
-                      preview={imagePreviews.preview3}
-                      isUploading={isUploadingImages.image3}
-                    />
-                  </div>
-
-                  <p className="text-xs text-gray-500 text-center mb-4">
-                    Upload up to 3 photos • Max 5MB each • JPG, PNG
-                  </p>
-
-                  {/* Photo Guidelines */}
-                  <div className="mt-6 text-center">
-                    <h4 className="text-sm font-medium text-orange-700 mb-3">
-                      Photo Guidelines
-                    </h4>
-                    <div className="flex justify-center gap-2">
-                      {/* Image 1 - Valid */}
-                      <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                          <Image
-                            src="https://img.shaadi.com/imgs/registration/male-closeup-v2.gif"
-                            alt="Example 1"
-                            width={64}
-                            height={64}
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                        <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
-                        <p className="text-xs mt-1">Close Up</p>
-                      </div>
-
-                      {/* Image 2 - Valid */}
-                      <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                          <Image
-                            src="https://img.shaadi.com/imgs/registration/male-full-view-v2.gif"
-                            alt="Example 2"
-                            width={64}
-                            height={64}
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                        <Check className="absolute -top-2 -right-2 w-5 h-5 text-green-500 bg-white rounded-full shadow" />
-                        <p className="text-xs mt-1">Full View</p>
-                      </div>
-
-                      {/* Image 3 - Invalid */}
-                      <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                          <Image
-                            src="https://img.shaadi.com/imgs/registration/male-face-blur-v2.gif"
-                            alt="Invalid Example 1"
-                            width={64}
-                            height={64}
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                        <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
-                        <p className="text-xs mt-1">Blur</p>
-                      </div>
-
-                      {/* Image 4 - Invalid */}
-                      <div className="relative">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-300">
-                          <Image
-                            src="https://img.shaadi.com/imgs/registration/male-face-group.gif"
-                            alt="Invalid Example 2"
-                            width={64}
-                            height={64}
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                        <X className="absolute -top-2 -right-2 w-5 h-5 text-red-500 bg-white rounded-full shadow" />
-                        <p className="text-xs mt-1">Group</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                <ProfileSidebar
-                  activeTab={activeTab}
-                  onTabChange={setActiveTab}
-                />
-              </div>
-
-              <div className="lg:col-span-2">
-                {/* Motivational Message */}
-                {currentTabConfig && (
-                  <MotivationalMessage
-                    title={currentTabConfig.message.title}
-                    subtitle={currentTabConfig.message.subtitle}
-                    icon={currentTabConfig.message.icon}
-                    currentStep={currentStep}
-                  />
-                )}
-
-                <Card className="p-6">
-                  {renderActiveTab()}
-                  {/* </form> */}
-                </Card>
-
-                <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 mb-10">
-                  {/* Navigation Buttons */}
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    {/* Previous Button */}
-                    {currentStep > 1 && (
-                      <Button
-                        onClick={handlePreviousStep}
-                        variant="outline"
-                        type="button"
-                        className="w-full sm:w-auto border-orange-300 text-orange-600 hover:bg-orange-50 bg-transparent"
-                      >
-                        ← Previous
-                      </Button>
-                    )}
-
-                    {currentStep < 5 && (
-                      <Button
-                        onClick={handleNextStep}
-                        type="button"
-                        className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
-                      >
-                        Next →
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    <Button
-                      type="submit"
-                      className={`w-full sm:w-auto ${
-                        currentStep === 5
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "bg-orange-600 hover:bg-orange-700"
-                      }`}
-                      disabled={isPending || isAnyImageUploading}
-                    >
-                      {isPending || isAnyImageUploading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {isAnyImageUploading
-                            ? "Uploading Images..."
-                            : type === "edit"
-                            ? "Updating..."
-                            : "Creating..."}
-                        </>
-                      ) : type === "edit" ? (
-                        "Update Profile"
-                      ) : currentStep === 5 ? (
-                        "Complete Profile ✨"
-                      ) : (
-                        "Save & Complete Later"
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-        <Toaster />
-      </div>
-    </>
+         {isPending && (
+           <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+             <Loader />
+           </div>
+         )}
+         <ValidationPopup
+           isOpen={showValidationPopup}
+           onClose={() => setShowValidationPopup(false)}
+           errors={validationErrors}
+           currentStep={currentStep}
+         />
+         <div className="min-h-screen bg-orange-50 mt-6 px-4 sm:px-6 lg:px-12">
+           <form onSubmit={handleCompleteProfile}>
+             <div className="max-w-full mx-auto">
+               {/* Progress Bar */}
+               <div className="mb-6">
+                 <ProgressBar currentStep={currentStep} />
+               </div>
+   
+               {/* Show Profile Relation Error */}
+               {validationErrors.profileRelation && (
+                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                   <p className="text-red-600 text-sm">
+                     {validationErrors.profileRelation}
+                   </p>
+                 </div>
+               )}
+   
+               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                 {/* Sidebar */}
+                 <div className="order-2 lg:order-1 lg:col-span-1">
+                   <Card className="p-4 mb-4">
+                     <h3 className="text-lg font-semibold mb-4 text-center text-orange-800">
+                       Profile Photos
+                     </h3>
+   
+                     {/* Multiple Image Upload Grid */}
+                     <div className="grid grid-cols-3 gap-3 mb-4">
+                       <ImageUploadSlot
+                         imageNumber={1}
+                         preview={imagePreviews.preview1}
+                         isUploading={isUploadingImages.image1}
+                         hasError={!!validationErrors.profileImage1}
+                       />
+   
+                       <ImageUploadSlot
+                         imageNumber={2}
+                         preview={imagePreviews.preview2}
+                         isUploading={isUploadingImages.image2}
+                       />
+                       <ImageUploadSlot
+                         imageNumber={3}
+                         preview={imagePreviews.preview3}
+                         isUploading={isUploadingImages.image3}
+                       />
+                     </div>
+                     {/* Show validation error for images */}
+                     {validationErrors.profileImage1 && (
+                       <div className="mb-4 p-2 bg-red-50 border border-red-200 rounded-md">
+                         <p className="text-red-600 text-sm text-center">
+                           {validationErrors.profileImage1}
+                         </p>
+                       </div>
+                     )}
+                     <p className="text-xs text-gray-500 text-center mb-4">
+                       Upload up to 3 photos • Max 5MB each • JPG, PNG
+                     </p>
+   
+                     {/* Photo Guidelines */}
+                     <div className="mt-6 text-center">
+                       <h4 className="text-sm font-medium text-orange-700 mb-3">
+                         Photo Guidelines
+                       </h4>
+                       <div className="flex flex-wrap justify-center gap-4">
+                         {/* Example Images */}
+                         <div className="relative">
+                           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
+                             <Image
+                               src="https://img.shaadi.com/imgs/registration/male-closeup-v2.gif"
+                               alt="Example 1"
+                               width={64}
+                               height={64}
+                               className="object-cover w-full h-full"
+                             />
+                           </div>
+                           <Check className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-green-500 bg-white rounded-full shadow" />
+                           <p className="text-xs mt-1">Close Up</p>
+                         </div>
+   
+                         <div className="relative">
+                           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
+                             <Image
+                               src="https://img.shaadi.com/imgs/registration/male-full-view-v2.gif"
+                               alt="Example 2"
+                               width={64}
+                               height={64}
+                               className="object-cover w-full h-full"
+                             />
+                           </div>
+                           <Check className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-green-500 bg-white rounded-full shadow" />
+                           <p className="text-xs mt-1">Full View</p>
+                         </div>
+   
+                         <div className="relative">
+                           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
+                             <Image
+                               src="https://img.shaadi.com/imgs/registration/male-face-blur-v2.gif"
+                               alt="Invalid Example 1"
+                               width={64}
+                               height={64}
+                               className="object-cover w-full h-full"
+                             />
+                           </div>
+                           <X className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-red-500 bg-white rounded-full shadow" />
+                           <p className="text-xs mt-1">Blur</p>
+                         </div>
+   
+                         <div className="relative">
+                           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-gray-300">
+                             <Image
+                               src="https://img.shaadi.com/imgs/registration/male-face-group.gif"
+                               alt="Invalid Example 2"
+                               width={64}
+                               height={64}
+                               className="object-cover w-full h-full"
+                             />
+                           </div>
+                           <X className="absolute -top-2 -right-2 w-4 h-4 sm:w-5 sm:h-5 text-red-500 bg-white rounded-full shadow" />
+                           <p className="text-xs mt-1">Group</p>
+                         </div>
+                       </div>
+                     </div>
+                   </Card>
+   
+                   <ProfileSidebar
+                     activeTab={activeTab}
+                     onTabChange={setActiveTab}
+                   />
+                 </div>
+   
+                 {/* Form Content */}
+                 <div className="order-1 lg:order-2 lg:col-span-2">
+                   {currentTabConfig && (
+                     <MotivationalMessage
+                       title={currentTabConfig.message.title}
+                       subtitle={currentTabConfig.message.subtitle}
+                       icon={currentTabConfig.message.icon}
+                       currentStep={currentStep}
+                     />
+                   )}
+   
+                   <Card className="p-4 sm:p-6">{renderActiveTab()}</Card>
+   
+                   <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4 mb-10">
+                     {/* Navigation Buttons */}
+                     <div className="flex gap-2 w-full sm:w-auto">
+                       {currentStep > 1 && (
+                         <Button
+                           onClick={handlePreviousStep}
+                           variant="outline"
+                           type="button"
+                           className="w-full sm:w-auto border-orange-300 text-orange-600 hover:bg-orange-50 bg-transparent"
+                         >
+                           ← Previous
+                         </Button>
+                       )}
+   
+                       {currentStep < 5 && (
+                         <Button
+                           onClick={handleNextStep}
+                           type="button"
+                           className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
+                         >
+                           Next →
+                         </Button>
+                       )}
+                     </div>
+   
+                     <div className="flex gap-2 w-full sm:w-auto">
+                       <Button
+                         type="submit"
+                         className={`w-full sm:w-auto ${
+                           currentStep === 5
+                             ? "bg-green-600 hover:bg-green-700"
+                             : "bg-orange-600 hover:bg-orange-700"
+                         }`}
+                         disabled={isPending || isAnyImageUploading}
+                       >
+                         {isPending || isAnyImageUploading ? (
+                           <>
+                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                             {isAnyImageUploading
+                               ? "Uploading Images..."
+                               : type === "edit"
+                               ? "Updating..."
+                               : "Creating..."}
+                           </>
+                         ) : type === "edit" ? (
+                           "Update Profile"
+                         ) : currentStep === 5 ? (
+                           "Complete Profile ✨"
+                         ) : (
+                           "Save & Complete Later"
+                         )}
+                       </Button>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </form>
+           <Toaster />
+         </div>
+       </>
   );
 }

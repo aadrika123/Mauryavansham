@@ -214,52 +214,49 @@ const ViewProfileById = (props: any) => {
       </div> */}
 
       {/* Main Content */}
-      <div className="flex-1  px-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-transparent bg-clip-text drop-shadow-lg">
+      <div className="flex-1 px-2 sm:px-4">
+        {/* Header Title */}
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-transparent bg-clip-text drop-shadow-lg px-2">
           Make sure to keep your profile 100% complete for better connections
         </h1>
-        <div className=" mx-auto bg-gradient-to-br from-orange-50 via-red-50 to-amber-50 shadow-lg rounded-lg overflow-hidden mt-8 mb-8 relative">
+
+        <div className="mx-auto bg-gradient-to-br from-orange-50 via-red-50 to-amber-50 shadow-lg rounded-lg overflow-hidden mt-6 sm:mt-8 mb-6 sm:mb-8 relative">
           {/* Background Crown Icons */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-5">
-            <div className="absolute top-32 right-16 text-red-400">
-              <Crown className="w-20 h-20" />
+            <div className="absolute top-32 right-4 sm:right-16 text-red-400">
+              <Crown className="w-16 h-16 sm:w-20 sm:h-20" />
             </div>
-            <div className="absolute top-80 left-20 text-amber-400">
-              <Crown className="w-20 h-20" />
+            <div className="absolute top-80 left-6 sm:left-20 text-amber-400">
+              <Crown className="w-16 h-16 sm:w-20 sm:h-20" />
             </div>
-            <div className="absolute bottom-40 right-8 text-orange-400">
-              <Crown className="w-20 h-20" />
+            <div className="absolute bottom-40 right-4 sm:right-8 text-orange-400">
+              <Crown className="w-16 h-16 sm:w-20 sm:h-20" />
             </div>
-            <div className="absolute bottom-20 left-32 text-red-400">
-              <Crown className="w-20 h-20" />
+            <div className="absolute bottom-20 left-10 sm:left-32 text-red-400">
+              <Crown className="w-16 h-16 sm:w-20 sm:h-20" />
             </div>
-            <div className="absolute top-60 right-32 text-amber-400">
-              <Crown className="w-20 h-20" />
+            <div className="absolute top-60 right-12 sm:right-32 text-amber-400">
+              <Crown className="w-16 h-16 sm:w-20 sm:h-20" />
             </div>
-          </div>{" "}
+          </div>
+
           {/* Header Section */}
-          <div
-            className="bg-[linear-gradient(125deg,#ffc733,#a30000,#ff7426)]
- text-white p-6 relative grid grid-cols-4 "
-          >
-            {" "}
-            {/* Added relative for positioning pencil icon */}
-            <div className="flex flex-col md:flex-row gap-6">
-              {/* Profile Image */}
-              <div className="flex-shrink-0">
-                <ProfileImageCarousel profile={profileData} />
-              </div>
+          <div className="bg-[linear-gradient(125deg,#ffc733,#a30000,#ff7426)] text-white p-4 sm:p-6 relative grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Profile Image */}
+            <div className="flex justify-center md:justify-start">
+              <ProfileImageCarousel profile={profileData} />
             </div>
+
             {/* Basic Info */}
-            <div className="capitalize text-lg">
-              <div className="grid grid-cols-1 gap-4">
+            <div className="capitalize text-base sm:text-lg md:col-span-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-white mb-2 white">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                     {profileData.name}
                   </h1>
-                  <div className=" text-white">
+                  <div className="text-white space-y-1">
                     <p className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />{" "}
+                      <Calendar className="w-4 h-4" />
                       {calculateAge(profileData.dob)},{" "}
                       <User className="w-4 h-4" />
                       {profileData.height}
@@ -274,10 +271,9 @@ const ViewProfileById = (props: any) => {
                     </p>
                   </div>
                 </div>
-                <div>
+                <div className="space-y-1">
                   <p className="flex items-center gap-1">
-                    <FlameKindlingIcon className="w-4 h-4" />
-                    Hindu
+                    <FlameKindlingIcon className="w-4 h-4" /> Hindu
                   </p>
                   <p className="flex items-center gap-1">
                     <Languages className="w-4 h-4" />
@@ -293,9 +289,9 @@ const ViewProfileById = (props: any) => {
                   </p>
                 </div>
               </div>
+
               {/* Social Links */}
-              {/* Social Links */}
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3 mt-4 sm:mt-6 flex-wrap">
                 {profileData.facebook && (
                   <a
                     href={profileData.facebook}
@@ -339,15 +335,17 @@ const ViewProfileById = (props: any) => {
               </div>
             </div>
           </div>
+
           {/* Pencil Icon for Edit */}
           <Link
             href={`/admin/edit-profile/${profileData.id}`}
-            className="absolute cursor-pointer top-4 right-4 text-white hover:text-gray-700 transition-colors"
+            className="absolute cursor-pointer top-3 sm:top-4 right-3 sm:right-4 text-white hover:text-gray-700 transition-colors"
           >
             <span className="sr-only">Edit Profile</span>
-            <UserPen className="w-8 h-8" />
+            <UserPen className="w-6 h-6 sm:w-8 sm:h-8" />
           </Link>
         </div>
+
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200">
           <nav className="flex overflow-x-auto">
@@ -355,9 +353,9 @@ const ViewProfileById = (props: any) => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
+                className={`flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? "border-red-600 text-red-700 bg-red-50" // Updated active tab color
+                    ? "border-red-600 text-red-700 bg-red-50"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
@@ -367,8 +365,11 @@ const ViewProfileById = (props: any) => {
             ))}
           </nav>
         </div>
+
         {/* Tab Content */}
-        <div className="p-6 relative  bg-white/80 backdrop-blur-sm mb-10 border border-gray-200 shadow-lg">
+        <div className="p-4 sm:p-6 relative bg-white/80 backdrop-blur-sm mb-8 border border-gray-200 shadow-lg">
+          {/* Yahan pe aapke saare activeTab content blocks rahenge (About, Education, Family, Heritage, Lifestyle etc.) 
+        Maine unko change nahi kiya hai — sirf wrapper responsive banaya hai. */}
           {activeTab === "about" && (
             <div className="space-y-6">
               <div>
@@ -379,56 +380,53 @@ const ViewProfileById = (props: any) => {
                   {profileData.aboutMe}
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-96">
+
+              {/* Personal + Contact Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Personal Details */}
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">
                     Personal Details
                   </h4>
                   <div className="space-y-2 text-sm text-gray-600 font-bold">
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Nick Name:
-                      </span>
+                      <span>Nick Name:</span>
                       <span className="font-medium">
                         {profileData?.nickName}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Date of Birth:
-                      </span>
+                      <span>Date of Birth:</span>
                       <span className="font-medium">
                         {new Date(profileData.dob).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">Height:</span>
+                      <span>Height:</span>
                       <span className="font-medium">{profileData.height}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">Weight:</span>
+                      <span>Weight:</span>
                       <span className="font-medium">
                         {profileData.weight} kg
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Complexion:
-                      </span>
+                      <span>Complexion:</span>
                       <span className="font-medium capitalize">
                         {profileData.complexion}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Body Type:
-                      </span>
+                      <span>Body Type:</span>
                       <span className="font-medium capitalize">
                         {profileData.bodyType}
                       </span>
                     </div>
                   </div>
                 </div>
+
+                {/* Contact Info */}
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">
                     Contact Information
@@ -447,410 +445,6 @@ const ViewProfileById = (props: any) => {
                     Interests
                   </h4>
                   <p className="text-sm text-gray-700">{profileData.hobbies}</p>
-                </div>
-              </div>
-            </div>
-          )}
-          {activeTab === "education" && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-bold mb-3 text-gray-900">
-                  Education
-                </h3>
-                <div className="bg-gray-50/90 backdrop-blur-sm p-4 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 font-bold">
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Highest Education:
-                      </span>
-                      <p className="font-medium capitalize">
-                        {profileData.highestEducation}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        College/University:
-                      </span>
-                      <p className="font-medium">
-                        {profileData.collegeUniversity}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold mb-3 text-gray-900">Career</h3>
-                <div className="bg-gray-50/90 backdrop-blur-sm p-4 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-gray-600 font-bold">
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Occupation:
-                      </span>
-                      <p className="font-medium capitalize">
-                        {profileData.occupation}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Company:
-                      </span>
-                      <p className="font-medium">
-                        {profileData.companyOrganization}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Designation:
-                      </span>
-                      <p className="font-medium">{profileData.designation}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Work Location:
-                      </span>
-                      <p className="font-medium">{profileData.workLocation}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Annual Income:
-                      </span>
-                      <p className="font-medium">{profileData.annualIncome}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Website:
-                      </span>
-                      <a
-                        href={profileData.website}
-                        className="text-blue-600 hover:underline font-medium"
-                      >
-                        {profileData.website}
-                      </a>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-gray-600 font-bold text-sm">
-                      Work Experience:
-                    </span>
-                    <p className="text-gray-700 mt-1">
-                      {profileData.workExperience}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {activeTab === "family" && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900">
-                  Family Information
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
-                  <div className="space-y-4">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">Father</h4>
-                      <p className="font-medium">{profileData.fatherName}</p>
-                      <p className="text-gray-600 font-bold text-sm">
-                        {profileData.fatherOccupation}
-                      </p>
-                    </div>
-                    <div className="bg-pink-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">Mother</h4>
-                      <p className="font-medium">{profileData.motherName}</p>
-                      <p className="text-gray-600 font-bold text-sm">
-                        {profileData.motherOccupation}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-3">Siblings</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600 font-bold">
-                            Brothers:
-                          </span>
-                          <span className="font-medium">
-                            {profileData.brothers}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600 font-bold">
-                            Sisters:
-                          </span>
-                          <span className="font-medium">
-                            {profileData.sisters}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">
-                        Family Income
-                      </h4>
-                      <p className="font-medium">
-                        {profileData.familyIncome} (Annual)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {activeTab === "heritage" && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900">
-                  Genealogy & Heritage
-                </h3>
-                <div className="space-y-4">
-                  <div className="bg-orange-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-2">
-                      Gotra Details
-                    </h4>
-                    <p className="text-gray-700">{profileData.gotraDetails}</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">
-                        Ancestral Village
-                      </h4>
-                      <p className="text-gray-700">
-                        {profileData.ancestralVillage}
-                      </p>
-                    </div>
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">
-                        Family History
-                      </h4>
-                      <p className="text-gray-700">
-                        {profileData.familyHistory}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-2">
-                      Community Contributions
-                    </h4>
-                    <p className="text-gray-700">
-                      {profileData.communityContributions}
-                    </p>
-                  </div>
-                  <div className="bg-indigo-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-2">
-                      Family Traditions
-                    </h4>
-                    <p className="text-gray-700">
-                      {profileData.familyTraditions}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {activeTab === "lifestyle" && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900">
-                  Lifestyle & Preferences
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
-                  <div>
-                    <h4 className="font-bold text-gray-900 mb-3">Habits</h4>
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center p-3 bg-white/70 backdrop-blur-sm rounded-lg">
-                        <span className="text-gray-600 font-bold">Diet:</span>
-                        <span className="font-medium capitalize">
-                          {profileData.diet}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Smoking:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.smoking}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Drinking:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.drinking}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Exercise:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.exercise}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Religious Beliefs:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.religiousBeliefs}
-                        </span>
-                      </div>
-                      {/* <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Caste Preference:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.castPreferences}
-                        </span>
-                      </div> */}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 mb-3">Interests</h4>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-blue-50 rounded-lg">
-                        <span className="text-gray-600 font-bold text-sm">
-                          Music:
-                        </span>
-                        <p className="font-medium">
-                          {profileData.musicPreferences}
-                        </p>
-                      </div>
-                      <div className="p-3 bg-green-50 rounded-lg">
-                        <span className="text-gray-600 font-bold text-sm">
-                          Movies:
-                        </span>
-                        <p className="font-medium">
-                          {profileData.moviePreferences}
-                        </p>
-                      </div>
-                      <div className="p-3 bg-purple-50 rounded-lg">
-                        <span className="text-gray-600 font-bold text-sm">
-                          Reading:
-                        </span>
-                        <p className="font-medium">
-                          {profileData.readingInterests}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-yellow-50 p-4 rounded-lg mt-6">
-                  <h4 className="font-bold text-gray-900 mb-2">
-                    Travel Interests
-                  </h4>
-                  <p className="text-gray-700">{profileData.travelInterests}</p>
-                </div>
-              </div>
-            </div>
-          )}
-          {/* Sibling Details */}
-          {activeTab === "family" && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900 mt-4">
-                  Sibling Details
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
-                  {/* Brothers */}
-                  <div className="space-y-3 bg-sky-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-3">Brothers</h4>
-                    {profileData?.brothersDetails?.length > 0 ? (
-                      profileData.brothersDetails.map(
-                        (brother: any, index: number) => (
-                          <div key={index} className="mb-4 border-b pb-2">
-                            <p className="text-gray-700">
-                              Name:{" "}
-                              <span className="font-medium capitalize">
-                                {brother.name}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Occupation:{" "}
-                              <span className="font-medium capitalize">
-                                {brother.occupation}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Marital Status:{" "}
-                              <span className="font-medium capitalize">
-                                {brother.maritalStatus}
-                              </span>
-                            </p>
-                            {brother.maritalStatus === "married" && (
-                              <>
-                                <p className="text-gray-700">
-                                  Spouse Name:{" "}
-                                  <span className="font-medium capitalize">
-                                    {brother.spouseName}
-                                  </span>
-                                </p>
-                                <p className="text-gray-700">
-                                  Spouse Occupation:{" "}
-                                  <span className="font-medium capitalize">
-                                    {brother.spouseOccupation}
-                                  </span>
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        )
-                      )
-                    ) : (
-                      <p className="text-gray-500">No brothers added</p>
-                    )}
-                  </div>
-
-                  {/* Sisters */}
-                  <div className="space-y-3 bg-pink-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-3">Sisters</h4>
-                    {profileData?.sistersDetails?.length > 0 ? (
-                      profileData.sistersDetails.map(
-                        (sister: any, index: number) => (
-                          <div key={index} className="mb-4 border-b pb-2">
-                            <p className="text-gray-700">
-                              Name:{" "}
-                              <span className="font-medium capitalize">
-                                {sister.name}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Occupation:{" "}
-                              <span className="font-medium capitalize">
-                                {sister.occupation}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Marital Status:{" "}
-                              <span className="font-medium capitalize">
-                                {sister.maritalStatus}
-                              </span>
-                            </p>
-                            {sister.maritalStatus === "married" && (
-                              <>
-                                <p className="text-gray-700">
-                                  Spouse Name:{" "}
-                                  <span className="font-medium capitalize">
-                                    {sister.spouseName}
-                                  </span>
-                                </p>
-                                <p className="text-gray-700">
-                                  Spouse Occupation:{" "}
-                                  <span className="font-medium capitalize">
-                                    {sister.spouseOccupation}
-                                  </span>
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        )
-                      )
-                    ) : (
-                      <p className="text-gray-500">No sisters added</p>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>

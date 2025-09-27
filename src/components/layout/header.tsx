@@ -107,7 +107,7 @@ export function Header() {
                   <Crown className="text-white text-xl" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-red-700 bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-red-700 bg-clip-text text-transparent">
                     Mauryavansham
                   </h1>
                   <p className="text-md font-semibold text-red-700">

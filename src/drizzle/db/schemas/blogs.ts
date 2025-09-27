@@ -1,7 +1,7 @@
 import { pgTable, text, timestamp, integer, serial,pgEnum } from "drizzle-orm/pg-core"
 import { users } from "./users.schema"
 
-export const blogStatusEnum = pgEnum("blog_status", ["draft", "pending", "approved", "rejected"])
+export const blogStatusEnum = pgEnum("blog_status", ["draft", "pending", "approved", "rejected","removed"])
 
 export const blogs = pgTable("blogs", {
   id: serial("id").primaryKey(),

@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
     if (n.type === "profile_connect" && n.sender?.id === userId) {
       return {
         ...n,
-        // message: `You sent a connection request to user ${n.receiverId}`,
+        message: `You sent a connection request to user ${n.receiverId}`,
       };
     }
     return n;

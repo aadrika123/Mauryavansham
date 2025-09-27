@@ -24,9 +24,9 @@ export default async function ViewBusinessIndex() {
             className="flex items-center  text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="w-4 h-4 text-red-700" />
-            <span className="text-red-700">Back to dashboard / </span>
+            <span className="text-red-700">Dashboard / </span>
           </Link>
-          <h1 className="text-2xl font-bold text-red-700">Business List</h1>
+          <h1 className=" font-bold text-red-700">Business List</h1>
         </div>
 
         <MyBusinessesPage />

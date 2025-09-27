@@ -29,7 +29,7 @@ export default async function BusinessIndexPage() {
                 <ArrowLeft className="w-4 h-4 text-red-700" />
                 <span className="text-red-700">Dashboard / </span>
               </Link>
-              <h1 className="text-2xl font-bold text-red-700">
+              <h1 className=" font-bold text-red-700">
                 Registration Form
               </h1>
             </div>

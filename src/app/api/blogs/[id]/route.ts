@@ -136,3 +136,56 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const blogId = Number(params.id);
+    if (isNaN(blogId)) {
+      return NextResponse.json({ error: "Invalid blog id" }, { status: 400 });
+    }
+
+    const [existingBlog] = await db
+      .select()
+      .from(blogs)
+      .where(eq(blogs.id, blogId));
+
+    if (!existingBlog) {
+      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+
+    // ✅ Only author or admin/superAdmin can "remove"
+    if (
+      existingBlog.authorId.toString() !== session.user.id.toString() &&
+      session.user.role !== "admin" &&
+      session.user.role !== "superAdmin"
+    ) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // ✅ Update status to "removed"
+    const [updatedBlog] = await db
+      .update(blogs)
+      .set({
+        status: "removed",
+        updatedAt: new Date(),
+      })
+      .where(eq(blogs.id, blogId))
+      .returning();
+
+    return NextResponse.json({ blog: updatedBlog });
+  } catch (error) {
+    console.error("Error removing blog:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

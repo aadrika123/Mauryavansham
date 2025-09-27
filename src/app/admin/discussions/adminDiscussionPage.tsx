@@ -117,15 +117,15 @@ export default function AdminDiscussionsPage() {
   return (
     <div className="p-6 space-y-6">
       {/* 🔎 Search + Filter */}
-      <div className="flex gap-4 items-center">
+      <div className="flex flex-col sm:flex-row gap-4 items-center">
         <Input
           placeholder="Search by title, content, or author..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-1/2"
+          className="w-full sm:w-1/2"
         />
         <Select value={filterCategory} onValueChange={setFilterCategory}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="Filter by Category" />
           </SelectTrigger>
           <SelectContent>
@@ -141,7 +141,7 @@ export default function AdminDiscussionsPage() {
 
       {/* Tabs for Active & Rejected */}
       <Tabs defaultValue="active">
-        <TabsList>
+        <TabsList className="flex flex-wrap">
           <TabsTrigger value="active">
             Active ({filterData("approved").length})
           </TabsTrigger>
@@ -152,8 +152,8 @@ export default function AdminDiscussionsPage() {
 
         {/* ✅ Active Discussions Table */}
         <TabsContent value="active">
-          <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 text-sm">
+          <div className="overflow-x-auto w-full">
+            <table className="min-w-[700px] border border-gray-200 text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="p-2 border">Title</th>
@@ -206,8 +206,8 @@ export default function AdminDiscussionsPage() {
 
         {/* ❌ Rejected Discussions Table */}
         <TabsContent value="rejected">
-          <div className="overflow-x-auto">
-            <table className="w-full border border-gray-200 text-sm">
+          <div className="overflow-x-auto w-full">
+            <table className="min-w-[800px] border border-gray-200 text-sm">
               <thead className="bg-gray-100">
                 <tr>
                   <th className="p-2 border">Title</th>

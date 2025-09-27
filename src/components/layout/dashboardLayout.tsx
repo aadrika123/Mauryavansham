@@ -25,6 +25,9 @@ import {
   Menu,
   X,
   MessageSquare,
+  HeartHandshakeIcon,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -40,6 +43,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const pathname = usePathname();
+  const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
 
   const sidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
@@ -50,20 +54,42 @@ export default function DashboardLayout({
       icon: MessageSquare,
     },
     {
-      title: "Create Matrimonial Profile",
-      href: "/dashboard/create-profile",
-      icon: LayoutDashboard,
+      title: "Matrimonial",
+      href: "",
+      icon: HeartHandshakeIcon,
+      subItems: [
+        {
+          title: "Create Matrimonial Profile",
+          href: "/dashboard/create-profile",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "My Matrimonial Profiles",
+          href: "/dashboard/profile-list",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Search Matrimonial Profiles",
+          href: "/dashboard/search-profile",
+          icon: Search,
+        },
+      ],
     },
-    {
-      title: "My Matrimonial Profiles",
-      href: "/dashboard/profile-list",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Search Matrimonial Profiles",
-      href: "/dashboard/search-profile",
-      icon: Search,
-    },
+    // {
+    //   title: "Create Matrimonial Profile",
+    //   href: "/dashboard/create-profile",
+    //   icon: LayoutDashboard,
+    // },
+    // {
+    //   title: "My Matrimonial Profiles",
+    //   href: "/dashboard/profile-list",
+    //   icon: LayoutDashboard,
+    // },
+    // {
+    //   title: "Search Matrimonial Profiles",
+    //   href: "/dashboard/search-profile",
+    //   icon: Search,
+    // },
     { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
     { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
     {
@@ -107,38 +133,62 @@ export default function DashboardLayout({
     await signOut({ callbackUrl: "/", redirect: false });
     window.location.href = "/";
   };
+  const toggleMenu = (title: string) => {
+    setOpenMenus((prev) => ({ ...prev, [title]: !prev[title] }));
+  };
 
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
-      <div className="bg-red-800 text-white p-4 lg:p-6  fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
+      <div className="bg-red-800 text-white p-6 lg:p-6 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          {/* Hamburger (Mobile) */}
+          {/* ✅ Hamburger menu for mobile */}
           <button
-            className="lg:hidden p-2 rounded-md hover:bg-red-700"
+            className="lg:hidden p-2 rounded hover:bg-red-700"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? (
-              <X className="w-6 h-6 text-white" />
+              <X className="w-6 h-6" />
             ) : (
-              <Menu className="w-6 h-6 text-white" />
+              <Menu className="w-6 h-6" />
             )}
           </button>
           <Crown className="w-8 h-8 text-orange-400" />
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold">
-              Welcome back, {user?.name || ""}!
+          <div className="hidden lg:block">
+            <h1 className="text-2xl font-bold capitalize">
+              Welcome back, {user?.name || ""} ({user?.role})
             </h1>
-            <p className="text-red-200 text-sm md:text-base hidden sm:block">
-              {/* Your matrimonial journey continues */}
-            </p>
+            {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
           </div>
         </div>
-
-        {/* Right actions */}
         <div className="flex items-center gap-4">
+          {/* Notifications */}
           {user?.role === "user" && (
-            <DropdownMenu onOpenChange={handleNotificationsOpen}>
+            <DropdownMenu
+              onOpenChange={async (isOpen) => {
+                if (isOpen) {
+                  const unreadNotifications = notifications.filter(
+                    (n) => !n.isRead
+                  );
+                  if (unreadNotifications.length > 0) {
+                    await fetch("/api/notifications/mark-read", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        notificationIds: unreadNotifications.map((n) => n.id),
+                      }),
+                    });
+                    setNotifications((prev) =>
+                      prev.map((n) =>
+                        unreadNotifications.find((u) => u.id === n.id)
+                          ? { ...n, isRead: true }
+                          : n
+                      )
+                    );
+                  }
+                }
+              }}
+            >
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -146,14 +196,16 @@ export default function DashboardLayout({
                   className="text-white hover:bg-red-700 relative"
                 >
                   <Bell className="w-4 h-4 mr-2" />
-                  Notifications
-                  {notifications.filter((n) => !n.isRead).length > 0 && (
+                  {/* ✅ Text sirf desktop pe */}
+                  <span className="hidden lg:inline">Notifications</span>
+                  {notifications.filter((n) => n.isRead === 0).length > 0 && (
                     <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
-                      {notifications.filter((n) => !n.isRead).length}
+                      {notifications.filter((n) => n.isRead === 0).length}
                     </span>
                   )}
                 </Button>
               </DropdownMenuTrigger>
+
               {notifications.length > 0 && (
                 <DropdownMenuContent
                   align="end"
@@ -174,7 +226,20 @@ export default function DashboardLayout({
             </DropdownMenu>
           )}
 
-          {/* Desktop Settings Menu */}
+          {/* Account Menu */}
+          {/* ✅ Mobile view: sirf logout icon */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-red-700"
+              onClick={() => setIsOpen(true)}
+            >
+              <LogOut className="w-5 h-5" />
+            </Button>
+          </div>
+
+          {/* ✅ Desktop view: pura Account menu */}
           <div className="hidden lg:block">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -200,31 +265,22 @@ export default function DashboardLayout({
         </div>
       </div>
 
-      {/* Sidebar + Main */}
+      {/* Sidebar + Main Content */}
       <div className="pt-24 flex">
         {/* Sidebar */}
         <div
           className={cn(
-            "bg-yellow-50 -mt-3 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
+            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           )}
         >
-          {/* Mobile Close Button */}
-          {/* <div className="lg:hidden flex justify-end mb-4">
-            <button
-              className="p-2 rounded-md hover:bg-red-200"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <X className="w-6 h-6 text-red-700" />
-            </button>
-          </div> */}
-          <div className="mb-2 border-b text-center flex flex-col items-center">
-            {/* Profile Image */}
+          {/* Profile section */}
+          <div className="flex items-center gap-3 mb-6">
             <div
-              className="w-16 h-16 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
+              className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
               onClick={() => {
                 if (typeof window !== "undefined") {
-                  window.location.href = "/dashboard/user-profile/" + user?.id;
+                  window.location.href = "/admin/user-profile/" + user?.id;
                 }
               }}
             >
@@ -234,46 +290,96 @@ export default function DashboardLayout({
                 className="w-full h-full object-cover"
               />
             </div>
-
-            {/* Name + Email */}
-            <h3 className="mt-1 font-semibold text-red-700">{user?.name}</h3>
-            <p className="text-xs text-red-600">{user?.email}</p>
+            <div>
+              <h3 className="font-semibold text-red-700">{user?.name}</h3>
+              <p className="text-sm text-red-600">{user?.role}</p>
+            </div>
           </div>
 
-          <nav className="space-y-2 overflow-y-auto flex-1">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                  pathname === item.href
-                    ? "bg-orange-100 text-orange-700"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.title}</span>
-              </Link>
-            ))}
+          {/* Scrollable nav */}
 
-            {/* Mobile-only Logout */}
-            <div className="lg:hidden mt-6 border-t pt-4">
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-100 w-full"
-              >
-                <LogOut className="w-5 h-5" />
-                Sign Out
-              </button>
-            </div>
+          <nav className="space-y-2 overflow-y-auto flex-1">
+            {sidebarItems.map((item) => {
+              const hasSubItems = item.subItems && item.subItems.length > 0;
+              const isOpen = openMenus[item.title] || false;
+
+              return (
+                <div key={item.href || item.title} className="space-y-1">
+                  {hasSubItems ? (
+                    <>
+                      {/* Parent button for submenus */}
+                      <button
+                        onClick={() => toggleMenu(item.title)}
+                        className={cn(
+                          "flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                          pathname === item.href
+                            ? "bg-orange-100 text-orange-700"
+                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        )}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </div>
+                        <span className="ml-2">
+                          {isOpen ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </span>
+                      </button>
+
+                      {/* Subitems */}
+                      {isOpen && (
+                        <div className="ml-6 space-y-1">
+                          {item.subItems!.map((sub) => (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              className={cn(
+                                "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                                pathname === sub.href
+                                  ? "bg-orange-50 text-orange-600"
+                                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                              )}
+                              onClick={() => setSidebarOpen(false)}
+                            >
+                              <sub.icon className="h-4 w-4" />
+                              <span className="whitespace-pre-wrap w-32">
+                                {sub.title}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    // ✅ Direct link for simple items
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        pathname === item.href
+                          ? "bg-orange-100 text-orange-700"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      )}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.title}</span>
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 lg:ml-64 px-6">{children}</div>
       </div>
+
       {/* Confirmation Modal */}
       {isOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">

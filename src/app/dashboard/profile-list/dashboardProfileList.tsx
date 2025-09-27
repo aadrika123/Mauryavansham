@@ -160,31 +160,27 @@ export default function DashboardProfileList(props: any) {
     });
 
   return (
-    <div className="space-y-6 w-[80%] mx-auto mb-10">
+    <div className="space-y-6 w-full sm:w-[90%] lg:w-[80%] mx-auto mb-10">
       {enrichedProfiles?.map((profile: any) => (
         <Card
           key={profile.id}
           className="overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl border border-gray-100"
         >
           {/* Header Section */}
-          <div className="flex gap-6 p-6">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row gap-6 p-6">
+            {/* Profile Image */}
+            <div className="relative flex-shrink-0 mx-auto sm:mx-0">
               <img
                 src={profile.profileImage1 || "/placeholder.png"}
                 alt={profile.name}
-                className="w-32 h-32 rounded-xl object-cover shadow-md"
+                className="w-28 h-28 sm:w-32 sm:h-32 rounded-xl object-cover shadow-md"
               />
-              {/* {profile.lastActive === "Online now" && (
-                <span className="absolute bottom-2 right-2 flex h-4 w-4">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <Circle className="relative inline-flex rounded-full h-4 w-4 text-green-500 bg-green-500" />
-                </span>
-              )} */}
             </div>
 
+            {/* Profile Info */}
             <div className="flex-grow">
-              <div className="flex justify-between items-start">
-                <h3 className="text-2xl font-bold text-gray-800 capitalize flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 capitalize flex items-center gap-2">
                   {profile.name}
                   {profile.isVerified && (
                     <ShieldCheck className="w-5 h-5 text-green-500" />
@@ -192,17 +188,20 @@ export default function DashboardProfileList(props: any) {
                   {profile.isPremium && (
                     <Crown className="w-5 h-5 text-yellow-500" />
                   )}
-                  <Badge variant="outline" className="mt-2 capitalize">
+                  <Badge
+                    variant="outline"
+                    className="capitalize text-xs sm:text-sm"
+                  >
                     {profile.profileRelation}
                   </Badge>
                 </h3>
+
                 {profile.lastActive && (
-                  <div className="flex items-center gap-2 mt-1">
-                    {/* Green Dot */}
+                  <div className="flex items-center gap-2 mt-2 sm:mt-1">
                     {profile.lastActive === "Online now" && (
-                      <span className="relative flex h-4 w-4">
+                      <span className="relative flex h-3 w-3 sm:h-4 sm:w-4">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 sm:h-4 sm:w-4 bg-green-500"></span>
                       </span>
                     )}
                     <p className="text-xs text-gray-500">
@@ -211,7 +210,8 @@ export default function DashboardProfileList(props: any) {
                   </div>
                 )}
               </div>
-              <p className="text-gray-600 text-sm">
+
+              <p className="text-gray-600 text-sm mt-1">
                 {profile.age} yrs • {profile.height}
               </p>
               <p className="flex items-center text-sm text-gray-700 mt-1">
@@ -233,13 +233,13 @@ export default function DashboardProfileList(props: any) {
           </div>
 
           {/* Action Buttons */}
-          <CardContent className="flex gap-3 px-6 pb-6">
+          <CardContent className="flex flex-wrap gap-3 px-6 pb-6">
             <Button
               variant="outline"
               onClick={() =>
                 router.push(`/dashboard/view-profile/${profile.id}`)
               }
-              className="rounded-lg"
+              className="rounded-lg flex-1 sm:flex-none"
             >
               <Eye className="w-4 h-4 mr-2" /> View
             </Button>
@@ -248,7 +248,7 @@ export default function DashboardProfileList(props: any) {
               onClick={() =>
                 router.push(`/dashboard/edit-profile/${profile.id}`)
               }
-              className="rounded-lg"
+              className="rounded-lg flex-1 sm:flex-none"
             >
               <Edit className="w-4 h-4 mr-2" /> Edit
             </Button>
@@ -256,27 +256,29 @@ export default function DashboardProfileList(props: any) {
               variant="outline"
               onClick={() => handleDeactivateProfileClick(profile.id)}
               disabled={deactivatingProfile === profile.id}
-              className="rounded-lg border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+              className="rounded-lg border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 flex-1 sm:flex-none"
             >
               <UserX className="w-4 h-4 mr-2" />
               {deactivatingProfile === profile.id
                 ? "Deactivating..."
                 : "Deactivate"}
             </Button>
-
             <Button
               variant="outline"
               onClick={() =>
                 router.push(`/dashboard/profile-interests/${profile.id}`)
               }
-              className="rounded-lg border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+              className="rounded-lg border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700 flex-1 sm:flex-none"
             >
               View Interests
             </Button>
           </CardContent>
         </Card>
       ))}
-      {enrichedProfiles.length === 0 && <p>No profiles found.</p>}
+
+      {enrichedProfiles.length === 0 && (
+        <p className="text-center text-gray-600">No profiles found.</p>
+      )}
 
       {/* Modal */}
       <DeactivateProfileModal

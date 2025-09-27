@@ -523,49 +523,49 @@ export default function CommunityForumPage({ user }: Props) {
   //   }
   // };
   const fetchReplies = async (discussionId: number) => {
-  setRepliesLoading(true);
-  try {
-    const res = await fetch(`/api/discussions/${discussionId}/replies`);
-    const data = await res.json();
-    
-    // Debug: Check what API actually returns
-    console.log('API Response:', data.data);
+    setRepliesLoading(true);
+    try {
+      const res = await fetch(`/api/discussions/${discussionId}/replies`);
+      const data = await res.json();
 
-    const replies = data.data || [];
-    const repliesMap = new Map();
-    const rootReplies: Reply[] = [];
+      // Debug: Check what API actually returns
+      console.log("API Response:", data.data);
 
-    // ✅ FIXED: Don't override like data from API
-    replies.forEach((reply: any) => {
-      repliesMap.set(reply.id, {
-        ...reply, // This preserves likeCount and isLiked from API
-        replies: [], // Only add empty replies array
-        // ❌ REMOVE these lines:
-        // likeCount: reply.likeCount || 0,
-        // isLiked: reply.isLiked || false,
+      const replies = data.data || [];
+      const repliesMap = new Map();
+      const rootReplies: Reply[] = [];
+
+      // ✅ FIXED: Don't override like data from API
+      replies.forEach((reply: any) => {
+        repliesMap.set(reply.id, {
+          ...reply, // This preserves likeCount and isLiked from API
+          replies: [], // Only add empty replies array
+          // ❌ REMOVE these lines:
+          // likeCount: reply.likeCount || 0,
+          // isLiked: reply.isLiked || false,
+        });
       });
-    });
 
-    // Second pass: build nested structure (same as before)
-    replies.forEach((reply: any) => {
-      if (reply.parentId) {
-        const parent = repliesMap.get(reply.parentId);
-        if (parent) {
-          parent.replies.push(repliesMap.get(reply.id));
+      // Second pass: build nested structure (same as before)
+      replies.forEach((reply: any) => {
+        if (reply.parentId) {
+          const parent = repliesMap.get(reply.parentId);
+          if (parent) {
+            parent.replies.push(repliesMap.get(reply.id));
+          }
+        } else {
+          rootReplies.push(repliesMap.get(reply.id));
         }
-      } else {
-        rootReplies.push(repliesMap.get(reply.id));
-      }
-    });
+      });
 
-    console.log('Final nested replies:', rootReplies); // Debug
-    setDiscussionReplies(rootReplies);
-  } catch (error) {
-    console.error("Failed to load replies:", error);
-  } finally {
-    setRepliesLoading(false);
-  }
-};
+      console.log("Final nested replies:", rootReplies); // Debug
+      setDiscussionReplies(rootReplies);
+    } catch (error) {
+      console.error("Failed to load replies:", error);
+    } finally {
+      setRepliesLoading(false);
+    }
+  };
 
   const handleViewReplies = (discussionId: number) => {
     if (!user) {
@@ -616,9 +616,12 @@ export default function CommunityForumPage({ user }: Props) {
     }
 
     try {
-      const response = await fetch(`/api/discussions/replies/${replyId}/likes`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `/api/discussions/replies/${replyId}/likes`,
+        {
+          method: "POST",
+        }
+      );
 
       if (response.ok) {
         // Refresh replies to get updated like counts
@@ -1054,38 +1057,45 @@ export default function CommunityForumPage({ user }: Props) {
 
             {/* Ad Banner */}
             <div className="mt-10 sm:mt-12">
-              <div className="w-full max-w-4xl mx-auto px-2 sm:px-6">
+              <div className="w-full max-w-5xl mx-auto px-2 sm:px-6">
                 {ad ? (
-                  <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                    <div className="relative p-4 sm:p-8 text-center">
-                      <Image
-                        src={ad.bannerImageUrl}
-                        alt={ad.title}
-                        width={900}
-                        height={300}
-                        className="w-full h-auto rounded-xl shadow-lg"
-                      />
+                  <div className="relative group">
+                    <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-amber-300/50">
+                      <div className="relative p-4 sm:p-6 text-center">
+                        <Image
+                          src={ad.bannerImageUrl}
+                          alt={ad.title}
+                          width={900}
+                          height={300}
+                          className="w-full h-auto rounded-xl shadow-lg transition-all duration-500 group-hover:brightness-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition duration-500 rounded-xl"></div>
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-amber-600/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md opacity-0 group-hover:opacity-100 transition duration-500">
+                          Sponsored Ad
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="w-full h-40 sm:h-60 md:h-72 lg:h-[300px] relative">
-                    <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4 sm:p-8">
-                      <div className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 bg-gradient-to-br from-amber-50 to-yellow-100">
-                        <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
-                          Book Your Ad (5) <br />
-                          <p>Please select image size of (900x300 pixels)</p>
+                  <div className="relative w-full h-44 sm:h-60 md:h-72 lg:h-[300px]">
+                    <div className="bg-gradient-to-br from-amber-50 via-yellow-100 to-amber-50 border-4 border-dashed border-amber-300 rounded-2xl shadow-lg w-full h-full flex items-center justify-center text-center p-6 relative overflow-hidden">
+                      {/* Floating sparkles */}
+                      <Sparkles className="absolute top-6 left-6 h-7 w-7 text-amber-500 animate-pulse" />
+                      <Star className="absolute top-6 right-6 h-7 w-7 text-amber-500 animate-bounce" />
+                      <Star className="absolute bottom-8 left-10 h-6 w-6 text-amber-400 animate-ping" />
+
+                      {/* Content */}
+                      <div className="max-w-lg">
+                        <h3 className="text-2xl md:text-3xl font-extrabold text-amber-800 mb-2 drop-shadow-sm">
+                          Book Your Ad (5)
                         </h3>
-                        <div className="space-y-4 relative">
-                          <div className="absolute top-4 left-4">
-                            <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
-                          </div>
-                          <div className="absolute top-4 right-4">
-                            <Star className="h-8 w-8 text-amber-500 animate-pulse" />
-                          </div>
-                          <p className="text-sm text-amber-600 mt-2">
-                            Go to your dashboard to create and manage ads.
-                          </p>
-                        </div>
+                        <p className="text-sm sm:text-base text-amber-700 mb-3">
+                          Recommended size:{" "}
+                          <span className="font-semibold">900×300 px</span>
+                        </p>
+                        <p className="text-xs sm:text-sm text-amber-600">
+                          Go to your dashboard to create and manage ads.
+                        </p>
                       </div>
                     </div>
                   </div>

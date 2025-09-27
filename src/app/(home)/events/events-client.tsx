@@ -602,65 +602,58 @@ export default function EventsClient({
         )}
 
         <div className="mt-8 mb-12">
-          {/* <VerticalAdBanner /> */}
-          <div className="container mx-auto px-8 py-2 w-5/6">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative">
               {bottomAd ? (
-                <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                  <div className="relative p-8 text-center">
+                <div
+                  className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
+                        border-4 border-amber-300 rounded-2xl shadow-2xl 
+                        overflow-hidden transform hover:scale-105 transition-transform duration-300"
+                >
+                  <div className="relative p-4 sm:p-6 md:p-8 text-center">
                     <Image
                       src={bottomAd.bannerImageUrl}
-                      alt={"Ad Banner"}
-                      width={400}
-                      height={500}
-                      className="mx-auto rounded-xl shadow-lg"
+                      alt="Ad Banner"
+                      width={900}
+                      height={300}
+                      className="w-full h-auto rounded-xl shadow-lg object-contain"
                     />
                   </div>
                 </div>
               ) : (
-                <div
-                  className="mx-auto relative"
-                  style={{ width: 900, height: 300 }}
-                >
+                // <div className="relative w-full max-w-5xl mx-auto aspect-[3/1]">
                   <div
                     className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
-                         border-4 border-amber-300 rounded-2xl shadow-2xl 
-                         overflow-hidden transform hover:scale-105 transition-transform duration-300
-                         w-full h-full"
+                          border-4 border-amber-300 rounded-2xl shadow-2xl 
+                          overflow-hidden transform hover:scale-105 transition-transform duration-300
+                          w-full h-full"
                   >
-                    <div className="relative p-8 w-full h-full">
+                    <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
                       {/* Decorative Book Pages Effect */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
 
                       {/* Content */}
                       <div className="text-center relative z-10 flex flex-col justify-center items-center h-full">
                         <div
-                          className="relative border-2 border-dashed border-amber-400 rounded-lg p-8 
-                               bg-gradient-to-br from-amber-50 to-yellow-100"
+                          className="relative border-2 border-dashed border-amber-400 rounded-lg p-6 sm:p-8 
+                             bg-gradient-to-br from-amber-50 to-yellow-100"
                         >
-                          <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
+                          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-amber-800 mb-4">
                             Book Your Ad (8) <br />
-                            <p>Please select image size of (900x300 pixels)</p>
+                            <span className="text-sm font-normal">
+                              Please select image size of (900x300 pixels)
+                            </span>
                           </h3>
 
                           <div className="space-y-4 relative">
                             <div className="absolute top-4 left-4">
-                              <Sparkles className="h-8 w-8 text-amber-500 animate-pulse" />
+                              <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
                             </div>
                             <div className="absolute top-4 right-4">
-                              <Star className="h-8 w-8 text-amber-500 animate-pulse" />
+                              <Star className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
                             </div>
 
-                            {/* <button
-                                    className="bg-gradient-to-r from-amber-500 to-yellow-500 
-                                   hover:from-amber-600 hover:to-yellow-600 
-                                   text-white font-bold py-3 px-8 rounded-full shadow-lg 
-                                   transform hover:scale-105 transition-all duration-200"
-                                  >
-                                    
-                                  </button> */}
-
-                            <p className="text-sm text-amber-600 mt-2">
+                            <p className="text-xs sm:text-sm text-amber-600 mt-2">
                               Go to your dashboard to create and manage ads.
                             </p>
                           </div>
@@ -668,15 +661,16 @@ export default function EventsClient({
                       </div>
 
                       {/* Decorative Borders */}
-                      <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-                      <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                      <div className="absolute inset-x-0 top-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+                      <div className="absolute inset-x-0 bottom-0 h-1 sm:h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
                     </div>
                   </div>
-                </div>
+                // </div>
               )}
             </div>
           </div>
         </div>
+
         {/* All Events */}
         <div>
           <h2 className="text-xl font-bold text-red-700 mb-4">All Events</h2>
@@ -720,7 +714,7 @@ export default function EventsClient({
                         title: "❌ Error",
                         variant: "destructive",
                         description: data.error || "Failed to register",
-                      })
+                      });
                     }
                   } catch (err) {
                     console.error(err);
@@ -729,7 +723,7 @@ export default function EventsClient({
                       title: "❌ Error",
                       variant: "destructive",
                       description: "Something went wrong",
-                    })
+                    });
                   } finally {
                     setLoading(false);
                   }
@@ -792,9 +786,7 @@ export default function EventsClient({
                             <div className="flex items-center gap-1">
                               <User className="w-3 h-3" />
                               {/* By: */}
-                              <span>
-                                {event.organizer}{" "}
-                              </span>
+                              <span>{event.organizer} </span>
                             </div>
                           </div>
                         </div>
