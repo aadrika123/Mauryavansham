@@ -25,6 +25,16 @@ interface User {
   education?: string;
   occupation?: string;
   gender?: string;
+  jobType?: string;
+  govSector?: string;
+  department?: string;
+  postingLocation?: string;
+  businessDetails?: string;
+  professionDetails?: string;
+  facebookLink?: string;
+  dateOfBirth?: string;
+  aboutMe?: string;
+  company?: string;
 }
 
 export default function CommunityMemberPage() {
@@ -219,61 +229,67 @@ export default function CommunityMemberPage() {
 
             {/* Details */}
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-700">
-              {selectedUser.city && (
-                <p>
-                  <strong>City:</strong> {selectedUser.city}
-                </p>
-              )}
-
-              {/* Profession or Designation */}
-              {selectedUser.professionGroup || selectedUser.profession ? (
-                <p>
-                  <strong>Profession:</strong> {selectedUser.professionGroup}
-                  {selectedUser.profession && ` - ${selectedUser.profession}`}
-                </p>
-              ) : (
-                selectedUser.designation && (
-                  <p>
-                    <strong>Designation:</strong> {selectedUser.designation}
-                  </p>
-                )
-              )}
-
-              {selectedUser.gender && (
-                <p>
-                  <strong>Gender:</strong> {selectedUser.gender}
-                </p>
-              )}
-              {selectedUser.dob && (
-                <p>
-                  <strong>DOB:</strong>{" "}
-                  {new Date(selectedUser.dob).toLocaleDateString("en-GB")}
-                </p>
-              )}
-              {selectedUser.maritalStatus && (
-                <p>
-                  <strong>Marital Status:</strong> {selectedUser.maritalStatus}
-                </p>
-              )}
-              {selectedUser.education && (
-                <p>
-                  <strong>Education:</strong> {selectedUser.education}
-                </p>
-              )}
-              {selectedUser.fatherName && (
-                <p>
-                  <strong>Father’s Name:</strong> {selectedUser.fatherName}
-                </p>
-              )}
-              {selectedUser.motherName && (
-                <p>
-                  <strong>Mother’s Name:</strong> {selectedUser.motherName}
-                </p>
-              )}
-              {selectedUser.spouseName && (
-                <p>
-                  <strong>Spouse Name:</strong> {selectedUser.spouseName}
-                </p>
+              {[
+                { label: "Gender", value: selectedUser.gender },
+                {
+                  label: "DOB",
+                  value: selectedUser.dateOfBirth
+                    ? (() => {
+                        const date = new Date(selectedUser.dateOfBirth);
+                        const day = String(date.getDate()).padStart(2, "0");
+                        const month = String(date.getMonth() + 1).padStart(
+                          2,
+                          "0"
+                        );
+                        return `${day}/${month}/xxxx`;
+                      })()
+                    : null,
+                },
+                { label: "Marital Status", value: selectedUser.maritalStatus },
+                { label: "Education", value: selectedUser.education },
+                { label: "Occupation", value: selectedUser.occupation },
+                { label: "Job Type", value: selectedUser.jobType },
+                { label: "Gov. Sector", value: selectedUser.govSector },
+                { label: "Department", value: selectedUser.department },
+                {
+                  label: "Posting Location",
+                  value: selectedUser.postingLocation,
+                },
+                { label: "Designation", value: selectedUser.designation },
+                { label: "Company", value: selectedUser.company },
+                {
+                  label: "Profession Group",
+                  value: selectedUser.professionGroup,
+                },
+                { label: "Profession", value: selectedUser.profession },
+                {
+                  label: "Profession Details",
+                  value: selectedUser.professionDetails,
+                },
+                { label: "Father’s Name", value: selectedUser.fatherName },
+                { label: "Mother’s Name", value: selectedUser.motherName },
+                { label: "Spouse Name", value: selectedUser.spouseName },
+                {
+                  label: "Facebook",
+                  value: selectedUser.facebookLink ? (
+                    <a
+                      href={selectedUser.facebookLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline inline-block max-w-[150px] truncate"
+                      title={selectedUser.facebookLink}
+                    >
+                      {selectedUser.facebookLink}
+                    </a>
+                  ) : null,
+                },
+              ].map(
+                (item, index) =>
+                  item.value && (
+                    <p key={index}>
+                      <strong>{item.label}:</strong> {item.value}
+                    </p>
+                  )
               )}
             </div>
 

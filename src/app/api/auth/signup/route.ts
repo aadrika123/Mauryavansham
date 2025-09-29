@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       currentState,
       currentCountry,
       currentZipCode,
+      facebookLink,
     } = await request.json();
 
     // Validation
@@ -84,6 +85,7 @@ export async function POST(request: NextRequest) {
         currentCountry,
         currentZipCode,
         gender,
+        facebookLink: facebookLink || null,
       })
       .returning({
         id: users.id,
@@ -101,6 +103,7 @@ export async function POST(request: NextRequest) {
         currentCountry: users.currentCountry,
         gender: users.gender,
         userCode: users.userCode,
+        facebookLink: users.facebookLink,
       });
 
     // ✅ Insert notification for admins

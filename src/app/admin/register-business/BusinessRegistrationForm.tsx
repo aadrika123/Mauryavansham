@@ -35,6 +35,7 @@ export default function BusinessRegistrationForm() {
     businessDescription: "",
     partners: [{ name: "" }],
     categories: [{ main: "", sub: "" }],
+    companyWebsite: "",
     registeredAddress: {
       office: "",
       branch: "",
@@ -947,11 +948,30 @@ export default function BusinessRegistrationForm() {
                   <Plus size={16} className="mr-1" /> Add Branch Office
                 </Button>
               </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  9) Company Website URL *
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://example.com"
+                  value={formData.companyWebsite || ""}
+                  onChange={(e) =>
+                    handleInputChange("companyWebsite", e.target.value)
+                  }
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                />
+                {/* {errors.companyWebsite && (
+                  <p className="text-red-600 text-xs mt-1">
+                    {errors.companyWebsite}
+                  </p>
+                )} */}
+              </div>
 
               {/* GST - Mandatory for all organizations */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  GST Number *
+                 10) GST Number *
                 </label>
                 <input
                   type="text"
@@ -1032,7 +1052,7 @@ export default function BusinessRegistrationForm() {
               {/* Premium Category */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Premium Category *
+                11)  Premium Category *
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.keys(premiumFeatures).map((category) => (
@@ -1064,7 +1084,7 @@ export default function BusinessRegistrationForm() {
               {/* Photos Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  9) Add Photos *
+                  12) Add Photos *
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Product Photos */}

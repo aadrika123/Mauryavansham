@@ -156,7 +156,7 @@ export default function DashboardLayout({
           <Crown className="w-8 h-8 text-orange-400" />
           <div className="hidden lg:block">
             <h1 className="text-2xl font-bold capitalize">
-              Welcome back, {user?.name || ""} ({user?.role})
+              Welcome back, {user?.name || ""} 
             </h1>
             {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
           </div>
@@ -292,7 +292,7 @@ export default function DashboardLayout({
             </div>
             <div>
               <h3 className="font-semibold text-red-700">{user?.name}</h3>
-              <p className="text-sm text-red-600">{user?.role}</p>
+              {/* <p className="text-sm text-red-600">{user?.role}</p> */}
             </div>
           </div>
 

@@ -20,7 +20,7 @@ export default function SignUpPage() {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50 flex flex-col items-center justify-center p-4">
+    <div className="w-full px-40 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50 flex flex-col items-center justify-center p-4">
       {/* Header */}
       <div
         className="text-center mb-8 cursor-pointer"
@@ -33,7 +33,7 @@ export default function SignUpPage() {
       </div>
 
       {/* Sign Up Form */}
-      <Card className="bg-yellow-50 border-yellow-200 shadow-lg">
+      <Card className="bg-yellow-50 border-yellow-200 shadow-lg ">
         <CardHeader>
           <CardTitle className="text-center text-red-700">
             Create Account

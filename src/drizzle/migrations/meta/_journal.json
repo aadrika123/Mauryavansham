@@ -13,6 +13,13 @@
       "when": 1758954042908,
       "tag": "0001_keen_lorna_dane",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759121077164,
+      "tag": "0002_great_gunslinger",
+      "breakpoints": true
     }
   ]
 }

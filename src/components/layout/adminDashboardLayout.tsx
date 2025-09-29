@@ -163,7 +163,7 @@ export default function AdmindashboardLayout({
         },
         {
           title: "Event Moderation",
-          href: "/admin/event-moderation",
+          href: "/admin/event-modaration",
           icon: Calendar,
         },
         {

@@ -205,6 +205,7 @@ export default function CreateEventForm() {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Title */}
+            {/* Title */}
             <div className="space-y-2">
               <Label>Event Title</Label>
               <Input
@@ -215,6 +216,8 @@ export default function CreateEventForm() {
                 required
               />
             </div>
+
+            {/* Organizer */}
             <div className="space-y-2">
               <Label>Organizer Name</Label>
               <Input
@@ -263,7 +266,6 @@ export default function CreateEventForm() {
                   required
                 />
               </div>
-              {/* To Time */}
               <div className="space-y-2">
                 <Label>To Time</Label>
                 <Input
@@ -294,13 +296,34 @@ export default function CreateEventForm() {
               <Label>Max Attendees</Label>
               <Input
                 type="number"
-                // min={1}
+                min={1}
                 value={formData.maxAttendees}
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    maxAttendees: e.target.value,
-                  })
+                  setFormData({ ...formData, maxAttendees: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            {/* Category */}
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <Input
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            {/* Type */}
+            <div className="space-y-2">
+              <Label>Type</Label>
+              <Input
+                value={formData.type}
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value })
                 }
                 required
               />
@@ -313,12 +336,7 @@ export default function CreateEventForm() {
                 {imagePreview ? (
                   <div className="flex flex-col items-center gap-2">
                     <div className="relative w-[175px] h-[175px] border rounded overflow-hidden">
-                      <Image
-                        src={imagePreview}
-                        alt="Preview"
-                        fill
-                        className=""
-                      />
+                      <Image src={imagePreview} alt="Preview" fill />
                     </div>
                     <Button
                       type="button"
@@ -348,22 +366,12 @@ export default function CreateEventForm() {
                         className="sr-only"
                         onChange={handleImageUpload}
                         disabled={uploading}
+                        required
                       />
                     </label>
                   </div>
                 )}
               </div>
-            </div>
-
-            {/* Featured Event */}
-            <div className="flex items-center gap-2">
-              <Checkbox
-                checked={formData.isFeatured}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, isFeatured: Boolean(checked) })
-                }
-              />
-              <span>Featured Event</span>
             </div>
 
             {/* Submit */}

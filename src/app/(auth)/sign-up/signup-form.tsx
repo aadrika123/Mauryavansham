@@ -55,6 +55,7 @@ export default function SignUpForm() {
     // Checkbox state
     sameAsPermanent: false,
     declaration: false,
+    facebookLink: "",
   });
 
   const passwordRules = [
@@ -232,6 +233,7 @@ export default function SignUpForm() {
           password: formData.password,
           fatherName: formData.fatherName.trim(),
           motherName: formData.motherName.trim(),
+          facebookLink: formData.facebookLink.trim() || null,
           gender: formData.gender,
           photo: formData.photo || "", // Include photo in signup
 
@@ -440,40 +442,56 @@ export default function SignUpForm() {
           </div>
         </div>
 
-        {/* Photo Upload Section - Added here */}
-        <div className="col-span-2 border p-4 rounded-md bg-gray-50">
-          <label className="block font-medium mb-2">
-            Upload Profile Photo (Optional)
+        {/* Photo Upload & Facebook Link Section - Compact */}
+        <div className="space-y-2">
+          <label className="block font-medium text-base">
+            Profile Photo (Optional)
           </label>
           <input
             type="file"
             accept="image/*"
             onChange={handleFileUpload}
-            className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500"
+            className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500 text-sm"
             disabled={uploading || isLoading}
           />
           {uploading && (
-            <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
+            <p className="text-xs text-gray-500 flex items-center gap-1">
+              <Loader2 className="h-3 w-3 animate-spin" />
               Uploading...
             </p>
           )}
           {formData.photo && (
-            <div className="mt-3 flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <img
                 src={formData.photo}
-                alt="Profile Preview"
-                className="w-16 h-16 rounded-full object-cover border-2 border-gray-300"
+                alt="Preview"
+                className="w-10 h-10 rounded-full object-cover border"
               />
-              <div className="text-sm text-green-600 flex items-center gap-1">
-                <CheckCircle className="h-4 w-4" />
-                Photo uploaded successfully!
-              </div>
+              <span className="text-xs text-green-600 flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" />
+                Uploaded
+              </span>
             </div>
           )}
-          <p className="text-xs text-gray-500 mt-1">
-            Supported formats: JPG, PNG. Max size: 5MB
-          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label
+            htmlFor="facebookLink"
+            className="block font-medium mb-2 text-base"
+          >
+            Facebook Profile Link (Optional)
+          </Label>
+          <Input
+            id="facebookLink"
+            name="facebookLink"
+            type="url"
+            placeholder="https://facebook.com/yourprofile"
+            value={formData.facebookLink}
+            onChange={handleInputChange}
+            className="bg-white border-yellow-300 focus:border-red-500 text-base"
+            disabled={isLoading}
+          />
         </div>
 
         {/* Permanent Address Section */}
