@@ -1,5 +1,5 @@
 {
-  "id": "76e41be8-314a-4ab3-9a0a-1cb0d3695f45",
+  "id": "4a6818ab-1fa1-4e89-9a93-9f6fa32cb0cb",
   "prevId": "f5007168-bfbb-42a8-8b7a-d03775338e77",
   "version": "7",
   "dialect": "postgresql",
@@ -2352,12 +2352,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'null'"
-        },
-        "company_website": {
-          "name": "company_website",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "registered_address": {
           "name": "registered_address",
