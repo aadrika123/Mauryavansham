@@ -4,14 +4,77 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { Upload, Plus, Trash2 } from "lucide-react";
-import Loader from "@/src/components/ui/loader";
 import { useToast } from "@/src/components/ui/toastProvider";
 import { useRouter } from "next/navigation";
 
-const premiumFeatures: Record<
-  string,
-  { product: number; office: number; notifications: string[] }
-> = {
+interface PremiumFeature {
+  product: number;
+  office: number;
+  notifications: string[];
+}
+
+interface PremiumFeatures {
+  [key: string]: PremiumFeature;
+}
+
+interface Partner {
+  name: string;
+}
+
+interface Category {
+  main: string;
+  sub: string;
+}
+
+interface BranchOffice {
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+}
+
+interface Photo {
+  file: File | null;
+  preview: string;
+  url: string;
+}
+
+interface FormData {
+  organizationName: string;
+  organizationType: string;
+  businessCategory: string;
+  businessDescription: string;
+  partners: Partner[];
+  categories: Category[];
+  companyWebsite: string;
+  officialEmail: string;
+  officialContactNumber: string;
+  registeredAddress: {
+    office: string;
+    branch: string;
+    location: string;
+    branchOffices: BranchOffice[];
+  };
+  cin: string;
+  gst: string;
+  udyam: string;
+  photos: {
+    product: Photo[];
+    office: Photo[];
+  };
+  premiumCategory: string;
+  dateOfestablishment: string;
+}
+
+interface Errors {
+  [key: string]: string;
+}
+
+interface EditBusinessFormProps {
+  id: string;
+}
+
+const premiumFeatures: PremiumFeatures = {
   Platinum: {
     product: 3,
     office: 2,
@@ -22,46 +85,39 @@ const premiumFeatures: Record<
   General: { product: 1, office: 1, notifications: ["Email"] },
 };
 
-interface EditBusinessFormProps {
-  id: string;
-}
-
 export default function EditBusinessForm({ id }: EditBusinessFormProps) {
   const [loading, setLoading] = useState({
     upload: false,
     submit: false,
     fetch: true,
-  }); // Added fetch loading state
+  });
   const [showPopup, setShowPopup] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const { addToast } = useToast();
-  const router = useRouter();
+  const [errors, setErrors] = useState<Errors>({});
+    const { addToast } = useToast();
+    const router = useRouter();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     organizationName: "",
     organizationType: "",
     businessCategory: "",
     businessDescription: "",
     partners: [{ name: "" }],
-    companyWebsite: "",
     categories: [{ main: "", sub: "" }],
+    companyWebsite: "",
+    officialEmail: "",
+    officialContactNumber: "",
     registeredAddress: {
       office: "",
       branch: "",
       location: "",
-      branchOffices: [] as {
-        address: string;
-        city: string;
-        state: string;
-        pincode: string;
-      }[],
+      branchOffices: [],
     },
     cin: "",
     gst: "",
     udyam: "",
     photos: {
-      product: [] as { file: File; preview: string; url: string }[],
-      office: [] as { file: File; preview: string; url: string }[],
+      product: [],
+      office: [],
     },
     premiumCategory: "General",
     dateOfestablishment: "",
@@ -78,15 +134,15 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
         }
 
         const businessData = await res.json();
-        console.log("Business Data:", businessData);
 
-        // Pre-populate form with fetched data
         setFormData({
           organizationName: businessData.data.organizationName || "",
           organizationType: businessData.data.organizationType || "",
           businessCategory: businessData.data.businessCategory || "",
           businessDescription: businessData.data.businessDescription || "",
           companyWebsite: businessData.data.companyWebsite || "",
+          officialEmail: businessData.data.officialEmail || "",
+          officialContactNumber: businessData.data.officialContactNumber || "",
           partners:
             businessData.data.partners?.length > 0
               ? businessData.data.partners
@@ -124,11 +180,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
         });
       } catch (error) {
         console.error("Error fetching business data:", error);
-        addToast({
-          title: "Error",
-          description: "Failed to load business data",
-          variant: "destructive",
-        });
+        alert("Failed to load business data");
       } finally {
         setLoading((prev) => ({ ...prev, fetch: false }));
       }
@@ -137,7 +189,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
     if (id) {
       fetchBusinessData();
     }
-  }, [id, addToast]);
+  }, [id]);
 
   const organizationTypes = [
     "Proprietorship",
@@ -176,53 +228,49 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
     "Others",
   ];
 
-  const handleInputChange = (field: any, value: any) => {
+  const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
-  const handleNestedInputChange = (parent: any, field: any, value: any) => {
+  const handleNestedInputChange = (
+    parent: keyof FormData,
+    field: string,
+    value: string
+  ) => {
     setFormData((prev) => ({
       ...prev,
-      [parent]: { ...prev[parent], [field]: value },
+      [parent]: { ...(prev[parent] as Record<string, unknown>), [field]: value },
     }));
     setErrors((prev) => ({ ...prev, [`${parent}.${field}`]: "" }));
   };
 
-  type FormDataType = typeof formData;
-  const handleArrayInputChange = <
-    K extends keyof FormDataType,
-    I extends number,
-    F extends string
-  >(
-    arrayName: K,
-    index: I,
-    field: F,
-    value: any
+  const handleArrayInputChange = (
+    arrayName: "partners" | "categories",
+    index: number,
+    field: string,
+    value: string
   ) => {
     setFormData((prev) => ({
       ...prev,
-      [arrayName]: (prev[arrayName] as any[]).map((item, i) =>
+      [arrayName]: prev[arrayName].map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       ),
     }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [`${arrayName}.${index}.${field}`]: "",
-    }));
+    setErrors((prev) => ({ ...prev, [`${arrayName}.${index}.${field}`]: "" }));
   };
 
-  const addArrayItem = (arrayName: ArrayKeys, template: any) => {
+  const addArrayItem = (
+    arrayName: "partners" | "categories",
+    template: Partner | Category
+  ) => {
     setFormData((prev) => ({
       ...prev,
-      [arrayName]: [...prev[arrayName], template],
+      [arrayName]: [...prev[arrayName], template] as Partner[] | Category[],
     }));
   };
 
-  type ArrayKeys = "partners" | "categories";
-
-  const removeArrayItem = (arrayName: ArrayKeys, index: number) => {
+  const removeArrayItem = (arrayName: "partners" | "categories", index: number) => {
     setFormData((prev) => ({
       ...prev,
       [arrayName]: prev[arrayName].filter((_, i) => i !== index),
@@ -261,7 +309,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
     const maxAllowed = premiumFeatures[formData.premiumCategory][type];
     const newFiles = Array.from(files).slice(0, maxAllowed);
 
-    const previews = newFiles.map((file) => ({
+    const previews: Photo[] = newFiles.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
       url: "",
@@ -291,19 +339,8 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
           }));
         } catch (e) {
           console.error(e);
-          addToast({
-            title: "Upload Failed",
-            description: `${file.name} could not be uploaded.`,
-            variant: "destructive",
-          });
         }
       }
-
-      addToast({
-        title: "Upload Success",
-        description: `${newFiles.length} image(s) uploaded successfully.`,
-        variant: "success",
-      });
     } finally {
       setLoading((prev) => ({ ...prev, upload: false }));
     }
@@ -320,7 +357,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Errors = {};
 
     if (!formData.organizationName.trim())
       newErrors.organizationName = "Organization Name is required";
@@ -339,7 +376,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
       });
     }
 
-    // CIN validation - mandatory for LLP and company types
     if (
       [
         "Limited Liability Partnership (LLP)",
@@ -353,7 +389,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
       }
     }
 
-    // GST validation - mandatory for all organization types
     if (!formData.gst || !formData.gst.trim()) {
       newErrors.gst = "GST number is mandatory for all organizations";
     }
@@ -386,6 +421,19 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
       newErrors.businessCategory = "Business Category is required";
     if (!formData.businessDescription.trim())
       newErrors.businessDescription = "Business Description is required";
+
+    if (!formData.officialEmail.trim()) {
+      newErrors.officialEmail = "Official Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.officialEmail)) {
+      newErrors.officialEmail = "Please enter a valid email address";
+    }
+
+    if (!formData.officialContactNumber.trim()) {
+      newErrors.officialContactNumber = "Official Contact Number is required";
+    } else if (!/^[6-9]\d{9}$/.test(formData.officialContactNumber)) {
+      newErrors.officialContactNumber =
+        "Please enter a valid 10-digit mobile number";
+    }
 
     formData.categories.forEach((c, idx) => {
       if (!c.main.trim())
@@ -466,7 +514,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
     formData.organizationType.includes("Limited") ||
     formData.organizationType.includes("Public");
 
-  // Premium Category Popup
   const PremiumPopup = () => {
     if (!showPopup) return null;
 
@@ -513,7 +560,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
   if (loading.fetch) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-        <Loader />
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-red-600"></div>
       </div>
     );
   }
@@ -522,7 +569,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
     <>
       {(loading.upload || loading.submit) && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <Loader />
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-red-600"></div>
         </div>
       )}
 
@@ -532,10 +579,9 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
         <Card className="shadow-lg border border-yellow-200">
           <CardContent className="p-8">
             <h1 className="text-2xl font-bold text-red-700 mb-6 text-center">
-              Add your Business House/Company
+              Edit Business Details
             </h1>
             <div className="space-y-6">
-              {/* Organization Name */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   1) Name of Organization *
@@ -555,7 +601,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 )}
               </div>
 
-              {/* Organization Type */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   2) Type of Organization *
@@ -581,7 +626,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 )}
               </div>
 
-              {/* Partners/Directors */}
               {showPartners && (
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -626,7 +670,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 </div>
               )}
 
-              {/* Business Category */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   3) Type of Business *
@@ -662,7 +705,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                   onChange={(e) =>
                     handleInputChange("dateOfestablishment", e.target.value)
                   }
-                  max={new Date().toISOString().split("T")[0]} // future date disable
+                  max={new Date().toISOString().split("T")[0]}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
                 {errors.dateOfestablishment && (
@@ -672,7 +715,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 )}
               </div>
 
-              {/* Business Description */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   5) Describe your business *
@@ -695,7 +737,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 </div>
               </div>
 
-              {/* Business Categories & Products */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   6) Business Categories & Products/Services *
@@ -780,7 +821,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 </Button>
               </div>
 
-              {/* Registered Address */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   7) Registered Address *
@@ -806,8 +846,7 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  8) Corporate/Branch Office Address (Optional, multiple
-                  allowed)
+                  8) Corporate/Branch Office Address (Optional)
                 </label>
                 {formData.registeredAddress.branchOffices?.map(
                   (branch, idx) => (
@@ -816,7 +855,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                       className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50"
                     >
                       <div className="grid grid-cols-1 gap-4">
-                        {/* Address */}
                         <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">
                             Branch Office Address *
@@ -840,7 +878,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                             }
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 h-20"
                             placeholder="Enter complete branch office address"
-                            required
                           />
                           {errors[`branchOffice.${idx}.address`] && (
                             <p className="text-red-600 text-xs mt-1">
@@ -849,7 +886,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                           )}
                         </div>
 
-                        {/* City, State, Pin code in a row */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -875,7 +911,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                               }
                               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                               placeholder="Enter city"
-                              required
                             />
                             {errors[`branchOffice.${idx}.city`] && (
                               <p className="text-red-600 text-xs mt-1">
@@ -997,7 +1032,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                               maxLength={6}
                               min="0"
                               max="999999"
-                              required
                             />
                             {errors[`branchOffice.${idx}.pincode`] && (
                               <p className="text-red-600 text-xs mt-1">
@@ -1048,9 +1082,71 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                   <Plus size={16} className="mr-1" /> Add Branch Office
                 </Button>
               </div>
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  9) Company Website URL *
+                  9) Official Email Address *
+                </label>
+                <input
+                  type="email"
+                  placeholder="business@example.com"
+                  value={formData.officialEmail || ""}
+                  onChange={(e) =>
+                    handleInputChange("officialEmail", e.target.value)
+                  }
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                />
+                {errors.officialEmail && (
+                  <p className="text-red-600 text-xs mt-1">
+                    {errors.officialEmail}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  10) Official Contact Number *
+                </label>
+                <input
+                  type="tel"
+                  placeholder="Enter 10-digit mobile number"
+                  value={formData.officialContactNumber || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (
+                      value === "" ||
+                      (/^\d+$/.test(value) && value.length <= 10)
+                    ) {
+                      handleInputChange("officialContactNumber", value);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (
+                      !/[0-9]/.test(e.key) &&
+                      ![
+                        "Backspace",
+                        "Delete",
+                        "ArrowLeft",
+                        "ArrowRight",
+                        "Tab",
+                      ].includes(e.key)
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  maxLength={10}
+                />
+                {errors.officialContactNumber && (
+                  <p className="text-red-600 text-xs mt-1">
+                    {errors.officialContactNumber}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  11) Company Website URL
                 </label>
                 <input
                   type="url"
@@ -1061,16 +1157,11 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 />
-                {/* {errors.companyWebsite && (
-                  <p className="text-red-600 text-xs mt-1">
-                    {errors.companyWebsite}
-                  </p>
-                )} */}
               </div>
-              {/* GST - Mandatory for all organizations */}
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                 10) GST Number *
+                  12) GST Number *
                 </label>
                 <input
                   type="text"
@@ -1084,7 +1175,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 )}
               </div>
 
-              {/* CIN and Udyam for specific organization types */}
               {[
                 "Limited Liability Partnership (LLP)",
                 "Private Limited",
@@ -1124,7 +1214,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 </div>
               )}
 
-              {/* Udyam for other organization types (optional) */}
               {![
                 "Limited Liability Partnership (LLP)",
                 "Private Limited",
@@ -1148,10 +1237,9 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                   </div>
                 )}
 
-              {/* Premium Category */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                11)  Premium Category *
+                  13) Premium Category *
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.keys(premiumFeatures).map((category) => (
@@ -1180,13 +1268,11 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 )}
               </div>
 
-              {/* Photos Upload */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  12) Add Photos *
+                  14) Add Photos *
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Product Photos */}
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-500 transition-colors">
                     <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-600 mb-2">
@@ -1223,11 +1309,12 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                         <div key={idx} className="relative">
                           <img
                             src={p.preview}
+                            alt={`Product ${idx + 1}`}
                             className="w-20 h-20 object-cover rounded"
                           />
                           <Button
                             size="sm"
-                            className="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white"
+                            className="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white p-1"
                             onClick={() => removePhoto("product", idx)}
                           >
                             <Trash2 size={14} />
@@ -1237,7 +1324,6 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                     </div>
                   </div>
 
-                  {/* Office Photos */}
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-500 transition-colors">
                     <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
                     <p className="text-sm text-gray-600 mb-2">
@@ -1274,11 +1360,12 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                         <div key={idx} className="relative">
                           <img
                             src={p.preview}
+                            alt={`Office ${idx + 1}`}
                             className="w-20 h-20 object-cover rounded"
                           />
                           <Button
                             size="sm"
-                            className="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white"
+                            className="absolute top-0 right-0 bg-red-600 hover:bg-red-700 text-white p-1"
                             onClick={() => removePhoto("office", idx)}
                           >
                             <Trash2 size={14} />
@@ -1290,14 +1377,13 @@ export default function EditBusinessForm({ id }: EditBusinessFormProps) {
                 </div>
               </div>
 
-              {/* Submit */}
               <div className="text-center">
                 <Button
                   onClick={handleSubmit}
                   disabled={loading.submit || loading.upload}
                   className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
                 >
-                  {loading.submit ? "Submitting..." : "Submit"}
+                  {loading.submit ? "Updating..." : "Update Business"}
                 </Button>
               </div>
             </div>

@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { Upload, Plus, Trash2 } from "lucide-react";
+import { useToast } from "@/src/components/ui/toastProvider";
+import { useRouter } from "next/navigation";
 
 interface PremiumFeature {
   product: number;
@@ -83,6 +85,8 @@ export default function BusinessRegistrationForm() {
   const [loading, setLoading] = useState({ upload: false, submit: false });
   const [showPopup, setShowPopup] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
+  const { addToast } = useToast();
+    const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     organizationName: "",
     organizationType: "",
@@ -402,14 +406,27 @@ export default function BusinessRegistrationForm() {
       });
 
       if (res.ok) {
-        alert("Business registered successfully!");
+        addToast({
+          title: "Success",
+          description: "Business registered successfully!",
+          variant: "success",
+        });
+        router.push("/admin/view-business");
       } else {
         const error = await res.json();
-        alert(error?.message || "Failed to register business");
+        addToast({
+          title: "Failed",
+          description: error?.message || "Failed to register business",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("Something went wrong!");
+      addToast({
+        title: "Error",
+        description: "Something went wrong!",
+        variant: "destructive",
+      });
     } finally {
       setLoading((prev) => ({ ...prev, submit: false }));
     }
