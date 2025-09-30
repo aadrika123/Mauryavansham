@@ -13,6 +13,8 @@ export const businesses = pgTable("businesses", {
   categories: json("categories").default(JSON.stringify([])),
   dateOfestablishment: json("date_of_establishment").default(JSON.stringify(null)),
   companyWebsite: text("company_website"),
+  officialEmail: text("official_email"),
+  officialContactNumber: text("official_contact_number"),
 
   // Registered + Branch addresses
   registeredAddress: json("registered_address").notNull(),

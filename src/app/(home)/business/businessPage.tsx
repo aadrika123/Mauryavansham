@@ -549,7 +549,7 @@ export default function BusinessDetailsPage({ user }: any) {
         {/* Know More Modal */}
         {showDetailsModal && selectedBusiness && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+            <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto relative">
               {/* Close button */}
               <button
                 onClick={() => setShowDetailsModal(false)}
@@ -558,51 +558,160 @@ export default function BusinessDetailsPage({ user }: any) {
                 <X className="h-5 w-5" />
               </button>
 
-              {/* Business Info */}
-              <h2 className="text-xl font-bold text-red-700 mb-4">
-                {selectedBusiness.businesses?.organizationName}
-              </h2>
-              <p className="text-gray-700 mb-4">
-                {selectedBusiness.businesses?.businessDescription}
-              </p>
+              {/* Heading */}
+              {selectedBusiness.businesses?.organizationName && (
+                <h2 className="text-2xl font-bold text-red-700 mb-4">
+                  {selectedBusiness.businesses.organizationName}
+                </h2>
+              )}
 
-              {/* Category & Owner */}
-              <div className="mb-4">
-                <p>
-                  <strong>Category:</strong>{" "}
-                  {selectedBusiness.businesses?.businessCategory}
+              {selectedBusiness.businesses?.businessDescription && (
+                <p className="text-gray-700 mb-4 whitespace-pre-line">
+                  {selectedBusiness.businesses.businessDescription}
                 </p>
-                <p>
-                  <strong>Owner:</strong> {selectedBusiness.users?.name}
-                </p>
-                {/* <p>
-                  <strong>Email:</strong> {selectedBusiness.users?.email}
-                </p> */}
-                <p>
-                  <strong>Address:</strong>{" "}
-                  {selectedBusiness.businesses?.registeredAddress?.office}
-                </p>
+              )}
+
+              {/* Details */}
+              <div className="space-y-2">
+                {selectedBusiness.businesses?.organizationType && (
+                  <p>
+                    <strong>Organization Type:</strong>{" "}
+                    {selectedBusiness.businesses.organizationType}
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.businessCategory && (
+                  <p>
+                    <strong>Category:</strong>{" "}
+                    {selectedBusiness.businesses.businessCategory}
+                  </p>
+                )}
+
+                {selectedBusiness.users?.name && (
+                  <p>
+                    <strong>Owner:</strong> {selectedBusiness.users.name}
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.dateOfestablishment && (
+                  <p>
+                    <strong>Date of Establishment:</strong>{" "}
+                    {selectedBusiness.businesses.dateOfestablishment}
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.companyWebsite && (
+                  <p>
+                    <strong>Website:</strong>{" "}
+                    <a
+                      href={`https://${selectedBusiness.businesses.companyWebsite}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      {selectedBusiness.businesses.companyWebsite}
+                    </a>
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.registeredAddress?.office && (
+                  <p>
+                    <strong>Registered Office:</strong>{" "}
+                    {selectedBusiness.businesses.registeredAddress.office}
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.cin && (
+                  <p>
+                    <strong>CIN:</strong> {selectedBusiness.businesses.cin}
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.gst && (
+                  <p>
+                    <strong>GST:</strong> {selectedBusiness.businesses.gst}
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.udyam && (
+                  <p>
+                    <strong>Udyam:</strong> {selectedBusiness.businesses.udyam}
+                  </p>
+                )}
+
+                {selectedBusiness.businesses?.premiumCategory && (
+                  <p>
+                    <strong>Premium Category:</strong>{" "}
+                    {selectedBusiness.businesses.premiumCategory}
+                  </p>
+                )}
+
               </div>
 
-              {/* Images */}
+              {/* Partners */}
+              {selectedBusiness.businesses?.partners?.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="font-semibold">Partners</h3>
+                  <ul className="list-disc list-inside">
+                    {selectedBusiness.businesses.partners.map(
+                      (p: any, idx: number) => (
+                        <li key={idx}>{p.name}</li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              {/* Categories */}
+              {selectedBusiness.businesses?.categories?.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="font-semibold">Categories</h3>
+                  <ul className="list-disc list-inside">
+                    {selectedBusiness.businesses.categories.map(
+                      (c: any, idx: number) => (
+                        <li key={idx}>
+                          {c.main} {c.sub && `- ${c.sub}`}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              {/* Photos */}
               {selectedBusiness.businesses?.photos?.product?.length > 0 && (
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  {selectedBusiness.businesses.photos.product.map(
-                    (img: string, idx: number) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt={`biz-img-${idx}`}
-                        className="w-full h-40 object-cover rounded cursor-pointer"
-                        // onClick={() =>
-                        //   openImageModal(
-                        //     selectedBusiness.businesses.photos.product,
-                        //     idx
-                        //   )
-                        // }
-                      />
-                    )
-                  )}
+                <div className="mt-4">
+                  <h3 className="font-semibold">Product Photos</h3>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {selectedBusiness.businesses.photos.product.map(
+                      (img: string, idx: number) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt={`product-${idx}`}
+                          className="w-full h-40 object-cover rounded"
+                        />
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {selectedBusiness.businesses?.photos?.office?.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="font-semibold">Office Photos</h3>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {selectedBusiness.businesses.photos.office.map(
+                      (img: string, idx: number) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt={`office-${idx}`}
+                          className="w-full h-40 object-cover rounded"
+                        />
+                      )
+                    )}
+                  </div>
                 </div>
               )}
             </div>
