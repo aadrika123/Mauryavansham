@@ -269,8 +269,18 @@ export default function MessengerPage() {
 
             {/* Chat Window */}
             {isConnected ? (
-              <>
+             <>
                 <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[350px]">
+                  {/* 📨 Show connection message at top */}
+                  {selectedUser?.lastMessage && (
+                    <div className="flex justify-center">
+                      <div className="bg-yellow-100 text-gray-800 text-sm px-4 py-2 rounded-lg max-w-md text-center">
+                        {selectedUser.lastMessage}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 💬 Then show actual chat messages */}
                   {messages.map((msg) => (
                     <div
                       key={msg.id}
@@ -301,6 +311,7 @@ export default function MessengerPage() {
                     </div>
                   ))}
                 </div>
+
                 <div className="p-4 border-t flex gap-2">
                   <input
                     type="text"

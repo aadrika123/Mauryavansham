@@ -37,6 +37,7 @@ export default function MessengerPage() {
   const [newMessage, setNewMessage] = useState("");
   const [isConnected, setIsConnected] = useState(false);
   const [sending, setSending] = useState(false);
+  console.log(selectedUser, "selectedUserselectedUser");
 
   // 🔹 Fetch connected users list (profile_connect where current user is receiver)
   useEffect(() => {
@@ -271,6 +272,16 @@ export default function MessengerPage() {
             {isConnected ? (
               <>
                 <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[350px]">
+                  {/* 📨 Show connection message at top */}
+                  {selectedUser?.lastMessage && (
+                    <div className="flex justify-center">
+                      <div className="bg-yellow-100 text-gray-800 text-sm px-4 py-2 rounded-lg max-w-md text-center">
+                        {selectedUser.lastMessage}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 💬 Then show actual chat messages */}
                   {messages.map((msg) => (
                     <div
                       key={msg.id}
@@ -301,6 +312,7 @@ export default function MessengerPage() {
                     </div>
                   ))}
                 </div>
+
                 <div className="p-4 border-t flex gap-2">
                   <input
                     type="text"

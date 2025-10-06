@@ -46,6 +46,7 @@ export default function CommunityMemberPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [sending, setSending] = useState(false);
   const [search, setSearch] = useState("");
+  const [reason, setReason] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -84,9 +85,9 @@ export default function CommunityMemberPage() {
   const currentUsers = filteredUsers.slice(start, start + pageSize);
 
   const handleConnect = async () => {
-    if (!selectedUser || !session?.user) return;
+    if (!selectedUser || !session?.user || !reason.trim()) return;
     const user = session.user as any;
-    const message = `${user.name} wants to connect with you.`;
+    const message = `${user.name} wants to connect with you.\n\nMessage: ${reason}`;
 
     try {
       setSending(true);
@@ -94,7 +95,7 @@ export default function CommunityMemberPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: selectedUser.id, // receiver
+          userId: selectedUser.id,
           type: "profile_connect",
           message,
           currentUser: user,
@@ -104,6 +105,7 @@ export default function CommunityMemberPage() {
       if (res.ok) {
         alert("Connection request sent!");
         setSelectedUser(null);
+        setReason("");
       } else {
         alert("Failed to send request");
       }
@@ -293,12 +295,29 @@ export default function CommunityMemberPage() {
               )}
             </div>
 
+            {/* Reason to Connect */}
+            <div className="mt-6">
+              <label className="block text-sm font-semibold mb-2 text-gray-800">
+                Why do you want to connect?
+              </label>
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Write a short message..."
+                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-[#8B0000] focus:outline-none text-sm"
+                rows={3}
+              />
+            </div>
+
             {/* Actions */}
             <div className="flex justify-end gap-4 mt-6">
               <Button variant="outline" onClick={() => setSelectedUser(null)}>
                 Close
               </Button>
-              <Button onClick={handleConnect} disabled={sending}>
+              <Button
+                onClick={handleConnect}
+                disabled={sending || !reason.trim()}
+              >
                 {sending ? "Sending..." : "Connect"}
               </Button>
             </div>
