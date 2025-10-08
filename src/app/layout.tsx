@@ -9,6 +9,7 @@ import { Toaster } from "../components/ui/toaster";
 import SessionTimeout from "../components/SessionTimeout"; 
 import Script from "next/script"; 
 import { usePathname } from "next/navigation"; // ✅ import
+import WhatsappFab from "../components/whatsappFab";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <SessionTimeout>
               {children}
               <Toaster />
+              <WhatsappFab />
             </SessionTimeout>
           </ThemeProvider>
         </SessionProvider>

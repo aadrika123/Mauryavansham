@@ -69,7 +69,7 @@ export default function ViewAllBlogs() {
               <img
                 src={blog.imageUrl}
                 alt={blog.title}
-                className="w-full h-48 object-cover rounded-lg mb-4"
+                className="w-full h-64 object-contain rounded-lg mb-4"
               />
             )}
             <h2 className="text-xl font-semibold mb-2 capitalize">
@@ -116,7 +116,7 @@ export default function ViewAllBlogs() {
                 <img
                   src={selectedBlog.imageUrl}
                   alt={selectedBlog.title}
-                  className="w-full h-64 object-cover rounded-lg mb-4"
+                  className="w-full h-64 object-contain rounded-lg mb-4"
                 />
               )}
               <h2 className="text-2xl font-bold mb-2 capitalize">{selectedBlog.title}</h2>
