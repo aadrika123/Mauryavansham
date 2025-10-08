@@ -6,7 +6,7 @@ import { ads, users } from "@/src/drizzle/schema";
 import { eq } from "drizzle-orm";
 import AdDetail from "./ad-detail";
 import { authOptions } from "@/src/lib/auth";
-import DashboardLayout from "@/src/components/layout/dashboardLayout";
+import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
 
 interface AdPageProps {
   params: { id: string };
@@ -42,11 +42,11 @@ export default async function AdPage({ params }: AdPageProps) {
     .where(eq(ads.id, Number(params.id)));
 
   if (!ad) {
-    redirect("/dashboard/ads");
+    redirect("/admin/ads");
   }
 
   return (
-    <DashboardLayout user={session.user}>
+    <AdmindashboardLayout user={session.user}>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <AdDetail
           ad={ad}
@@ -54,6 +54,6 @@ export default async function AdPage({ params }: AdPageProps) {
           userRole={session.user.role}
         />
       </div>
-    </DashboardLayout>
+    </AdmindashboardLayout>
   );
 }

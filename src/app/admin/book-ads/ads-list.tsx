@@ -164,7 +164,7 @@ export default function AdsList({ userId }: AdsListProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
-        <Link href="/dashboard/ads/create" target="_blank">
+        <Link href="/admin/ads/create" target="_blank">
           <Button className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Apply for New Ad
@@ -187,7 +187,7 @@ export default function AdsList({ userId }: AdsListProps) {
                   Get started by applying for your first banner advertisement
                 </p>
               </div>
-              <Link href="/dashboard/ads/create">
+              <Link href="/admin/ads/create">
                 <Button>Apply for Your First Ad</Button>
               </Link>
             </div>
@@ -284,7 +284,7 @@ export default function AdsList({ userId }: AdsListProps) {
                   )}
 
                   <div className="flex gap-2">
-                    <Link href={`/dashboard/ads/${ad.id}`} className="flex-1">
+                    <Link href={`/admin/ads/${ad.id}`} className="flex-1">
                       <Button
                         variant="outline"
                         size="sm"

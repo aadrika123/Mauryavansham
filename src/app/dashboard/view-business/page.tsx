@@ -19,7 +19,7 @@ export default async function ViewBusinessIndex() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-1">
           <Link
-            href="/admin/overview"
+            href="/dashboard"
             className="flex items-center  text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="w-4 h-4 text-red-700" />

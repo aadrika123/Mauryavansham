@@ -198,7 +198,7 @@ console.log(placementBookedDates);
           description: "Please select a valid image file.",
           variant: "destructive",
         });
-        router.push("/dashboard/ads");
+        router.push("/admin/ads");
       } else {
         const error = await response.json();
         // toast.error(error.error || "Failed to submit ad");
@@ -252,7 +252,7 @@ console.log(placementBookedDates);
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href="/dashboard/ads">
+        <Link href="/admin/ads">
           <Button variant="outline" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Ads
           </Button>
