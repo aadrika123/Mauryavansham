@@ -1,0 +1,21 @@
+CREATE TABLE "coaching_centers" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"center_name" varchar(255) NOT NULL,
+	"owner_name" varchar(255) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"phone" varchar(15) NOT NULL,
+	"address" text NOT NULL,
+	"city" varchar(100) NOT NULL,
+	"state" varchar(100) NOT NULL,
+	"pincode" varchar(10) NOT NULL,
+	"courses" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"branches" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"image_url" text,
+	"status" varchar(50) DEFAULT 'PENDING' NOT NULL,
+	"approved_by" varchar(255),
+	"rejected_by" varchar(255),
+	"rejected_reason" text,
+	"user_id" varchar(255) NOT NULL,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);

@@ -32,6 +32,7 @@ import {
   ChevronUp,
   ChevronDown,
   HeartHandshakeIcon,
+  BookAIcon,
 } from "lucide-react"; // ✅ Added Menu & X icons
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -123,6 +124,15 @@ export default function AdmindashboardLayout({
           href: "/admin/view-business",
           icon: Wallet2Icon,
         },
+      ],
+    },
+    {
+      title: "Education ",
+      href: "",
+      icon: BookAIcon,
+      subItems: [
+        { title: "Register Coaching", href: "/admin/register-coaching", icon: BookAIcon },
+        { title: "My Registered Coaching", href: "/admin/register-coaching/view", icon: BookAIcon },
       ],
     },
   ];

@@ -8,6 +8,27 @@
       "when": 1759213669819,
       "tag": "0000_overrated_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1760014359694,
+      "tag": "0001_calm_onslaught",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760063773406,
+      "tag": "0002_loud_ender_wiggin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1760063848056,
+      "tag": "0003_safe_shadow_king",
+      "breakpoints": true
     }
   ]
 }

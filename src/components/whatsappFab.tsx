@@ -5,7 +5,7 @@ import { FaWhatsapp } from "react-icons/fa6";
 
 const WhatsappFab = () => {
   const number = "919135135033"; 
-  const message = "Hello, Team Aadrika! Is anyone available to chat?";
+  const message = "Hello support team of Mauryavansham! Is anyone available to chat?";
   const encodedMsg = encodeURIComponent(message);
 
   // Detect if it's mobile

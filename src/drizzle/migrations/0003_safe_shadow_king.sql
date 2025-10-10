@@ -1,0 +1,1 @@
+ALTER TABLE "coaching_centers" ADD COLUMN "doc_urls" jsonb DEFAULT '[]'::jsonb NOT NULL;
