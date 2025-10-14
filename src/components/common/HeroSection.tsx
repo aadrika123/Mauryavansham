@@ -28,6 +28,7 @@ interface AdPlacement {
   link?: string;
   views: number;
   placementId: number;
+  adUrl: string;
 }
 
 // Sample carousel images
@@ -146,36 +147,109 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   );
 };
 
-// Mobile Ad Banner Component
+// Ad Slider Component for Multiple Ads
+const AdSlider: React.FC<{ ads: AdPlacement[]; position: "left" | "right" }> = ({
+  ads,
+  position,
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  // Track view when ad changes
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  if (ads.length === 0) {
+    return (
+      <div className="w-full h-[450px] text-center bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
+        Ad Space ({position === "left" ? "1" : "2"}) <br />
+        Please select image size of (350 x 500 pixels)
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-[450px] overflow-hidden rounded-2xl">
+      {ads.map((ad, index) => (
+        <div
+          key={ad.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentIndex ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-0"
+          }`}
+        >
+          <a
+            href={ad.adUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full h-full"
+          >
+            <Image
+              src={ad.bannerImageUrl}
+              alt={`${position} Ad ${index + 1}`}
+              width={350}
+              height={500}
+              className="w-full h-full object-fill shadow-lg"
+              priority={index === 0}
+            />
+          </a>
+        </div>
+      ))}
+
+      {/* Ad Counter - only show if multiple ads */}
+      {ads.length > 1 && (
+        <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-10">
+          {currentIndex + 1} / {ads.length}
+        </div>
+      )}
+
+      {/* Navigation Dots - only show if multiple ads */}
+      {ads.length > 1 && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+          {ads.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                index === currentIndex
+                  ? "bg-white scale-125"
+                  : "bg-white/50 hover:bg-white/75"
+              }`}
+              aria-label={`Go to ad ${index + 1}`}
+              type="button"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Mobile Ad Banner Component with Slider
 const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({
   adPlacements,
 }) => {
-  const leftAd = adPlacements.find((ad) => ad.id === 1);
-  const rightAd = adPlacements.find((ad) => ad.id === 2);
+  const leftAds = adPlacements.filter((ad) => ad.placementId === 1);
+  const rightAds = adPlacements.filter((ad) => ad.placementId === 2);
 
   return (
     <div className="lg:hidden mt-8 flex flex-col gap-4">
-      {leftAd && (
-        <a href={leftAd.link || "#"} target="_blank" rel="noopener noreferrer">
-          <Image
-            src={leftAd.bannerImageUrl}
-            alt="Left Mobile Ad"
-            className="w-full h-auto object-cover rounded-2xl shadow-lg"
-            width={400}
-            height={200}
-          />
-        </a>
+      {leftAds.length > 0 && (
+        <AdSlider ads={leftAds} position="left" />
       )}
-      {rightAd && (
-        <a href={rightAd.link || "#"} target="_blank" rel="noopener noreferrer">
-          <Image
-            src={rightAd.bannerImageUrl}
-            alt="Right Mobile Ad"
-            className="w-full h-auto object-cover rounded-2xl shadow-lg"
-            width={400}
-            height={200}
-          />
-        </a>
+      {rightAds.length > 0 && (
+        <AdSlider ads={rightAds} position="right" />
       )}
     </div>
   );
@@ -185,29 +259,26 @@ const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({
 const HeroSection: React.FC = () => {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetch("/api/ad-placements/approved")
       .then((res) => res.json())
       .then((data: AdPlacement[]) => {
-        // sirf approved ads le lo
-
         setAdPlacements(data);
         setLoading(false);
       })
-      .catch(() => console.error("Failed to load ad placements"));
-    setLoading(false);
+      .catch(() => {
+        console.error("Failed to load ad placements");
+        setLoading(false);
+      });
   }, []);
 
-  const leftAd = adPlacements.find((ad) => ad.placementId === 1);
-  const rightAd = adPlacements.find((ad) => ad.placementId === 2);
-  console.log("Ad leftAd:", leftAd);
-  console.log("Ad rightAd:", rightAd);
-  console.log("All adPlacements:", adPlacements);
+  const leftAds = adPlacements.filter((ad) => ad.placementId === 1);
+  const rightAds = adPlacements.filter((ad) => ad.placementId === 2);
 
-  useEffect(() => {
-    if (leftAd) fetch(`/api/ad-placements/${leftAd.id}`, { method: "POST" });
-    if (rightAd) fetch(`/api/ad-placements/${rightAd.id}`, { method: "POST" });
-  }, [leftAd, rightAd]);
+  console.log("Left Ads:", leftAds);
+  console.log("Right Ads:", rightAds);
+  console.log("All adPlacements:", adPlacements);
 
   return (
     <section className="relative text-white py-10 overflow-hidden">
@@ -226,58 +297,26 @@ const HeroSection: React.FC = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex gap-2 items-start">
-          {/* Left Ad Banner */}
+          {/* Left Ad Banner with Slider */}
           <div className="hidden lg:block w-[20rem] flex-shrink-0 relative">
             {loading ? (
               <Loader />
-            ) : leftAd ? (
-              <>
-                <Image
-                  src={leftAd.bannerImageUrl}
-                  alt="Left Ad"
-                  className="w-full h-auto object-fill shadow-lg rounded-2xl"
-                  width={350}
-                  height={500}
-                  priority
-                />
-              </>
             ) : (
-              // </a>
-              <div className="w-full h-[450px] text-center bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
-                Ad Space (1) <br />
-                Please select image size of (350 x 500 pixels)
-              </div>
+              <AdSlider ads={leftAds} position="left" />
             )}
           </div>
 
           {/* Main Carousel */}
-          <div className="flex-1 ">
+          <div className="flex-1">
             <ImageCarousel images={carouselImages} />
           </div>
 
-          {/* Right Ad Banner */}
+          {/* Right Ad Banner with Slider */}
           <div className="hidden lg:block w-[20rem] flex-shrink-0">
             {loading ? (
               <Loader />
-            ) : rightAd ? (
-              <>
-                <Image
-                  src={rightAd.bannerImageUrl}
-                  alt="Right Ad"
-                  width={350}
-                  height={500}
-                  className="shadow-lg rounded-2xl object-fill bg-white"
-                  priority
-                />
-                {/* <span className="absolute bottom-2  bg-black/30 text-white text-sm px-2 py-1 rounded">
-                  {rightAd.views} <Eye className="w-4 h-4"/>
-                </span> */}
-              </>
             ) : (
-              <div className="w-full h-[450px] text-center bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
-                Ad Space (2) <br />
-                 Please select image size of (350 x 500 pixels)
-              </div>
+              <AdSlider ads={rightAds} position="right" />
             )}
           </div>
         </div>

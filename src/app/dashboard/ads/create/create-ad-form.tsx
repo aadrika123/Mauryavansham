@@ -13,11 +13,8 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { ArrowLeft, Send, ImageIcon } from "lucide-react";
 import Link from "next/link";
-// import toast from "react-hot-toast";
-import Image from "next/image";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { useToast } from "@/src/components/ui/use-toast";
+// import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "@/src/components/ui/use-toast";
 
 interface Placement {
@@ -26,35 +23,22 @@ interface Placement {
   sectionName: string;
 }
 
-interface BookedDate {
-  start: string;
-  end: string;
-}
-
 export default function CreateAdForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [placements, setPlacements] = useState<Placement[]>([]);
-  const [bookedDates, setBookedDates] = useState<Date[]>([]);
-  const [showCalendarPopup, setShowCalendarPopup] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  // Example: mapping placementId => booked dates
-const [placementBookedDates, setPlacementBookedDates] = useState<Record<number, Date[]>>({});
-console.log(placementBookedDates);
-
-
-  // const { toast } = useToast();
 
   const [formData, setFormData] = useState({
     title: "",
     bannerImageUrl: "",
+    adUrl: "",
     fromDate: "",
     toDate: "",
     placementId: null as number | null,
   });
-  console.log(formData);
+
   // Fetch placements
   useEffect(() => {
     fetch("/api/ad-placements/master")
@@ -65,7 +49,6 @@ console.log(placementBookedDates);
       })
       .then((data) => setPlacements(data))
       .catch(() =>
-        // toast.error("Failed to load placements"));
         toast({
           title: "Failed to load placements",
           variant: "destructive",
@@ -73,54 +56,27 @@ console.log(placementBookedDates);
       );
   }, []);
 
-  // Fetch booked dates when placementId changes
-  useEffect(() => {
-    if (!formData.placementId) return;
-
-    fetch(`/api/book-dates?placementId=${formData.placementId}`)
-      .then((res) => res.json())
-      .then((data: BookedDate[]) => {
-        const dates: Date[] = [];
-        data.forEach((d) => {
-          const start = new Date(d.start);
-          const end = new Date(d.end);
-          let current = new Date(start);
-          while (current <= end) {
-            dates.push(new Date(current));
-            current.setDate(current.getDate() + 1);
-          }
-        });
-        setBookedDates(dates);
-         setPlacementBookedDates(prev => ({ ...prev, [formData.placementId]: dates }));
-      })
-      .catch(() =>
-        //  toast.error("Failed to load booked dates"));
-        toast({
-          title: "Failed to load booked dates",
-          variant: "destructive",
-        })
-      );
-  }, [formData.placementId]);
-
-  // Handle Image Upload
   // Handle Image Upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/"))
-      // return toast.error("Please select an image file");
-      return;
-    toast({
-      title: "Invalid File",
-      description: "Please select a valid image file.",
-      variant: "destructive",
-    });
-    if (file.size > 5 * 1024 * 1024) return;
-    toast({
-      title: "File Too Large",
-      description: "Please select an image smaller than 5MB.",
-      variant: "destructive",
-    });
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      return toast({
+        title: "Invalid File",
+        description: "Please select a valid image (JPG, PNG, WEBP, or GIF).",
+        variant: "destructive",
+      });
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      return toast({
+        title: "File Too Large",
+        description: "Please select a file smaller than 10MB.",
+        variant: "destructive",
+      });
+    }
 
     setUploading(true);
     try {
@@ -136,21 +92,17 @@ console.log(placementBookedDates);
         const result = await response.json();
         setImagePreview(result.url);
         setFormData({ ...formData, bannerImageUrl: result.url });
-        // toast.success("Image uploaded successfully");
         toast({
           title: "Image uploaded successfully",
-          variant: "default",
         });
       } else {
         const error = await response.json();
-        // toast.error(error.error || "Upload failed");
         toast({
           title: error.error || "Upload failed",
           variant: "destructive",
         });
       }
     } catch {
-      // toast.error("Error uploading image");
       toast({
         title: "Error uploading image",
         variant: "destructive",
@@ -162,7 +114,6 @@ console.log(placementBookedDates);
 
   // Handle Form Submit
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(formData);
     e.preventDefault();
     if (
       !formData.title ||
@@ -171,8 +122,11 @@ console.log(placementBookedDates);
       !formData.toDate ||
       !formData.placementId
     ) {
-      // return toast.error("Please fill in all fields");
-      return console.log("error");
+      return toast({
+        title: "Missing Fields",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
     }
 
     const from = new Date(formData.fromDate);
@@ -180,9 +134,21 @@ console.log(placementBookedDates);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // if (from < today) return toast.error("Start date cannot be in the past");
-    if (from < today) return console.log("Start date cannot be in the past");
-    if (to <= from) return console.log("End date must be after start date");
+    if (from < today) {
+      return toast({
+        title: "Invalid Date",
+        description: "Start date cannot be in the past",
+        variant: "destructive",
+      });
+    }
+
+    if (to <= from) {
+      return toast({
+        title: "Invalid Date Range",
+        description: "End date must be after start date",
+        variant: "destructive",
+      });
+    }
 
     setLoading(true);
     try {
@@ -191,24 +157,21 @@ console.log(placementBookedDates);
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
       if (response.ok) {
-        // toast.success("Ad submitted for approval");
         toast({
-          title: "Invalid File",
-          description: "Please select a valid image file.",
-          variant: "destructive",
+          title: "Success",
+          description: "Ad submitted for approval",
         });
         router.push("/dashboard/ads");
       } else {
         const error = await response.json();
-        // toast.error(error.error || "Failed to submit ad");
         toast({
           title: error.error || "Failed to submit ad",
           variant: "destructive",
         });
       }
     } catch {
-      // toast.error("Error submitting ad");
       toast({
         title: "Error submitting ad",
         variant: "destructive",
@@ -217,15 +180,14 @@ console.log(placementBookedDates);
       setLoading(false);
     }
   };
-  // replace your existing formatDate with this
-  // string => Date
+
+  // Date utility functions
   const parseDate = (str: string): Date | null => {
     if (!str) return null;
     const [day, month, year] = str.split("-").map(Number);
-    return new Date(year, month - 1, day); // JS Date expects YYYY, MM-1, DD
+    return new Date(year, month - 1, day);
   };
 
-  // Date => string (DD-MM-YYYY)
   const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -233,20 +195,10 @@ console.log(placementBookedDates);
     return `${day}-${month}-${year}`;
   };
 
-  // add days
   const addDays = (date: Date, days: number) => {
     const d = new Date(date);
     d.setDate(d.getDate() + days);
     return d;
-  };
-  // Check if a date is booked
-  const isBooked = (date: Date) => {
-    return bookedDates.some(
-      (d) =>
-        d.getFullYear() === date.getFullYear() &&
-        d.getMonth() === date.getMonth() &&
-        d.getDate() === date.getDate()
-    );
   };
 
   return (
@@ -288,7 +240,6 @@ console.log(placementBookedDates);
                 onChange={(e) => {
                   const placementId = Number(e.target.value);
                   setFormData({ ...formData, placementId });
-                  if (placementId) setShowCalendarPopup(true); // open modal
                 }}
                 className="w-full border rounded px-3 py-2"
                 required
@@ -300,6 +251,23 @@ console.log(placementBookedDates);
                   </option>
                 ))}
               </select>
+              <p className="text-sm text-gray-500">
+                Multiple ads can run on the same placement simultaneously
+              </p>
+            </div>
+
+            {/* Ad URL */}
+            <div className="space-y-2">
+              <Label htmlFor="adUrl">Ad URL (Optional)</Label>
+              <Input
+                id="adUrl"
+                type="url"
+                placeholder="https://example.com"
+                value={formData.adUrl}
+                onChange={(e) =>
+                  setFormData({ ...formData, adUrl: e.target.value })
+                }
+              />
             </div>
 
             {/* Banner Image */}
@@ -312,12 +280,10 @@ console.log(placementBookedDates);
                 {imagePreview ? (
                   <div className="flex flex-col items-center gap-4">
                     <div className="relative w-[175px] h-[250px] border rounded-lg overflow-hidden">
-                      <Image
+                      <img
                         src={imagePreview}
                         alt="Banner preview"
-                        fill
-                        className="object-cover"
-                        sizes="175px"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                     <Button
@@ -342,7 +308,7 @@ console.log(placementBookedDates);
                         Upload banner image
                       </span>
                       <span className="block text-sm text-gray-500">
-                        PNG, JPG up to 5MB <br />
+                        PNG, JPG, or GIF up to 10MB <br />
                         (350x500px) for vertical image ads <br />
                         (900x300px) for horizontal image ads
                       </span>
@@ -350,7 +316,7 @@ console.log(placementBookedDates);
                         id="banner-upload"
                         type="file"
                         className="sr-only"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
                         onChange={handleImageUpload}
                         disabled={uploading}
                       />
@@ -372,17 +338,11 @@ console.log(placementBookedDates);
                       fromDate: date ? formatDate(date) : "",
                     })
                   }
-                  excludeDates={bookedDates}
                   minDate={addDays(new Date(), 1)}
                   dateFormat="dd-MM-yyyy"
                   className="w-full border rounded px-3 py-2"
                   placeholderText="Select start date"
                   required
-                  dayClassName={(date) =>
-                    isBooked(date)
-                      ? "bg-red-200 text-red-700"
-                      : "bg-green-200 text-green-900"
-                  }
                 />
               </div>
               <div className="space-y-2">
@@ -395,7 +355,6 @@ console.log(placementBookedDates);
                       toDate: date ? formatDate(date) : "",
                     })
                   }
-                  excludeDates={bookedDates}
                   minDate={
                     formData.fromDate
                       ? addDays(parseDate(formData.fromDate)!, 1)
@@ -422,40 +381,6 @@ console.log(placementBookedDates);
           </CardContent>
         </Card>
       </form>
-      {showCalendarPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-[350px]">
-            <h2 className="text-lg font-semibold mb-4">Available Slots</h2>
-
-            <DatePicker
-              inline
-              excludeDates={bookedDates}
-              minDate={addDays(new Date(), 1)}
-              dayClassName={
-                (date) =>
-                  bookedDates.some(
-                    (d) =>
-                      d.getFullYear() === date.getFullYear() &&
-                      d.getMonth() === date.getMonth() &&
-                      d.getDate() === date.getDate()
-                  )
-                    ? "bg-red-200 text-red-700" // booked
-                    : "bg-green-200 text-green-900" // available
-              }
-            />
-
-            <div className="flex justify-end mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowCalendarPopup(false)}
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

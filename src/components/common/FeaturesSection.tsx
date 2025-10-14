@@ -1,8 +1,6 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
-import { Tooltip } from "@/src/components/ui/tooltip"; // Assuming you have a tooltip component
-
 import {
   Card,
   CardContent,
@@ -21,50 +19,163 @@ import {
   Star,
   Eye,
   Crown,
+  User,
+  Lock,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import "keen-slider/keen-slider.min.css";
-import { useKeenSlider } from "keen-slider/react";
+// import "keen-slider/keen-slider.min.css";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-interface User {
-  id: number;
-  name: string;
-  photo: string | null;
-}
-interface Ad {
-  id: number;
-  title: string;
-  bannerImageUrl: string;
-  link?: string;
-}
 interface AdPlacement {
   id: number;
   bannerImageUrl: string;
   link?: string;
   views: number;
   placementId: number;
+  adUrl: string;
 }
+
+// Ad Slider Component for Horizontal Ads (Placement 3)
+const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  // Track view when ad changes
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  if (ads.length === 0) {
+    return (
+      <div className="mx-auto relative w-full max-w-[900px] h-[180px] sm:h-[220px] md:h-[300px]">
+        <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 w-full h-full">
+          <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
+            <div className="text-center relative z-10 flex flex-col justify-center items-center h-full">
+              <div className="relative border-2 border-dashed border-amber-400 rounded-lg p-4 sm:p-6 md:p-8 bg-gradient-to-br from-amber-50 to-yellow-100 w-full">
+                <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-amber-800 mb-4">
+                  Book Your Ad (3) <br />
+                  <p className="text-xs sm:text-sm">
+                    (Recommended size: 900x300px)
+                  </p>
+                </h3>
+                <div className="space-y-4 relative">
+                  <div className="absolute top-4 left-4">
+                    <Sparkles className="h-5 sm:h-6 md:h-8 w-5 sm:w-6 md:w-8 text-amber-500 animate-pulse" />
+                  </div>
+                  <div className="absolute top-4 right-4">
+                    <Star className="h-5 sm:h-6 md:h-8 w-5 sm:w-6 md:w-8 text-amber-500 animate-pulse" />
+                  </div>
+                  <p className="text-xs sm:text-sm text-amber-600 mt-2">
+                    Go to your dashboard to create and manage ads.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+            <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full max-w-[900px] mx-auto h-[180px] sm:h-[220px] md:h-[300px]">
+      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 w-full h-full">
+        <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
+          {/* Ad Images */}
+          {ads.map((ad, index) => (
+            <div
+              key={ad.id}
+              className={`absolute inset-0 p-4 sm:p-6 md:p-8 transition-opacity duration-1000 ${
+                index === currentIndex
+                  ? "opacity-100 z-10"
+                  : "opacity-0 pointer-events-none z-0"
+              }`}
+            >
+              <a
+                href={ad.adUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full h-full"
+              >
+                <Image
+                  src={ad.bannerImageUrl}
+                  alt={`Horizontal Ad ${index + 1}`}
+                  width={900}
+                  height={300}
+                  className="w-full h-full rounded-xl shadow-lg object-cover cursor-pointer"
+                  priority={index === 0}
+                />
+              </a>
+            </div>
+          ))}
+
+          {/* Ad Counter - only show if multiple ads */}
+          {ads.length > 1 && (
+            <div className="absolute top-6 right-6 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
+              {currentIndex + 1} / {ads.length}
+            </div>
+          )}
+
+          {/* Navigation Dots - only show if multiple ads */}
+          {ads.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+              {ads.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    index === currentIndex
+                      ? "bg-amber-600 scale-125"
+                      : "bg-amber-400/50 hover:bg-amber-400/75"
+                  }`}
+                  aria-label={`Go to ad ${index + 1}`}
+                  type="button"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export function FeaturesSection() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
   const { data: session } = useSession();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const Router = useRouter();
 
   useEffect(() => {
     fetch("/api/ad-placements/approved")
       .then((res) => res.json())
       .then((data: AdPlacement[]) => {
-        // sirf approved ads le lo
         setAdPlacements(data);
       })
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
 
-  const ad = adPlacements.find((ad) => ad.placementId === 3); // Assuming placement ID 3 is for the FeaturesSection ad
+  // Filter ads for placement 3 (horizontal banner)
+  const horizontalAds = adPlacements.filter((ad) => ad.placementId === 3);
 
-  useEffect(() => {
-    if (ad) fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
-  }, [ad]);
+  console.log("Horizontal Ads (Placement 3):", horizontalAds);
 
   const features = [
     {
@@ -79,14 +190,8 @@ export function FeaturesSection() {
       description: "Find your perfect life partner within the community",
       href: "/matrimonial",
     },
-    // {
-    //   icon: ShoppingBag,
-    //   title: "Trading Platform",
-    //   description: "Buy and sell products/services within the community",
-    //   href: "/",
-    // },
     {
-      title: "Business Forum  ",
+      title: "Business Forum",
       icon: ShoppingBag,
       description: "Promote your business and connect with potential clients",
       href: "/business",
@@ -97,7 +202,6 @@ export function FeaturesSection() {
       description: "Stay updated with community events and celebrations",
       href: "/events",
     },
-
     {
       icon: HandHeart,
       title: "Donation",
@@ -132,6 +236,44 @@ export function FeaturesSection() {
 
   return (
     <>
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-red-700 flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Login Required
+              </h3>
+              <button
+                onClick={() => setShowLoginModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Please login to access the Community Directory.
+            </p>
+            <div className="space-y-3">
+              <Button
+                onClick={() => Router.push("/sign-in")}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Login
+              </Button>
+              <Button
+                onClick={() => setShowLoginModal(false)}
+                variant="outline"
+                className="w-full"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Welcome Section */}
       <section className="py-8 bg-[#FFFDEF] px-4 sm:px-8">
         <div className="container mx-auto max-w-4xl">
@@ -176,67 +318,8 @@ export function FeaturesSection() {
 
       <section className="py-10 bg-[#FFFDEF] px-4 sm:px-8">
         <div className="container mx-auto px-4 sm:px-8 py-2 w-full md:w-5/6">
-          <div className="relative">
-            {ad ? (
-              <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 w-full max-w-[900px] mx-auto">
-                <div className="relative p-4 sm:p-6 md:p-8 text-center">
-                  <Image
-                    src={ad.bannerImageUrl}
-                    alt="Ad Banner"
-                    width={900}
-                    height={300}
-                    className="w-full h-auto rounded-xl shadow-lg object-cover"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="mx-auto relative w-full max-w-[900px] h-[180px] sm:h-[220px] md:h-[300px]">
-                <div
-                  className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 
-            border-4 border-amber-300 rounded-2xl shadow-2xl 
-            overflow-hidden transform hover:scale-105 transition-transform duration-300
-            w-full h-full"
-                >
-                  <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
-                    {/* Decorative Book Pages Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20"></div>
-
-                    {/* Content */}
-                    <div className="text-center relative z-10 flex flex-col justify-center items-center h-full">
-                      <div
-                        className="relative border-2 border-dashed border-amber-400 rounded-lg p-4 sm:p-6 md:p-8 
-                  bg-gradient-to-br from-amber-50 to-yellow-100 w-full"
-                      >
-                        <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-amber-800 mb-4">
-                          Book Your Ad (3) <br />
-                          <p className="text-xs sm:text-sm">
-                            (Recommended size: 900x300px)
-                          </p>
-                        </h3>
-
-                        <div className="space-y-4 relative">
-                          <div className="absolute top-4 left-4">
-                            <Sparkles className="h-5 sm:h-6 md:h-8 w-5 sm:w-6 md:w-8 text-amber-500 animate-pulse" />
-                          </div>
-                          <div className="absolute top-4 right-4">
-                            <Star className="h-5 sm:h-6 md:h-8 w-5 sm:w-6 md:w-8 text-amber-500 animate-pulse" />
-                          </div>
-
-                          <p className="text-xs sm:text-sm text-amber-600 mt-2">
-                            Go to your dashboard to create and manage ads.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Decorative Borders */}
-                    <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-                    <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400"></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Horizontal Ad Slider for Placement 3 */}
+          <HorizontalAdSlider ads={horizontalAds} />
         </div>
 
         {/* Community Section */}
@@ -281,24 +364,18 @@ export function FeaturesSection() {
                       <Button
                         variant="outline"
                         size="sm"
-                        asChild
-                        className={
-                          isDisabled
-                            ? "cursor-not-allowed text-gray-400"
-                            : "text-orange-600"
-                        }
-                        disabled={isDisabled}
+                        onClick={() => {
+                          if (isCommunityDirectory && !session) {
+                            setShowLoginModal(true);
+                          } else if (!isDisabled) {
+                            Router.push(feature.href);
+                          }
+                        }}
+                        className={"text-orange-600"}
+                        disabled={feature.href === "/"}
                       >
-                        <Link href={isDisabled ? "#" : feature.href}>
-                          {feature.href === "/" ? "Coming Soon" : "Learn More"}
-                        </Link>
+                        {feature.href === "/" ? "Coming Soon" : "Learn More"}
                       </Button>
-                      {/* Hover text for login */}
-                      {isCommunityDirectory && !session && (
-                        <span className="text-xs text-red-600 mt-1">
-                          Please login first
-                        </span>
-                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -306,9 +383,6 @@ export function FeaturesSection() {
             })}
           </div>
         </div>
-        {/* {session && ( */}
-
-        {/* )} */}
       </section>
     </>
   );

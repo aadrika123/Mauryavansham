@@ -50,7 +50,11 @@ export async function GET(request: NextRequest) {
         updatedAt: ads.updatedAt,
         approvedAt: ads.approvedAt,
         rejectionReason: ads.rejectionReason,
+        placementId: ads.placementId,
         viewCount: ads.views,
+        approvedBy: ads.approvedBy,
+        rejectedBy: ads.rejectedBy,
+        adUrl: ads.adUrl,
         user: {
           id: users.id,
           name: users.name,
@@ -127,7 +131,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, bannerImageUrl, fromDate, toDate, placementId } = body;
+    const { title, bannerImageUrl, fromDate, toDate, placementId, adUrl } = body;
 
     if (!title || !bannerImageUrl || !fromDate || !toDate || !placementId) {
       return NextResponse.json(
@@ -171,6 +175,7 @@ export async function POST(request: NextRequest) {
     placementId: Number(placementId),
     userId: Number(session.user.id),
     status: "pending",
+    adUrl: adUrl ? String(adUrl) : null,
   })
   .returning();
 

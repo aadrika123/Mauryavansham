@@ -20,7 +20,102 @@ interface AdPlacement {
   link?: string;
   views: number;
   placementId: number;
+  adUrl: string;
 }
+
+// Heritage Ad Slider Component for Placement 4
+const HeritageAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  // Track view when ad changes
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  if (ads.length === 0) {
+    return (
+      <div className="mx-auto relative w-full max-w-[900px] h-[180px] sm:h-[250px] md:h-[300px] flex items-center justify-center border-2 border-dashed border-amber-400 rounded-xl bg-amber-50">
+        <p className="text-sm sm:text-lg text-amber-700 text-center px-2">
+          Book Your Ad (4) – Recommended size: 900x300px
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative">
+      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-2 sm:border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+        <div className="relative p-4 sm:p-6 md:p-8 text-center h-[180px] sm:h-[250px] md:h-[300px]">
+          {/* Ad Images */}
+          {ads.map((ad, index) => (
+            <div
+              key={ad.id}
+              className={`absolute inset-0 p-4 sm:p-6 md:p-8 transition-opacity duration-1000 ${
+                index === currentIndex
+                  ? "opacity-100 z-10"
+                  : "opacity-0 pointer-events-none z-0"
+              }`}
+            >
+              <a
+                href={ad.adUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full h-full"
+              >
+                <Image
+                  src={ad.bannerImageUrl}
+                  alt={`Heritage Ad ${index + 1}`}
+                  width={900}
+                  height={300}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain cursor-pointer"
+                  priority={index === 0}
+                />
+              </a>
+            </div>
+          ))}
+
+          {/* Ad Counter - only show if multiple ads */}
+          {ads.length > 1 && (
+            <div className="absolute top-6 right-6 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
+              {currentIndex + 1} / {ads.length}
+            </div>
+          )}
+
+          {/* Navigation Dots - only show if multiple ads */}
+          {ads.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+              {ads.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    index === currentIndex
+                      ? "bg-amber-600 scale-125"
+                      : "bg-amber-400/50 hover:bg-amber-400/75"
+                  }`}
+                  aria-label={`Go to ad ${index + 1}`}
+                  type="button"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function HeritagePage() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
@@ -32,11 +127,10 @@ export default function HeritagePage() {
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
 
-  const ad = adPlacements.find((ad) => ad.placementId === 4);
+  // Filter ads for placement 4 (heritage page banner)
+  const heritageAds = adPlacements.filter((ad) => ad.placementId === 4);
 
-  useEffect(() => {
-    if (ad) fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
-  }, [ad]);
+  console.log("Heritage Ads (Placement 4):", heritageAds);
 
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-12 bg-gradient-to-b from-yellow-50 to-orange-50">
@@ -181,29 +275,9 @@ export default function HeritagePage() {
         </div>
       </div>
 
-      {/* Ad Banner */}
+      {/* Ad Banner with Slider */}
       <div className="container mx-auto px-2 sm:px-6 lg:px-8 py-6">
-        <div className="relative">
-          {ad ? (
-            <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-2 sm:border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-              <div className="relative p-4 sm:p-6 md:p-8 text-center">
-                <Image
-                  src={ad.bannerImageUrl}
-                  alt="Ad Banner"
-                  width={900}
-                  height={300}
-                  className="mx-auto rounded-xl shadow-lg w-full h-auto max-h-[250px] sm:max-h-[300px] object-contain"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="mx-auto relative w-full max-w-[900px] h-[180px] sm:h-[250px] md:h-[300px] flex items-center justify-center border-2 border-dashed border-amber-400 rounded-xl bg-amber-50">
-              <p className="text-sm sm:text-lg text-amber-700 text-center px-2">
-                Book Your Ad (4) – Recommended size: 900x300px
-              </p>
-            </div>
-          )}
-        </div>
+        <HeritageAdSlider ads={heritageAds} />
       </div>
 
       {/* Sacred Knowledge Section */}

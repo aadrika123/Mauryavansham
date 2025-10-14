@@ -17,6 +17,7 @@ export async function GET() {
         placementId: adPlacements.id,
         fromDate: ads.fromDate,
         toDate: ads.toDate,
+        adUrl: ads.adUrl,
       })
       .from(adPlacements)
       .leftJoin(ads, eq(adPlacements.id, ads.placementId))

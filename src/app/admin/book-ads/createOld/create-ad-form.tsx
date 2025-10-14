@@ -13,8 +13,11 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { ArrowLeft, Send, ImageIcon } from "lucide-react";
 import Link from "next/link";
+// import toast from "react-hot-toast";
+import Image from "next/image";
 import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker.css";
+import { useToast } from "@/src/components/ui/use-toast";
 import { toast } from "@/src/components/ui/use-toast";
 
 interface Placement {
@@ -23,12 +26,27 @@ interface Placement {
   sectionName: string;
 }
 
+interface BookedDate {
+  start: string;
+  end: string;
+}
+
 export default function CreateAdForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [placements, setPlacements] = useState<Placement[]>([]);
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
+  const [showCalendarPopup, setShowCalendarPopup] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  // Example: mapping placementId => booked dates
+  const [placementBookedDates, setPlacementBookedDates] = useState<
+    Record<number, Date[]>
+  >({});
+  console.log(placementBookedDates);
+
+  // const { toast } = useToast();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -38,7 +56,7 @@ export default function CreateAdForm() {
     toDate: "",
     placementId: null as number | null,
   });
-
+  console.log(formData);
   // Fetch placements
   useEffect(() => {
     fetch("/api/ad-placements/master")
@@ -49,6 +67,7 @@ export default function CreateAdForm() {
       })
       .then((data) => setPlacements(data))
       .catch(() =>
+        // toast.error("Failed to load placements"));
         toast({
           title: "Failed to load placements",
           variant: "destructive",
@@ -56,11 +75,46 @@ export default function CreateAdForm() {
       );
   }, []);
 
+  // Fetch booked dates when placementId changes
+  useEffect(() => {
+    if (!formData.placementId) return;
+
+    fetch(`/api/book-dates?placementId=${formData.placementId}`)
+      .then((res) => res.json())
+      .then((data: BookedDate[]) => {
+        const dates: Date[] = [];
+        data.forEach((d) => {
+          const start = new Date(d.start);
+          const end = new Date(d.end);
+          let current = new Date(start);
+          while (current <= end) {
+            dates.push(new Date(current));
+            current.setDate(current.getDate() + 1);
+          }
+        });
+        setBookedDates(dates);
+        setPlacementBookedDates((prev) => ({
+          ...prev,
+          [formData.placementId]: dates,
+        }));
+      })
+      .catch(() =>
+        //  toast.error("Failed to load booked dates"));
+        toast({
+          title: "Failed to load booked dates",
+          variant: "destructive",
+        })
+      );
+  }, [formData.placementId]);
+
+  // Handle Image Upload
   // Handle Image Upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // alert("handleImageUpload");
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // ✅ Allow both images and GIFs
     const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
       return toast({
@@ -70,10 +124,11 @@ export default function CreateAdForm() {
       });
     }
 
+    // ✅ Max size: 5MB
     if (file.size > 10 * 1024 * 1024) {
       return toast({
         title: "File Too Large",
-        description: "Please select a file smaller than 10MB.",
+        description: "Please select a file smaller than 5MB.",
         variant: "destructive",
       });
     }
@@ -114,6 +169,7 @@ export default function CreateAdForm() {
 
   // Handle Form Submit
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log(formData);
     e.preventDefault();
     if (
       !formData.title ||
@@ -122,11 +178,8 @@ export default function CreateAdForm() {
       !formData.toDate ||
       !formData.placementId
     ) {
-      return toast({
-        title: "Missing Fields",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
+      // return toast.error("Please fill in all fields");
+      return console.log("error");
     }
 
     const from = new Date(formData.fromDate);
@@ -134,21 +187,9 @@ export default function CreateAdForm() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (from < today) {
-      return toast({
-        title: "Invalid Date",
-        description: "Start date cannot be in the past",
-        variant: "destructive",
-      });
-    }
-
-    if (to <= from) {
-      return toast({
-        title: "Invalid Date Range",
-        description: "End date must be after start date",
-        variant: "destructive",
-      });
-    }
+    // if (from < today) return toast.error("Start date cannot be in the past");
+    if (from < today) return console.log("Start date cannot be in the past");
+    if (to <= from) return console.log("End date must be after start date");
 
     setLoading(true);
     try {
@@ -157,21 +198,24 @@ export default function CreateAdForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       if (response.ok) {
+        // toast.success("Ad submitted for approval");
         toast({
-          title: "Success",
-          description: "Ad submitted for approval",
+          title: "Invalid File",
+          description: "Please select a valid image file.",
+          variant: "destructive",
         });
         router.push("/admin/book-ads");
       } else {
         const error = await response.json();
+        // toast.error(error.error || "Failed to submit ad");
         toast({
           title: error.error || "Failed to submit ad",
           variant: "destructive",
         });
       }
     } catch {
+      // toast.error("Error submitting ad");
       toast({
         title: "Error submitting ad",
         variant: "destructive",
@@ -180,14 +224,15 @@ export default function CreateAdForm() {
       setLoading(false);
     }
   };
-
-  // Date utility functions
+  // replace your existing formatDate with this
+  // string => Date
   const parseDate = (str: string): Date | null => {
     if (!str) return null;
     const [day, month, year] = str.split("-").map(Number);
-    return new Date(year, month - 1, day);
+    return new Date(year, month - 1, day); // JS Date expects YYYY, MM-1, DD
   };
 
+  // Date => string (DD-MM-YYYY)
   const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -195,10 +240,20 @@ export default function CreateAdForm() {
     return `${day}-${month}-${year}`;
   };
 
+  // add days
   const addDays = (date: Date, days: number) => {
     const d = new Date(date);
     d.setDate(d.getDate() + days);
     return d;
+  };
+  // Check if a date is booked
+  const isBooked = (date: Date) => {
+    return bookedDates.some(
+      (d) =>
+        d.getFullYear() === date.getFullYear() &&
+        d.getMonth() === date.getMonth() &&
+        d.getDate() === date.getDate()
+    );
   };
 
   return (
@@ -240,6 +295,7 @@ export default function CreateAdForm() {
                 onChange={(e) => {
                   const placementId = Number(e.target.value);
                   setFormData({ ...formData, placementId });
+                  if (placementId) setShowCalendarPopup(true); // open modal
                 }}
                 className="w-full border rounded px-3 py-2"
                 required
@@ -251,14 +307,10 @@ export default function CreateAdForm() {
                   </option>
                 ))}
               </select>
-              <p className="text-sm text-gray-500">
-                Multiple ads can run on the same placement simultaneously
-              </p>
             </div>
-
             {/* Ad URL */}
             <div className="space-y-2">
-              <Label htmlFor="adUrl">Ad URL (Optional)</Label>
+              <Label htmlFor="adUrl">Ad URL</Label>
               <Input
                 id="adUrl"
                 type="url"
@@ -308,7 +360,7 @@ export default function CreateAdForm() {
                         Upload banner image
                       </span>
                       <span className="block text-sm text-gray-500">
-                        PNG, JPG, or GIF up to 10MB <br />
+                        PNG, JPG, or GIF up to 8MB <br />
                         (350x500px) for vertical image ads <br />
                         (900x300px) for horizontal image ads
                       </span>
@@ -338,11 +390,17 @@ export default function CreateAdForm() {
                       fromDate: date ? formatDate(date) : "",
                     })
                   }
+                  excludeDates={bookedDates}
                   minDate={addDays(new Date(), 1)}
                   dateFormat="dd-MM-yyyy"
                   className="w-full border rounded px-3 py-2"
                   placeholderText="Select start date"
                   required
+                  dayClassName={(date) =>
+                    isBooked(date)
+                      ? "bg-red-200 text-red-700"
+                      : "bg-green-200 text-green-900"
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -355,6 +413,7 @@ export default function CreateAdForm() {
                       toDate: date ? formatDate(date) : "",
                     })
                   }
+                  excludeDates={bookedDates}
                   minDate={
                     formData.fromDate
                       ? addDays(parseDate(formData.fromDate)!, 1)
@@ -381,6 +440,40 @@ export default function CreateAdForm() {
           </CardContent>
         </Card>
       </form>
+      {showCalendarPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[350px]">
+            <h2 className="text-lg font-semibold mb-4">Available Slots</h2>
+
+            <DatePicker
+              inline
+              excludeDates={bookedDates}
+              minDate={addDays(new Date(), 1)}
+              dayClassName={
+                (date) =>
+                  bookedDates.some(
+                    (d) =>
+                      d.getFullYear() === date.getFullYear() &&
+                      d.getMonth() === date.getMonth() &&
+                      d.getDate() === date.getDate()
+                  )
+                    ? "bg-red-200 text-red-700" // booked
+                    : "bg-green-200 text-green-900" // available
+              }
+            />
+
+            <div className="flex justify-end mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowCalendarPopup(false)}
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

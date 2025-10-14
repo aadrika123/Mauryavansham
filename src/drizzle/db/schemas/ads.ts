@@ -35,6 +35,9 @@ export const ads = pgTable("ads", {
     .references(() => adPlacements.id)
     .notNull(),
   views: integer("views").default(0).notNull(),
+  adUrl: text("ad_url"), // New field for the ad URL
+  rejectedBy: text("rejected_by"),
+  approvedBy: text("approved_by"),
 });
 
 export type Ad = typeof ads.$inferSelect;

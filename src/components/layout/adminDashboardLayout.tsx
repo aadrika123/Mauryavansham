@@ -126,15 +126,15 @@ export default function AdmindashboardLayout({
         },
       ],
     },
-    {
-      title: "Education ",
-      href: "",
-      icon: BookAIcon,
-      subItems: [
-        { title: "Register Coaching", href: "/admin/register-coaching", icon: BookAIcon },
-        { title: "My Registered Coaching", href: "/admin/register-coaching/view", icon: BookAIcon },
-      ],
-    },
+    // {
+    //   title: "Education ",
+    //   href: "",
+    //   icon: BookAIcon,
+    //   subItems: [
+    //     { title: "Register Coaching", href: "/admin/register-coaching", icon: BookAIcon },
+    //     { title: "My Registered Coaching", href: "/admin/register-coaching/view", icon: BookAIcon },
+    //   ],
+    // },
   ];
 
   const superAdminSidebarItems = [

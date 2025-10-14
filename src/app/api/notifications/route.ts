@@ -77,6 +77,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // ✅ Check if a similar connection request already exists
+  const existing = await db
+    .select()
+    .from(notifications)
+    .where(
+      sql`${notifications.type} = 'profile_connect' 
+        AND ${notifications.senderId} = ${senderId}
+        AND ${notifications.userId} = ${userId}`
+    );
+
+  if (existing.length > 0) {
+    return NextResponse.json(
+      { message: "You are already connected with this user. You can go to your inbox to chat with them." },
+      { status: 409 } // Conflict
+    );
+  }
+
+  // ✅ If not connected, create a new notification
   const [notification] = await db
     .insert(notifications)
     .values({
@@ -89,3 +107,4 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json(notification);
 }
+

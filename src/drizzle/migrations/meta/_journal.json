@@ -29,6 +29,20 @@
       "when": 1760063848056,
       "tag": "0003_safe_shadow_king",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1760337219887,
+      "tag": "0004_opposite_iceman",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1760343080882,
+      "tag": "0005_loud_lyja",
+      "breakpoints": true
     }
   ]
 }

@@ -47,6 +47,10 @@ export default function CommunityMemberPage() {
   const [sending, setSending] = useState(false);
   const [search, setSearch] = useState("");
   const [reason, setReason] = useState("");
+  const [popup, setPopup] = useState<{ message: string; visible: boolean }>({
+    message: "",
+    visible: false,
+  });
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -86,11 +90,13 @@ export default function CommunityMemberPage() {
 
   const handleConnect = async () => {
     if (!selectedUser || !session?.user || !reason.trim()) return;
+
     const user = session.user as any;
     const message = `${user.name} wants to connect with you.\n\nMessage: ${reason}`;
 
     try {
       setSending(true);
+
       const res = await fetch("/api/notifications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -102,16 +108,35 @@ export default function CommunityMemberPage() {
         }),
       });
 
-      if (res.ok) {
-        alert("Connection request sent!");
+      const data = await res.json();
+
+      if (res.status === 409) {
+        setPopup({
+          message:
+            data.message ||
+            "You are already connected with this user. You can go to your inbox to chat with them.",
+          visible: true,
+        });
+      } else if (res.ok) {
+        setPopup({
+          message:
+            "Connection request sent successfully! You can check your inbox for updates.",
+          visible: true,
+        });
         setSelectedUser(null);
         setReason("");
       } else {
-        alert("Failed to send request");
+        setPopup({
+          message: data.error || "Failed to send request. Please try again.",
+          visible: true,
+        });
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong!");
+      setPopup({
+        message: "Something went wrong. Please try again later.",
+        visible: true,
+      });
     } finally {
       setSending(false);
     }
@@ -319,6 +344,26 @@ export default function CommunityMemberPage() {
                 disabled={sending || !reason.trim()}
               >
                 {sending ? "Sending..." : "Connect"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {popup.visible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-[400px] text-center">
+            <p className="text-gray-800 text-base mb-4 whitespace-pre-line">
+              {popup.message}
+            </p>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  setPopup({ message: "", visible: false });
+                  setSelectedUser(null);
+                }}
+                className="bg-[#8B0000] text-white hover:bg-[#a30a0a]"
+              >
+                OK
               </Button>
             </div>
           </div>

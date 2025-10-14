@@ -19,6 +19,7 @@ import {
   AlertCircle,
   CheckCircle,
   Eye,
+  Hash,
 } from "lucide-react";
 import { format } from "date-fns";
 // import toast from "react-hot-toast";
@@ -39,6 +40,10 @@ interface Ad {
   isActive: boolean;
   isExpired: boolean;
   viewCount: number;
+  placementId: number;
+  approvedBy?: string;
+  rejectedBy?: string;
+  adUrl?: string;
   user: {
     id: string;
     name: string;
@@ -71,7 +76,7 @@ export default function AdsList({ userId }: AdsListProps) {
           title: "Success",
           description: "Ads fetched successfully",
           // variant: "default",
-        })
+        });
       } else {
         // toast.error("Failed to fetch ads");
         toast({
@@ -86,7 +91,7 @@ export default function AdsList({ userId }: AdsListProps) {
         title: "Error",
         description: "Error loading ads",
         variant: "destructive",
-      })
+      });
     } finally {
       setLoading(false);
     }
@@ -238,6 +243,12 @@ export default function AdsList({ userId }: AdsListProps) {
                     <span>
                       Applied {format(new Date(ad.createdAt), "MMM d, yyyy")}
                     </span>
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Hash className="h-4 w-4" />
+                      <span>
+                        Placement ID: <strong>{ad.placementId}</strong>
+                      </span>
+                    </div>
                   </div>
 
                   {getDaysLeftText(ad) && (
@@ -268,7 +279,26 @@ export default function AdsList({ userId }: AdsListProps) {
                       </div>
                     </div>
                   )}
-
+                  {ad.status === "approved" && ad.approvedBy && (
+                    <div className="flex items-start gap-2 p-3 bg-green-50 rounded-lg">
+                      <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-green-800">
+                          Approved By: {ad.approvedBy}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {ad.status === "rejected" && ad.rejectedBy && (
+                    <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
+                      <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-red-800">
+                          Rejected By: {ad.rejectedBy}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   {ad.isActive && (
                     <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
                       <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />

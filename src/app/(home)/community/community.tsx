@@ -34,6 +34,7 @@ interface Ad {
   link?: string;
   views: number;
   placementId: number;
+  adUrl: string;
 }
 
 interface Reply {
@@ -78,6 +79,124 @@ interface User {
 interface Props {
   user?: User;
 }
+
+const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  // Track view when ad changes
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  if (ads.length === 0) {
+    return (
+      <div className="relative w-full h-44 sm:h-60 md:h-72 lg:h-[300px]">
+        <div className="bg-gradient-to-br from-amber-50 via-yellow-100 to-amber-50 border-4 border-dashed border-amber-300 rounded-2xl shadow-lg w-full h-full flex items-center justify-center text-center p-6 relative overflow-hidden">
+          {/* Floating sparkles */}
+          <Sparkles className="absolute top-6 left-6 h-7 w-7 text-amber-500 animate-pulse" />
+          <Star className="absolute top-6 right-6 h-7 w-7 text-amber-500 animate-bounce" />
+          <Star className="absolute bottom-8 left-10 h-6 w-6 text-amber-400 animate-ping" />
+
+          {/* Content */}
+          <div className="max-w-lg">
+            <h3 className="text-2xl md:text-3xl font-extrabold text-amber-800 mb-2 drop-shadow-sm">
+              Book Your Ad (5)
+            </h3>
+            <p className="text-sm sm:text-base text-amber-700 mb-3">
+              Recommended size:{" "}
+              <span className="font-semibold">900×300 px</span>
+            </p>
+            <p className="text-xs sm:text-sm text-amber-600">
+              Go to your dashboard to create and manage ads.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative group">
+      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-amber-300/50">
+        <div className="relative p-4 sm:p-6 text-center h-44 sm:h-60 md:h-72 lg:h-[300px]">
+          {/* Ad Images */}
+          {ads.map((ad, index) => (
+            <div
+              key={ad.id}
+              className={`absolute inset-0 p-4 sm:p-6 transition-opacity duration-1000 ${
+                index === currentIndex
+                  ? "opacity-100 z-10"
+                  : "opacity-0 pointer-events-none z-0"
+              }`}
+            >
+              <a
+                href={ad.adUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full h-full"
+              >
+                <Image
+                  src={ad.bannerImageUrl}
+                  alt={ad.title}
+                  width={900}
+                  height={300}
+                  className="w-full h-full rounded-xl shadow-lg transition-all duration-500 group-hover:brightness-105 object-contain"
+                  priority={index === 0}
+                />
+              </a>
+            </div>
+          ))}
+
+          {/* Gradient Overlay on Hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition duration-500 rounded-xl pointer-events-none z-20"></div>
+
+          {/* Ad Counter - only show if multiple ads */}
+          {ads.length > 1 && (
+            <div className="absolute top-8 right-8 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-30">
+              {currentIndex + 1} / {ads.length}
+            </div>
+          )}
+
+          {/* Sponsored Badge */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-amber-600/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md opacity-0 group-hover:opacity-100 transition duration-500 z-30">
+            Sponsored Ad
+          </div>
+
+          {/* Navigation Dots - only show if multiple ads */}
+          {ads.length > 1 && (
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 z-30 opacity-0 group-hover:opacity-100 transition duration-300">
+              {ads.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    index === currentIndex
+                      ? "bg-amber-600 scale-125"
+                      : "bg-amber-400/50 hover:bg-amber-400/75"
+                  }`}
+                  aria-label={`Go to ad ${index + 1}`}
+                  type="button"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Separate Reply Component for better organization
 function ReplyComponent({
@@ -287,6 +406,7 @@ export default function CommunityForumPage({ user }: Props) {
     { id: "2", name: "Jane Smith" },
     { id: "3", name: "Mike Johnson" },
   ]);
+  const forumAds = adPlacements.filter((ad) => ad.placementId === 5);
 
   const openModal = (discussion: Discussion) => {
     setSelectedDiscussion(discussion);
@@ -649,13 +769,13 @@ export default function CommunityForumPage({ user }: Props) {
     );
   };
 
-  const ad = adPlacements.find((ad) => ad.placementId === 5);
+  // const ad = adPlacements.find((ad) => ad.placementId === 5);
 
-  useEffect(() => {
-    if (ad) {
-      fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
-    }
-  }, [ad]);
+  // useEffect(() => {
+  //   if (ad) {
+  //     fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
+  //   }
+  // }, [ad]);
 
   return (
     <div className="px-4 sm:px-6 md:px-8 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">
@@ -1054,52 +1174,9 @@ export default function CommunityForumPage({ user }: Props) {
                   </p>
                 </div>
               )}
-
-            {/* Ad Banner */}
             <div className="mt-10 sm:mt-12">
               <div className="w-full max-w-5xl mx-auto px-2 sm:px-6">
-                {ad ? (
-                  <div className="relative group">
-                    <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-amber-300/50">
-                      <div className="relative p-4 sm:p-6 text-center">
-                        <Image
-                          src={ad.bannerImageUrl}
-                          alt={ad.title}
-                          width={900}
-                          height={300}
-                          className="w-full h-auto rounded-xl shadow-lg transition-all duration-500 group-hover:brightness-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition duration-500 rounded-xl"></div>
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-amber-600/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md opacity-0 group-hover:opacity-100 transition duration-500">
-                          Sponsored Ad
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="relative w-full h-44 sm:h-60 md:h-72 lg:h-[300px]">
-                    <div className="bg-gradient-to-br from-amber-50 via-yellow-100 to-amber-50 border-4 border-dashed border-amber-300 rounded-2xl shadow-lg w-full h-full flex items-center justify-center text-center p-6 relative overflow-hidden">
-                      {/* Floating sparkles */}
-                      <Sparkles className="absolute top-6 left-6 h-7 w-7 text-amber-500 animate-pulse" />
-                      <Star className="absolute top-6 right-6 h-7 w-7 text-amber-500 animate-bounce" />
-                      <Star className="absolute bottom-8 left-10 h-6 w-6 text-amber-400 animate-ping" />
-
-                      {/* Content */}
-                      <div className="max-w-lg">
-                        <h3 className="text-2xl md:text-3xl font-extrabold text-amber-800 mb-2 drop-shadow-sm">
-                          Book Your Ad (5)
-                        </h3>
-                        <p className="text-sm sm:text-base text-amber-700 mb-3">
-                          Recommended size:{" "}
-                          <span className="font-semibold">900×300 px</span>
-                        </p>
-                        <p className="text-xs sm:text-sm text-amber-600">
-                          Go to your dashboard to create and manage ads.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <ForumAdSlider ads={forumAds} />
               </div>
             </div>
           </div>

@@ -55,20 +55,16 @@ export async function PUT(
     const body = await request.json();
     const { status, rejectionReason } = body;
 
-    // ✅ convert params.id to number
     const adId = Number(params.id);
     if (isNaN(adId)) {
       return NextResponse.json({ error: "Invalid ad id" }, { status: 400 });
     }
 
-    // Check if ad exists
     const [existingAd] = await db.select().from(ads).where(eq(ads.id, adId));
-
     if (!existingAd) {
       return NextResponse.json({ error: "Ad not found" }, { status: 404 });
     }
 
-    // Only admin can approve/reject ads
     if (session.user.role !== "admin" && session.user.role !== "superAdmin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -82,10 +78,12 @@ export async function PUT(
       .set({
         status,
         rejectionReason: status === "rejected" ? rejectionReason : null,
+        rejectedBy: status === "rejected" ? session.user.name : null,  // ✅ add rejectedBy
         approvedAt: status === "approved" ? new Date() : null,
+        approvedBy: status === "approved" ? session.user.name : null,  // ✅ add approvedBy
         updatedAt: new Date(),
       })
-      .where(eq(ads.id, adId)) // ✅ yaha number use karna zaruri tha
+      .where(eq(ads.id, adId))
       .returning();
 
     return NextResponse.json({ ad: updatedAd });
@@ -97,4 +95,5 @@ export async function PUT(
     );
   }
 }
+
 

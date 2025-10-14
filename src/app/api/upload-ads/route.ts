@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ❌ Validate size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json(
         { error: "Image size should be less than 5MB" },
         { status: 400 }
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     // 📦 Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
+    const format = file.type === "image/gif" ? undefined : "auto";
     // ☁️ Upload to Cloudinary (no dimension check, only upload)
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
             resource_type: "image",
             folder: "ads-banners",
             transformation: [{ quality: "auto" }, { format: "auto" }],
+            format: format,
           },
           (error, result) => {
             if (error) reject(error);
