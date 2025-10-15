@@ -62,6 +62,10 @@ export type DatabaseProfile = {
   isDeleted: boolean | null
   deactivateReason?: string | null
   deactivateReview?: string | null
+  lastActive: Date | null
+  education?: string | null
+  location?: string | null
+  age?: number | null
 
   
   
@@ -96,8 +100,8 @@ export type Profile = {
   profileRelation?: string
   customRelation?: string
   nickName?: string
-  brothersDetails?: string
-  sistersDetails?: string
+  brothersDetails?: unknown
+  sistersDetails?: unknown
   deactivateReview?: string
   deactivateReason?: string
   

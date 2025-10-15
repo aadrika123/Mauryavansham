@@ -2,9 +2,8 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import Dashboard from "./dashboard-view";
 import { authOptions } from "@/src/lib/auth";
-import { getProfileById } from "@/src/features/getProfile/actions/getProfileById";
-import { getAllProfiles } from "@/src/features/searchProfile/actions/getAllProfiles";
 import DashboardLayout from "@/src/components/layout/dashboardLayout";
+import { getUserDashboardData } from "@/src/features/searchProfile/actions/getUserDashboardData";
 
 export default async function DashboardPage() {
   // 1. Session fetch karo
@@ -18,7 +17,7 @@ export default async function DashboardPage() {
   // 3. Logged-in user ka ID lo
   const userId = session.user.id;
 
-  const profileList = await getAllProfiles(Number(userId));
+  const profileList = await getUserDashboardData(Number(userId));
   console.log("SearchProfilePage result:", profileList?.data);
 
 

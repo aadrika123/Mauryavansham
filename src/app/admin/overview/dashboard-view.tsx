@@ -54,7 +54,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Loader from "@/src/components/ui/loader";
 
-export default function Dashboard(props: any) {
+export default function AdminDashboard(props: any) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -107,7 +107,7 @@ export default function Dashboard(props: any) {
     <div className="min-h-screen bg-gray-50 mb-10 shadow-lg rounded-md">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Welcome to Your Dashboard
           </h1>
@@ -115,7 +115,7 @@ export default function Dashboard(props: any) {
             Manage your matrimonial profile, blogs, advertisements, and more all
             in one place.
           </p>
-        </div>
+        </div> */}
 
         {/* Overview Stats */}
         {/* <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
@@ -278,7 +278,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-pink-600 hover:bg-pink-700"
-                    onClick={() => router.push("/dashboard/profile-list")}
+                    onClick={() => router.push("/admin/profile-list")}
                   >
                     <User className="mr-1 h-3 w-3" />
                     Manage
@@ -304,7 +304,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => router.push("/dashboard/profile-list")}
+                    onClick={() => router.push("/admin/profile-list")}
                   >
                     <User className="mr-1 h-3 w-3" />
                     Manage
@@ -334,7 +334,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-red-600 hover:bg-red-700"
-                    onClick={() => router.push("/dashboard/profile-list")}
+                    onClick={() => router.push("/admin/profile-list")}
                   >
                     <User className="mr-1 h-3 w-3" />
                     Manage
@@ -357,7 +357,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-purple-600 hover:bg-purple-700"
-                    onClick={() => router.push("/dashboard/create-profile")}
+                    onClick={() => router.push("/admin/create-profile")}
                   >
                     <Plus className="mr-1 h-3 w-3" />
                     Create
@@ -376,7 +376,7 @@ export default function Dashboard(props: any) {
                 <Button
                   size="sm"
                   className="w-full bg-emerald-600 hover:bg-emerald-700"
-                  onClick={() => router.push("/dashboard/my-blogs")}
+                  onClick={() => router.push("/admin/my-blogs")}
                 >
                   <Plus className="mr-1 h-3 w-3" />
                   Write Blog
@@ -400,7 +400,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-blue-600 hover:bg-blue-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push("/admin/my-blogs")}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View All
@@ -424,7 +424,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-cyan-600 hover:bg-cyan-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push("/admin/my-blogs")}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View
@@ -448,7 +448,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-teal-600 hover:bg-teal-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push("/admin/my-blogs")}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View
@@ -476,7 +476,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-emerald-600 hover:bg-emerald-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push("/admin/my-blogs")}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View
@@ -495,7 +495,7 @@ export default function Dashboard(props: any) {
                 <Button
                   size="sm"
                   className="w-full bg-amber-600 hover:bg-amber-700"
-                  onClick={() => router.push("/dashboard/book-ads")}
+                  onClick={() => router.push("/admin/book-ads")}
                 >
                   <Plus className="mr-1 h-3 w-3" />
                   Book Ad
@@ -519,7 +519,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push("/admin/book-ads")}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All
@@ -541,7 +541,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-lime-600 hover:bg-lime-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push("/admin/book-ads")}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All
@@ -565,7 +565,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-yellow-600 hover:bg-yellow-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push("/admin/book-ads")}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All
@@ -591,7 +591,7 @@ export default function Dashboard(props: any) {
                   <Button
                     size="sm"
                     className="w-full bg-amber-600 hover:bg-amber-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push("/admin/book-ads")}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All

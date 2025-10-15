@@ -126,15 +126,47 @@ export default function AdmindashboardLayout({
         },
       ],
     },
-    // {
-    //   title: "Education ",
-    //   href: "",
-    //   icon: BookAIcon,
-    //   subItems: [
-    //     { title: "Register Coaching", href: "/admin/register-coaching", icon: BookAIcon },
-    //     { title: "My Registered Coaching", href: "/admin/register-coaching/view", icon: BookAIcon },
-    //   ],
-    // },
+    {
+      title: "Reports",
+      href: "",
+      icon: BookAIcon,
+      subItems: [
+        { title: "User Reports", href: "/admin/reports/users", icon: Users },
+        {
+          title: "Matrimonial Reports",
+          href: "/admin/reports/matrimonial",
+          icon: HeartHandshakeIcon,
+        },
+        {
+          title: "Business Reports",
+          href: "/admin/reports/business",
+          icon: Wallet2Icon,
+        },
+        { title: "Blog Reports", href: "/admin/reports/blogs", icon: Camera },
+        { title: "Ads Reports", href: "/admin/reports/ads", icon: Tv },
+        {
+          title: "Event Reports",
+          href: "/admin/reports/events",
+          icon: Calendar,
+        },
+        {
+          title: "Discussion Reports",
+          href: "/admin/reports/discussions",
+          icon: MessageSquare,
+        },
+        {
+          title: "Master Data Reports",
+          href: "/admin/reports/masters",
+          icon: Globe,
+        },
+        // optional existing item
+        // {
+        //   title: "Register Coaching",
+        //   href: "/admin/register-coaching",
+        //   icon: BookAIcon,
+        // },
+      ],
+    },
   ];
 
   const superAdminSidebarItems = [
@@ -181,11 +213,11 @@ export default function AdmindashboardLayout({
           href: "/admin/register-business",
           icon: Wallet2Icon,
         },
-        {
-          title: "Discussions Moderation",
-          href: "/admin/discussions",
-          icon: MessageSquare,
-        },
+        // {
+        //   title: "Discussions Moderation",
+        //   href: "/admin/discussions",
+        //   icon: MessageSquare,
+        // },
       ],
     },
     {
