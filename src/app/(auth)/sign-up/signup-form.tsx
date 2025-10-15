@@ -29,7 +29,7 @@ export default function SignUpForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [emailSent, setEmailSent] = useState<boolean | null>(null);
-  const [uploading, setUploading] = useState(false); // Added for photo upload
+  const [uploading, setUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -45,14 +45,12 @@ export default function SignUpForm() {
     country: "India",
     zipCode: "",
     motherName: "",
-    photo: "", // Added photo field
-    // Current Address
+    photo: "",
     currentAddress: "",
     currentCity: "",
     currentState: "",
     currentCountry: "India",
     currentZipCode: "",
-    // Checkbox state
     sameAsPermanent: false,
     declaration: false,
     facebookLink: "",
@@ -111,7 +109,6 @@ export default function SignUpForm() {
     if (error) setError("");
   };
 
-  // Image Upload handler - Added from profile form
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -220,7 +217,6 @@ export default function SignUpForm() {
     setEmailSent(null);
 
     try {
-      // Create account
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
@@ -235,16 +231,12 @@ export default function SignUpForm() {
           motherName: formData.motherName.trim(),
           facebookLink: formData.facebookLink.trim() || null,
           gender: formData.gender,
-          photo: formData.photo || "", // Include photo in signup
-
-          // Permanent Address
+          photo: formData.photo || "",
           address: formData.address,
           city: formData.city.trim(),
           state: formData.state,
           country: formData.country,
           zipCode: formData.zipCode,
-
-          // Current Address
           currentAddress: formData.currentAddress,
           currentCity: formData.currentCity,
           currentState: formData.currentState,
@@ -260,7 +252,6 @@ export default function SignUpForm() {
         throw new Error(data.error || "Something went wrong");
       }
 
-      // Set success message with email status
       setEmailSent(data.emailSent);
       if (data.emailSent) {
         setSuccess(
@@ -272,7 +263,6 @@ export default function SignUpForm() {
         );
       }
 
-      // Auto sign in after successful registration
       const signInResult = await signIn("credentials", {
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
@@ -297,14 +287,12 @@ export default function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Error Alert */}
       {error && (
         <Alert className="border-red-200 bg-red-50">
           <AlertDescription className="text-red-700">{error}</AlertDescription>
         </Alert>
       )}
 
-      {/* Success Alert */}
       {success && (
         <Alert className="border-green-200 bg-green-50">
           <div className="flex items-start space-x-2">
@@ -324,7 +312,7 @@ export default function SignUpForm() {
         </Alert>
       )}
 
-      <div className="grid gap-4 grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Name Field */}
         <div className="space-y-2">
           <Label htmlFor="name" className="block font-medium mb-2 text-base">
@@ -387,13 +375,15 @@ export default function SignUpForm() {
         </div>
 
         {/* Gender */}
-        <SelectField
-          label="Gender *"
-          name="gender"
-          value={formData.gender}
-          onChange={handleInputChange}
-          options={["Male", "Female", "Other"]}
-        />
+        <div className="space-y-2">
+          <SelectField
+            label="Gender *"
+            name="gender"
+            value={formData.gender}
+            onChange={handleInputChange}
+            options={["Male", "Female", "Other"]}
+          />
+        </div>
 
         {/* Father's Name Field */}
         <div className="space-y-2">
@@ -442,7 +432,7 @@ export default function SignUpForm() {
           </div>
         </div>
 
-        {/* Photo Upload & Facebook Link Section - Compact */}
+        {/* Photo Upload & Facebook Link Section */}
         <div className="space-y-2">
           <label className="block font-medium text-base">
             Profile Photo (Optional)
@@ -495,17 +485,17 @@ export default function SignUpForm() {
         </div>
 
         {/* Permanent Address Section */}
-        <div className="col-span-2 ">
+        <div className="col-span-1 md:col-span-2">
           <h3 className="font-semibold text-lg mb-4 text-gray-800 flex items-center gap-2">
             🏠 Permanent Address
           </h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField
               label="Address"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              className="col-span-2"
+              className="col-span-1 md:col-span-2"
               placeholder="Enter your permanent address"
               required
             />
@@ -555,7 +545,7 @@ export default function SignUpForm() {
         </div>
 
         {/* Current Address Section */}
-        <div className="col-span-2  mt-6">
+        <div className="col-span-1 md:col-span-2 mt-6">
           <div className="flex items-center justify-between mb-4">
             <label className="flex items-center gap-2 text-lg text-gray-600 italic">
               <input
@@ -590,14 +580,14 @@ export default function SignUpForm() {
               Current Address Same as Permanent
             </label>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField
               label="Address"
               name="currentAddress"
               value={formData.currentAddress}
               onChange={handleInputChange}
               disabled={formData.sameAsPermanent}
-              className="col-span-2"
+              className="col-span-1 md:col-span-2"
             />
             <InputField
               label="City"
@@ -870,7 +860,7 @@ function InputField({
         disabled={disabled}
         placeholder={placeholder}
         required={required}
-        className="w-full border rounded p-2  border-yellow-300 focus:border-red-500"
+        className="w-full border rounded p-2 border-yellow-300 focus:border-red-500"
       />
     </div>
   );
