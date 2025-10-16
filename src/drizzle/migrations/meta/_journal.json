@@ -43,6 +43,13 @@
       "when": 1760343080882,
       "tag": "0005_loud_lyja",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1760528826324,
+      "tag": "0006_outstanding_strong_guy",
+      "breakpoints": true
     }
   ]
 }

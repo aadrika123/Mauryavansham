@@ -2,7 +2,7 @@ import { db } from "@/src/drizzle/db";
 import { events } from "@/src/drizzle/db/schemas/events";
 import { event_attendees, users } from "@/src/drizzle/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,22 +51,28 @@ export async function POST(req: NextRequest) {
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const userId = url.searchParams.get("userId"); // optional filter for user
+    const userId = url.searchParams.get("userId"); // optional filter for user's events
+    const status = url.searchParams.get("status"); // optional filter for status
 
-    // 1️⃣ Fetch events (optionally filter by userId)
+    const conditions: any[] = [];
+    if (userId) conditions.push(eq(events.userId, Number(userId)));
+    if (status) conditions.push(eq(events.status, status));
+
+    // 🟢 1️⃣ Fetch events (optionally filtered by userId)
     let allEvents;
-    if (userId) {
+   if (conditions.length > 0) {
       allEvents = await db
         .select()
         .from(events)
-        .where(eq(events.userId, Number(userId))); // user's events only
+        .where(and(...conditions));
     } else {
       allEvents = await db.select().from(events);
     }
 
-    // 2️⃣ Add attendees info for each event
-    const eventsWithAttendees = await Promise.all(
+    // 🟢 2️⃣ Attach attendees and organizer info
+    const eventsWithDetails = await Promise.all(
       allEvents.map(async (event) => {
+        // fetch attendees for this event
         const attendees = await db
           .select({
             id: users.id,
@@ -84,17 +90,42 @@ export async function GET(req: Request) {
           .innerJoin(users, eq(event_attendees.userId, users.id))
           .where(eq(event_attendees.eventId, event.id));
 
+        // fetch event organizer details
+        const organizerInfo = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            phone: users.phone,
+            fatherName: users.fatherName,
+            motherName: users.motherName,
+            address: users.address,
+            city: users.city,
+            profession: users.profession,
+            designation: users.designation,
+            role: users.role,
+            status: users.status,
+          })
+          .from(users)
+          .where(eq(users.id, (event.userId as number) || 0))
+          .limit(1);
+
         return {
           ...event,
           attendees,
           attendeesCount: attendees.length,
+          organizerInfo: organizerInfo[0] || null, // full organizer details
         };
       })
     );
 
-    return NextResponse.json(eventsWithAttendees, { status: 200 });
+    return NextResponse.json(eventsWithDetails, { status: 200 });
   } catch (error) {
     console.error("Error fetching events:", error);
-    return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch events" },
+      { status: 500 }
+    );
   }
 }
+

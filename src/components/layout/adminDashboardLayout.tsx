@@ -104,11 +104,11 @@ export default function AdmindashboardLayout({
     // { title: "Create Events", href: "/admin/events", icon: Calendar },
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
-    {
-      title: "Discussions Moderation",
-      href: "/admin/discussions",
-      icon: MessageSquare,
-    },
+    // {
+    //   title: "Discussions Moderation",
+    //   href: "/admin/discussions",
+    //   icon: MessageSquare,
+    // },
     {
       title: "Business",
       href: "",
@@ -126,47 +126,7 @@ export default function AdmindashboardLayout({
         },
       ],
     },
-    {
-      title: "Reports",
-      href: "",
-      icon: BookAIcon,
-      subItems: [
-        { title: "User Reports", href: "/admin/reports/users", icon: Users },
-        {
-          title: "Matrimonial Reports",
-          href: "/admin/reports/matrimonial",
-          icon: HeartHandshakeIcon,
-        },
-        {
-          title: "Business Reports",
-          href: "/admin/reports/business",
-          icon: Wallet2Icon,
-        },
-        { title: "Blog Reports", href: "/admin/reports/blogs", icon: Camera },
-        { title: "Ads Reports", href: "/admin/reports/ads", icon: Tv },
-        {
-          title: "Event Reports",
-          href: "/admin/reports/events",
-          icon: Calendar,
-        },
-        {
-          title: "Discussion Reports",
-          href: "/admin/reports/discussions",
-          icon: MessageSquare,
-        },
-        {
-          title: "Master Data Reports",
-          href: "/admin/reports/masters",
-          icon: Globe,
-        },
-        // optional existing item
-        // {
-        //   title: "Register Coaching",
-        //   href: "/admin/register-coaching",
-        //   icon: BookAIcon,
-        // },
-      ],
-    },
+    
   ];
 
   const superAdminSidebarItems = [
@@ -281,6 +241,47 @@ export default function AdmindashboardLayout({
 
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
+    {
+      title: "Reports",
+      href: "",
+      icon: BookAIcon,
+      subItems: [
+        { title: "User Reports", href: "/admin/reports/users", icon: Users },
+        {
+          title: "Matrimonial Reports",
+          href: "/admin/reports/matrimonial",
+          icon: HeartHandshakeIcon,
+        },
+        {
+          title: "Business Reports",
+          href: "/admin/reports/business",
+          icon: Wallet2Icon,
+        },
+        { title: "Blog Reports", href: "/admin/reports/blogs", icon: Camera },
+        { title: "Ads Reports", href: "/admin/reports/ads", icon: Tv },
+        {
+          title: "Event Reports",
+          href: "/admin/reports/events",
+          icon: Calendar,
+        },
+        {
+          title: "Discussion Reports",
+          href: "/admin/reports/discussions",
+          icon: MessageSquare,
+        },
+        // {
+        //   title: "Master Data Reports",
+        //   href: "/admin/reports/masters",
+        //   icon: Globe,
+        // },
+        // optional existing item
+        // {
+        //   title: "Register Coaching",
+        //   href: "/admin/register-coaching",
+        //   icon: BookAIcon,
+        // },
+      ],
+    },
   ];
 
   const sidebarItems =
@@ -422,118 +423,114 @@ export default function AdmindashboardLayout({
       </div>
 
       {/* Sidebar + Main Content */}
-      <div className="pt-24 flex">
+      <div className="flex h-screen bg-orange-50">
         {/* Sidebar */}
         <div
           className={cn(
-            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
+            "bg-yellow-50 border-yellow-200 w-64 p-4 flex flex-col",
+            "fixed top-24 left-0 h-[calc(100%-6rem)] z-30 transition-transform duration-300", // top-24 = header height
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           )}
         >
-          {/* Profile section */}
-          <div className="flex items-center gap-3 mb-6">
-            <div
-              className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.location.href = "/admin/user-profile/" + user?.id;
+          {/* Profile + Navigation */}
+          <div className="flex flex-col h-full">
+            <div className="flex items-center gap-3 mb-6">
+              <div
+                className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
+                onClick={() =>
+                  (window.location.href = "/admin/user-profile/" + user?.id)
                 }
-              }}
-            >
-              <img
-                src={user?.photo || "/placeholder.svg"}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              >
+                <img
+                  src={user?.photo || "/placeholder.svg"}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="font-semibold text-red-700">{user?.name}</h3>
+                <p className="text-sm text-red-600">{user?.role}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-red-700">{user?.name}</h3>
-              <p className="text-sm text-red-600">{user?.role}</p>
-            </div>
-          </div>
 
-          {/* Scrollable nav */}
+            {/* Navigation */}
+            <nav className="flex-1 overflow-y-auto space-y-2">
+              {sidebarItems.map((item) => {
+                const hasSubItems = (item.subItems?.length ?? 0) > 0;
+                const isOpen = openMenus[item.title] || false;
 
-          <nav className="space-y-2 overflow-y-auto flex-1">
-            {sidebarItems.map((item) => {
-              const hasSubItems = item.subItems && item.subItems.length > 0;
-              const isOpen = openMenus[item.title] || false;
-
-              return (
-                <div key={item.href || item.title} className="space-y-1">
-                  {hasSubItems ? (
-                    <>
-                      {/* Parent button for submenus */}
-                      <button
-                        onClick={() => toggleMenu(item.title)}
-                        className={cn(
-                          "flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                          pathname === item.href
-                            ? "bg-orange-100 text-orange-700"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                        )}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <item.icon className="h-5 w-5" />
-                          <span>{item.title}</span>
-                        </div>
-                        <span className="ml-2">
+                return (
+                  <div key={item.href || item.title} className="space-y-1">
+                    {hasSubItems ? (
+                      <>
+                        <button
+                          onClick={() => toggleMenu(item.title)}
+                          className={cn(
+                            "flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium",
+                            pathname === item.href
+                              ? "bg-orange-100 text-orange-700"
+                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                          )}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <item.icon className="h-5 w-5" />
+                            <span>{item.title}</span>
+                          </div>
                           {isOpen ? (
                             <ChevronUp className="w-4 h-4" />
                           ) : (
                             <ChevronDown className="w-4 h-4" />
                           )}
-                        </span>
-                      </button>
-
-                      {/* Subitems */}
-                      {isOpen && (
-                        <div className="ml-6 space-y-1">
-                          {item.subItems!.map((sub) => (
-                            <Link
-                              key={sub.href}
-                              href={sub.href}
-                              className={cn(
-                                "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                                pathname === sub.href
-                                  ? "bg-orange-50 text-orange-600"
-                                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                              )}
-                              onClick={() => setSidebarOpen(false)}
-                            >
-                              <sub.icon className="h-4 w-4" />
-                              <span className="whitespace-pre-wrap w-32">
-                                {sub.title}
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    // ✅ Direct link for simple items
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                        pathname === item.href
-                          ? "bg-orange-100 text-orange-700"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                      )}
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
-                    </Link>
-                  )}
-                </div>
-              );
-            })}
-          </nav>
+                        </button>
+                        {isOpen && (
+                          <div className="ml-6 space-y-1">
+                            {item.subItems!.map((sub) => (
+                              <Link
+                                key={sub.href}
+                                href={sub.href}
+                                className={cn(
+                                  "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium",
+                                  pathname === sub.href
+                                    ? "bg-orange-50 text-orange-600"
+                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                )}
+                                onClick={() => setSidebarOpen(false)}
+                              >
+                                <sub.icon className="h-4 w-4" />
+                                <span className="whitespace-pre-wrap w-32">
+                                  {sub.title}
+                                </span>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium",
+                          pathname === item.href
+                            ? "bg-orange-100 text-orange-700"
+                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        )}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
+          </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 lg:ml-64 px-6">{children}</div>
+        {/* Main content */}
+        <div className="flex-1 ml-0 lg:ml-64 pt-24 overflow-y-auto h-screen">
+          {children}
+        </div>
       </div>
 
       {/* Confirmation Modal */}

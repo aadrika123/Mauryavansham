@@ -5,6 +5,7 @@ import { authOptions } from "@/src/lib/auth";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
+import EventReports from "./eventsReport";
 
 export default async function ReportsIndex() {
   const session = await getServerSession(authOptions);
@@ -27,6 +28,7 @@ export default async function ReportsIndex() {
         </div>
       </div>
       {/* <SummaryCard /> */}
+      <EventReports />
     </AdmindashboardLayout>
   );
 }

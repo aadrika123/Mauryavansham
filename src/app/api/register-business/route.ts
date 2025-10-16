@@ -6,6 +6,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/lib/auth";
+import { gte, lte, and } from "drizzle-orm";
 // import { db } from "@/db";
 // import { businesses, users } from "@/db/schema";
 
@@ -72,14 +73,37 @@ export async function POST(req: NextRequest) {
 // GET
 export async function GET(req: NextRequest) {
   try {
+    const url = new URL(req.url);
+    const status = url.searchParams.get("status"); // "true" | "false" | null
+    const from = url.searchParams.get("from"); // yyyy-mm-dd
+    const to = url.searchParams.get("to"); // yyyy-mm-dd
+
+    const isActive =
+      status === "true" ? true : status === "false" ? false : undefined;
+
+    let conditions: any[] = [];
+
+    if (isActive !== undefined)
+      conditions.push(eq(businesses.isActive, isActive));
+    if (from) conditions.push(gte(businesses.createdAt, new Date(from)));
+
+    if (to) {
+      const toDateObj = new Date(to);
+      toDateObj.setHours(23, 59, 59, 999); // end of the day
+      conditions.push(lte(businesses.createdAt, toDateObj));
+    }
+
     const businessesWithUser = await db
       .select()
       .from(businesses)
-      .innerJoin(users, eq(users.id, businesses.userId));
+      .innerJoin(users, eq(users.id, businesses.userId))
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
 
     return NextResponse.json({ success: true, data: businessesWithUser });
   } catch (error: any) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 }
+    );
   }
 }
-

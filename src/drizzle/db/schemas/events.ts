@@ -30,4 +30,7 @@ export const events = pgTable("events", {
   rejectedBy: varchar("rejected_by", { length: 255 }), // kisne reject kiya
   userId: integer("user_id"), // jisne event banaya
   status: varchar("status", { length: 20 }).default("pending").notNull(), // pending | approved | rejected
+
+  createdAt: date("created_at").defaultNow(),
+  updatedAt: date("updated_at").defaultNow(),
 });
