@@ -300,6 +300,23 @@ export default function AdmindashboardLayout({
       ],
     },
     {
+      title: "Health & Wellness",
+      href: "",
+      icon: AmbulanceIcon,
+      subItems: [
+        {
+          title: "Register Health Service",
+          href: "/admin/health-wellness",
+          icon: BookAIcon,
+        },
+        {
+          title: "My Registered Health Services",
+          href: "/admin/health-wellness/view",
+          icon: BookAIcon,
+        },
+      ],
+    },
+    {
       title: "Reports",
       href: "",
       icon: BookAIcon,

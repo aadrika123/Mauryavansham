@@ -28,6 +28,8 @@ import {
   HeartHandshakeIcon,
   ChevronUp,
   ChevronDown,
+  BookAIcon,
+  AmbulanceIcon,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -101,6 +103,40 @@ export default function DashboardLayout({
       title: "My Registered-business",
       href: "/dashboard/view-business",
       icon: Wallet2Icon,
+    },
+    {
+      title: "Education & Coaching",
+      href: "",
+      icon: BookAIcon,
+      subItems: [
+        {
+          title: "Register Coaching",
+          href: "/dashboard/register-coaching",
+          icon: BookAIcon,
+        },
+        {
+          title: "My Registered Coaching",
+          href: "/dashboard/register-coaching/view",
+          icon: BookAIcon,
+        },
+      ],
+    },
+    {
+      title: "Health & Wellness",
+      href: "",
+      icon: AmbulanceIcon,
+      subItems: [
+        {
+          title: "Register Health Service",
+          href: "/dashboard/health-wellness",
+          icon: BookAIcon,
+        },
+        {
+          title: "My Registered Health Services",
+          href: "/dashboard/health-wellness/view",
+          icon: BookAIcon,
+        },
+      ],
     },
   ];
 
