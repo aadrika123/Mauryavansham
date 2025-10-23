@@ -162,6 +162,10 @@ export default function SignUpForm() {
       setError("Please enter a valid email address");
       return false;
     }
+    if (!formData.photo) {
+      setError("Profile photo is required");
+      return false;
+    }
 
     if (!formData.password) {
       setError("Password is required");
@@ -435,12 +439,13 @@ export default function SignUpForm() {
         {/* Photo Upload & Facebook Link Section */}
         <div className="space-y-2">
           <label className="block font-medium text-base">
-            Profile Photo (Optional)
+            Profile Photo *
           </label>
           <input
             type="file"
             accept="image/*"
             onChange={handleFileUpload}
+            required
             className="w-full border rounded p-2 bg-white border-yellow-300 focus:border-red-500 text-sm"
             disabled={uploading || isLoading}
           />

@@ -1,0 +1,1 @@
+ALTER TABLE "coaching_centers" ALTER COLUMN "status" SET DEFAULT 'active';

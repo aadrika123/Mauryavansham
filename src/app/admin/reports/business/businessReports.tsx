@@ -13,9 +13,6 @@ interface Business {
   businessCategory: string;
   businessDescription: string;
   partners: { name: string; role: string }[];
-  //   categories: string[
-  //     { main: string; sub: string }
-  //   ];
   categories: { main: string; sub: string }[];
   dateOfestablishment: string | null;
   companyWebsite?: string;
@@ -44,17 +41,43 @@ export default function BusinessReportsPage() {
   const [allFilteredBusinesses, setAllFilteredBusinesses] = useState<
     Business[]
   >([]);
-  const [statusFilter, setStatusFilter] = useState(""); // active/inactive
+  const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+
   const totalPages = Math.ceil(totalCount / pageSize);
 
+  // ✅ Basic columns (always visible)
+  const basicColumns = [
+    { key: "organizationName", label: "Organization Name" },
+    { key: "organizationType", label: "Organization Type" },
+    { key: "businessCategory", label: "Business Category" },
+    { key: "isActive", label: "Status" },
+    { key: "createdBy", label: "Created By" },
+    { key: "createdAt", label: "Created On" },
+  ];
+
+  // ✅ Optional columns (alphabetically ordered)
+  const optionalColumns = [
+    // { key: "businessDescription", label: "Description" },
+    { key: "categories", label: "Categories" },
+    { key: "companyWebsite", label: "Website" },
+    { key: "dateOfestablishment", label: "Date of Establishment" },
+    { key: "officialEmail", label: "Official Email" },
+    { key: "officialContactNumber", label: "Official Contact" },
+    { key: "partners", label: "Partners" },
+    { key: "paymentStatus", label: "Payment Status" },
+    { key: "premiumCategory", label: "Premium Category" },
+  ].sort((a, b) => a.label.localeCompare(b.label));
+
+  // ✅ Fetch businesses
   useEffect(() => {
     const fetchBusinesses = async () => {
       setLoading(true);
@@ -93,37 +116,35 @@ export default function BusinessReportsPage() {
     };
 
     fetchBusinesses();
-  }, [currentPage, pageSize, statusFilter, fromDate, toDate]); // include date filters
+  }, [currentPage, pageSize, statusFilter, fromDate, toDate]);
 
-  // Format date
+  // ✅ Format date
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "-";
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
+    return `${String(d.getDate()).padStart(2, "0")}-${String(
+      d.getMonth() + 1
+    ).padStart(2, "0")}-${d.getFullYear()}`;
   };
 
-  // Export to Excel
+  // ✅ Excel export (no change)
   const exportToExcel = () => {
     if (allFilteredBusinesses.length === 0) return;
 
-    const sortedBusinesses = [...allFilteredBusinesses].sort((a, b) =>
+    const sorted = [...allFilteredBusinesses].sort((a, b) =>
       a.organizationName.localeCompare(b.organizationName, "en", {
         sensitivity: "base",
       })
     );
 
-    const dataToExport = sortedBusinesses.map((b) => ({
+    const dataToExport = sorted.map((b) => ({
       "Organization Name": b.organizationName,
       "Organization Type": b.organizationType,
       "Business Category": b.businessCategory,
       Description: b.businessDescription,
       Partners: b.partners?.map((p) => p.name).join(", ") || "-",
-      //   Categories: b.categories?.join(", ") || "-",
       Categories:
-        b.categories?.map((c) => `${c.main} , ${c.sub}`).join(", ") || "-",
+        b.categories?.map((c) => `${c.main}, ${c.sub}`).join(", ") || "-",
       "Date of Establishment": formatDate(b.dateOfestablishment || null),
       Website: b.companyWebsite || "-",
       "Official Email": b.officialEmail || "-",
@@ -141,12 +162,36 @@ export default function BusinessReportsPage() {
     XLSX.writeFile(workbook, "businesses-report.xlsx");
   };
 
+  // ✅ Column selection handlers
+  const handleCheckboxChange = (key: string) => {
+    if (selectedColumns.includes(key)) {
+      setSelectedColumns(selectedColumns.filter((c) => c !== key));
+    } else {
+      setSelectedColumns([...selectedColumns, key]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedColumns([]);
+      setSelectAll(false);
+    } else {
+      setSelectedColumns(optionalColumns.map((col) => col.key));
+      setSelectAll(true);
+    }
+  };
+
+  const visibleColumns = [
+    ...basicColumns,
+    ...optionalColumns.filter((c) => selectedColumns.includes(c.key)),
+  ];
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Business Reports</h1>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow ">
+      <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow">
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -156,7 +201,7 @@ export default function BusinessReportsPage() {
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
-        {/* From Date */}
+
         <div>
           <label className="block text-xs mb-1">From Date</label>
           <input
@@ -170,7 +215,6 @@ export default function BusinessReportsPage() {
           />
         </div>
 
-        {/* To Date */}
         <div>
           <label className="block text-xs mb-1">To Date</label>
           <input
@@ -183,12 +227,14 @@ export default function BusinessReportsPage() {
             className="border p-2 rounded"
           />
         </div>
+
         <button
           onClick={exportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel
         </button>
+
         <button
           onClick={() => {
             setStatusFilter("");
@@ -202,6 +248,38 @@ export default function BusinessReportsPage() {
         </button>
       </div>
 
+      {/* Column Selector */}
+      <div className="border p-3 rounded-md bg-gray-50 shadow-sm">
+        <div className="flex items-center gap-2 mb-2">
+          <input
+            type="checkbox"
+            checked={selectAll}
+            onChange={handleSelectAll}
+            className="cursor-pointer"
+          />
+          <span className="font-medium text-sm">Select All Columns</span>
+        </div>
+
+        <div className="max-h-56 overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
+            {optionalColumns.map((col) => (
+              <label
+                key={col.key}
+                className="flex items-center gap-2 text-sm cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedColumns.includes(col.key)}
+                  onChange={() => handleCheckboxChange(col.key)}
+                  className="cursor-pointer"
+                />
+                {col.label}
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Loader */}
       {loading ? (
         <div className="flex justify-center items-center h-64">
@@ -210,32 +288,25 @@ export default function BusinessReportsPage() {
       ) : (
         <>
           {/* Table */}
-          <div className="overflow-x-auto border rounded shadow ">
+          <div className="overflow-x-auto border rounded shadow">
             <table className="min-w-full border border-gray-200 rounded text-xs">
               <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
-                  <th className="px-4 py-2 border">Sl.No</th>
-                  <th className="px-4 py-2 border">Organization Name</th>
-                  <th className="px-4 py-2 border">Type</th>
-                  <th className="px-4 py-2 border">Category</th>
-                  <th className="px-4 py-2 border ">Description</th>
-                  <th className="px-4 py-2 border">Partners</th>
-                  <th className="px-4 py-2 border">Categories</th>
-                  <th className="px-4 py-2 border ">Date of Establishment</th>
-                  <th className="px-4 py-2 border ">Website</th>
-                  <th className="px-4 py-2 border ">Official Email</th>
-                  <th className="px-4 py-2 border ">Official Contact</th>
-                  <th className="px-4 py-2 border">Premium Category</th>
-                  <th className="px-4 py-2 border">Payment Status</th>
-                  <th className="px-4 py-2 border">Status</th>
-                  <th className="px-4 py-2 border">Created By</th>
-                  <th className="px-4 py-2 border ">Created On</th>
+                  <th className="px-4 py-2 border">#</th>
+                  {visibleColumns.map((col) => (
+                    <th key={col.key} className="px-4 py-2 border">
+                      {col.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {businesses.length === 0 ? (
                   <tr>
-                    <td colSpan={16} className="text-center p-4">
+                    <td
+                      colSpan={visibleColumns.length + 1}
+                      className="text-center p-4"
+                    >
                       No businesses found
                     </td>
                   </tr>
@@ -245,43 +316,45 @@ export default function BusinessReportsPage() {
                       <td className="px-4 py-2 border">
                         {(currentPage - 1) * pageSize + index + 1}
                       </td>
-                      <td className="px-4 py-2 border">{b.organizationName}</td>
-                      <td className="px-4 py-2 border">{b.organizationType}</td>
-                      <td className="px-4 py-2 border">{b.businessCategory}</td>
-                      <td className="px-4 py-2 border ">
-                        {b.businessDescription}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {b.partners?.map((p) => p.name).join(", ") || "-"}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {b.categories
-                          ?.map((c) => `${c.main} , ${c.sub}`)
-                          .join(", ") || "-"}
-                      </td>
-                      <td className="px-4 py-2 border ">
-                        {formatDate(b.dateOfestablishment || null)}
-                      </td>
-                      <td className="px-4 py-2 border ">
-                        {b.companyWebsite || "-"}
-                      </td>
-                      <td className="px-4 py-2 border ">
-                        {b.officialEmail || "-"}
-                      </td>
-                      <td className="px-4 py-2 border ">
-                        {b.officialContactNumber || "-"}
-                      </td>
-                      <td className="px-4 py-2 border">{b.premiumCategory}</td>
-                      <td className="px-4 py-2 border">
-                        {b.paymentStatus ? "Paid" : "Pending"}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {b.isActive ? "Active" : "Inactive"}
-                      </td>
-                      <td className="px-4 py-2 border">{b.user.name}</td>
-                      <td className="px-4 py-2 border ">
-                        {formatDate(b.createdAt)}
-                      </td>
+                      {visibleColumns.map((col) => {
+                        let value = "-";
+                        switch (col.key) {
+                          case "createdBy":
+                            value = b.user.name;
+                            break;
+                          case "createdAt":
+                            value = formatDate(b.createdAt);
+                            break;
+                          case "isActive":
+                            value = b.isActive ? "Active" : "Inactive";
+                            break;
+                          case "dateOfestablishment":
+                            value = formatDate(b.dateOfestablishment || null);
+                            break;
+                          case "partners":
+                            value =
+                              b.partners?.map((p) => p.name).join(", ") || "-";
+                            break;
+                          case "categories":
+                            value =
+                              b.categories
+                                ?.map((c) => `${c.main}, ${c.sub}`)
+                                .join(", ") || "-";
+                            break;
+                          case "paymentStatus":
+                            value = b.paymentStatus ? "Paid" : "Pending";
+                            break;
+                          default:
+                            // @ts-ignore
+                            value = b[col.key] || "-";
+                        }
+
+                        return (
+                          <td key={col.key} className="px-4 py-2 border">
+                            {value}
+                          </td>
+                        );
+                      })}
                     </tr>
                   ))
                 )}

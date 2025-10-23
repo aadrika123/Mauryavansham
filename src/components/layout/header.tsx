@@ -75,10 +75,10 @@ export function Header() {
     { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
     { title: "Events & Calendar", href: "/events", icon: Calendar },
     { title: "Business Forum", href: "/business", icon: ShoppingBag },
-    { title: "Health & Wellness", href: "/", icon: HandHeart },
-    { title: "Education", href: "/", icon: Crown },
+    { title: "Health & Wellness", href: "/health-wellness", icon: HandHeart },
+    { title: "Education", href: "/education", icon: Crown },
     // { title: "Donation", href: "/", icon: HandHeart },
-    { title: "Achievements", href: "/", icon: Trophy },
+    { title: "Achievements", href: "/achievements", icon: Trophy },
     { title: "Blogs", href: "/blogs", icon: ShoppingBag },
 
   ];

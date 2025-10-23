@@ -29,5 +29,6 @@ export * from "./db/schemas/discussionReplyLikes";
 export * from "./db/schemas/messages";
 export * from "./db/schemas/connections";
 export * from "./db/schemas/coachingCenters";
+export * from "./db/schemas/health_services"
  
 

@@ -1,0 +1,1 @@
+ALTER TABLE "coaching_centers" ADD COLUMN "logo_url" text;

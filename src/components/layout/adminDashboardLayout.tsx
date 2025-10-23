@@ -33,6 +33,7 @@ import {
   ChevronDown,
   HeartHandshakeIcon,
   BookAIcon,
+  AmbulanceIcon,
 } from "lucide-react"; // ✅ Added Menu & X icons
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -49,12 +50,19 @@ export default function AdmindashboardLayout({
   const pathname = usePathname();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
+  const unreadCount =
+    notifications?.filter((n) => !n.isRead || n.isRead === 0).length || 0;
 
   useEffect(() => {
     if (user?.role === "admin" || user?.role === "superAdmin") {
       fetch("/api/admin/notifications")
         .then((res) => res.json())
-        .then((data) => setNotifications(data));
+        .then((data) => {
+          // ✅ handle both raw array or { data: [] }
+          const notifs = Array.isArray(data) ? data : data.data || [];
+          setNotifications(notifs);
+        })
+        .catch((err) => console.error("Failed to fetch notifications:", err));
     }
   }, [user]);
 
@@ -126,7 +134,40 @@ export default function AdmindashboardLayout({
         },
       ],
     },
-    
+    {
+      title: "Education & Coaching",
+      href: "",
+      icon: BookAIcon,
+      subItems: [
+        {
+          title: "Register Coaching",
+          href: "/admin/register-coaching",
+          icon: BookAIcon,
+        },
+        {
+          title: "My Registered Coaching",
+          href: "/admin/register-coaching/view",
+          icon: BookAIcon,
+        },
+      ],
+    },
+    {
+      title: "Health & Wellness",
+      href: "",
+      icon: AmbulanceIcon,
+      subItems: [
+        {
+          title: "Register Health Service",
+          href: "/admin/health-wellness",
+          icon: BookAIcon,
+        },
+        {
+          title: "My Registered Health Services",
+          href: "/admin/health-wellness/view",
+          icon: BookAIcon,
+        },
+      ],
+    },
   ];
 
   const superAdminSidebarItems = [
@@ -242,6 +283,23 @@ export default function AdmindashboardLayout({
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
     {
+      title: "Education & Coaching",
+      href: "",
+      icon: BookAIcon,
+      subItems: [
+        {
+          title: "Register Coaching",
+          href: "/admin/register-coaching",
+          icon: BookAIcon,
+        },
+        {
+          title: "My Registered Coaching",
+          href: "/admin/register-coaching/view",
+          icon: BookAIcon,
+        },
+      ],
+    },
+    {
       title: "Reports",
       href: "",
       icon: BookAIcon,
@@ -275,14 +333,33 @@ export default function AdmindashboardLayout({
         //   icon: Globe,
         // },
         // optional existing item
-        // {
-        //   title: "Register Coaching",
-        //   href: "/admin/register-coaching",
-        //   icon: BookAIcon,
-        // },
       ],
     },
   ];
+  const handleOpenNotifications = async (isOpen: boolean) => {
+    if (!isOpen) return;
+
+    const unread = notifications.filter((n) => !n.isRead || n.isRead === 0);
+    if (unread.length === 0) return;
+
+    try {
+      const res = await fetch("/api/admin/notifications/mark-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
+      });
+
+      if (res.ok) {
+        // ✅ Update UI instantly
+        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: 1 })));
+        console.log("✅ Notifications marked as read");
+      } else {
+        console.error("❌ Failed to mark notifications as read");
+      }
+    } catch (err) {
+      console.error("⚠️ Error marking notifications:", err);
+    }
+  };
 
   const sidebarItems =
     user?.role === "superAdmin" ? superAdminSidebarItems : adminSidebarItems;
@@ -325,27 +402,7 @@ export default function AdmindashboardLayout({
         <div className="flex items-center gap-4">
           {/* Notifications */}
           {(user?.role === "admin" || user?.role === "superAdmin") && (
-            <DropdownMenu
-              onOpenChange={async (isOpen) => {
-                if (isOpen) {
-                  const unreadNotifications = notifications.filter(
-                    (n) => n.isRead === 0
-                  );
-                  if (unreadNotifications.length > 0) {
-                    await fetch("/api/admin/notifications/mark-read", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        notificationIds: unreadNotifications.map((n) => n.id),
-                      }),
-                    });
-                    setNotifications((prev) =>
-                      prev.map((n) => ({ ...n, isRead: 1 }))
-                    );
-                  }
-                }
-              }}
-            >
+            <DropdownMenu onOpenChange={handleOpenNotifications}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -355,9 +412,9 @@ export default function AdmindashboardLayout({
                   <Bell className="w-4 h-4 mr-2" />
                   {/* ✅ Text sirf desktop pe */}
                   <span className="hidden lg:inline">Notifications</span>
-                  {notifications.filter((n) => n.isRead === 0).length > 0 && (
-                    <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
-                      {notifications.filter((n) => n.isRead === 0).length}
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-red-800 rounded-full px-1.5 text-xs font-bold shadow">
+                      {unreadCount}
                     </span>
                   )}
                 </Button>

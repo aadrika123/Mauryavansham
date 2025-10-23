@@ -955,16 +955,17 @@ function ProfessionGroupField({
   required = false,
 }: any) {
   const professionGroups = [
-    "Traditional Professions",
-    "Business & Commerce",
-    "Technology & Digital",
-    "Government & Public Service",
-    "Skilled Trades & Services",
-    "Creative & Media",
-    "Healthcare & Wellness",
     "Agriculture & Allied Fields",
+    "Business & Commerce",
+    "Creative & Media",
     "Education & Research",
+    "Government & Public Service",
+    "Healthcare & Wellness",
     "Miscellaneous Modern Professions",
+    "Skilled Trades & Services",
+    "Student",
+    "Technology & Digital",
+    "Traditional Professions",
   ];
 
   return (
@@ -998,12 +999,11 @@ function SpecificProfessionField({
   required = false,
 }: any) {
   const professionsByGroup: { [key: string]: string[] } = {
-    "Traditional Professions": [
-      "Doctor",
-      "Engineer",
-      "Lawyer",
-      "Architect",
-      "Chartered Accountant / Company Secretary",
+    "Agriculture & Allied Fields": [
+      "Farmer / Agri-entrepreneur",
+      "Horticulturist",
+      "Veterinary Doctor",
+      "Fisheries & Dairy Expert",
     ],
     "Business & Commerce": [
       "Entrepreneur / Business Owner",
@@ -1013,28 +1013,6 @@ function SpecificProfessionField({
       "Real Estate Developer",
       "Stock Broker",
     ],
-    "Technology & Digital": [
-      "Software Developer / IT Consultant",
-      "Data Scientist / Analyst",
-      "Cybersecurity Specialist",
-      "Web & App Developer",
-      "Digital Marketer / SEO Specialist",
-      "AI & Robotics Engineer",
-    ],
-    "Government & Public Service": [
-      "Civil Servant (IAS/IPS/IFS, etc.)",
-      "Defense Personnel (Army/Navy/Air Force)",
-      "Politician / Public Representative",
-      "Public Sector Professional",
-      "Judiciary / Judge",
-    ],
-    "Skilled Trades & Services": [
-      "Electrician / Plumber / Mechanic",
-      "Carpenter / Mason",
-      "Tailor / Artisan / Handicraft Worker",
-      "Driver / Transporter",
-      "Hospitality & Tourism Worker",
-    ],
     "Creative & Media": [
       "Artist / Designer",
       "Writer / Author / Poet",
@@ -1042,20 +1020,6 @@ function SpecificProfessionField({
       "Actor / Musician / Filmmaker",
       "Photographer / Videographer",
       "Fashion Designer / Stylist",
-    ],
-    "Healthcare & Wellness": [
-      "Doctor (Specialists: Cardiologist, Surgeon, Dentist, etc.)",
-      "Nurse / Paramedic",
-      "Physiotherapist",
-      "Nutritionist / Dietician",
-      "Yoga & Wellness Coach",
-      "Psychologist / Counselor",
-    ],
-    "Agriculture & Allied Fields": [
-      "Farmer / Agri-entrepreneur",
-      "Horticulturist",
-      "Veterinary Doctor",
-      "Fisheries & Dairy Expert",
     ],
     "Education & Research": [
       "School Teacher",
@@ -1065,12 +1029,56 @@ function SpecificProfessionField({
       "Education Coach",
       "Librarian",
     ],
+    "Government & Public Service": [
+      "Civil Servant (IAS/IPS/IFS, etc.)",
+      "Defense Personnel (Army/Navy/Air Force)",
+      "Politician / Public Representative",
+      "Public Sector Professional",
+      "Judiciary / Judge",
+    ],
+    "Healthcare & Wellness": [
+      "Doctor (Specialists: Cardiologist, Surgeon, Dentist, etc.)",
+      "Nurse / Paramedic",
+      "Physiotherapist",
+      "Nutritionist / Dietician",
+      "Yoga & Wellness Coach",
+      "Psychologist / Counselor",
+    ],
     "Miscellaneous Modern Professions": [
       "Social Media Influencer / Content Creator",
       "Event Manager",
       "Fitness Trainer",
       "NGO Worker / Social Activist",
       "Corporate Professional (HR, Marketing, Operations, etc.)",
+    ],
+    "Skilled Trades & Services": [
+      "Electrician / Plumber / Mechanic",
+      "Carpenter / Mason",
+      "Tailor / Artisan / Handicraft Worker",
+      "Driver / Transporter",
+      "Hospitality & Tourism Worker",
+    ],
+    Student: [
+      "School Student",
+      "Undergraduate Student",
+      "Postgraduate Student",
+      "Research Scholar / PhD Student",
+      "Competitive Exam Aspirant",
+    ],
+    "Technology & Digital": [
+      "Software Developer / IT Consultant",
+      "Data Scientist / Analyst",
+      "Cybersecurity Specialist",
+      "Web & App Developer",
+      "Digital Marketer / SEO Specialist",
+      "AI & Robotics Engineer",
+    ],
+    "Traditional Professions": [
+      "Doctor",
+      "Engineer",
+      "Lawyer",
+      "Architect",
+      "Chartered Accountant / Company Secretary",
     ],
   };
 

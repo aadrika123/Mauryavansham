@@ -29,9 +29,79 @@ export default function MatrimonialReports() {
     dateTo: "",
   });
 
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  // 🔹 Fetch profiles from API
+  // ✅ Always visible columns
+  const basicColumns = [
+    { key: "name", label: "Name" },
+    { key: "gender", label: "Gender" },
+    { key: "phoneNo", label: "Phone" },
+    { key: "email", label: "Email" },
+    { key: "createdBy", label: "Created By" },
+    { key: "createdAt", label: "Created At" },
+  ];
+
+  const optionalColumns = [
+    { key: "aboutMe", label: "About Me" },
+    { key: "ancestralVillage", label: "Ancestral Village" },
+    { key: "annualIncome", label: "Annual Income" },
+    { key: "bodyType", label: "Body Type" },
+    { key: "brothers", label: "Brothers" },
+    { key: "castPreferences", label: "Cast Preferences" },
+    { key: "collegeUniversity", label: "College / University" },
+    { key: "communityContributions", label: "Community Contributions" },
+    { key: "companyOrganization", label: "Company / Organization" },
+    { key: "complexion", label: "Complexion" },
+    { key: "deactivateReason", label: "Deactivate Reason" },
+    { key: "deactivateReview", label: "Deactivate Review" },
+    { key: "designation", label: "Designation" },
+    { key: "diet", label: "Diet" },
+    { key: "dob", label: "DOB" },
+    { key: "drinking", label: "Drinking" },
+    { key: "exercise", label: "Exercise" },
+    { key: "facebook", label: "Facebook" },
+    { key: "familyHistory", label: "Family History" },
+    { key: "familyIncome", label: "Family Income" },
+    { key: "familyTraditions", label: "Family Traditions" },
+    { key: "fatherName", label: "Father Name" },
+    { key: "fatherOccupation", label: "Father Occupation" },
+    { key: "gotraDetails", label: "Gotra Details" },
+    { key: "height", label: "Height" },
+    { key: "highestEducation", label: "Highest Education" },
+    { key: "hobbies", label: "Hobbies" },
+    { key: "instagram", label: "Instagram" },
+    // { key: "isActive", label: "Is Active" },
+    // { key: "isDeleted", label: "Is Deleted" },
+    // { key: "isPremium", label: "Is Premium" },
+    // { key: "isVerified", label: "Is Verified" },
+    { key: "languagesKnown", label: "Languages Known" },
+    { key: "linkedin", label: "LinkedIn" },
+    { key: "maritalStatus", label: "Marital Status" },
+    { key: "motherName", label: "Mother Name" },
+    { key: "motherOccupation", label: "Mother Occupation" },
+    { key: "moviePreferences", label: "Movie Preferences" },
+    { key: "musicPreferences", label: "Music Preferences" },
+    { key: "nickName", label: "Nick Name" },
+    { key: "occupation", label: "Occupation" },
+    { key: "profileImage", label: "Profile Image" },
+    { key: "profileRelation", label: "Profile Relation" },
+    { key: "readingInterests", label: "Reading Interests" },
+    { key: "religiousBeliefs", label: "Religious Beliefs" },
+    { key: "sisters", label: "Sisters" },
+    { key: "smoking", label: "Smoking" },
+    { key: "state", label: "State" },
+    { key: "travelInterests", label: "Travel Interests" },
+    { key: "updatedAt", label: "Updated At" },
+    { key: "website", label: "Website" },
+    { key: "weight", label: "Weight" },
+    { key: "workExperience", label: "Work Experience" },
+    { key: "workLocation", label: "Work Location" },
+  ];
+
+  // 🔹 Fetch profiles
   const fetchProfiles = async () => {
     try {
       setLoading(true);
@@ -59,7 +129,6 @@ export default function MatrimonialReports() {
     fetchProfiles();
   }, [currentPage, pageSize]);
 
-  // 🔹 Handle input change
   const handleFilterChange = (e: any) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
@@ -69,89 +138,59 @@ export default function MatrimonialReports() {
     fetchProfiles();
   };
 
-  // 🔹 Export to Excel
+  const handleCheckboxChange = (key: string) => {
+    if (selectedColumns.includes(key)) {
+      setSelectedColumns(selectedColumns.filter((c) => c !== key));
+    } else {
+      setSelectedColumns([...selectedColumns, key]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedColumns([]);
+      setSelectAll(false);
+    } else {
+      setSelectedColumns(optionalColumns.map((col) => col.key));
+      setSelectAll(true);
+    }
+  };
+
+  // 🔹 Export to Excel (keep same)
   const exportToExcel = () => {
-  if (profiles.length === 0) return;
+    if (profiles.length === 0) return;
 
-  const dataToExport = profiles.map((p: any, index: number) => {
-    const u = p.users || {};
-    const prof = p.profiles || {};
+    const dataToExport = profiles.map((p: any, index: number) => {
+      const u = p.users || {};
+      const prof = p.profiles || {};
 
-    return {
-      "#": index + 1,
-      "Name": prof.name,
-      "Profile Relation": prof.profileRelation,
-      "Created By": u.name || "—",
-      "Nick Name": prof.nickName,
-      "Phone": prof.phoneNo,
-      "Gender": prof.gender,
-      "Email": prof.email,
-      "Website": prof.website,
-      "DOB": prof.dob,
-      "Height": prof.height,
-      "Weight": prof.weight,
-      "Complexion": prof.complexion,
-      "Body Type": prof.bodyType,
-      "Marital Status": prof.maritalStatus,
-      "Languages Known": prof.languagesKnown,
-      "Hobbies": prof.hobbies,
-      "About Me": prof.aboutMe,
-      "Highest Education": prof.highestEducation,
-      "College / University": prof.collegeUniversity,
-      "Occupation": prof.occupation,
-      "Company / Organization": prof.companyOrganization,
-      "Designation": prof.designation,
-      "Work Location": prof.workLocation,
-      "Annual Income": prof.annualIncome,
-      "Work Experience": prof.workExperience,
-      "Father Name": prof.fatherName,
-      "Father Occupation": prof.fatherOccupation,
-      "Mother Name": prof.motherName,
-      "Mother Occupation": prof.motherOccupation,
-      "Brothers": prof.brothers,
-      "Sisters": prof.sisters,
-      "Family Income": prof.familyIncome,
-      "Gotra Details": prof.gotraDetails,
-      "Ancestral Village": prof.ancestralVillage,
-      "Family History": prof.familyHistory,
-      "Community Contributions": prof.communityContributions,
-      "Family Traditions": prof.familyTraditions,
-      "Diet": prof.diet,
-      "Smoking": prof.smoking,
-      "Drinking": prof.drinking,
-      "Exercise": prof.exercise,
-      "Religious Beliefs": prof.religiousBeliefs,
-      "Music Preferences": prof.musicPreferences,
-      "Movie Preferences": prof.moviePreferences,
-      "Reading Interests": prof.readingInterests,
-      "Travel Interests": prof.travelInterests,
-      "Cast Preferences": prof.castPreferences,
-      "Facebook": prof.facebook,
-      "Instagram": prof.instagram,
-      "LinkedIn": prof.linkedin,
-      "Profile Image": prof.profileImage || "—",
-      "Created At": prof.createdAt ? new Date(prof.createdAt).toLocaleDateString() : "—",
-      "Updated At": prof.updatedAt ? new Date(prof.updatedAt).toLocaleDateString() : "—",
-      "Is Premium": prof.isPremium ? "Yes" : "No",
-      "Is Verified": prof.isVerified ? "Yes" : "No",
-      "Is Active": prof.isActive ? "Yes" : "No",
-      "Is Deleted": prof.isDeleted ? "Yes" : "No",
-      "Deactivate Reason": prof.deactivateReason || "—",
-      "Deactivate Review": prof.deactivateReview || "—",
-    };
-  });
+      return {
+        "#": index + 1,
+        Name: prof.name,
+        "Profile Relation": prof.profileRelation,
+        "Created By": u.name || "—",
+        Gender: prof.gender,
+        Phone: prof.phoneNo,
+        Email: prof.email,
+        "Created At": prof.createdAt
+          ? new Date(prof.createdAt).toLocaleDateString()
+          : "—",
+      };
+    });
 
-  const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Matrimonial Report");
-  XLSX.writeFile(workbook, "matrimonial-report.xlsx");
-};
-
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Matrimonial Report");
+    XLSX.writeFile(workbook, "matrimonial-report.xlsx");
+  };
 
   if (loading) return <Loader />;
-  {
-    console.log(profiles);
-  }
+
+  // Merge visible columns
+  const visibleColumns = [
+    ...basicColumns,
+    ...optionalColumns.filter((col) => selectedColumns.includes(col.key)),
+  ];
 
   return (
     <div className="p-6 space-y-6">
@@ -193,14 +232,12 @@ export default function MatrimonialReports() {
               name="dateFrom"
               value={filters.dateFrom}
               onChange={handleFilterChange}
-              placeholder="From Date"
             />
             <Input
               type="date"
               name="dateTo"
               value={filters.dateTo}
               onChange={handleFilterChange}
-              placeholder="To Date"
             />
           </div>
 
@@ -215,199 +252,74 @@ export default function MatrimonialReports() {
               Export to Excel
             </Button>
           </div>
-          {/* 🧾 Table View */}
+
+          {/* 🧩 Column selector */}
+          <div className="border p-3 rounded-md mb-4 bg-gray-50">
+            <div className="flex items-center gap-2 mb-2">
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+                className="cursor-pointer"
+              />
+              <span className="font-medium">Select All Columns</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-2">
+              {optionalColumns.map((col) => (
+                <label
+                  key={col.key}
+                  className="flex items-center gap-2 text-sm cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedColumns.includes(col.key)}
+                    onChange={() => handleCheckboxChange(col.key)}
+                    className="cursor-pointer"
+                  />
+                  <span>{col.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* 🧾 Table */}
           {profiles.length === 0 ? (
             <p className="text-center py-4">No profiles found.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full border border-gray-200 text-sm">
-                <thead className="bg-gray-100 text-left font-semibold">
+                <thead className="bg-gray-100">
                   <tr>
                     <th className="border px-4 py-2">#</th>
-                    <th className="border px-4 py-2">Name</th>
-                    <th className="border px-4 py-2">Profile Relation</th>
-                    <th className="border px-4 py-2">Created By</th>
-                    <th className="border px-4 py-2">Nick Name</th>
-                    <th className="border px-4 py-2">Phone</th>
-                    <th className="border px-4 py-2">Gender</th>
-                    <th className="border px-4 py-2">Email</th>
-                    <th className="border px-4 py-2">Website</th>
-                    <th className="border px-4 py-2">DOB</th>
-                    <th className="border px-4 py-2">Height</th>
-                    <th className="border px-4 py-2">Weight</th>
-                    <th className="border px-4 py-2">Complexion</th>
-                    <th className="border px-4 py-2">Body Type</th>
-                    <th className="border px-4 py-2">Marital Status</th>
-                    <th className="border px-4 py-2">Languages Known</th>
-                    <th className="border px-4 py-2">Hobbies</th>
-                    <th className="border px-4 py-2">About Me</th>
-                    <th className="border px-4 py-2">Highest Education</th>
-                    <th className="border px-4 py-2">College / University</th>
-                    <th className="border px-4 py-2">Occupation</th>
-                    <th className="border px-4 py-2">Company / Organization</th>
-                    <th className="border px-4 py-2">Designation</th>
-                    <th className="border px-4 py-2">Work Location</th>
-                    <th className="border px-4 py-2">Annual Income</th>
-                    <th className="border px-4 py-2">Work Experience</th>
-                    <th className="border px-4 py-2">Father Name</th>
-                    <th className="border px-4 py-2">Father Occupation</th>
-                    <th className="border px-4 py-2">Mother Name</th>
-                    <th className="border px-4 py-2">Mother Occupation</th>
-                    <th className="border px-4 py-2">Brothers</th>
-                    <th className="border px-4 py-2">Sisters</th>
-                    <th className="border px-4 py-2">Family Income</th>
-                    <th className="border px-4 py-2">Gotra Details</th>
-                    <th className="border px-4 py-2">Ancestral Village</th>
-                    <th className="border px-4 py-2">Family History</th>
-                    <th className="border px-4 py-2">
-                      Community Contributions
-                    </th>
-                    <th className="border px-4 py-2">Family Traditions</th>
-                    <th className="border px-4 py-2">Diet</th>
-                    <th className="border px-4 py-2">Smoking</th>
-                    <th className="border px-4 py-2">Drinking</th>
-                    <th className="border px-4 py-2">Exercise</th>
-                    <th className="border px-4 py-2">Religious Beliefs</th>
-                    <th className="border px-4 py-2">Music Preferences</th>
-                    <th className="border px-4 py-2">Movie Preferences</th>
-                    <th className="border px-4 py-2">Reading Interests</th>
-                    <th className="border px-4 py-2">Travel Interests</th>
-                    <th className="border px-4 py-2">Cast Preferences</th>
-                    <th className="border px-4 py-2">Facebook</th>
-                    <th className="border px-4 py-2">Instagram</th>
-                    <th className="border px-4 py-2">LinkedIn</th>
-                    <th className="border px-4 py-2">Profile Image</th>
-                    <th className="border px-4 py-2">Created At</th>
-                    <th className="border px-4 py-2">Updated At</th>
-                    <th className="border px-4 py-2">Is Premium</th>
-                    <th className="border px-4 py-2">Is Verified</th>
-                    <th className="border px-4 py-2">Is Active</th>
-                    <th className="border px-4 py-2">Is Deleted</th>
-                    <th className="border px-4 py-2">Deactivate Reason</th>
-                    <th className="border px-4 py-2">Deactivate Review</th>
+                    {visibleColumns.map((col) => (
+                      <th key={col.key} className="border px-4 py-2">
+                        {col.label}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
-
                 <tbody>
                   {profiles.map((p: any, index: number) => {
-                    const u = p.users; // Users object
-                    console.log(p.profiles);
+                    const u = p.users || {};
+                    const prof = p.profiles || {};
                     return (
-                      <tr key={p.id} className="hover:bg-gray-50">
+                      <tr key={index} className="hover:bg-gray-50">
                         <td className="border px-4 py-2">{index + 1}</td>
-                        <td className="border px-4 py-2">{p.profiles.name}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.profileRelation}
-                        </td>
-                        <td className="border px-4 py-2">{u?.name || "—"}</td>
-                        <td className="border px-4 py-2">{p.profiles.nickName}</td>
-                        <td className="border px-4 py-2">{p.profiles.phoneNo}</td>
-                        <td className="border px-4 py-2">{p.profiles.gender}</td>
-                        <td className="border px-4 py-2">{p.profiles.email}</td>
-                        <td className="border px-4 py-2">{p.profiles.website}</td>
-                        <td className="border px-4 py-2">{p.profiles.dob}</td>
-                        <td className="border px-4 py-2">{p.profiles.height}</td>
-                        <td className="border px-4 py-2">{p.profiles.weight}</td>
-                        <td className="border px-4 py-2">{p.profiles.complexion}</td>
-                        <td className="border px-4 py-2">{p.profiles.bodyType}</td>
-                        <td className="border px-4 py-2">{p.profiles.maritalStatus}</td>
-                        <td className="border px-4 py-2">{p.profiles.languagesKnown}</td>
-                        <td className="border px-4 py-2">{p.profiles.hobbies}</td>
-                        <td className="border px-4 py-2">{p.profiles.aboutMe}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.highestEducation}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.collegeUniversity}
-                        </td>
-                        <td className="border px-4 py-2">{p.profiles.occupation}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.companyOrganization}
-                        </td>
-                        <td className="border px-4 py-2">{p.profiles.designation}</td>
-                        <td className="border px-4 py-2">{p.profiles.workLocation}</td>
-                        <td className="border px-4 py-2">{p.profiles.annualIncome}</td>
-                        <td className="border px-4 py-2">{p.profiles.workExperience}</td>
-                        <td className="border px-4 py-2">{p.profiles.fatherName}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.fatherOccupation}
-                        </td>
-                        <td className="border px-4 py-2">{p.profiles.motherName}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.motherOccupation}
-                        </td>
-                        <td className="border px-4 py-2">{p.profiles.brothers}</td>
-                        <td className="border px-4 py-2">{p.profiles.sisters}</td>
-                        <td className="border px-4 py-2">{p.profiles.familyIncome}</td>
-                        <td className="border px-4 py-2">{p.profiles.gotraDetails}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.ancestralVillage}
-                        </td>
-                        <td className="border px-4 py-2">{p.profiles.familyHistory}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.communityContributions}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.familyTraditions}
-                        </td>
-                        <td className="border px-4 py-2">{p.profiles.diet}</td>
-                        <td className="border px-4 py-2">{p.profiles.smoking}</td>
-                        <td className="border px-4 py-2">{p.profiles.drinking}</td>
-                        <td className="border px-4 py-2">{p.profiles.exercise}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.religiousBeliefs}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.musicPreferences}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.moviePreferences}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.readingInterests}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.travelInterests}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.castPreferences}
-                        </td>
-                        <td className="border px-4 py-2">{p.profiles.facebook}</td>
-                        <td className="border px-4 py-2">{p.profiles.instagram}</td>
-                        <td className="border px-4 py-2">{p.profiles.linkedin}</td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.profileImage && (
-                            <img
-                              src={p.profiles.profileImage}
-                              alt="Profile"
-                              className="w-16 h-16 object-cover"
-                            />
-                          )}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {new Date(p.profiles.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {new Date(p.profiles.updatedAt).toLocaleDateString()}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.isPremium ? "Yes" : "No"}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.isVerified ? "Yes" : "No"}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.isActive ? "Yes" : "No"}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.isDeleted ? "Yes" : "No"}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.deactivateReason || "—"}
-                        </td>
-                        <td className="border px-4 py-2">
-                          {p.profiles.deactivateReview || "—"}
-                        </td>
+                        {visibleColumns.map((col) => {
+                          let value = "";
+                          if (col.key === "createdBy") value = u.name || "—";
+                          else if (col.key === "createdAt")
+                            value = prof.createdAt
+                              ? new Date(prof.createdAt).toLocaleDateString()
+                              : "—";
+                          else value = prof[col.key] || "—";
+
+                          return (
+                            <td key={col.key} className="border px-4 py-2">
+                              {value}
+                            </td>
+                          );
+                        })}
                       </tr>
                     );
                   })}
@@ -418,7 +330,6 @@ export default function MatrimonialReports() {
         </CardContent>
       </Card>
 
-      {/* 🔢 Pagination */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

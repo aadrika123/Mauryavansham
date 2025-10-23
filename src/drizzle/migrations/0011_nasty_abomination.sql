@@ -1,0 +1,20 @@
+CREATE TABLE "health_services" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" varchar(64),
+	"center_name" varchar(255) NOT NULL,
+	"category" varchar(100) NOT NULL,
+	"owner_name" varchar(255) NOT NULL,
+	"email" varchar(255),
+	"phone" varchar(15) NOT NULL,
+	"address" text,
+	"city" varchar(100),
+	"state" varchar(100),
+	"pincode" varchar(10),
+	"offerings" jsonb DEFAULT '[]'::jsonb NOT NULL,
+	"branches" jsonb DEFAULT '[]'::jsonb,
+	"about" text,
+	"logo_url" text,
+	"doc_urls" jsonb DEFAULT '[]'::jsonb,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);

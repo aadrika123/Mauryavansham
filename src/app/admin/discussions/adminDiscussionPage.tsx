@@ -146,7 +146,7 @@ export default function AdminDiscussionsPage() {
             Active ({filterData("approved").length})
           </TabsTrigger>
           <TabsTrigger value="rejected">
-            Rejected ({filterData("rejected").length})
+            Closed ({filterData("rejected").length})
           </TabsTrigger>
         </TabsList>
 
@@ -184,7 +184,7 @@ export default function AdminDiscussionsPage() {
                         }}
                         className="bg-red-600"
                       >
-                        Reject
+                        Close
                       </Button>
                     </td>
                   </tr>
@@ -215,8 +215,8 @@ export default function AdminDiscussionsPage() {
                   <th className="p-2 border">Category</th>
                   <th className="p-2 border">Location</th>
                   <th className="p-2 border">Author</th>
-                  <th className="p-2 border">Rejected Reason</th>
-                  <th className="p-2 border">Rejected By</th>
+                  <th className="p-2 border">Closed Reason</th>
+                  <th className="p-2 border">Closed By</th>
                   <th className="p-2 border">Actions</th>
                 </tr>
               </thead>
@@ -237,7 +237,7 @@ export default function AdminDiscussionsPage() {
                         onClick={() => approveDiscussion(d.id)}
                         className="bg-green-600"
                       >
-                        Approve
+                        Active
                       </Button>
                     </td>
                   </tr>
@@ -262,7 +262,7 @@ export default function AdminDiscussionsPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject Discussion</DialogTitle>
+            <DialogTitle>Close Discussion Reason</DialogTitle>
           </DialogHeader>
           <Textarea
             placeholder="Enter reason for rejection..."

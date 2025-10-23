@@ -1,4 +1,36 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface CommunityStats {
+  successfulMarriages: number;
+  registeredFamilies: number;
+  countriesConnected: number;
+  forumDiscussions: number;
+}
+
 export function CommunityStatsSection() {
+  const [stats, setStats] = useState<CommunityStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/masters");
+        const data = await res.json();
+        if (data.success) {
+          setStats(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="bg-[#FFFDEF] px-4 sm:px-6 lg:px-8 py-10">
       <div className="container mx-auto">
@@ -15,30 +47,49 @@ export function CommunityStatsSection() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-4 sm:px-6 lg:px-12">
-            {/* Stat Item */}
+            {/* Registered Families */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold mb-2">25,000+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-2">
+                {loading
+                  ? "..."
+                  : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
+              </div>
               <div className="text-sm sm:text-base text-white/80">
                 Registered Families
               </div>
             </div>
 
+            {/* Successful Marriages */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold mb-2">500+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-2">
+                {loading
+                  ? "..."
+                  : `${stats?.successfulMarriages?.toLocaleString() || 0}+`}
+              </div>
               <div className="text-sm sm:text-base text-white/80">
                 Successful Marriages
               </div>
             </div>
 
+            {/* Countries Connected */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold mb-2">50+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-2">
+                {loading
+                  ? "..."
+                  : `${stats?.countriesConnected?.toLocaleString() || 0}+`}
+              </div>
               <div className="text-sm sm:text-base text-white/80">
                 Countries Connected
               </div>
             </div>
 
+            {/* Forum Discussions */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold mb-2">10,000+</div>
+              <div className="text-3xl sm:text-4xl font-bold mb-2">
+                {loading
+                  ? "..."
+                  : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
+              </div>
               <div className="text-sm sm:text-base text-white/80">
                 Forum Discussions
               </div>
@@ -47,5 +98,5 @@ export function CommunityStatsSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }

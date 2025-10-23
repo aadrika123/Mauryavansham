@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
       logoUrl,
       docUrls,
       userId,
+      about
     } = data;
 
     // Optional validation
@@ -81,7 +82,8 @@ export async function POST(request: NextRequest) {
         logoUrl,
         docUrls,
         userId,
-        status: "pending", // 👈 default value
+        about,
+        status: "active", // 👈 default value
         approvedBy: null,
         rejectedBy: null,
         rejectedReason: null,

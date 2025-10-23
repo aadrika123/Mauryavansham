@@ -23,33 +23,55 @@ interface FormDataState {
   coursesInput: string;
   courses: string[];
   branches: Branch[];
+  about: string;
 }
 
 interface Message {
   type: "success" | "error";
   text: string;
 }
+interface CoachingFormProps {
+  initialData?: FormDataState & {
+    logoUrl?: string;
+    docUrls?: string[];
+    id?: number;
+  };
+  onSuccess?: () => void; // callback after submit
+}
 
-export default function CoachingExperienceCenterRegistration() {
+export default function CoachingExperienceCenterRegistration({
+  initialData,
+  onSuccess,
+}: CoachingFormProps) {
   const { data: session } = useSession();
 
   const [form, setForm] = useState<FormDataState>({
-    centerName: "",
-    ownerName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
+    centerName: initialData?.centerName || "",
+    ownerName: initialData?.ownerName || "",
+    email: initialData?.email || "",
+    phone: initialData?.phone || "",
+    address: initialData?.address || "",
+    city: initialData?.city || "",
+    state: initialData?.state || "",
+    pincode: initialData?.pincode || "",
     coursesInput: "",
-    courses: [],
-    branches: [{ name: "", address: "", phone: "" }],
+    courses: initialData?.courses || [],
+    branches: initialData?.branches || [{ name: "", address: "", phone: "" }],
+    about: initialData?.about || "",
   });
 
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    initialData?.logoUrl || null
+  );
+
+  const [docs, setDocs] = useState<File[]>([]); // new files
+  const [existingDocs, setExistingDocs] = useState<string[]>(
+    initialData?.docUrls || []
+  );
+
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [docs, setDocs] = useState<File[]>([]);
+  // const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  // const [docs, setDocs] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<Message | null>(null);
@@ -178,6 +200,7 @@ export default function CoachingExperienceCenterRegistration() {
     ) {
       err.branches = "All branch fields are required";
     }
+    if (!form.about.trim()) err.about = "About section cannot be empty";
 
     if (docs.length === 0) err.docs = "Upload at least one document";
 
@@ -204,28 +227,31 @@ export default function CoachingExperienceCenterRegistration() {
     if (!validate()) return;
 
     setSubmitting(true);
+
     try {
-      // Upload logo if provided
-      let logoUrl: string | null = null;
+      let logoUrl = logoPreview;
       if (logoFile) {
         logoUrl = await uploadFile(logoFile);
       }
 
-      // Upload all documents and store only URLs
-      let docUrls: string[] = [];
-      if (docs.length > 0) {
-        docUrls = await Promise.all(docs.map((file) => uploadFile(file)));
-      }
+      const newDocUrls =
+        docs.length > 0 ? await Promise.all(docs.map(uploadFile)) : [];
+      const allDocUrls = [...existingDocs, ...newDocUrls];
 
       const payload = {
         ...form,
         logoUrl,
-        docUrls,
+        docUrls: allDocUrls,
         userId: session?.user?.id || null,
       };
 
-      const res = await fetch("/api/coaching-centers", {
-        method: "POST",
+      const url = initialData
+        ? `/api/coaching-centers/${initialData.id}`
+        : "/api/coaching-centers";
+      const method = initialData ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -233,31 +259,12 @@ export default function CoachingExperienceCenterRegistration() {
       const data = await res.json();
 
       if (data.success) {
-        toast.success("Registration successful!");
-        setMessage({
-          type: "success",
-          text: "Center registered successfully!",
-        });
-        // Reset form
-        setForm({
-          centerName: "",
-          ownerName: "",
-          email: "",
-          phone: "",
-          address: "",
-          city: "",
-          state: "",
-          pincode: "",
-          coursesInput: "",
-          courses: [],
-          branches: [{ name: "", address: "", phone: "" }],
-        });
-        setLogoFile(null);
-        setLogoPreview(null);
-        setDocs([]);
+        toast.success(
+          initialData ? "Updated successfully!" : "Registration successful!"
+        );
+        onSuccess?.();
       } else {
         toast.error(data.error || "Something went wrong");
-        setMessage({ type: "error", text: data.error || "Error occurred" });
       }
     } catch (err) {
       console.error("Submission failed:", err);
@@ -497,6 +504,20 @@ export default function CoachingExperienceCenterRegistration() {
             ))}
           </div>
         </div>
+        <div>
+          <label className="block text-sm font-medium">About Center *</label>
+          <textarea
+            name="about"
+            value={form.about}
+            onChange={handleChange}
+            rows={4}
+            className="mt-1 block w-full rounded-lg border p-2"
+            placeholder="Describe your coaching/experience center..."
+          />
+          {errors.about && (
+            <p className="text-sm text-red-600">{errors.about}</p>
+          )}
+        </div>
 
         {/* 🔹 Logo and Documents */}
         <div className="grid md:grid-cols-2 gap-4">
@@ -545,6 +566,29 @@ export default function CoachingExperienceCenterRegistration() {
               ))}
             </div>
           </div>
+        </div>
+        <div className="mt-2 space-y-1">
+          {existingDocs.map((url, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between bg-gray-50 p-2 rounded"
+            >
+              <a
+                href={url}
+                target="_blank"
+                className="text-sm text-blue-600 underline"
+              >{`Document ${i + 1}`}</a>
+              <button
+                type="button"
+                onClick={() =>
+                  setExistingDocs((d) => d.filter((_, idx) => idx !== i))
+                }
+                className="text-red-600 text-sm"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
         </div>
 
         <div className="flex items-center justify-end gap-2">

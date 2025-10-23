@@ -399,6 +399,11 @@ export default function CommunityForumPage({ user }: Props) {
   const [selectedDiscussion, setSelectedDiscussion] =
     useState<Discussion | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [closeReason, setCloseReason] = useState("");
+  const [discussionToClose, setDiscussionToClose] = useState<number | null>(
+    null
+  );
 
   // Mock user mentions list (you can replace with real data)
   const [availableUsers] = useState([
@@ -768,6 +773,46 @@ export default function CommunityForumPage({ user }: Props) {
       "bg-gray-100 text-gray-800 border-gray-200"
     );
   };
+  // Confirm close after entering reason
+  const handleConfirmCloseDiscussion = async () => {
+    if (!discussionToClose || !closeReason.trim()) return;
+
+    try {
+      const res = await fetch(`/api/discussions/${discussionToClose}/close`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rejectionReason: closeReason }),
+      });
+
+      if (res.ok) {
+        setShowCloseModal(false);
+        setCloseReason("");
+        setDiscussionToClose(null);
+        loadDiscussions();
+      } else {
+        console.error("Failed to close discussion");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Reopen closed discussion
+  const handleReopenDiscussion = async (discussionId: number) => {
+    try {
+      const res = await fetch(`/api/discussions/${discussionId}/reopen`, {
+        method: "PATCH",
+      });
+
+      if (res.ok) {
+        loadDiscussions();
+      } else {
+        console.error("Failed to reopen discussion");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // const ad = adPlacements.find((ad) => ad.placementId === 5);
 
@@ -1120,19 +1165,31 @@ export default function CommunityForumPage({ user }: Props) {
                               !discussion.isCompleted &&
                               selectedCategory == "My Discussions" && (
                                 <button
-                                  onClick={() =>
-                                    handleCloseDiscussion(discussion.id)
-                                  }
+                                  onClick={() => {
+                                    setDiscussionToClose(discussion.id);
+                                    setShowCloseModal(true);
+                                  }}
                                   className="ml-4 px-2 py-1 bg-orange-500 text-white rounded hover:bg-red-600 text-sm"
                                 >
                                   Close Discussion
                                 </button>
                               )}
+
                             {discussion.authorId === user?.id &&
                               discussion.isCompleted && (
-                                <span className="ml-4 px-2 py-1 bg-red-500 text-white rounded text-sm">
-                                  Closed
-                                </span>
+                                <div className="ml-4 flex items-center gap-2">
+                                  <span className="px-2 py-1 bg-red-500 text-white rounded text-sm">
+                                    Closed
+                                  </span>
+                                  <button
+                                    onClick={() =>
+                                      handleReopenDiscussion(discussion.id)
+                                    }
+                                    className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+                                  >
+                                    Reopen
+                                  </button>
+                                </div>
                               )}
                           </div>
                         </div>
@@ -1317,6 +1374,61 @@ export default function CommunityForumPage({ user }: Props) {
               >
                 {selectedDiscussion.isCompleted ? "Closed" : "Active"}
               </span>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Close Discussion Modal */}
+      {showCloseModal && discussionToClose && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-red-700">
+                Close Discussion
+              </h3>
+              <button
+                onClick={() => {
+                  setShowCloseModal(false);
+                  setCloseReason("");
+                  setDiscussionToClose(null);
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="text-gray-600 mb-3">
+              Please provide a reason for closing this discussion.
+            </p>
+
+            <textarea
+              value={closeReason}
+              onChange={(e) => setCloseReason(e.target.value)}
+              rows={4}
+              placeholder="Enter reason for closing..."
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 mb-4"
+            />
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCloseModal(false);
+                  setCloseReason("");
+                  setDiscussionToClose(null);
+                }}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                disabled={!closeReason.trim()}
+                onClick={() => handleConfirmCloseDiscussion()}
+                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
+              >
+                Confirm Close
+              </Button>
             </div>
           </div>
         </div>
