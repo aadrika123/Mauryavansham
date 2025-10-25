@@ -427,7 +427,6 @@ export default function AdmindashboardLayout({
                   className="text-white hover:bg-red-700 relative"
                 >
                   <Bell className="w-4 h-4 mr-2" />
-                  {/* ✅ Text sirf desktop pe */}
                   <span className="hidden lg:inline">Notifications</span>
                   {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-yellow-400 text-red-800 rounded-full px-1.5 text-xs font-bold shadow">
@@ -437,23 +436,67 @@ export default function AdmindashboardLayout({
                 </Button>
               </DropdownMenuTrigger>
 
-              {notifications.length > 0 && (
-                <DropdownMenuContent
-                  align="end"
-                  className="w-72 max-h-96 overflow-y-auto"
-                >
-                  {notifications.map((n) => (
+              <DropdownMenuContent
+                align="end"
+                className="w-80 max-h-96 overflow-y-auto"
+              >
+                {/* ✅ Header section with "Mark All as Read" button */}
+                <div className="flex items-center justify-between px-3 py-2 border-b border-yellow-200 bg-yellow-50 sticky top-0 z-10">
+                  <h3 className="text-sm font-semibold text-red-700">
+                    Notifications
+                  </h3>
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(
+                            "/api/notifications/mark-all-read",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ userId: user?.id }),
+                            }
+                          );
+
+                          if (res.ok) {
+                            // ✅ Clear all notifications from UI
+                            setNotifications([]);
+                            console.log(
+                              "✅ All notifications marked as read for user:",
+                              user?.id
+                            );
+                          } else {
+                            console.error("❌ Failed to mark all as read");
+                          }
+                        } catch (err) {
+                          console.error("⚠️ Error marking all as read:", err);
+                        }
+                      }}
+                      className="text-xs text-blue-700 hover:underline font-medium"
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+
+                {/* ✅ Notification list */}
+                {notifications.length > 0 ? (
+                  notifications.map((n) => (
                     <div
                       key={n.id}
-                      className="bg-yellow-50 rounded-md border border-yellow-200 p-2 mb-2 hover:bg-yellow-100 shadow-sm"
+                      className="bg-yellow-50 rounded-md border border-yellow-200 p-2 m-2 hover:bg-yellow-100 shadow-sm"
                     >
                       <DropdownMenuItem className="whitespace-normal text-sm">
                         {n.message}
                       </DropdownMenuItem>
                     </div>
-                  ))}
-                </DropdownMenuContent>
-              )}
+                  ))
+                ) : (
+                  <div className="p-3 text-center text-gray-500 text-sm">
+                    No new notifications
+                  </div>
+                )}
+              </DropdownMenuContent>
             </DropdownMenu>
           )}
 

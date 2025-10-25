@@ -144,9 +144,28 @@ export default function DashboardLayout({
     if (user?.role === "user") {
       fetch("/api/notifications")
         .then((res) => res.json())
-        .then((data) => setNotifications(data));
+        .then((data) => setNotifications(data || []))
+        .catch(() => setNotifications([]));
     }
   }, [user]);
+
+  const handleMarkRead = async () => {
+    const unread = notifications.filter((n) => !n.isRead);
+    if (unread.length === 0) return;
+
+    await fetch("/api/notifications/mark-read", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
+    });
+
+    // update local state
+    setNotifications((prev) =>
+      prev.map((n) =>
+        unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
+      )
+    );
+  };
 
   const handleNotificationsOpen = async () => {
     const unread = notifications.filter((n) => !n.isRead);
@@ -192,7 +211,7 @@ export default function DashboardLayout({
           <Crown className="w-8 h-8 text-orange-400" />
           <div className="hidden lg:block">
             <h1 className="text-2xl font-bold capitalize">
-              Welcome back, {user?.name || ""} 
+              Welcome back, {user?.name || ""}
             </h1>
             {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
           </div>
@@ -200,31 +219,7 @@ export default function DashboardLayout({
         <div className="flex items-center gap-4">
           {/* Notifications */}
           {user?.role === "user" && (
-            <DropdownMenu
-              onOpenChange={async (isOpen) => {
-                if (isOpen) {
-                  const unreadNotifications = notifications.filter(
-                    (n) => !n.isRead
-                  );
-                  if (unreadNotifications.length > 0) {
-                    await fetch("/api/notifications/mark-read", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        notificationIds: unreadNotifications.map((n) => n.id),
-                      }),
-                    });
-                    setNotifications((prev) =>
-                      prev.map((n) =>
-                        unreadNotifications.find((u) => u.id === n.id)
-                          ? { ...n, isRead: true }
-                          : n
-                      )
-                    );
-                  }
-                }
-              }}
-            >
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -232,33 +227,75 @@ export default function DashboardLayout({
                   className="text-white hover:bg-red-700 relative"
                 >
                   <Bell className="w-4 h-4 mr-2" />
-                  {/* ✅ Text sirf desktop pe */}
                   <span className="hidden lg:inline">Notifications</span>
-                  {notifications.filter((n) => n.isRead === 0).length > 0 && (
+                  {notifications.filter((n) => !n.isRead).length > 0 && (
                     <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
-                      {notifications.filter((n) => n.isRead === 0).length}
+                      {notifications.filter((n) => !n.isRead).length}
                     </span>
                   )}
                 </Button>
               </DropdownMenuTrigger>
 
-              {notifications.length > 0 && (
-                <DropdownMenuContent
-                  align="end"
-                  className="w-72 max-h-96 overflow-y-auto"
-                >
-                  {notifications.map((n) => (
+              <DropdownMenuContent
+                align="end"
+                className="w-72 max-h-96 overflow-y-auto"
+              >
+                {/* ✅ Mark All as Read Button */}
+                {notifications.length > 0 && (
+                  <button
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(
+                          "/api/notifications/mark-all-read",
+                          {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId: user?.id }),
+                          }
+                        );
+
+                        if (res.ok) {
+                          // ✅ Clear all notifications from UI
+                          setNotifications([]);
+                          console.log(
+                            "✅ All notifications marked as read for user:",
+                            user?.id
+                          );
+                        } else {
+                          console.error("❌ Failed to mark all as read");
+                        }
+                      } catch (err) {
+                        console.error("⚠️ Error marking all as read:", err);
+                      }
+                    }}
+                    className="text-xs text-blue-700 hover:underline font-medium"
+                  >
+                    Mark all as read
+                  </button>
+                )}
+
+                {/* ✅ Notifications List */}
+                {notifications.length > 0 ? (
+                  notifications.map((n) => (
                     <div
                       key={n.id}
-                      className="bg-yellow-50 rounded-md border border-yellow-200 p-2 mb-2 hover:bg-yellow-100 shadow-sm"
+                      className={`rounded-md border p-2 m-2 shadow-sm ${
+                        n.isRead
+                          ? "bg-gray-50 border-gray-200"
+                          : "bg-yellow-50 border-yellow-300"
+                      }`}
                     >
                       <DropdownMenuItem className="whitespace-normal text-sm">
                         {n.message}
                       </DropdownMenuItem>
                     </div>
-                  ))}
-                </DropdownMenuContent>
-              )}
+                  ))
+                ) : (
+                  <div className="p-3 text-sm text-gray-500 text-center">
+                    No notifications
+                  </div>
+                )}
+              </DropdownMenuContent>
             </DropdownMenu>
           )}
 
