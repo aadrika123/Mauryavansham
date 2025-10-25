@@ -46,6 +46,11 @@ export default function DashboardLayout({
   const [notifications, setNotifications] = useState<any[]>([]);
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
+  // unread notifications filter
+  const unreadNotifications = notifications.filter(
+    (n) => !n.isRead || n.isRead === 0
+  );
+  const unreadCount = unreadNotifications.length;
 
   const sidebarItems = [
     { title: "Home", href: "/", icon: LayoutDashboard },
@@ -142,7 +147,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (user?.role === "user") {
-      fetch("/api/notifications")
+      fetch("/api/admin/notifications")
         .then((res) => res.json())
         .then((data) => setNotifications(data || []))
         .catch(() => setNotifications([]));
@@ -153,7 +158,7 @@ export default function DashboardLayout({
     const unread = notifications.filter((n) => !n.isRead);
     if (unread.length === 0) return;
 
-    await fetch("/api/notifications/mark-read", {
+    await fetch("/api/admin/notifications/mark-read", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
@@ -167,19 +172,33 @@ export default function DashboardLayout({
     );
   };
 
-  const handleNotificationsOpen = async () => {
+  // const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const handleNotificationsOpen = async (isOpen: boolean) => {
+    if (!isOpen) return;
+
     const unread = notifications.filter((n) => !n.isRead);
-    if (unread.length > 0) {
-      await fetch("/api/notifications/mark-read", {
+    if (unread.length === 0) return;
+
+    try {
+      const res = await fetch("/api/notifications/mark-read", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
       });
-      setNotifications((prev) =>
-        prev.map((n) =>
-          unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
-        )
-      );
+
+      if (res.ok) {
+        setNotifications((prev) =>
+          prev.map((n) =>
+            unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
+          )
+        );
+        console.log("✅ Notifications marked as read");
+      } else {
+        console.error("❌ Failed to mark notifications as read");
+      }
+    } catch (err) {
+      console.error("⚠️ Error marking notifications:", err);
     }
   };
 
@@ -219,7 +238,7 @@ export default function DashboardLayout({
         <div className="flex items-center gap-4">
           {/* Notifications */}
           {user?.role === "user" && (
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={handleNotificationsOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -228,9 +247,9 @@ export default function DashboardLayout({
                 >
                   <Bell className="w-4 h-4 mr-2" />
                   <span className="hidden lg:inline">Notifications</span>
-                  {notifications.filter((n) => !n.isRead).length > 0 && (
-                    <span className="ml-2 bg-yellow-400 text-red-800 rounded-full px-2 text-xs">
-                      {notifications.filter((n) => !n.isRead).length}
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-red-800 rounded-full px-1.5 text-xs font-bold">
+                      {unreadCount}
                     </span>
                   )}
                 </Button>
@@ -240,43 +259,42 @@ export default function DashboardLayout({
                 align="end"
                 className="w-72 max-h-96 overflow-y-auto"
               >
-                {/* ✅ Mark All as Read Button */}
                 {notifications.length > 0 && (
-                  <button
-                    onClick={async () => {
-                      try {
-                        const res = await fetch(
-                          "/api/notifications/mark-all-read",
-                          {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ userId: user?.id }),
-                          }
-                        );
-
-                        if (res.ok) {
-                          // ✅ Clear all notifications from UI
-                          setNotifications([]);
-                          console.log(
-                            "✅ All notifications marked as read for user:",
-                            user?.id
+                  <div className="flex justify-between px-3 py-2 border-b border-yellow-200 bg-yellow-50 sticky top-0 z-10">
+                    <h3 className="text-sm font-semibold text-red-700">
+                      Notifications
+                    </h3>
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(
+                            "/api/notifications/mark-all-read",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ userId: user?.id }),
+                            }
                           );
-                        } else {
-                          console.error("❌ Failed to mark all as read");
+
+                          if (res.ok) {
+                            setNotifications([]);
+                            console.log("✅ All notifications marked as read");
+                          } else {
+                            console.error("❌ Failed to mark all as read");
+                          }
+                        } catch (err) {
+                          console.error("⚠️ Error marking all as read:", err);
                         }
-                      } catch (err) {
-                        console.error("⚠️ Error marking all as read:", err);
-                      }
-                    }}
-                    className="text-xs text-blue-700 hover:underline font-medium"
-                  >
-                    Mark all as read
-                  </button>
+                      }}
+                      className="text-xs text-blue-700 hover:underline font-medium"
+                    >
+                      Mark all as read
+                    </button>
+                  </div>
                 )}
 
-                {/* ✅ Notifications List */}
-                {notifications.length > 0 ? (
-                  notifications.map((n) => (
+                {unreadNotifications.length > 0 ? (
+                  unreadNotifications.map((n) => (
                     <div
                       key={n.id}
                       className={`rounded-md border p-2 m-2 shadow-sm ${
@@ -292,7 +310,7 @@ export default function DashboardLayout({
                   ))
                 ) : (
                   <div className="p-3 text-sm text-gray-500 text-center">
-                    No notifications
+                    No new notifications
                   </div>
                 )}
               </DropdownMenuContent>

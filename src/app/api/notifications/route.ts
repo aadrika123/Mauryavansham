@@ -7,7 +7,6 @@ import { sql } from "drizzle-orm";
 import { notification_reads } from "@/src/drizzle/db/schemas/notification_reads";
 import { users } from "@/src/drizzle/schema";
 
-// 📌 GET: fetch notifications for users
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || !session.user.role) {
@@ -23,7 +22,18 @@ export async function GET(req: NextRequest) {
       type: notifications.type,
       message: notifications.message,
       createdAt: notifications.createdAt,
-      isRead: sql<boolean>`CASE WHEN ${notification_reads.id} IS NULL THEN false ELSE true END`,
+      isRead: sql<boolean>`
+  CASE 
+    WHEN ${notification_reads.id} IS NOT NULL THEN true
+    WHEN EXISTS (
+      SELECT 1 
+      FROM notification_reads nr
+      WHERE nr.admin_id = ${userId} AND nr.mark_all_read = true
+    ) THEN true
+    ELSE false
+  END
+`,
+
       sender: {
         id: users.id,
         name: users.name,
@@ -36,14 +46,16 @@ export async function GET(req: NextRequest) {
     .leftJoin(
       notification_reads,
       sql`${notification_reads.notificationId} = ${notifications.id} 
-           AND ${notification_reads.adminId} = ${userId}`
+         AND ${notification_reads.adminId} = ${userId}`
     )
     .leftJoin(users, sql`${notifications.senderId} = ${users.id}`)
     .where(
       role === "user"
-        ? sql`${notifications.type} != 'signup' AND ${notifications.userId} = ${userId}`
+        ? sql`${notifications.type} != 'signup' 
+          AND ${notifications.userId} = ${userId}`
         : undefined
     )
+
     .orderBy(sql`${notifications.createdAt} DESC`);
 
   // Customize message if sender exists
@@ -89,7 +101,10 @@ export async function POST(req: NextRequest) {
 
   if (existing.length > 0) {
     return NextResponse.json(
-      { message: "You are already connected with this user. You can go to your inbox to chat with them." },
+      {
+        message:
+          "You are already connected with this user. You can go to your inbox to chat with them.",
+      },
       { status: 409 } // Conflict
     );
   }
@@ -107,4 +122,3 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json(notification);
 }
-

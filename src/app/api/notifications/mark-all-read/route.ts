@@ -13,43 +13,15 @@ export async function POST(req: NextRequest) {
 
   const adminId = Number(session.user.id);
 
-  // ✅ Get all notification IDs (assuming you have notifications table)
-  const allNotifications = await db
-    .select({ id: notifications.id })
-    .from(notifications);
-
-  if (!allNotifications || allNotifications.length === 0) {
-    return NextResponse.json({ message: "No notifications found" }, { status: 404 });
-  }
-
-  const allIds = allNotifications.map((n) => n.id);
-
-  // ✅ Get already read ones for this admin
-  const alreadyRead = await db
-    .select({ notificationId: notification_reads.notificationId })
-    .from(notification_reads)
-    .where(eq(notification_reads.adminId, adminId));
-
-  const readIds = alreadyRead.map((r) => r.notificationId);
-
-  // ✅ Filter unread notifications only
-  const unreadIds = allIds.filter((id) => !readIds.includes(id));
-
-  if (unreadIds.length === 0) {
-    return NextResponse.json({ message: "No unread notifications" });
-  }
-
-  // ✅ Insert remaining unread as read
-  await db.insert(notification_reads).values(
-    unreadIds.map((id) => ({
-      notificationId: id,
-      adminId,
-    }))
-  );
+  // ✅ Insert one record for "mark all read" without caring about individual notification IDs
+  await db
+  .update(notification_reads)
+  .set({ markAllRead: true })
+  .where(eq(notification_reads.adminId, adminId));
 
   return NextResponse.json({
     success: true,
     message: "All notifications marked as read",
-    count: unreadIds.length,
   });
 }
+

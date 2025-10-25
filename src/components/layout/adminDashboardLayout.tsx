@@ -52,6 +52,9 @@ export default function AdmindashboardLayout({
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   const unreadCount =
     notifications?.filter((n) => !n.isRead || n.isRead === 0).length || 0;
+  const unreadNotifications = notifications.filter(
+    (n) => !n.isRead || n.isRead === 0
+  );
 
   useEffect(() => {
     if (user?.role === "admin" || user?.role === "superAdmin") {
@@ -454,7 +457,7 @@ export default function AdmindashboardLayout({
                             {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ userId: user?.id }),
+                              // body: JSON.stringify({ userId: user?.id }),
                             }
                           );
 
@@ -480,8 +483,8 @@ export default function AdmindashboardLayout({
                 </div>
 
                 {/* ✅ Notification list */}
-                {notifications.length > 0 ? (
-                  notifications.map((n) => (
+                {unreadNotifications.length > 0 ? (
+                  unreadNotifications.map((n) => (
                     <div
                       key={n.id}
                       className="bg-yellow-50 rounded-md border border-yellow-200 p-2 m-2 hover:bg-yellow-100 shadow-sm"

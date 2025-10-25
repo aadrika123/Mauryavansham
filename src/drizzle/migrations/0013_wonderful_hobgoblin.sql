@@ -1,0 +1,1 @@
+ALTER TABLE "notification_reads" ADD COLUMN "mark_all_read" boolean DEFAULT false NOT NULL;

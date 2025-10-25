@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   }
 
   const userId = Number(session.user.id);
-  const role = session.user.role; // 'user' | 'admin' | 'super-admin'
+  const role = session.user.role;
 
   const userNotifications = await db
     .select({
@@ -29,7 +29,18 @@ export async function GET(req: NextRequest) {
         photo: users.photo,
         email: users.email,
       },
-      isRead: sql<boolean>`CASE WHEN ${notification_reads.id} IS NULL THEN false ELSE true END`,
+      // ✅ Check individual read or mark all read
+      isRead: sql<boolean>`
+        CASE 
+          WHEN ${notification_reads.id} IS NOT NULL THEN true
+          WHEN EXISTS (
+            SELECT 1 
+            FROM notification_reads nr
+            WHERE nr.admin_id = ${userId} AND nr.mark_all_read = true
+          ) THEN true
+          ELSE false
+        END
+      `,
     })
     .from(notifications)
     .leftJoin(
@@ -38,26 +49,13 @@ export async function GET(req: NextRequest) {
            AND ${notification_reads.adminId} = ${userId}`
     )
     .leftJoin(users, sql`${notifications.senderId} = ${users.id}`)
+    // ✅ Only filter by user role and type, no need for markAllRead in WHERE
     .where(
       role === "user"
-        ? sql`${notifications.userId} = ${userId} OR ${notifications.senderId} = ${userId}`
-        : undefined // admin/super-admin can see all
+        ? sql`${notifications.type} != 'signup' AND ${notifications.userId} = ${userId}`
+        : undefined
     )
     .orderBy(sql`${notifications.createdAt} DESC`);
 
-  // Customize message for sender if type = 'profile_connect'
-  const customized = userNotifications.map((n) => {
-    if (n.type === "profile_connect") {
-      if (n.sender?.id === userId) {
-        // ✅ optional chaining
-        return {
-          ...n,
-          // message: `You sent a connection request to ${n.receiverId}`,
-        };
-      }
-    }
-    return n;
-  });
-
-  return NextResponse.json(customized);
+  return NextResponse.json(userNotifications);
 }
