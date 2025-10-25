@@ -438,9 +438,7 @@ export default function SignUpForm() {
 
         {/* Photo Upload & Facebook Link Section */}
         <div className="space-y-2">
-          <label className="block font-medium text-base">
-            Profile Photo *
-          </label>
+          <label className="block font-medium text-base">Profile Photo *</label>
           <input
             type="file"
             accept="image/*"
@@ -519,22 +517,34 @@ export default function SignUpForm() {
               onChange={handleInputChange}
               required
               options={[
-                "Bihar",
-                "Uttar Pradesh",
-                "Delhi",
-                "Maharashtra",
-                "West Bengal",
-                "Madhya Pradesh",
-                "Rajasthan",
-                "Karnataka",
-                "Tamil Nadu",
-                "Kerala",
-                "Punjab",
-                "Haryana",
-                "Gujarat",
-                "Jharkhand",
-                "Odisha",
+                "Andhra Pradesh",
+                "Arunachal Pradesh",
                 "Assam",
+                "Bihar",
+                "Chhattisgarh",
+                "Goa",
+                "Gujarat",
+                "Haryana",
+                "Himachal Pradesh",
+                "Jharkhand",
+                "Karnataka",
+                "Kerala",
+                "Madhya Pradesh",
+                "Maharashtra",
+                "Manipur",
+                "Meghalaya",
+                "Mizoram",
+                "Nagaland",
+                "Odisha",
+                "Punjab",
+                "Rajasthan",
+                "Sikkim",
+                "Tamil Nadu",
+                "Telangana",
+                "Tripura",
+                "Uttar Pradesh",
+                "Uttarakhand",
+                "West Bengal",
               ]}
             />
             <InputField label="Country" name="country" value="India" disabled />
@@ -607,22 +617,34 @@ export default function SignUpForm() {
               value={formData.currentState}
               onChange={handleInputChange}
               options={[
-                "Bihar",
-                "Uttar Pradesh",
-                "Delhi",
-                "Maharashtra",
-                "West Bengal",
-                "Madhya Pradesh",
-                "Rajasthan",
-                "Karnataka",
-                "Tamil Nadu",
-                "Kerala",
-                "Punjab",
-                "Haryana",
-                "Gujarat",
-                "Jharkhand",
-                "Odisha",
+                "Andhra Pradesh",
+                "Arunachal Pradesh",
                 "Assam",
+                "Bihar",
+                "Chhattisgarh",
+                "Goa",
+                "Gujarat",
+                "Haryana",
+                "Himachal Pradesh",
+                "Jharkhand",
+                "Karnataka",
+                "Kerala",
+                "Madhya Pradesh",
+                "Maharashtra",
+                "Manipur",
+                "Meghalaya",
+                "Mizoram",
+                "Nagaland",
+                "Odisha",
+                "Punjab",
+                "Rajasthan",
+                "Sikkim",
+                "Tamil Nadu",
+                "Telangana",
+                "Tripura",
+                "Uttar Pradesh",
+                "Uttarakhand",
+                "West Bengal",
               ]}
               disabled={formData.sameAsPermanent}
             />

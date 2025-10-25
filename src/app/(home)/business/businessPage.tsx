@@ -25,6 +25,104 @@ interface User {
 interface Props {
   user?: User;
 }
+
+// 🔸 Book Your Ad (11) Component
+const HorizontalAdSlider11: React.FC<{ ads: any[] }> = ({ ads }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  // 🔹 Track ad views
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  // 🔸 If no ads
+  if (ads.length === 0) {
+    return (
+      <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
+        <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4">
+          <div>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800">
+              Book Your Ad (11)
+            </h3>
+            <span className="text-sm font-normal text-amber-700">
+              Please select image size of (900x300 px)
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔸 Render slider
+  return (
+    <div className="mx-auto relative w-full max-w-[900px]">
+      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="relative p-4 sm:p-8 text-center h-[200px] sm:h-[250px] md:h-[300px]">
+          {ads.map((ad, index) => (
+            <div
+              key={ad.id}
+              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+                index === currentIndex
+                  ? "opacity-100 z-10"
+                  : "opacity-0 pointer-events-none z-0"
+              }`}
+            >
+              <a
+                href={ad.adUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full h-full"
+              >
+                <img
+                  src={ad.bannerImageUrl}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
+                />
+              </a>
+            </div>
+          ))}
+
+          {/* 🔸 Slider Dots + Counter */}
+          {ads.length > 1 && (
+            <>
+              <div className="absolute top-6 right-6 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
+                {currentIndex + 1} / {ads.length}
+              </div>
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+                {ads.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      index === currentIndex
+                        ? "bg-amber-600 scale-125"
+                        : "bg-amber-400/50 hover:bg-amber-400/75"
+                    }`}
+                    aria-label={`Go to ad ${index + 1}`}
+                    type="button"
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function BusinessDetailsPage({ user }: any) {
   const [loading, setLoading] = useState(false);
   const [businesses, setBusinesses] = useState<any[]>([]);
@@ -48,6 +146,15 @@ export default function BusinessDetailsPage({ user }: any) {
     setSelectedBusiness(business);
     setShowDetailsModal(true);
   };
+  const [adPlacements, setAdPlacements] = useState<any[]>([]);
+  const topAds = adPlacements.filter((ad) => ad.placementId === 11);
+
+  useEffect(() => {
+    fetch("/api/ad-placements/approved")
+      .then((res) => res.json())
+      .then((data) => setAdPlacements(data))
+      .catch(() => console.error("Failed to load ad placements"));
+  }, []);
 
   useEffect(() => {
     if (session?.user) {
@@ -290,10 +397,8 @@ export default function BusinessDetailsPage({ user }: any) {
       {/* Main Content */}
       <div className="flex-1">
         {/* Banner / Hero */}
-        <div className="w-full h-40 sm:h-56 bg-orange-200 rounded-2xl mb-6 flex items-center justify-center">
-          <h2 className="text-base sm:text-xl font-bold text-red-700">
-            Hero Banner / Ads
-          </h2>
+        <div className="mb-6 flex justify-center">
+          <HorizontalAdSlider11 ads={topAds} />
         </div>
 
         <h2 className="text-lg sm:text-xl font-bold text-red-700 mb-6">
@@ -645,7 +750,6 @@ export default function BusinessDetailsPage({ user }: any) {
                     {selectedBusiness.businesses.premiumCategory}
                   </p>
                 )}
-
               </div>
 
               {/* Partners */}

@@ -347,11 +347,16 @@ export default function AdmindashboardLayout({
           href: "/admin/reports/discussions",
           icon: MessageSquare,
         },
-        // {
-        //   title: "Master Data Reports",
-        //   href: "/admin/reports/masters",
-        //   icon: Globe,
-        // },
+        {
+          title: "Coaching Reports",
+          href: "/admin/reports/educations",
+          icon: BookAIcon,
+        },
+        {
+          title: "Health Services Reports",
+          href: "/admin/reports/health",
+          icon: AmbulanceIcon,
+        },
         // optional existing item
       ],
     },

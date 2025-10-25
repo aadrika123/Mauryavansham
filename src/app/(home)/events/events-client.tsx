@@ -374,7 +374,7 @@ export default function EventsClient({
   };
 
   return (
-    <div className="min-h-screen bg-orange-50">
+    <div className="min-h-screen bg-yellow-50">
       {showLoginModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
@@ -414,7 +414,7 @@ export default function EventsClient({
         </div>
       )}
 
-      <div className="bg-white border-b border-gray-200 p-4">
+      <div className="bg-yellow-50 border-b border-gray-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-1">
             <Link
@@ -431,7 +431,7 @@ export default function EventsClient({
         </div>
       </div>
 
-      <div className="bg-[#FFF7ED] border-b border-yellow-200 p-4">
+      <div className="bg-yellow-50 border-b border-yellow-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -459,7 +459,7 @@ export default function EventsClient({
         </div>
       </div>
 
-      <div className="bg-[#FFF7ED] border-yellow-200 border-b ">
+      <div className="bg-yellow-50 border-yellow-200 border-b ">
         <div className="max-w-7xl mx-auto">
           <div className="flex">
             <button

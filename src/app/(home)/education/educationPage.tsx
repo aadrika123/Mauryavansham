@@ -7,6 +7,103 @@ import { Lock, User, X, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+// 🔸 Book Your Ad (13) Component
+const HorizontalAdSlider13: React.FC<{ ads: any[] }> = ({ ads }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  // 🔹 Track ad views
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  // 🔸 If no ads found
+  if (ads.length === 0) {
+    return (
+      <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
+        <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4">
+          <div>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800">
+              Book Your Ad (13)
+            </h3>
+            <span className="text-sm font-normal text-amber-700">
+              Please select image size of (900x300 px)
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔸 Render slider
+  return (
+    <div className="mx-auto relative w-full max-w-[900px]">
+      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="relative p-4 sm:p-8 text-center h-[200px] sm:h-[250px] md:h-[300px]">
+          {ads.map((ad, index) => (
+            <div
+              key={ad.id}
+              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+                index === currentIndex
+                  ? "opacity-100 z-10"
+                  : "opacity-0 pointer-events-none z-0"
+              }`}
+            >
+              <a
+                href={ad.adUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full h-full"
+              >
+                <img
+                  src={ad.bannerImageUrl}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
+                />
+              </a>
+            </div>
+          ))}
+
+          {/* 🔸 Dots + Counter */}
+          {ads.length > 1 && (
+            <>
+              <div className="absolute top-6 right-6 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
+                {currentIndex + 1} / {ads.length}
+              </div>
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+                {ads.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      index === currentIndex
+                        ? "bg-amber-600 scale-125"
+                        : "bg-amber-400/50 hover:bg-amber-400/75"
+                    }`}
+                    aria-label={`Go to ad ${index + 1}`}
+                    type="button"
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function CoachingCentersPage({ user }: any) {
   const [loading, setLoading] = useState(false);
   const [centers, setCenters] = useState<any[]>([]);
@@ -36,6 +133,15 @@ export default function CoachingCentersPage({ user }: any) {
   useEffect(() => {
     if (session?.user) setCurrentUser(session.user);
   }, [session]);
+  const [adPlacements, setAdPlacements] = useState<any[]>([]);
+  const topAds = adPlacements.filter((ad) => ad.placementId === 13);
+
+  useEffect(() => {
+    fetch("/api/ad-placements/approved")
+      .then((res) => res.json())
+      .then((data) => setAdPlacements(data))
+      .catch(() => console.error("Failed to load ad placements"));
+  }, []);
 
   // Fetch coaching centers
   useEffect(() => {
@@ -279,10 +385,9 @@ export default function CoachingCentersPage({ user }: any) {
         </div>
 
         {/* Banner */}
-        <div className="w-full h-40 sm:h-56 bg-orange-200 rounded-2xl mb-6 flex items-center justify-center">
-          <h2 className="text-base sm:text-xl font-bold text-red-700">
-            Featured Coaching Centers
-          </h2>
+        {/* 🔹 Book Your Ad (13) */}
+        <div className="mb-6 flex justify-center">
+          <HorizontalAdSlider13 ads={topAds} />
         </div>
 
         <h2 className="text-lg sm:text-xl font-bold text-red-700 mb-6">
@@ -303,12 +408,12 @@ export default function CoachingCentersPage({ user }: any) {
                     {/* Image */}
                     <div className="flex justify-center">
                       {/* {images.length > 0 ? ( */}
-                        <img
-                          src={images[0] || logo }
-                          alt={center.centerName}
-                          className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded border cursor-pointer"
-                          onClick={() => openImageModal(images, 0)}
-                        />
+                      <img
+                        src={images[0] || logo}
+                        alt={center.centerName}
+                        className="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded border cursor-pointer"
+                        onClick={() => openImageModal(images, 0)}
+                      />
                       {/* ) : (
                         <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center border rounded bg-gray-100 text-xs text-gray-500">
                           No Image

@@ -7,6 +7,103 @@ import { Lock, User, X, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+// 🔸 Book Your Ad (12) Component
+const HorizontalAdSlider12: React.FC<{ ads: any[] }> = ({ ads }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  // 🔹 Track ad views
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  // 🔸 If no ads found
+  if (ads.length === 0) {
+    return (
+      <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
+        <div className="bg-gradient-to-r from-orange-100 via-yellow-50 to-orange-100 border-4 border-orange-300 rounded-2xl shadow-xl w-full h-full flex items-center justify-center text-center p-4">
+          <div>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-orange-800">
+              Book Your Ad (12)
+            </h3>
+            <span className="text-sm font-normal text-orange-700">
+              Please select image size of (900x300 px)
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔸 Render slider
+  return (
+    <div className="mx-auto relative w-full max-w-[900px]">
+      <div className="bg-gradient-to-r from-orange-100 via-yellow-50 to-orange-100 border-4 border-orange-300 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="relative p-4 sm:p-8 text-center h-[200px] sm:h-[250px] md:h-[300px]">
+          {ads.map((ad, index) => (
+            <div
+              key={ad.id}
+              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+                index === currentIndex
+                  ? "opacity-100 z-10"
+                  : "opacity-0 pointer-events-none z-0"
+              }`}
+            >
+              <a
+                href={ad.adUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full h-full"
+              >
+                <img
+                  src={ad.bannerImageUrl}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
+                />
+              </a>
+            </div>
+          ))}
+
+          {/* 🔸 Dots + Counter */}
+          {ads.length > 1 && (
+            <>
+              <div className="absolute top-6 right-6 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
+                {currentIndex + 1} / {ads.length}
+              </div>
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+                {ads.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      index === currentIndex
+                        ? "bg-orange-600 scale-125"
+                        : "bg-orange-400/50 hover:bg-orange-400/75"
+                    }`}
+                    aria-label={`Go to ad ${index + 1}`}
+                    type="button"
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function HealthAndWellnessPage({ user }: any) {
   const [loading, setLoading] = useState(false);
   const [centers, setCenters] = useState<any[]>([]);
@@ -22,6 +119,15 @@ export default function HealthAndWellnessPage({ user }: any) {
   const [modalIndex, setModalIndex] = useState(0);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedCenter, setSelectedCenter] = useState<any>(null);
+  const [adPlacements, setAdPlacements] = useState<any[]>([]);
+  const topAds = adPlacements.filter((ad) => ad.placementId === 12);
+
+  useEffect(() => {
+    fetch("/api/ad-placements/approved")
+      .then((res) => res.json())
+      .then((data) => setAdPlacements(data))
+      .catch(() => console.error("Failed to load ad placements"));
+  }, []);
 
   useEffect(() => {
     if (session?.user) setCurrentUser(session.user);
@@ -84,7 +190,11 @@ export default function HealthAndWellnessPage({ user }: any) {
       return;
     }
 
-    const message = `${user.name} from ${user.city || ""} ${user.state || ""} (${user.email}) wants to connect with you regarding your registered health/wellness service.`;
+    const message = `${user.name} from ${user.city || ""} ${
+      user.state || ""
+    } (${
+      user.email
+    }) wants to connect with you regarding your registered health/wellness service.`;
 
     // 1️⃣ Send notification (optional)
     const notifyRes = await fetch("/api/notifications", {
@@ -207,7 +317,10 @@ export default function HealthAndWellnessPage({ user }: any) {
               <>
                 <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 text-gray-700 text-sm">
                   {displayed.map((c, i) => (
-                    <li key={i} className="hover:text-orange-600 cursor-pointer">
+                    <li
+                      key={i}
+                      className="hover:text-orange-600 cursor-pointer"
+                    >
                       {c}
                     </li>
                   ))}
@@ -257,10 +370,9 @@ export default function HealthAndWellnessPage({ user }: any) {
         </div>
 
         {/* Banner */}
-        <div className="w-full h-40 sm:h-56 bg-orange-200 rounded-2xl mb-6 flex items-center justify-center">
-          <h2 className="text-base sm:text-xl font-bold text-red-700">
-            Featured Health & Wellness Centers
-          </h2>
+        {/* 🔹 Book Your Ad (12) */}
+        <div className="mb-6 flex justify-center">
+          <HorizontalAdSlider12 ads={topAds} />
         </div>
 
         <h2 className="text-lg sm:text-xl font-bold text-red-700 mb-6">
@@ -309,9 +421,11 @@ export default function HealthAndWellnessPage({ user }: any) {
                           <p className="text-sm font-medium">Offerings:</p>
                           {center.offerings?.length > 0 ? (
                             <ul className="list-disc ml-5 text-sm text-gray-700">
-                              {center.offerings.map((o: string, idx: number) => (
-                                <li key={idx}>{o}</li>
-                              ))}
+                              {center.offerings.map(
+                                (o: string, idx: number) => (
+                                  <li key={idx}>{o}</li>
+                                )
+                              )}
                             </ul>
                           ) : (
                             <p className="text-sm text-gray-500">
@@ -364,108 +478,115 @@ export default function HealthAndWellnessPage({ user }: any) {
       </div>
 
       {/* 🔹 Details Modal */}
-     {showDetailsModal && selectedCenter && (
-  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full relative overflow-y-auto max-h-[90vh]">
-      {/* Close Button */}
-      <button
-        onClick={() => setShowDetailsModal(false)}
-        className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-      >
-        <X className="w-5 h-5" />
-      </button>
+      {showDetailsModal && selectedCenter && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full relative overflow-y-auto max-h-[90vh]">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowDetailsModal(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
-      {/* Title */}
-      <h2 className="text-xl font-bold mb-4 text-red-700 text-center">
-        {selectedCenter.centerName}
-      </h2>
+            {/* Title */}
+            <h2 className="text-xl font-bold mb-4 text-red-700 text-center">
+              {selectedCenter.centerName}
+            </h2>
 
-      {/* Logo */}
-      {selectedCenter.logoUrl && (
-        <img
-          src={selectedCenter.logoUrl}
-          alt={selectedCenter.centerName}
-          className="w-40 h-40 object-cover rounded mb-4 mx-auto"
-        />
-      )}
+            {/* Logo */}
+            {selectedCenter.logoUrl && (
+              <img
+                src={selectedCenter.logoUrl}
+                alt={selectedCenter.centerName}
+                className="w-40 h-40 object-cover rounded mb-4 mx-auto"
+              />
+            )}
 
-      {/* Basic Info */}
-      <div className="space-y-2 text-gray-700">
-        <p>
-          <strong>Category:</strong> {selectedCenter.category}
-        </p>
-        <p>
-          <strong>Owner:</strong> {selectedCenter.ownerName}
-        </p>
-        <p>
-          <strong>Email:</strong> {selectedCenter.email}
-        </p>
-        <p>
-          <strong>Phone:</strong> {selectedCenter.phone}
-        </p>
-        <p>
-          <strong>Address:</strong> {selectedCenter.address},{" "}
-          {selectedCenter.city}, {selectedCenter.state} -{" "}
-          {selectedCenter.pincode}
-        </p>
-        <p>
-          <strong>About:</strong>{" "}
-          {selectedCenter.about || (
-            <span className="italic text-gray-500">No description available.</span>
-          )}
-        </p>
-      </div>
-
-      {/* Offerings */}
-      {selectedCenter.offerings?.length > 0 && (
-        <div className="mt-4">
-          <h3 className="font-semibold mb-2 text-red-700">Services Offered:</h3>
-          <ul className="list-disc ml-6 text-gray-700">
-            {selectedCenter.offerings.map((service: string, i: number) => (
-              <li key={i}>{service}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* 🔹 Documents Section */}
-      {selectedCenter.docUrls?.length > 0 && (
-        <div className="mt-6">
-          <h3 className="font-semibold mb-2 text-red-700">Uploaded Documents:</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {selectedCenter.docUrls.map((url: string, i: number) => (
-              <a
-                key={i}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block border rounded-lg overflow-hidden hover:shadow-md transition"
-              >
-                {url.endsWith(".pdf") ? (
-                  <div className="flex flex-col items-center justify-center p-4 bg-gray-50">
-                    <img
-                      src="/pdf-icon.png"
-                      alt="PDF"
-                      className="w-10 h-10 mb-2"
-                    />
-                    <p className="text-xs text-gray-600">View PDF</p>
-                  </div>
-                ) : (
-                  <img
-                    src={url}
-                    alt={`Document ${i + 1}`}
-                    className="w-full h-32 object-cover"
-                  />
+            {/* Basic Info */}
+            <div className="space-y-2 text-gray-700">
+              <p>
+                <strong>Category:</strong> {selectedCenter.category}
+              </p>
+              <p>
+                <strong>Owner:</strong> {selectedCenter.ownerName}
+              </p>
+              <p>
+                <strong>Email:</strong> {selectedCenter.email}
+              </p>
+              <p>
+                <strong>Phone:</strong> {selectedCenter.phone}
+              </p>
+              <p>
+                <strong>Address:</strong> {selectedCenter.address},{" "}
+                {selectedCenter.city}, {selectedCenter.state} -{" "}
+                {selectedCenter.pincode}
+              </p>
+              <p>
+                <strong>About:</strong>{" "}
+                {selectedCenter.about || (
+                  <span className="italic text-gray-500">
+                    No description available.
+                  </span>
                 )}
-              </a>
-            ))}
+              </p>
+            </div>
+
+            {/* Offerings */}
+            {selectedCenter.offerings?.length > 0 && (
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2 text-red-700">
+                  Services Offered:
+                </h3>
+                <ul className="list-disc ml-6 text-gray-700">
+                  {selectedCenter.offerings.map(
+                    (service: string, i: number) => (
+                      <li key={i}>{service}</li>
+                    )
+                  )}
+                </ul>
+              </div>
+            )}
+
+            {/* 🔹 Documents Section */}
+            {selectedCenter.docUrls?.length > 0 && (
+              <div className="mt-6">
+                <h3 className="font-semibold mb-2 text-red-700">
+                  Uploaded Documents:
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {selectedCenter.docUrls.map((url: string, i: number) => (
+                    <a
+                      key={i}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block border rounded-lg overflow-hidden hover:shadow-md transition"
+                    >
+                      {url.endsWith(".pdf") ? (
+                        <div className="flex flex-col items-center justify-center p-4 bg-gray-50">
+                          <img
+                            src="/pdf-icon.png"
+                            alt="PDF"
+                            className="w-10 h-10 mb-2"
+                          />
+                          <p className="text-xs text-gray-600">View PDF</p>
+                        </div>
+                      ) : (
+                        <img
+                          src={url}
+                          alt={`Document ${i + 1}`}
+                          className="w-full h-32 object-cover"
+                        />
+                      )}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
-    </div>
-  </div>
-)}
-
     </div>
   );
 }
