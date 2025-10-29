@@ -24,13 +24,8 @@ import {
   Calendar,
   MapPin,
   Award,
-  Star,
-  Sparkles,
-  Eye,
 } from "lucide-react";
 import Link from "next/link";
-import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
-import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
 import Image from "next/image";
 interface Achievement {
   id: number;
@@ -169,274 +164,23 @@ export default function AchievementsClient({
   const [filterCategory, setFilterCategory] = useState("all");
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
   const bottomAds = adPlacements.filter((ad) => ad.placementId === 10);
+  const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+
   useEffect(() => {
     fetch("/api/ad-placements/approved")
       .then((res) => res.json())
       .then((data: AdPlacement[]) => {
-        // sirf approved ads le lo
         setAdPlacements(data);
       })
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
-  // const bottomAd = adPlacements.find((ad) => ad.placementId === 10);
-  // console.log("Ad for AchievementsClient:", bottomAd);
-  // useEffect(() => {
-  //   if (bottomAd)
-  //     fetch(`/api/ad-placements/${bottomAd.id}`, { method: "POST" });
-  // }, [bottomAd]);
-
-  // Real data with your provided names and images
-  const realAchievements: Achievement[] = [
-    {
-      id: 1,
-      name: "Savitri Kumari",
-      title: "Healthcare Innovation Leader",
-      description:
-        "Leading healthcare initiatives and improving community health services with innovative approaches and dedication to patient care.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/savitri_yjb8ku.jpg",
-      category: "Healthcare",
-      isVerified: true,
-      isFeatured: true,
-      isHallOfFame: false,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement:
-        "Established mobile healthcare units serving 10,000+ rural patients",
-      impact: "Improved healthcare access for underserved communities by 80%",
-      achievements: [
-        "Community Health Excellence Award",
-        "Healthcare Innovation Prize",
-      ],
-    },
-    {
-      id: 2,
-      name: "Prafful Priyadarshi",
-      title: "Technology Entrepreneur",
-      description:
-        "Pioneering technology solutions and driving digital transformation in the region with cutting-edge innovations.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129462/praful_rclc50.jpg",
-      category: "Technology",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement:
-        "Developed AI-powered education platform used by 50,000+ students",
-      impact:
-        "Enhanced digital literacy and educational access across Jharkhand",
-      achievements: ["Tech Innovation Award", "Digital Excellence Recognition"],
-    },
-    {
-      id: 3,
-      name: "Priyanka Bharti",
-      title: "Education Reformer",
-      description:
-        "Transforming educational landscapes through innovative teaching methods and community engagement programs.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/priyanka_wib5ox.jpg",
-      category: "Education",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement:
-        "Established 25 community learning centers benefiting 5,000+ children",
-      impact: "Increased literacy rates in rural areas by 60%",
-      achievements: [
-        "Education Excellence Award",
-        "Community Development Prize",
-      ],
-    },
-    {
-      id: 4,
-      name: "Rovin Kumar",
-      title: "Sports Development Champion",
-      description:
-        "Promoting sports culture and developing athletic talent through comprehensive training programs and community initiatives.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/rovin_dpvjsz.jpg",
-      category: "Sports",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement:
-        "Trained 200+ young athletes, 15 reached state level competitions",
-      impact: "Boosted sports participation among youth by 150%",
-      achievements: [
-        "Sports Excellence Award",
-        "Youth Development Recognition",
-      ],
-    },
-    {
-      id: 5,
-      name: "Vishwajeet Kumar",
-      title: "Business Innovation Leader",
-      description:
-        "Driving economic growth through innovative business solutions and entrepreneurship development in the region.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/vishwajeet_an8fcr.jpg",
-      category: "Business",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Created 500+ jobs through startup ecosystem development",
-      impact: "Contributed ₹50 crores to local economy growth",
-      achievements: [
-        "Business Excellence Award",
-        "Entrepreneurship Recognition",
-      ],
-    },
-    {
-      id: 6,
-      name: "Ankur Kumar",
-      title: "Arts & Culture Promoter",
-      description:
-        "Preserving and promoting local arts and culture while creating platforms for artistic expression and cultural heritage.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/ankur_dcoppo.jpg",
-      category: "Arts",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Organized 50+ cultural events showcasing local talent",
-      impact: "Revitalized local arts scene and cultural tourism",
-      achievements: ["Cultural Excellence Award", "Arts Promotion Prize"],
-    },
-    {
-      id: 7,
-      name: "Aastha Rani",
-      title: "Healthcare Community Worker",
-      description:
-        "Dedicated healthcare professional focusing on maternal and child health with exceptional community service record.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/aastha_yzbjaa.jpg",
-      category: "Healthcare",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Improved maternal health outcomes in 20 villages",
-      impact: "Reduced maternal mortality rate by 40% in target areas",
-      achievements: ["Community Health Award", "Maternal Care Excellence"],
-    },
-    {
-      id: 8,
-      name: "Dhirendra Kumar Singh",
-      title: "Technology Solutions Architect",
-      description:
-        "Building robust technology infrastructure and digital solutions for local businesses and government initiatives.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129463/dhirendra_pij6ma.jpg",
-      category: "Technology",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Digitized 100+ local businesses with custom solutions",
-      impact:
-        "Increased operational efficiency by 70% for participating businesses",
-      achievements: [
-        "Digital Transformation Award",
-        "Tech Innovation Recognition",
-      ],
-    },
-    {
-      id: 9,
-      name: "Ujjawal Kumar",
-      title: "Education Technology Specialist",
-      description:
-        "Integrating technology in education to enhance learning experiences and improve educational outcomes for students.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/ujjawal_ds1yao.jpg",
-      category: "Education",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Implemented e-learning systems in 30 schools",
-      impact: "Enhanced learning outcomes for 8,000+ students",
-      achievements: ["EdTech Excellence Award", "Innovation in Learning Prize"],
-    },
-    {
-      id: 10,
-      name: "Gautam Gaurav",
-      title: "Community Sports Coordinator",
-      description:
-        "Organizing sports events and developing grassroots sports programs to identify and nurture local athletic talent.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/gautam_ynholv.jpg",
-      category: "Sports",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Organized 40+ inter-district sports tournaments",
-      impact: "Discovered and developed 50+ promising athletes",
-      achievements: ["Sports Organization Award", "Youth Development Prize"],
-    },
-    {
-      id: 11,
-      name: "Rakesh Kumar Verma",
-      title: "Business Development Consultant",
-      description:
-        "Supporting local businesses through strategic consulting and helping establish sustainable business practices in the region.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129465/rakesh_llnhl0.jpg",
-      category: "Business",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Mentored 80+ small businesses to profitability",
-      impact: "Generated ₹20 crores in additional revenue for local businesses",
-      achievements: [
-        "Business Mentorship Award",
-        "Economic Development Recognition",
-      ],
-    },
-    {
-      id: 12,
-      name: "Udai Kumar",
-      title: "Cultural Heritage Preservationist",
-      description:
-        "Working to preserve and document local cultural heritage while promoting traditional arts and crafts among younger generations.",
-      image:
-        "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754129464/udai_eimlbe.jpg",
-      category: "Arts",
-      isVerified: true,
-      isFeatured: false,
-      isHallOfFame: true,
-      year: 2024,
-      location: "Ranchi, Jharkhand",
-      keyAchievement: "Documented 100+ traditional art forms and practices",
-      impact: "Preserved cultural heritage for future generations",
-      achievements: [
-        "Heritage Preservation Award",
-        "Cultural Documentation Prize",
-      ],
-    },
-  ];
-
-  const [achievements] = useState(realAchievements);
-
-  const featuredAchievement = achievements.find(
+  const [achievements, setAchievements] = useState<Achievement[]>(
+    initialAchievements || []
+  );
+  const featuredAchievements = achievements.filter(
     (achievement) => achievement.isFeatured
   );
+
   const hallOfFameMembers = achievements.filter(
     (achievement) => achievement.isHallOfFame
   );
@@ -445,15 +189,18 @@ export default function AchievementsClient({
   );
 
   const filteredAchievements = achievements.filter((achievement) => {
-    const matchesSearch =
-      achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      achievement.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      achievement.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      filterCategory === "all" ||
-      achievement.category.toLowerCase() === filterCategory.toLowerCase();
-    return matchesSearch && matchesCategory;
-  });
+  const matchesSearch =
+    achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    achievement.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    achievement.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+  const matchesCategory =
+    filterCategory === "all" ||
+    achievement.category.toLowerCase() === filterCategory.toLowerCase();
+
+  return matchesSearch && matchesCategory;
+});
+
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -492,7 +239,15 @@ export default function AchievementsClient({
         return "⭐";
     }
   };
-
+  useEffect(() => {
+    if (featuredAchievements.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentFeaturedIndex(
+        (prev) => (prev + 1) % featuredAchievements.length
+      );
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [featuredAchievements.length]);
   return (
     <div className="min-h-screen bg-yellow-50">
       {/* Header */}
@@ -510,10 +265,6 @@ export default function AchievementsClient({
               Community Achievements
             </h1>
           </div>
-          {/* <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
-            <Plus className="w-4 h-4 mr-2" />
-            Nominate Achievement
-          </Button> */}
         </div>
       </div>
 
@@ -563,7 +314,7 @@ export default function AchievementsClient({
             >
               Hall of Fame
             </button>
-            <button
+            {/* <button
               onClick={() => setActiveTab("recent")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
                 activeTab === "recent"
@@ -572,7 +323,7 @@ export default function AchievementsClient({
               }`}
             >
               Recent Achievements
-            </button>
+            </button> */}
             <button
               onClick={() => setActiveTab("by-category")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
@@ -583,117 +334,170 @@ export default function AchievementsClient({
             >
               By Category
             </button>
-            {/* <button
-              onClick={() => setActiveTab("nominations")}
-              className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "nominations"
-                  ? "border-orange-600 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Nominations
-            </button> */}
           </div>
         </div>
       </div>
-      {/* <div className="absolute top-72 left-16">
-        <LeftSideAddBanner />
-    </div> */}
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Achievement */}
-        {featuredAchievement && activeTab === "hall-of-fame" && (
+        {featuredAchievements.length > 0 && activeTab === "hall-of-fame" && (
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-red-700 mb-6">
-              Featured Achievement
+              Featured Achievements
             </h2>
-            <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
-              <CardContent className="p-0">
-                <div className="flex flex-col lg:flex-row">
-                  <div className="lg:w-1/3 p-6 flex justify-center items-center">
-                    <img
-                      src={featuredAchievement.image}
-                      alt={featuredAchievement.name}
-                      className="w-48 h-48 object-cover rounded-lg"
-                    />
+
+            <div className="relative w-full overflow-hidden">
+              {/* Slider Container */}
+              <div
+                className="flex transition-transform duration-700 ease-in-out"
+                style={{
+                  transform: `translateX(-${currentFeaturedIndex * 100}%)`,
+                  width: `${featuredAchievements.length * 100}%`,
+                }}
+              >
+                {featuredAchievements.map((featuredAchievement) => (
+                  <div
+                    key={featuredAchievement.id}
+                    className="w-full flex-shrink-0"
+                    style={{ flex: "0 0 100%" }}
+                  >
+                    <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
+                      <CardContent className="p-0">
+                        <div className="flex flex-col lg:flex-row">
+                          <div className="w-1/6 p-6 hidden lg:flex items-center justify-center bg-yellow-100">
+                            <img
+                              src={featuredAchievement.image}
+                              alt={featuredAchievement.name}
+                              className="w-48 h-48 object-fill rounded-lg"
+                            />
+                          </div>
+                          <div className="lg:w-2/3 p-6">
+                            <div className="flex items-center gap-2 mb-4">
+                              <Badge
+                                className={getCategoryColor(
+                                  featuredAchievement.category
+                                )}
+                              >
+                                <span className="mr-1">
+                                  {getCategoryIcon(
+                                    featuredAchievement.category
+                                  )}
+                                </span>
+                                {featuredAchievement.category}
+                              </Badge>
+                              {featuredAchievement.isVerified && (
+                                <Badge className="bg-blue-100 text-blue-800">
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  Verified
+                                </Badge>
+                              )}
+                            </div>
+
+                            <h3 className="text-2xl font-bold text-red-700 mb-2">
+                              {featuredAchievement.name}
+                            </h3>
+                            <h4 className="text-lg font-semibold text-red-600 mb-4">
+                              {featuredAchievement.title}
+                            </h4>
+
+                            <p className="text-gray-600 mb-6 leading-relaxed">
+                              {featuredAchievement.description}
+                            </p>
+
+                            <div className="mb-6">
+                              <h5 className="font-semibold text-red-700 mb-2">
+                                Key Achievement:
+                              </h5>
+                              <p className="text-gray-700">
+                                {featuredAchievement.keyAchievement}
+                              </p>
+                            </div>
+
+                            <div className="mb-6">
+                              <p className="text-green-600 font-medium">
+                                {featuredAchievement.impact}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-6 mb-6 text-gray-600">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4" />
+                                <span>{featuredAchievement.year}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <MapPin className="w-4 h-4" />
+                                <span>{featuredAchievement.location}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Trophy className="w-4 h-4" />
+                                <span>Hall of Fame</span>
+                              </div>
+                            </div>
+
+                            {/* <div className="flex gap-3">
+                              <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
+                                <User className="w-4 h-4 mr-2" />
+                                View Full Profile
+                              </Button>
+                              <Button
+                                variant="outline"
+                                className="border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
+                              >
+                                <Share className="w-4 h-4 mr-2" />
+                                Share Achievement
+                              </Button>
+                            </div> */}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
-                  <div className="lg:w-2/3 p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Badge
-                        className={getCategoryColor(
-                          featuredAchievement.category
-                        )}
-                      >
-                        <span className="mr-1">
-                          {getCategoryIcon(featuredAchievement.category)}
-                        </span>
-                        {featuredAchievement.category}
-                      </Badge>
-                      {featuredAchievement.isVerified && (
-                        <Badge className="bg-blue-100 text-blue-800">
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          Verified
-                        </Badge>
-                      )}
-                    </div>
+                ))}
+              </div>
 
-                    <h3 className="text-2xl font-bold text-red-700 mb-2">
-                      {featuredAchievement.name}
-                    </h3>
-                    <h4 className="text-lg font-semibold text-red-600 mb-4">
-                      {featuredAchievement.title}
-                    </h4>
-
-                    <p className="text-gray-600 mb-6 leading-relaxed">
-                      {featuredAchievement.description}
-                    </p>
-
-                    <div className="mb-6">
-                      <h5 className="font-semibold text-red-700 mb-2">
-                        Key Achievement:
-                      </h5>
-                      <p className="text-gray-700">
-                        {featuredAchievement.keyAchievement}
-                      </p>
-                    </div>
-
-                    <div className="mb-6">
-                      <p className="text-green-600 font-medium">
-                        {featuredAchievement.impact}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-6 mb-6 text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        <span>{featuredAchievement.year}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
-                        <span>{featuredAchievement.location}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Trophy className="w-4 h-4" />
-                        <span>Hall of Fame</span>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
-                        <User className="w-4 h-4 mr-2" />
-                        View Full Profile
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
-                      >
-                        <Share className="w-4 h-4 mr-2" />
-                        Share Achievement
-                      </Button>
-                    </div>
+              {/* Slider Controls */}
+              {featuredAchievements.length > 1 && (
+                <>
+                  {/* Dots */}
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+                    {featuredAchievements.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentFeaturedIndex(idx)}
+                        className={`w-3 h-3 rounded-full transition-all ${
+                          idx === currentFeaturedIndex
+                            ? "bg-orange-600 scale-110"
+                            : "bg-orange-300 hover:bg-orange-400"
+                        }`}
+                      />
+                    ))}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+
+                  {/* Arrows */}
+                  <button
+                    onClick={() =>
+                      setCurrentFeaturedIndex(
+                        (prev) =>
+                          (prev - 1 + featuredAchievements.length) %
+                          featuredAchievements.length
+                      )
+                    }
+                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-orange-500/70 text-white rounded-full p-2"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentFeaturedIndex(
+                        (prev) => (prev + 1) % featuredAchievements.length
+                      )
+                    }
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-orange-500/70 text-white rounded-full p-2"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         )}
 
@@ -727,12 +531,6 @@ export default function AchievementsClient({
                           </span>
                           {achievement.category}
                         </Badge>
-                        {/* {achievement.isVerified && (
-                          <Badge className="bg-blue-100 text-blue-800">
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Verified
-                          </Badge>
-                        )} */}
                       </div>
                     </div>
 
@@ -769,7 +567,7 @@ export default function AchievementsClient({
                         </span>
                       </div>
 
-                      <div className="flex gap-2">
+                      {/* <div className="flex gap-2">
                         <Button
                           size="sm"
                           className="flex-1 bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white"
@@ -784,7 +582,7 @@ export default function AchievementsClient({
                         >
                           Share
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </CardContent>
                 </Card>
@@ -794,7 +592,7 @@ export default function AchievementsClient({
         )}
 
         {/* Recent Achievements */}
-        {activeTab === "recent" && (
+        {/* {activeTab === "recent" && (
           <div>
             <h2 className="text-2xl font-bold text-red-700 mb-6">
               Recent Achievements (2024)
@@ -860,7 +658,7 @@ export default function AchievementsClient({
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* By Category */}
         {activeTab === "by-category" && (

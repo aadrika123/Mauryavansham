@@ -34,6 +34,7 @@ import {
   HeartHandshakeIcon,
   BookAIcon,
   AmbulanceIcon,
+  Trophy,
 } from "lucide-react"; // ✅ Added Menu & X icons
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -80,7 +81,23 @@ export default function AdmindashboardLayout({
       icon: MessageSquare,
     },
     { title: "Manage Users", href: "/admin/users", icon: Users },
-
+    // {
+    //   title: "Achievements",
+    //   href: "",
+    //   icon: Trophy,
+    //   subItems: [
+    //     {
+    //       title: "Create Achievements",
+    //       href: "/admin/create-achievement",
+    //       icon: Trophy,
+    //     },
+    //     {
+    //       title: " Created Achievements",
+    //       href: "/admin/created-achievement",
+    //       icon: Trophy,
+    //     },
+    //   ],
+    // },
     {
       title: "Events",
       href: "",
@@ -194,6 +211,23 @@ export default function AdmindashboardLayout({
       ],
     },
     { title: "All Users", href: "/admin/manage-users", icon: Users },
+    {
+      title: "Achievements",
+      href: "",
+      icon: Trophy,
+      subItems: [
+        {
+          title: "Create Achievements",
+          href: "/admin/create-achievement",
+          icon: Trophy,
+        },
+        {
+          title: " Created Achievements",
+          href: "/admin/created-achievement",
+          icon: Trophy,
+        },
+      ],
+    },
 
     {
       title: "Modarations",

@@ -1,0 +1,392 @@
+"use client";
+
+import { useState } from "react";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/src/components/ui/tabs";
+import { Card, CardContent } from "@/src/components/ui/card";
+import { Badge } from "@/src/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/src/components/ui/dialog";
+import { Calendar, User, Eye } from "lucide-react";
+import { toast } from "react-hot-toast";
+
+interface Achievement {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  isVerified: boolean;
+  isFeatured: boolean;
+  isHallOfFame: boolean;
+  year: number;
+  location: string;
+  keyAchievement: string;
+  impact: string;
+  achievements: string[];
+  status: string;
+  createdBy?: string;
+  createdAt?: string;
+  removedBy?: string | null;
+  removedById?: string | null;
+  reason?: string | null;
+  removedAt?: string | null;
+}
+
+export default function AdminAchievementsPage({
+  achievements,
+}: {
+  achievements: Achievement[];
+}) {
+  const [activeTab, setActiveTab] = useState("active");
+  const [selectedAchievement, setSelectedAchievement] =
+    useState<Achievement | null>(null);
+
+  const [showReasonModal, setShowReasonModal] = useState(false);
+  const [disableReason, setDisableReason] = useState("");
+  const [processing, setProcessing] = useState(false);
+
+  const activeAchievements = achievements.filter((a) => a.status === "active");
+  const removedAchievements = achievements.filter(
+    (a) => a.status === "inactive" || a.status === "removed"
+  );
+
+  const openModal = (achievement: Achievement) =>
+    setSelectedAchievement(achievement);
+  const closeModal = () => setSelectedAchievement(null);
+
+  const handleDisableClick = (achievement: Achievement) => {
+    setSelectedAchievement(achievement);
+    setShowReasonModal(true);
+  };
+
+  const handleActivateClick = async (achievement: Achievement) => {
+    try {
+      setProcessing(true);
+      const res = await fetch(`/api/achievements/updateStatus`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: achievement.id,
+          status: "active",
+          reason: null,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`"${achievement.name}" has been activated.`);
+        window.location.reload();
+      } else {
+        toast.error(data.message || "Failed to activate.");
+      }
+    } catch (err) {
+      toast.error("Error activating achievement.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const submitDisable = async () => {
+    if (!disableReason.trim()) {
+      toast.error("Please provide a reason before disabling.");
+      return;
+    }
+
+    if (!selectedAchievement) return;
+
+    try {
+      setProcessing(true);
+      const res = await fetch(`/api/achievements/updateStatus`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedAchievement.id,
+          status: "inactive",
+          reason: disableReason,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`"${selectedAchievement.name}" has been disabled.`);
+        setShowReasonModal(false);
+        setDisableReason("");
+        window.location.reload();
+      } else {
+        toast.error(data.message || "Failed to disable.");
+      }
+    } catch (err) {
+      toast.error("Error disabling achievement.");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <div className="p-6">
+      <h1 className="text-3xl font-bold text-red-700 mb-6">
+        Manage Achievements
+      </h1>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="bg-gray-100">
+          <TabsTrigger value="active">Active</TabsTrigger>
+          <TabsTrigger value="inactive">Disabled / Removed</TabsTrigger>
+        </TabsList>
+
+        {/* Active Tab */}
+        <TabsContent value="active">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {activeAchievements.map((a) => (
+              <Card key={a.id} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <img
+                    src={a.image}
+                    alt={a.name}
+                    className="w-full h-40 object-cover rounded-md mb-4"
+                  />
+                  <Badge className="mb-2">{a.category}</Badge>
+                  <h3 className="font-bold text-lg text-red-700">{a.name}</h3>
+                  <p className="text-sm text-gray-600">{a.title}</p>
+
+                  <div className="text-sm text-gray-500 mt-3">
+                    <p className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" /> Created On:{" "}
+                      {a.createdAt
+                        ? new Date(a.createdAt).toLocaleString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "—"}
+                    </p>
+
+                    <p className="flex items-center gap-1">
+                      <User className="w-4 h-4" /> Created By:{" "}
+                      {a.createdBy || "—"}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      onClick={() => openModal(a)}
+                      className="bg-orange-600 hover:bg-orange-700 text-white flex-1"
+                    >
+                      <Eye className="w-4 h-4 mr-2" /> View
+                    </Button>
+
+                    <Button
+                      variant="destructive"
+                      onClick={() => handleDisableClick(a)}
+                      className="flex-1"
+                    >
+                      Disable
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* Disabled Tab */}
+        <TabsContent value="inactive">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {removedAchievements.map((a) => (
+              <Card
+                key={a.id}
+                className="hover:shadow-md transition-shadow border-red-200"
+              >
+                <CardContent className="p-4">
+                  <img
+                    src={a.image}
+                    alt={a.name}
+                    className="w-full h-40 object-cover rounded-md mb-4"
+                  />
+                  <Badge className="mb-2 bg-red-100 text-red-700">
+                    {a.status.toUpperCase()}
+                  </Badge>
+                  <h3 className="font-bold text-lg text-red-700">{a.name}</h3>
+                  <p className="text-sm text-gray-600">{a.title}</p>
+
+                  <div className="text-sm text-gray-500 mt-3">
+                    <p className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" /> Removed On:{" "}
+                      {a.removedAt
+                        ? new Date(a.removedAt).toLocaleString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "—"}
+                    </p>
+                    <p className="flex items-center gap-1">
+                      <User className="w-4 h-4" /> Removed By:{" "}
+                      {a.removedBy || "—"}
+                    </p>
+                    <p className="flex items-center gap-1">
+                      <User className="w-4 h-4" /> Reason: {a.reason || "—"}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      onClick={() => openModal(a)}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Eye className="w-4 h-4 mr-2" /> View
+                    </Button>
+
+                    <Button
+                      onClick={() => handleActivateClick(a)}
+                      className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                      disabled={processing}
+                    >
+                      Activate
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* View Details Dialog */}
+      <Dialog
+        open={!!selectedAchievement && !showReasonModal}
+        onOpenChange={closeModal}
+      >
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-red-700 text-xl font-bold">
+              {selectedAchievement?.name}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedAchievement && (
+            <div>
+              <img
+                src={selectedAchievement.image}
+                alt={selectedAchievement.name}
+                className="w-full h-64 object-fill rounded-lg mb-4"
+              />
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Title:</span>{" "}
+                {selectedAchievement.title}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Category:</span>{" "}
+                {selectedAchievement.category}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Description:</span>{" "}
+                {selectedAchievement.description}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Key Achievement:</span>{" "}
+                {selectedAchievement.keyAchievement}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-semibold">Impact:</span>{" "}
+                {selectedAchievement.impact}
+              </p>
+
+              {selectedAchievement.status !== "active" && (
+                <>
+                  <p className="text-gray-700 mt-4">
+                    <span className="font-semibold">Removed By:</span>{" "}
+                    {selectedAchievement.removedBy || "—"}
+                  </p>
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Removed At:</span>{" "}
+                    {selectedAchievement.removedAt
+                      ? new Date(selectedAchievement.removedAt).toLocaleString(
+                          "en-IN",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )
+                      : "—"}
+                  </p>
+                </>
+              )}
+
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={closeModal}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Reason Dialog */}
+      <Dialog open={showReasonModal} onOpenChange={setShowReasonModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-red-700">
+              Disable Achievement
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600 mb-2">
+            Please enter a reason for disabling{" "}
+            <strong>{selectedAchievement?.name}</strong>:
+          </p>
+          <textarea
+            value={disableReason}
+            onChange={(e) => setDisableReason(e.target.value)}
+            placeholder="Enter reason..."
+            className="w-full border rounded-lg p-2 text-sm mb-4 focus:ring-1 focus:ring-red-500 outline-none"
+            rows={4}
+          />
+          <DialogFooter className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowReasonModal(false);
+                setSelectedAchievement(null); // 🔥 Prevents reopening of view dialog
+                setDisableReason("");
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              onClick={submitDisable}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={processing}
+            >
+              {processing ? "Processing..." : "Disable"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
