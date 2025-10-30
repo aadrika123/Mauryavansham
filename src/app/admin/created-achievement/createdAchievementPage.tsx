@@ -19,6 +19,7 @@ import {
 } from "@/src/components/ui/dialog";
 import { Calendar, User, Eye } from "lucide-react";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 interface Achievement {
   id: number;
@@ -155,7 +156,7 @@ export default function AdminAchievementsPage({
                   <img
                     src={a.image}
                     alt={a.name}
-                    className="w-full h-40 object-cover rounded-md mb-4"
+                    className="w-full h-40 object-fill rounded-md mb-4"
                   />
                   <Badge className="mb-2">{a.category}</Badge>
                   <h3 className="font-bold text-lg text-red-700">{a.name}</h3>
@@ -196,6 +197,11 @@ export default function AdminAchievementsPage({
                     >
                       Disable
                     </Button>
+                    <Link href={`/admin/created-achievement/${a.id}/edit`}>
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
+                        Edit
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

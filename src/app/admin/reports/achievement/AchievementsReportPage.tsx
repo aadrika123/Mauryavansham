@@ -29,11 +29,15 @@ interface Achievement {
   createdAt: string;
   updatedAt: string;
   reason?: string;
+  updatedBy?: string;
+  updatedById?: string;
 }
 
 export default function AchievementsReportPage() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [allFilteredAchievements, setAllFilteredAchievements] = useState<Achievement[]>([]);
+  const [allFilteredAchievements, setAllFilteredAchievements] = useState<
+    Achievement[]
+  >([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +61,9 @@ export default function AchievementsReportPage() {
         if (statusFilter) params.append("status", statusFilter);
         if (categoryFilter) params.append("category", categoryFilter);
 
-        const res = await fetch(`/api/reports/achievements?${params.toString()}`);
+        const res = await fetch(
+          `/api/reports/achievements?${params.toString()}`
+        );
         const data = await res.json();
 
         let records: Achievement[] = data.achievements || [];
@@ -76,7 +82,9 @@ export default function AchievementsReportPage() {
 
         setAllFilteredAchievements(records);
         setTotalCount(records.length);
-        setAchievements(records.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+        setAchievements(
+          records.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        );
       } catch (err) {
         console.error("Error fetching achievements:", err);
       } finally {
@@ -91,10 +99,9 @@ export default function AchievementsReportPage() {
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "-";
     const d = new Date(dateStr);
-    return `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${d.getFullYear()}`;
+    return `${String(d.getDate()).padStart(2, "0")}-${String(
+      d.getMonth() + 1
+    ).padStart(2, "0")}-${d.getFullYear()}`;
   };
 
   // ✅ Export Excel
@@ -106,23 +113,23 @@ export default function AchievementsReportPage() {
     );
 
     const dataToExport = sortedData.map((a) => ({
-      "Name": a.name,
-      "Title": a.title,
-      "Category": a.category,
-      "Year": a.year,
-      "Location": a.location,
+      Name: a.name,
+      Title: a.title,
+      Category: a.category,
+      Year: a.year,
+      Location: a.location,
       "Key Achievement": a.keyAchievement,
-      "Impact": a.impact,
-      "Verified": a.isVerified ? "Yes" : "No",
-      "Featured": a.isFeatured ? "Yes" : "No",
+      Impact: a.impact,
+      Verified: a.isVerified ? "Yes" : "No",
+      Featured: a.isFeatured ? "Yes" : "No",
       "Hall of Fame": a.isHallOfFame ? "Yes" : "No",
-      "Status": a.status,
+      Status: a.status,
       "Created By": a.createdBy,
       "Created On": formatDate(a.createdAt),
       "Updated On": formatDate(a.updatedAt),
       "Removed By": a.removedBy || "-",
       "Removed On": formatDate(a.removedAt),
-      "Reason": a.reason || "-",
+      Reason: a.reason || "-",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
@@ -210,6 +217,8 @@ export default function AchievementsReportPage() {
                   <th className="px-4 py-2 border">Featured</th>
                   <th className="px-4 py-2 border">Created By</th>
                   <th className="px-4 py-2 border">Created On</th>
+                  <th className="px-4 py-2 border">Updated On</th>
+                  <th className="px-4 py-2 border">Updated By</th>
                   <th className="px-4 py-2 border">Removed By</th>
                   <th className="px-4 py-2 border">Reason</th>
                 </tr>
@@ -232,11 +241,21 @@ export default function AchievementsReportPage() {
                       <td className="px-4 py-2 border">{a.category}</td>
                       <td className="px-4 py-2 border">{a.year}</td>
                       <td className="px-4 py-2 border">{a.location}</td>
-                      <td className="px-4 py-2 border capitalize">{a.status}</td>
+                      <td className="px-4 py-2 border capitalize">
+                        {a.status}
+                      </td>
                       {/* <td className="px-4 py-2 border">{a.isVerified ? "Yes" : "No"}</td> */}
-                      <td className="px-4 py-2 border">{a.isFeatured ? "Yes" : "No"}</td>
+                      <td className="px-4 py-2 border">
+                        {a.isFeatured ? "Yes" : "No"}
+                      </td>
                       <td className="px-4 py-2 border">{a.createdBy}</td>
-                      <td className="px-4 py-2 border">{formatDate(a.createdAt)}</td>
+                      <td className="px-4 py-2 border">
+                        {formatDate(a.createdAt)}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {a.updatedBy ? formatDate(a.updatedAt) : "-"}
+                      </td>
+                      <td className="px-4 py-2 border">{a.updatedBy || "-"}</td>
                       <td className="px-4 py-2 border">{a.removedBy || "-"}</td>
                       <td className="px-4 py-2 border">{a.reason || "-"}</td>
                     </tr>

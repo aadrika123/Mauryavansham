@@ -56,4 +56,6 @@ export const achievements = pgTable("achievements", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   reason: text("reason"),
+  updatedBy: varchar("updated_by", { length: 150 }),
+  updatedById: varchar("updated_by_id", { length: 100 }),
 });
