@@ -473,58 +473,65 @@ export default function CommunityForumPage({ user }: Props) {
   }, []);
 
   const loadDiscussions = async (fetchedCategories?: any[]) => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (searchQuery) params.append("search", searchQuery);
+  try {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (searchQuery) params.append("search", searchQuery);
 
-      const response = await fetch(`/api/discussions?${params}`);
-      const data = await response.json();
-      const allDiscussionsData: Discussion[] = data.data || data || [];
+    const response = await fetch(`/api/discussions?${params}`);
+    const data = await response.json();
+    const allDiscussionsData: Discussion[] = data.data || [];
 
-      let filteredDiscussions: Discussion[];
-      if (selectedCategory === "All Discussions") {
-        filteredDiscussions = allDiscussionsData.filter((d) => !d.isCompleted);
-      } else if (selectedCategory === "My Discussions") {
-        filteredDiscussions = allDiscussionsData.filter(
-          (d) => String(d.authorId) === String(user?.id)
-        );
-      } else {
-        filteredDiscussions = allDiscussionsData.filter(
-          (d) => d.category === selectedCategory && !d.isCompleted
-        );
-      }
+    // Pre-filtered lists
+    const notCompleted = allDiscussionsData.filter((d) => !d.isCompleted);
+    const myDiscussions = allDiscussionsData.filter(
+      (d) => String(d.authorId) === String(user?.id)
+    );
 
-      setAllDiscussions(filteredDiscussions);
-      setDiscussions(filteredDiscussions.slice(0, displayCount));
+    let filteredDiscussions =
+      selectedCategory === "All Discussions"
+        ? notCompleted
+        : selectedCategory === "My Discussions"
+        ? myDiscussions
+        : notCompleted.filter((d) => d.category === selectedCategory);
 
-      const counts: Record<string, number> = {
-        "All Discussions": allDiscussionsData.filter((d) => !d.isCompleted)
-          .length,
-        "My Discussions": allDiscussionsData.filter(
-          (d) => String(d.authorId) === String(user?.id)
-        ).length,
-      };
-
-      allDiscussionsData.forEach((d) => {
-        if (!d.isCompleted && d.category) {
-          counts[d.category] = (counts[d.category] || 0) + 1;
-        }
-      });
-
-      const catsToUse = fetchedCategories || categories;
-      const updatedCategories = catsToUse.map((cat) => ({
-        ...cat,
-        count: counts[cat.name] || 0,
-      }));
-
-      setCategories(updatedCategories);
-    } catch (error) {
-      console.error("Failed to load discussions:", error);
-    } finally {
-      setLoading(false);
+    // Apply local search if backend search not active
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filteredDiscussions = filteredDiscussions.filter(
+        (d) =>
+          d.title?.toLowerCase().includes(q) ||
+          d.content?.toLowerCase().includes(q) ||
+          d.authorName?.toLowerCase().includes(q)
+      );
     }
-  };
+
+    setAllDiscussions(filteredDiscussions);
+    setDiscussions(filteredDiscussions.slice(0, displayCount));
+
+    // Count categories
+    const counts: Record<string, number> = {
+      "All Discussions": notCompleted.length,
+      "My Discussions": myDiscussions.length,
+    };
+
+    notCompleted.forEach((d) => {
+      if (d.category) counts[d.category] = (counts[d.category] || 0) + 1;
+    });
+
+    const updatedCategories = (fetchedCategories || categories).map((cat) => ({
+      ...cat,
+      count: counts[cat.name] || 0,
+    }));
+
+    setCategories(updatedCategories);
+  } catch (error) {
+    console.error("Failed to load discussions:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     setDiscussions(allDiscussions.slice(0, displayCount));
@@ -570,83 +577,48 @@ export default function CommunityForumPage({ user }: Props) {
   };
 
   const handleLikeDiscussion = async (discussionId: number) => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
+  if (!user) {
+    setShowLoginModal(true);
+    return;
+  }
 
-    try {
-      const response = await fetch(`/api/discussions/${discussionId}/likes`, {
-        method: "POST",
-      });
+  // Optimistic update
+  setDiscussions((prev) =>
+    prev.map((d) =>
+      d.id === discussionId
+        ? {
+            ...d,
+            isLiked: !d.isLiked,
+            likeCount: d.isLiked ? d.likeCount - 1 : d.likeCount + 1,
+          }
+        : d
+    )
+  );
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Like response:", data);
-        loadDiscussions();
-      }
-    } catch (error) {
-      console.error("Failed to like discussion:", error);
-    }
-  };
+  try {
+    const response = await fetch(`/api/discussions/${discussionId}/likes`, {
+      method: "POST",
+    });
 
-  const handleCloseDiscussion = async (discussionId: number) => {
-    try {
-      const res = await fetch(`/api/discussions/${discussionId}/close`, {
-        method: "PATCH",
-      });
+    if (!response.ok) throw new Error("Failed to like");
+  } catch (error) {
+    console.error("Failed to like discussion:", error);
 
-      if (res.ok) {
-        loadDiscussions();
-      } else {
-        console.error("Failed to close discussion");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    // Rollback if failed
+    setDiscussions((prev) =>
+      prev.map((d) =>
+        d.id === discussionId
+          ? {
+              ...d,
+              isLiked: !d.isLiked,
+              likeCount: d.isLiked ? d.likeCount + 1 : d.likeCount - 1,
+            }
+          : d
+      )
+    );
+  }
+};
 
-  // Enhanced replies fetching with nested structure
-  // const fetchReplies = async (discussionId: number) => {
-  //   setRepliesLoading(true);
-  //   try {
-  //     const res = await fetch(`/api/discussions/${discussionId}/replies`);
-  //     const data = await res.json();
-
-  //     // Transform flat replies into nested structure
-  //     const replies = data.data || [];
-  //     const repliesMap = new Map();
-  //     const rootReplies: Reply[] = [];
-
-  //     // First pass: create map of all replies
-  //     replies.forEach((reply: any) => {
-  //       repliesMap.set(reply.id, {
-  //         ...reply,
-  //         replies: [],
-  //         likeCount: reply.likeCount || 0,
-  //         isLiked: reply.isLiked || false,
-  //       });
-  //     });
-
-  //     // Second pass: build nested structure
-  //     replies.forEach((reply: any) => {
-  //       if (reply.parentId) {
-  //         const parent = repliesMap.get(reply.parentId);
-  //         if (parent) {
-  //           parent.replies.push(repliesMap.get(reply.id));
-  //         }
-  //       } else {
-  //         rootReplies.push(repliesMap.get(reply.id));
-  //       }
-  //     });
-
-  //     setDiscussionReplies(rootReplies);
-  //   } catch (error) {
-  //     console.error("Failed to load replies:", error);
-  //   } finally {
-  //     setRepliesLoading(false);
-  //   }
-  // };
   const fetchReplies = async (discussionId: number) => {
     setRepliesLoading(true);
     try {
@@ -813,14 +785,6 @@ export default function CommunityForumPage({ user }: Props) {
       console.error(error);
     }
   };
-
-  // const ad = adPlacements.find((ad) => ad.placementId === 5);
-
-  // useEffect(() => {
-  //   if (ad) {
-  //     fetch(`/api/ad-placements/${ad.id}`, { method: "POST" });
-  //   }
-  // }, [ad]);
 
   return (
     <div className="px-4 sm:px-6 md:px-8 min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50">

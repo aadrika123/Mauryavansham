@@ -13,10 +13,8 @@ export async function GET() {
     const userId = session?.user?.id;
 
     const isLikedSql = userId
-      ? sql<boolean>`BOOL_OR(${discussionLikes.userId} = ${userId})`.as(
-          "isLiked"
-        )
-      : sql<boolean>`FALSE`.as("isLiked"); // user not logged in, so always false
+      ? sql<boolean>`BOOL_OR(${discussionLikes.userId} = ${userId})`.as("isLiked")
+      : sql<boolean>`FALSE`.as("isLiked");
 
     const allDiscussions = await db
       .select({
@@ -30,22 +28,14 @@ export async function GET() {
         status: discussions.status,
         isCompleted: discussions.isCompleted,
         createdAt: discussions.createdAt,
-        likeCount: sql<number>`COUNT(${discussionLikes.id})`.as("likeCount"),
-        replyCount: sql<number>`COUNT(${discussionReplies.id})`.as(
-          "replyCount"
-        ), // <-- add reply count
+        likeCount: sql<number>`COUNT(DISTINCT ${discussionLikes.id})`.as("likeCount"),
+        replyCount: sql<number>`COUNT(DISTINCT ${discussionReplies.id})`.as("replyCount"),
         isLiked: isLikedSql,
       })
       .from(discussions)
       .where(eq(discussions.status, "approved"))
-      .leftJoin(
-        discussionLikes,
-        eq(discussions.id, discussionLikes.discussionId)
-      )
-      .leftJoin(
-        discussionReplies,
-        eq(discussions.id, discussionReplies.discussionId)
-      )
+      .leftJoin(discussionLikes, eq(discussions.id, discussionLikes.discussionId))
+      .leftJoin(discussionReplies, eq(discussions.id, discussionReplies.discussionId))
       .groupBy(discussions.id)
       .orderBy(desc(discussions.createdAt));
 
@@ -58,6 +48,7 @@ export async function GET() {
     );
   }
 }
+
 
 // ✅ Create Discussion (Only logged-in user)
 export async function POST(req: Request) {
