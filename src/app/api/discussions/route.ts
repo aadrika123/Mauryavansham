@@ -12,10 +12,32 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
-    const isLikedSql = userId
-      ? sql<boolean>`BOOL_OR(${discussionLikes.userId} = ${userId})`.as("isLiked")
-      : sql<boolean>`FALSE`.as("isLiked");
+    // ✅ Subquery for like counts
+    const likeCountSub = db
+      .select({
+        discussionId: discussionLikes.discussionId,
+        likeCount: sql<number>`COUNT(${discussionLikes.id})`.as("like_count"),
+      })
+      .from(discussionLikes)
+      .groupBy(discussionLikes.discussionId)
+      .as("like_count_sub");
 
+    // ✅ Subquery for reply counts
+    const replyCountSub = db
+      .select({
+        discussionId: discussionReplies.discussionId,
+        replyCount: sql<number>`COUNT(${discussionReplies.id})`.as("reply_count"),
+      })
+      .from(discussionReplies)
+      .groupBy(discussionReplies.discussionId)
+      .as("reply_count_sub");
+
+    // ✅ Whether user liked the discussion
+    const isLikedSql = userId
+      ? sql<boolean>`BOOL_OR(${discussionLikes.userId} = ${userId})`.as("is_liked")
+      : sql<boolean>`FALSE`.as("is_liked");
+
+    // ✅ Main query
     const allDiscussions = await db
       .select({
         id: discussions.id,
@@ -28,15 +50,20 @@ export async function GET() {
         status: discussions.status,
         isCompleted: discussions.isCompleted,
         createdAt: discussions.createdAt,
-        likeCount: sql<number>`COUNT(DISTINCT ${discussionLikes.id})`.as("likeCount"),
-        replyCount: sql<number>`COUNT(DISTINCT ${discussionReplies.id})`.as("replyCount"),
+        likeCount: sql<number>`COALESCE("like_count_sub"."like_count", 0)`.as("like_count"),
+        replyCount: sql<number>`COALESCE("reply_count_sub"."reply_count", 0)`.as("reply_count"),
         isLiked: isLikedSql,
       })
       .from(discussions)
-      .where(eq(discussions.status, "approved"))
+      .leftJoin(likeCountSub, eq(discussions.id, likeCountSub.discussionId))
+      .leftJoin(replyCountSub, eq(discussions.id, replyCountSub.discussionId))
       .leftJoin(discussionLikes, eq(discussions.id, discussionLikes.discussionId))
-      .leftJoin(discussionReplies, eq(discussions.id, discussionReplies.discussionId))
-      .groupBy(discussions.id)
+      .where(eq(discussions.status, "approved"))
+      .groupBy(
+        discussions.id,
+        sql`"like_count_sub"."like_count"`,
+        sql`"reply_count_sub"."reply_count"`
+      )
       .orderBy(desc(discussions.createdAt));
 
     return NextResponse.json({ success: true, data: allDiscussions });
@@ -48,6 +75,7 @@ export async function GET() {
     );
   }
 }
+
 
 
 // ✅ Create Discussion (Only logged-in user)

@@ -576,13 +576,18 @@ export default function CommunityForumPage({ user }: Props) {
     }
   };
 
-  const handleLikeDiscussion = async (discussionId: number) => {
+const handleLikeDiscussion = async (discussionId: number) => {
   if (!user) {
     setShowLoginModal(true);
     return;
   }
 
-  // Optimistic update
+  // find the current discussion before optimistic update
+  const currentDiscussion = discussions.find((d) => d.id === discussionId);
+  const prevIsLiked = currentDiscussion?.isLiked;
+  const prevLikeCount = currentDiscussion?.likeCount ?? 0;
+
+  // ✅ Optimistic update
   setDiscussions((prev) =>
     prev.map((d) =>
       d.id === discussionId
@@ -601,23 +606,21 @@ export default function CommunityForumPage({ user }: Props) {
     });
 
     if (!response.ok) throw new Error("Failed to like");
+    await loadDiscussions();
   } catch (error) {
     console.error("Failed to like discussion:", error);
 
-    // Rollback if failed
+    // ✅ Rollback to previous values (not toggle again)
     setDiscussions((prev) =>
       prev.map((d) =>
         d.id === discussionId
-          ? {
-              ...d,
-              isLiked: !d.isLiked,
-              likeCount: d.isLiked ? d.likeCount + 1 : d.likeCount - 1,
-            }
+          ? { ...d, isLiked: prevIsLiked, likeCount: prevLikeCount }
           : d
       )
     );
   }
 };
+
 
   const fetchReplies = async (discussionId: number) => {
     setRepliesLoading(true);
