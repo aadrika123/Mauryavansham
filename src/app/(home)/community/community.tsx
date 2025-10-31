@@ -581,25 +581,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
     setShowLoginModal(true);
     return;
   }
-
-  // find the current discussion before optimistic update
-  const currentDiscussion = discussions.find((d) => d.id === discussionId);
-  const prevIsLiked = currentDiscussion?.isLiked;
-  const prevLikeCount = currentDiscussion?.likeCount ?? 0;
-
-  // ✅ Optimistic update
-  setDiscussions((prev) =>
-    prev.map((d) =>
-      d.id === discussionId
-        ? {
-            ...d,
-            isLiked: !d.isLiked,
-            likeCount: d.isLiked ? d.likeCount - 1 : d.likeCount + 1,
-          }
-        : d
-    )
-  );
-
   try {
     const response = await fetch(`/api/discussions/${discussionId}/likes`, {
       method: "POST",
@@ -609,15 +590,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
     await loadDiscussions();
   } catch (error) {
     console.error("Failed to like discussion:", error);
-
-    // ✅ Rollback to previous values (not toggle again)
-    setDiscussions((prev) =>
-      prev.map((d) =>
-        d.id === discussionId
-          ? { ...d, isLiked: prevIsLiked, likeCount: prevLikeCount }
-          : d
-      )
-    );
   }
 };
 
