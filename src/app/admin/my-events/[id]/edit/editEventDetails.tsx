@@ -48,7 +48,7 @@ export default function EditEventPage() {
             title: "You cannot edit this event",
             variant: "destructive",
           });
-          router.push("/myEvents");
+          router.push("/admin/my-events");
           return;
         }
 
@@ -63,7 +63,7 @@ export default function EditEventPage() {
           title: "Failed to load event",
           variant: "destructive",
         });
-        router.push("/myEvents");
+        router.push("/admin/my-events");
       } finally {
         setLoading(false);
       }

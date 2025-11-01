@@ -196,7 +196,7 @@ export default function AchievementsClient({
   );
 
   const hallOfFameMembers = achievements.filter(
-    (achievement) => achievement.isHallOfFame
+    (achievement) => achievement.isHallOfFame || !achievement.isHallOfFame
   );
   const recentAchievements = achievements.filter(
     (achievement) => achievement.year === 2024
