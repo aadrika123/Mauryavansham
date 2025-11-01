@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
-// ✅ Enum for category
+// ✅ Updated Enum for category
 export const achievementCategoryEnum = pgEnum("achievement_category", [
   "Healthcare",
   "Sports",
@@ -19,6 +19,10 @@ export const achievementCategoryEnum = pgEnum("achievement_category", [
   "Education",
   "Business",
   "Arts",
+  "Central Government",
+  "PSU",
+  "State Government",
+  "Other",
 ]);
 
 // ✅ Enum for status
@@ -32,10 +36,16 @@ export const achievementStatusEnum = pgEnum("achievement_status", [
 export const achievements = pgTable("achievements", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 150 }).notNull(),
-  title: varchar("title", { length: 200 }).notNull(),
+  fatherName: varchar("father_name", { length: 150 }).notNull(),
+  motherName: varchar("mother_name", { length: 150 }).notNull(),
+  achievementTitle: varchar("achievement_title", { length: 200 }).notNull(),
   description: text("description").notNull(),
-  image: text("image").notNull(),
+  images: jsonb("images")
+    .$type<string[]>()
+    .default(sql`'[]'::jsonb`)
+    .notNull(),
   category: achievementCategoryEnum("category").notNull(),
+  otherCategory: varchar("other_category", { length: 200 }), // ✅ for custom input
   isVerified: boolean("is_verified").default(false).notNull(),
   isFeatured: boolean("is_featured").default(false).notNull(),
   isHallOfFame: boolean("is_hall_of_fame").default(false).notNull(),

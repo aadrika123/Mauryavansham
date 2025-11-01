@@ -48,6 +48,19 @@ interface Achievement {
   keyAchievement: string;
   impact: string;
   achievements: string[];
+  status: string;
+  createdBy: string;
+  createdById: string;
+  removedBy?: string;
+  removedById?: string;
+  removedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  reason?: string;
+  updatedBy?: string;
+  updatedById?: string;
+  images: string[];
+  currentImageIndex: number;
 }
 
 interface AchievementsClientProps {
@@ -70,7 +83,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % ads.length);
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(timer);
   }, [ads.length]);
@@ -165,6 +178,7 @@ export default function AchievementsClient({
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
   const bottomAds = adPlacements.filter((ad) => ad.placementId === 10);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+  console.log(initialAchievements);
 
   useEffect(() => {
     fetch("/api/ad-placements/approved")
@@ -189,18 +203,17 @@ export default function AchievementsClient({
   );
 
   const filteredAchievements = achievements.filter((achievement) => {
-  const matchesSearch =
-    achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    achievement.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    achievement.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      achievement.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      achievement.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const matchesCategory =
-    filterCategory === "all" ||
-    achievement.category.toLowerCase() === filterCategory.toLowerCase();
+    const matchesCategory =
+      filterCategory === "all" ||
+      achievement.category.toLowerCase() === filterCategory.toLowerCase();
 
-  return matchesSearch && matchesCategory;
-});
-
+    return matchesSearch && matchesCategory;
+  });
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -245,9 +258,29 @@ export default function AchievementsClient({
       setCurrentFeaturedIndex(
         (prev) => (prev + 1) % featuredAchievements.length
       );
-    }, 5000);
+    }, 10000);
     return () => clearInterval(timer);
   }, [featuredAchievements.length]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAchievements((prev) =>
+        prev.map((ach) => {
+          if (ach.isFeatured && ach.images && ach.images.length > 1) {
+            const currentIndex = ach.currentImageIndex || 0;
+            return {
+              ...ach,
+              currentImageIndex: (currentIndex + 1) % ach.images.length,
+            };
+          }
+          return ach;
+        })
+      );
+    }, 3000); // change every 3 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  console.log(featuredAchievements);
   return (
     <div className="min-h-screen bg-yellow-50">
       {/* Header */}
@@ -314,16 +347,6 @@ export default function AchievementsClient({
             >
               Hall of Fame
             </button>
-            {/* <button
-              onClick={() => setActiveTab("recent")}
-              className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "recent"
-                  ? "border-orange-600 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Recent Achievements
-            </button> */}
             <button
               onClick={() => setActiveTab("by-category")}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
@@ -351,26 +374,54 @@ export default function AchievementsClient({
                 className="flex transition-transform duration-700 ease-in-out"
                 style={{
                   transform: `translateX(-${currentFeaturedIndex * 100}%)`,
-                  width: `${featuredAchievements.length * 100}%`,
                 }}
               >
                 {featuredAchievements.map((featuredAchievement) => (
                   <div
                     key={featuredAchievement.id}
                     className="w-full flex-shrink-0"
-                    style={{ flex: "0 0 100%" }}
+                    // style={{ flex: "0 0 100%" }}
                   >
                     <Card className="bg-yellow-50 border-yellow-200 overflow-hidden">
                       <CardContent className="p-0">
-                        <div className="flex flex-col lg:flex-row">
-                          <div className="w-1/6 p-6 hidden lg:flex items-center justify-center bg-yellow-100">
-                            <img
-                              src={featuredAchievement.image}
-                              alt={featuredAchievement.name}
-                              className="w-48 h-48 object-fill rounded-lg"
-                            />
+                        <div className="flex">
+                          {/* Left Side - Image */}
+                          <div className="w-1/3 bg-yellow-100 flex items-center justify-center p-6 relative overflow-hidden rounded-lg">
+                            {/* Inner image slider */}
+                            <div
+                              className="flex transition-transform duration-700 ease-in-out"
+                              style={{
+                                transform: `translateX(-${
+                                  (featuredAchievement.currentImageIndex || 0) *
+                                  100
+                                }%)`,
+                                width: `${
+                                  (featuredAchievement.images?.length || 1) *
+                                  100
+                                }%`,
+                              }}
+                            >
+                              {(
+                                featuredAchievement.images || [
+                                  featuredAchievement.image,
+                                ]
+                              ).map((imgUrl, i) => (
+                                <div
+                                  key={i}
+                                  className="flex-shrink-0 w-full flex justify-center items-center"
+                                >
+                                  <img
+                                    src={imgUrl}
+                                    alt={`${featuredAchievement.name}-${i}`}
+                                    className="w-48 h-48 object-fill rounded-lg"
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          <div className="lg:w-2/3 p-6">
+
+                          {/* Right Side - Content */}
+                          <div className="w-2/3 p-6">
                             <div className="flex items-center gap-2 mb-4">
                               <Badge
                                 className={getCategoryColor(
@@ -432,20 +483,6 @@ export default function AchievementsClient({
                                 <span>Hall of Fame</span>
                               </div>
                             </div>
-
-                            {/* <div className="flex gap-3">
-                              <Button className="bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white">
-                                <User className="w-4 h-4 mr-2" />
-                                View Full Profile
-                              </Button>
-                              <Button
-                                variant="outline"
-                                className="border-gray-300 text-gray-700 hover:bg-gray-50 bg-transparent"
-                              >
-                                <Share className="w-4 h-4 mr-2" />
-                                Share Achievement
-                              </Button>
-                            </div> */}
                           </div>
                         </div>
                       </CardContent>
@@ -515,13 +552,36 @@ export default function AchievementsClient({
                 >
                   <CardContent className="p-0">
                     <div className="relative p-4">
-                      <div className="flex justify-center mb-4">
-                        <img
-                          src={achievement.image}
-                          alt={achievement.name}
-                          className="w-24 h-24 object-cover rounded-lg"
-                        />
+                      <div className="flex justify-center mb-4 relative w-24 h-24 mx-auto overflow-hidden rounded-lg">
+                        {achievement.images && achievement.images.length > 0 ? (
+                          <div className="relative w-full h-full">
+                            <div
+                              className="flex transition-transform duration-700 ease-in-out"
+                              style={{
+                                transform: `translateX(-${
+                                  achievement.currentImageIndex ?? 0
+                                }00%)`,
+                              }}
+                            >
+                              {achievement.images.map((imgUrl, imgIndex) => (
+                                <img
+                                  key={imgIndex}
+                                  src={imgUrl}
+                                  alt={`${achievement.name} ${imgIndex + 1}`}
+                                  className="w-24 h-24 flex-shrink-0 object-cover rounded-lg"
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <img
+                            src={achievement.image}
+                            alt={achievement.name}
+                            className="w-24 h-24 object-cover rounded-lg"
+                          />
+                        )}
                       </div>
+
                       <div className="absolute top-4 left-4 flex gap-2">
                         <Badge
                           className={getCategoryColor(achievement.category)}
@@ -566,23 +626,6 @@ export default function AchievementsClient({
                           {achievement.year} • {achievement.location}
                         </span>
                       </div>
-
-                      {/* <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          className="flex-1 bg-gradient-to-r bg-orange-600 hover:bg-orange-700 text-white"
-                        >
-                          <Trophy className="w-4 h-4 mr-1" />
-                          View Profile
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="flex-1 border-gray-300 text-gray-700 bg-transparent"
-                        >
-                          Share
-                        </Button>
-                      </div> */}
                     </div>
                   </CardContent>
                 </Card>
@@ -590,75 +633,6 @@ export default function AchievementsClient({
             </div>
           </div>
         )}
-
-        {/* Recent Achievements */}
-        {/* {activeTab === "recent" && (
-          <div>
-            <h2 className="text-2xl font-bold text-red-700 mb-6">
-              Recent Achievements (2024)
-            </h2>
-            <div className="space-y-6">
-              {recentAchievements.map((achievement) => (
-                <Card
-                  key={achievement.id}
-                  className="bg-white hover:shadow-lg transition-shadow"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex gap-4">
-                      <img
-                        src={achievement.image}
-                        alt={achievement.name}
-                        className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-bold text-red-700">
-                            {achievement.name}
-                          </h3>
-                          <Badge
-                            className={getCategoryColor(achievement.category)}
-                          >
-                            <span className="mr-1">
-                              {getCategoryIcon(achievement.category)}
-                            </span>
-                            {achievement.category}
-                          </Badge>
-                          {achievement.isVerified && (
-                            <Badge className="bg-blue-100 text-blue-800">
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                              Verified
-                            </Badge>
-                          )}
-                        </div>
-                        <h4 className="text-purple-600 font-semibold mb-2">
-                          {achievement.title}
-                        </h4>
-                        <p className="text-gray-600 mb-3">
-                          {achievement.description}
-                        </p>
-                        <div className="mb-2">
-                          <span className="text-sm font-medium text-gray-700">
-                            Achievement:{" "}
-                          </span>
-                          <span className="text-sm text-gray-600">
-                            {achievement.keyAchievement}
-                          </span>
-                        </div>
-                        <p className="text-sm text-green-600 font-medium">
-                          {achievement.impact}
-                        </p>
-                      </div>
-                      <div className="text-right text-sm text-gray-500">
-                        <div>{achievement.year}</div>
-                        <div>{achievement.location}</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )} */}
 
         {/* By Category */}
         {activeTab === "by-category" && (
@@ -673,23 +647,34 @@ export default function AchievementsClient({
                   className="bg-white hover:shadow-lg transition-shadow overflow-hidden"
                 >
                   <CardContent className="p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <img
-                        src={achievement.image}
-                        alt={achievement.name}
-                        className="w-12 h-12 object-cover rounded-lg"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-red-700">
-                          {achievement.name}
-                        </h3>
-                        <p className="text-sm text-purple-600">
-                          {achievement.title}
-                        </p>
-                      </div>
-                      <Badge className={getCategoryColor(achievement.category)}>
-                        {getCategoryIcon(achievement.category)}
-                      </Badge>
+                    <div className="flex justify-center mb-4 relative w-24 h-24 mx-auto overflow-hidden rounded-lg">
+                      {achievement.images && achievement.images.length > 0 ? (
+                        <div className="relative w-full h-full">
+                          <div
+                            className="flex transition-transform duration-700 ease-in-out"
+                            style={{
+                              transform: `translateX(-${
+                                achievement.currentImageIndex ?? 0
+                              }00%)`,
+                            }}
+                          >
+                            {achievement.images.map((imgUrl, imgIndex) => (
+                              <img
+                                key={imgIndex}
+                                src={imgUrl}
+                                alt={`${achievement.name} ${imgIndex + 1}`}
+                                className="w-12 h-12 flex-shrink-0 object-cover rounded-lg"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <img
+                          src={achievement.image}
+                          alt={achievement.name}
+                          className="w-12 h-12 object-cover rounded-lg"
+                        />
+                      )}
                     </div>
                     <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                       {achievement.description}

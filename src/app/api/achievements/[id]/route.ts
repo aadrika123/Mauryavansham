@@ -25,10 +25,13 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       .update(achievements)
       .set({
         name: body.name,
-        title: body.title,
+        fatherName: body.fatherName,
+        motherName: body.motherName,
+        achievementTitle: body.achievementTitle,
         description: body.description,
-        image: body.image,
+        images: body.images, // array of URLs (1 mandatory, 2 optional)
         category: body.category,
+        otherCategory: body.otherCategory || null,
         year: body.year,
         location: body.location,
         keyAchievement: body.keyAchievement,
@@ -56,7 +59,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// 🔵 GET SINGLE ACHIEVEMENT (optional)
+// 🔵 GET SINGLE ACHIEVEMENT
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   try {
     const id = Number(params.id);
@@ -83,18 +86,32 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   }
 }
 
-// 🔴 DELETE (optional)
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+// 🔴 DELETE (soft delete)
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
+    const session = await getServerSession(authOptions);
+    const user = session?.user;
     const id = Number(params.id);
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized access" },
+        { status: 401 }
+      );
+    }
 
     await db
       .update(achievements)
-      .set({ status: "removed" })
+      .set({
+        status: "removed",
+        removedBy: user.name || "Unknown",
+        removedById: user.id,
+        removedAt: new Date(),
+      })
       .where(eq(achievements.id, id));
 
     return NextResponse.json(
-      { success: true, message: "Achievement removed" },
+      { success: true, message: "Achievement removed successfully" },
       { status: 200 }
     );
   } catch (err) {

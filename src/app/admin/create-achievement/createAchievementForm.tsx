@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { toast } from "react-hot-toast";
-import { useSession } from "next-auth/react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import Loader from "@/src/components/ui/loader";
 import { useToast } from "@/src/components/ui/toastProvider";
 import { useRouter } from "next/navigation";
@@ -10,16 +8,23 @@ import { useRouter } from "next/navigation";
 interface Achievement {
   id?: number;
   name: string;
-  title: string;
+  fatherName: string;
+  motherName: string;
+  achievementTitle: string;
   description: string;
-  image: string;
   category:
     | "Healthcare"
     | "Sports"
     | "Technology"
     | "Education"
     | "Business"
-    | "Arts";
+    | "Arts"
+    | "Central Government"
+    | "PSU"
+    | "State Government"
+    | "Other";
+  otherCategory?: string;
+  images: string[];
   isVerified: boolean;
   isFeatured: boolean;
   isHallOfFame: boolean;
@@ -39,95 +44,131 @@ export default function CreateAchievementForm({
   initialData,
   onSuccess,
 }: Props) {
-  const { data: session } = useSession();
   const { addToast } = useToast();
   const router = useRouter();
 
-  const [form, setForm] = useState<Achievement>({
-    id: initialData?.id,
-    name: initialData?.name || "",
-    title: initialData?.title || "",
-    description: initialData?.description || "",
-    image: initialData?.image || "",
-    category: initialData?.category || "Education",
-    isVerified: initialData?.isVerified || false,
-    isFeatured: initialData?.isFeatured || false,
-    isHallOfFame: initialData?.isHallOfFame || false,
-    year: initialData?.year || new Date().getFullYear(),
-    location: initialData?.location || "",
-    keyAchievement: initialData?.keyAchievement || "",
-    impact: initialData?.impact || "",
-    achievements: initialData?.achievements || [],
-  });
+  // ✅ default form
+  const emptyForm: Achievement = {
+    name: "",
+    fatherName: "",
+    motherName: "",
+    achievementTitle: "",
+    description: "",
+    category: "Education",
+    otherCategory: "",
+    images: [],
+    isVerified: false,
+    isFeatured: false,
+    isHallOfFame: false,
+    year: new Date().getFullYear(),
+    location: "",
+    keyAchievement: "",
+    impact: "",
+    achievements: [],
+  };
 
+  const [form, setForm] = useState<Achievement>(initialData || emptyForm);
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>([
+    null,
+    null,
+    null,
+  ]);
+  const [imagePreviews, setImagePreviews] = useState<(string | null)[]>([
+    null,
+    null,
+    null,
+  ]);
   const [achievementInput, setAchievementInput] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(
-    initialData?.image || null
-  );
-  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
-  // ✅ handle input change
-  function handleChange(
+  // ✅ prefill edit data
+  useEffect(() => {
+    if (initialData) {
+      setForm(initialData);
+      setImagePreviews([
+        initialData.images?.[0] || null,
+        initialData.images?.[1] || null,
+        initialData.images?.[2] || null,
+      ]);
+    }
+  }, [initialData]);
+
+  // ✅ handle text inputs
+  const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) {
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-  }
+  };
 
-  // ✅ handle checkbox/toggle
-  function handleCheckbox(e: ChangeEvent<HTMLInputElement>) {
+  // ✅ handle checkbox
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setForm((prev) => ({ ...prev, [name]: checked }));
-  }
+  };
 
-  // ✅ handle image upload
-  function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setImageFile(f);
-    setImagePreview(URL.createObjectURL(f));
-  }
+  // ✅ handle images
+  const handleImageChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  // ✅ add individual achievement point
-  function handleAddAchievement() {
+    const updatedFiles = [...imageFiles];
+    const updatedPreviews = [...imagePreviews];
+
+    updatedFiles[index] = file;
+    updatedPreviews[index] = URL.createObjectURL(file);
+
+    setImageFiles(updatedFiles);
+    setImagePreviews(updatedPreviews);
+  };
+
+  // ✅ Add achievement point
+  const handleAddAchievement = () => {
     const trimmed = achievementInput.trim();
     if (!trimmed) return;
-    setForm((s) => ({
-      ...s,
-      achievements: [...s.achievements, trimmed],
+    setForm((prev) => ({
+      ...prev,
+      achievements: [...prev.achievements, trimmed],
     }));
     setAchievementInput("");
-  }
+  };
 
-  // ✅ remove achievement
-  function removeAchievement(idx: number) {
-    setForm((s) => ({
-      ...s,
-      achievements: s.achievements.filter((_, i) => i !== idx),
+  const removeAchievement = (idx: number) => {
+    setForm((prev) => ({
+      ...prev,
+      achievements: prev.achievements.filter((_, i) => i !== idx),
     }));
-  }
+  };
 
-  // ✅ validation
-  function validate() {
+  // ✅ Validation
+  const validate = () => {
     const err: Record<string, string> = {};
     if (!form.name.trim()) err.name = "Name is required";
-    if (!form.title.trim()) err.title = "Title is required";
+    if (!form.fatherName.trim()) err.fatherName = "Father's name is required";
+    if (!form.motherName.trim()) err.motherName = "Mother's name is required";
+    if (!form.achievementTitle.trim())
+      err.achievementTitle = "Achievement Title is required";
     if (!form.description.trim()) err.description = "Description is required";
     if (!form.location.trim()) err.location = "Location is required";
     if (!form.keyAchievement.trim())
-      err.keyAchievement = "Key achievement required";
-    if (!form.impact.trim()) err.impact = "Impact field required";
-    if (!form.year) err.year = "Year required";
+      err.keyAchievement = "Key Achievement is required";
+    if (!form.impact.trim()) err.impact = "Impact is required";
+    if (!form.year) err.year = "Year is required";
+    if (!form.images?.[0] && !imageFiles[0])
+      err.image1 = "At least 1 image is mandatory";
     if (form.achievements.length === 0)
       err.achievements = "Add at least one achievement point";
-
+    if (form.category === "Other" && !form.otherCategory?.trim())
+      err.otherCategory = "Please specify category";
     setErrors(err);
     return Object.keys(err).length === 0;
-  }
+  };
 
-  // ✅ upload file to server/cloudinary
+  // ✅ upload single image
   const uploadFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("image", file);
@@ -136,27 +177,28 @@ export default function CreateAchievementForm({
       body: formData,
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Image upload failed");
-    return data.url; // ✅ matches backend
+    if (!res.ok) throw new Error(data.error || "Upload failed");
+    return data.url;
   };
 
-  // ✅ submit
-  async function handleSubmit(e: FormEvent) {
+  // ✅ handle submit
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-
     setSubmitting(true);
 
     try {
-      let imageUrl = imagePreview;
-      if (imageFile) {
-        imageUrl = await uploadFile(imageFile);
-      }
+      // upload new images if selected
+      const uploadedUrls = await Promise.all(
+        imageFiles.map(async (file, idx) => {
+          if (file) return await uploadFile(file);
+          return imagePreviews[idx]; // keep old image if exists
+        })
+      );
 
       const payload = {
         ...form,
-        image: imageUrl,
-        userId: session?.user?.id || null,
+        images: uploadedUrls.filter((url): url is string => !!url),
       };
 
       const method = initialData ? "PUT" : "POST";
@@ -199,7 +241,7 @@ export default function CreateAchievementForm({
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow">
@@ -209,156 +251,168 @@ export default function CreateAchievementForm({
         </div>
       )}
 
-      <h2 className="text-2xl font-semibold mb-4">
-        {initialData ? "Edit Achievement" : "Create Achievement"}
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Name *</label>
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className="mt-1 block w-full border rounded-lg p-2"
-            />
-            {errors.name && (
-              <p className="text-red-600 text-sm">{errors.name}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Title *</label>
-            <input
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              className="mt-1 block w-full border rounded-lg p-2"
-            />
-            {errors.title && (
-              <p className="text-red-600 text-sm">{errors.title}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Year *</label>
-            <input
-              type="number"
-              name="year"
-              value={form.year}
-              onChange={handleChange}
-              className="mt-1 block w-full border rounded-lg p-2"
-            />
-            {errors.year && (
-              <p className="text-red-600 text-sm">{errors.year}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Location *</label>
-            <input
-              name="location"
-              value={form.location}
-              onChange={handleChange}
-              className="mt-1 block w-full border rounded-lg p-2"
-            />
-            {errors.location && (
-              <p className="text-red-600 text-sm">{errors.location}</p>
-            )}
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* ✅ Basic Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { name: "name", label: "Name", required: true },
+            { name: "fatherName", label: "Father's Name", required: true },
+            { name: "motherName", label: "Mother's Name", required: true },
+            {
+              name: "achievementTitle",
+              label: "Achievement Title",
+              required: true,
+            },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium mb-1">
+                {field.label}{" "}
+                {field.required && <span className="text-red-500">*</span>}
+              </label>
+              <input
+                name={field.name}
+                value={(form as any)[field.name]}
+                onChange={handleChange}
+                className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[field.name]}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
 
+        {/* ✅ Category */}
         <div>
-          <label className="block text-sm font-medium">Category *</label>
+          <label className="block font-medium mb-1">
+            Category <span className="text-red-500">*</span>
+          </label>
           <select
             name="category"
             value={form.category}
             onChange={handleChange}
-            className="mt-1 block w-full border rounded-lg p-2"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
           >
             {[
-              "Healthcare",
-              "Sports",
-              "Technology",
               "Education",
+              "Technology",
+              "Healthcare",
               "Business",
+              "Sports",
               "Arts",
+              "Central Government",
+              "PSU",
+              "State Government",
+              "Other",
             ].map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
               </option>
             ))}
           </select>
+          {form.category === "Other" && (
+            <input
+              name="otherCategory"
+              placeholder="Specify category"
+              value={form.otherCategory}
+              onChange={handleChange}
+              className="border p-2 rounded mt-2 w-full focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          )}
         </div>
 
+        {/* ✅ Description */}
         <div>
-          <label className="block text-sm font-medium">Description *</label>
+          <label className="block font-medium mb-1">
+            Description <span className="text-red-500">*</span>
+          </label>
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
-            rows={3}
-            className="mt-1 block w-full border rounded-lg p-2"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
           />
-          {errors.description && (
-            <p className="text-red-600 text-sm">{errors.description}</p>
-          )}
         </div>
 
+        {/* ✅ Location + Year */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-medium mb-1">
+              Address <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+              className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+          <div>
+            <label className="block font-medium mb-1">
+              Year <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="year"
+              value={form.year}
+              onChange={handleChange}
+              className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+        </div>
+
+        {/* ✅ Key Achievement */}
         <div>
-          <label className="block text-sm font-medium">Key Achievement *</label>
+          <label className="block font-medium mb-1">
+            Key Achievement <span className="text-red-500">*</span>
+          </label>
           <input
             name="keyAchievement"
             value={form.keyAchievement}
             onChange={handleChange}
-            className="mt-1 block w-full border rounded-lg p-2"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
           />
-          {errors.keyAchievement && (
-            <p className="text-red-600 text-sm">{errors.keyAchievement}</p>
-          )}
         </div>
 
+        {/* ✅ Impact */}
         <div>
-          <label className="block text-sm font-medium">Impact *</label>
+          <label className="block font-medium mb-1">
+            Impact <span className="text-red-500">*</span>
+          </label>
           <textarea
             name="impact"
             value={form.impact}
             onChange={handleChange}
-            rows={3}
-            className="mt-1 block w-full border rounded-lg p-2"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
           />
-          {errors.impact && (
-            <p className="text-red-600 text-sm">{errors.impact}</p>
-          )}
         </div>
 
-        {/* Achievements List */}
+        {/* ✅ Achievement Points */}
         <div>
-          <label className="block text-sm font-medium">Achievements *</label>
-          <div className="flex gap-2 mt-2">
+          <label className="block font-medium mb-1">
+            Achievement Points <span className="text-red-500">*</span>
+          </label>
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               value={achievementInput}
               onChange={(e) => setAchievementInput(e.target.value)}
-              placeholder="Enter achievement point"
-              className="flex-1 border rounded-lg p-2"
+              placeholder="Add achievement point"
+              className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
             />
             <button
               type="button"
               onClick={handleAddAchievement}
-              className="bg-blue-600 text-white px-3 py-2 rounded"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
             >
               Add
             </button>
           </div>
-
-          <div className="mt-2 flex flex-wrap gap-2">
+          <ul className="list-disc ml-5 mt-2">
             {form.achievements.map((a, i) => (
-              <span
-                key={i}
-                className="px-3 py-1 bg-gray-100 rounded-full flex items-center gap-2"
-              >
-                {a}
+              <li key={i} className="flex justify-between items-center">
+                <span>{a}</span>
                 <button
                   type="button"
                   onClick={() => removeAchievement(i)}
@@ -366,70 +420,70 @@ export default function CreateAchievementForm({
                 >
                   ✕
                 </button>
-              </span>
+              </li>
             ))}
-          </div>
-          {errors.achievements && (
-            <p className="text-red-600 text-sm">{errors.achievements}</p>
-          )}
+          </ul>
         </div>
 
-        {/* Image Upload */}
-        <div>
-          <label className="block text-sm font-medium">Image *</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="mt-2"
-          />
-          {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="mt-3 h-32 w-32 object-cover rounded-lg"
-            />
-          )}
+        {/* ✅ Images */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[0, 1, 2].map((i) => (
+            <div key={i}>
+              <label className="block font-medium mb-1">
+                Image {i + 1}{" "}
+                {i === 0 && <span className="text-red-500">*</span>}
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, i)}
+                className="border p-1 rounded w-full"
+              />
+              {imagePreviews[i] && (
+                <img
+                  src={imagePreviews[i]!}
+                  alt={`Preview ${i + 1}`}
+                  className="w-full h-40 object-cover mt-2 rounded-md border"
+                />
+              )}
+            </div>
+          ))}
         </div>
 
-        {/* Toggles */}
-        <div className="grid md:grid-cols-3 gap-4">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="isVerified"
-              checked={form.isVerified}
-              onChange={handleCheckbox}
-            />
-            Verified
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="isFeatured"
-              checked={form.isFeatured}
-              onChange={handleCheckbox}
-            />
-            Featured
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="isHallOfFame"
-              checked={form.isHallOfFame}
-              onChange={handleCheckbox}
-            />
-            Hall of Fame
-          </label>
+        {/* ✅ Flags */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { name: "isVerified", label: "Verified" },
+            { name: "isFeatured", label: "Featured" },
+            { name: "isHallOfFame", label: "Hall of Fame" },
+          ].map((cb) => (
+            <label key={cb.name} className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                name={cb.name}
+                checked={(form as any)[cb.name]}
+                onChange={handleCheckboxChange}
+                className="w-5 h-5 accent-blue-600"
+              />
+              <span>{cb.label}</span>
+            </label>
+          ))}
         </div>
 
-        <div className="flex justify-end">
+        {/* ✅ Submit */}
+        <div className="text-center">
           <button
             type="submit"
             disabled={submitting}
-            className="bg-green-600 text-white px-4 py-2 rounded"
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
           >
-            {submitting ? "Submitting..." : "Save Achievement"}
+            {submitting ? (
+              <Loader />
+            ) : initialData ? (
+              "Update Achievement"
+            ) : (
+              "Submit Achievement"
+            )}
           </button>
         </div>
       </form>

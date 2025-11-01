@@ -1,26 +1,28 @@
-// import { db } from "@/src/db";
-// import { achievements } from "@/src/db/schema/achievements";
-import { eq, desc } from "drizzle-orm"; // ✅ import eq() & desc() here
+import { eq, desc } from "drizzle-orm";
 import AchievementsClient from "@/src/app/(home)/achievements/achievement-client";
 import { achievements } from "@/src/drizzle/schema";
 import { db } from "@/src/drizzle/db";
 
 export default async function AchievementsPage() {
   try {
-    // ✅ Correct Drizzle syntax
+    // ✅ Fetch only active achievements ordered by year (newest first)
     const allAchievements = await db
       .select()
       .from(achievements)
-      .where(eq(achievements.status, "active")) // ✅ fixed
+      .where(eq(achievements.status, "active"))
       .orderBy(desc(achievements.year));
 
+    // ✅ Format data for frontend
     const formatted = allAchievements.map((item) => ({
       id: item.id,
       name: item.name,
-      title: item.title,
+      fatherName: item.fatherName,
+      motherName: item.motherName,
+      achievementTitle: item.achievementTitle,
       description: item.description,
-      image: item.image,
+      images: item.images || [],
       category: item.category,
+      otherCategory: item.otherCategory ?? "",
       isVerified: item.isVerified,
       isFeatured: item.isFeatured,
       isHallOfFame: item.isHallOfFame,
@@ -30,8 +32,7 @@ export default async function AchievementsPage() {
       impact: item.impact,
       achievements: item.achievements ?? [],
     }));
-
-    console.log(formatted, "Formatted Achievements");
+    console.log(formatted, "formatted");
     return <AchievementsClient initialAchievements={formatted} />;
   } catch (error) {
     console.error("Error fetching achievements:", error);

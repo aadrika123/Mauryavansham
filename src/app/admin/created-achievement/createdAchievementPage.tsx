@@ -24,10 +24,13 @@ import Link from "next/link";
 interface Achievement {
   id: number;
   name: string;
-  title: string;
+  fatherName: string;
+  motherName: string;
+  achievementTitle: string;
   description: string;
-  image: string;
+  images: string[];
   category: string;
+  otherCategory?: string;
   isVerified: boolean;
   isFeatured: boolean;
   isHallOfFame: boolean;
@@ -153,14 +156,38 @@ export default function AdminAchievementsPage({
             {activeAchievements.map((a) => (
               <Card key={a.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
-                  <img
-                    src={a.image}
-                    alt={a.name}
-                    className="w-full h-40 object-fill rounded-md mb-4"
-                  />
-                  <Badge className="mb-2">{a.category}</Badge>
+                  {/* Show First Image */}
+                  {a.images?.[0] ? (
+                    <img
+                      src={a.images[0]}
+                      alt={a.name}
+                      className="w-full h-40 object-cover rounded-md mb-4"
+                    />
+                  ) : (
+                    <div className="w-full h-40 bg-gray-100 rounded-md mb-4 flex items-center justify-center text-gray-400">
+                      No Image
+                    </div>
+                  )}
+
+                  <Badge className="mb-2">
+                    {a.category === "Other"
+                      ? a.otherCategory || "Other"
+                      : a.category}
+                  </Badge>
+
                   <h3 className="font-bold text-lg text-red-700">{a.name}</h3>
-                  <p className="text-sm text-gray-600">{a.title}</p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-semibold">Father:</span>{" "}
+                    {a.fatherName}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-semibold">Mother:</span>{" "}
+                    {a.motherName}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    <span className="font-semibold">Achievement Title:</span>{" "}
+                    {a.achievementTitle}
+                  </p>
 
                   <div className="text-sm text-gray-500 mt-3">
                     <p className="flex items-center gap-1">
@@ -197,6 +224,7 @@ export default function AdminAchievementsPage({
                     >
                       Disable
                     </Button>
+
                     <Link href={`/admin/created-achievement/${a.id}/edit`}>
                       <Button className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
                         Edit
@@ -218,16 +246,23 @@ export default function AdminAchievementsPage({
                 className="hover:shadow-md transition-shadow border-red-200"
               >
                 <CardContent className="p-4">
-                  <img
-                    src={a.image}
-                    alt={a.name}
-                    className="w-full h-40 object-cover rounded-md mb-4"
-                  />
+                  {a.images?.[0] ? (
+                    <img
+                      src={a.images[0]}
+                      alt={a.name}
+                      className="w-full h-40 object-cover rounded-md mb-4"
+                    />
+                  ) : (
+                    <div className="w-full h-40 bg-gray-100 rounded-md mb-4 flex items-center justify-center text-gray-400">
+                      No Image
+                    </div>
+                  )}
+
                   <Badge className="mb-2 bg-red-100 text-red-700">
                     {a.status.toUpperCase()}
                   </Badge>
                   <h3 className="font-bold text-lg text-red-700">{a.name}</h3>
-                  <p className="text-sm text-gray-600">{a.title}</p>
+                  <p className="text-sm text-gray-600">{a.achievementTitle}</p>
 
                   <div className="text-sm text-gray-500 mt-3">
                     <p className="flex items-center gap-1">
@@ -283,69 +318,59 @@ export default function AdminAchievementsPage({
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-red-700 text-xl font-bold">
-              {selectedAchievement?.name}
+              {selectedAchievement?.achievementTitle}
             </DialogTitle>
           </DialogHeader>
 
           {selectedAchievement && (
             <div>
-              <img
-                src={selectedAchievement.image}
-                alt={selectedAchievement.name}
-                className="w-full h-64 object-fill rounded-lg mb-4"
-              />
-              <p className="text-gray-700 mb-2">
-                <span className="font-semibold">Title:</span>{" "}
-                {selectedAchievement.title}
+              {/* Multiple Images */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                {selectedAchievement.images?.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img}
+                    alt={`${selectedAchievement.name}-${i}`}
+                    className="w-full h-48 object-cover rounded-lg"
+                  />
+                ))}
+              </div>
+
+              <p className="text-gray-700 mb-1">
+                <span className="font-semibold">Name:</span>{" "}
+                {selectedAchievement.name}
               </p>
-              <p className="text-gray-700 mb-2">
+              <p className="text-gray-700 mb-1">
+                <span className="font-semibold">Father's Name:</span>{" "}
+                {selectedAchievement.fatherName}
+              </p>
+              <p className="text-gray-700 mb-1">
+                <span className="font-semibold">Mother's Name:</span>{" "}
+                {selectedAchievement.motherName}
+              </p>
+              <p className="text-gray-700 mb-1">
                 <span className="font-semibold">Category:</span>{" "}
-                {selectedAchievement.category}
+                {selectedAchievement.category === "Other"
+                  ? selectedAchievement.otherCategory
+                  : selectedAchievement.category}
               </p>
-              <p className="text-gray-700 mb-2">
+              <p className="text-gray-700 mb-1">
                 <span className="font-semibold">Description:</span>{" "}
                 {selectedAchievement.description}
               </p>
-              <p className="text-gray-700 mb-2">
+              <p className="text-gray-700 mb-1">
                 <span className="font-semibold">Key Achievement:</span>{" "}
                 {selectedAchievement.keyAchievement}
               </p>
-              <p className="text-gray-700 mb-2">
+              <p className="text-gray-700 mb-1">
                 <span className="font-semibold">Impact:</span>{" "}
                 {selectedAchievement.impact}
               </p>
 
-              {selectedAchievement.status !== "active" && (
-                <>
-                  <p className="text-gray-700 mt-4">
-                    <span className="font-semibold">Removed By:</span>{" "}
-                    {selectedAchievement.removedBy || "—"}
-                  </p>
-                  <p className="text-gray-700">
-                    <span className="font-semibold">Removed At:</span>{" "}
-                    {selectedAchievement.removedAt
-                      ? new Date(selectedAchievement.removedAt).toLocaleString(
-                          "en-IN",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )
-                      : "—"}
-                  </p>
-                </>
-              )}
-
               <div className="flex justify-end mt-6">
-                <button
-                  onClick={closeModal}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all"
-                >
+                <Button onClick={closeModal} className="bg-red-600 text-white">
                   Close
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -362,7 +387,7 @@ export default function AdminAchievementsPage({
           </DialogHeader>
           <p className="text-sm text-gray-600 mb-2">
             Please enter a reason for disabling{" "}
-            <strong>{selectedAchievement?.name}</strong>:
+            <strong>{selectedAchievement?.achievementTitle}</strong>:
           </p>
           <textarea
             value={disableReason}
@@ -376,7 +401,7 @@ export default function AdminAchievementsPage({
               variant="outline"
               onClick={() => {
                 setShowReasonModal(false);
-                setSelectedAchievement(null); // 🔥 Prevents reopening of view dialog
+                setSelectedAchievement(null);
                 setDisableReason("");
               }}
             >

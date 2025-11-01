@@ -4,7 +4,6 @@ import { authOptions } from "@/src/lib/auth";
 import { db } from "@/src/drizzle/db";
 import { achievements } from "@/src/drizzle/schema";
 import { eq } from "drizzle-orm";
-// import CreateAchievementForm from "@/src/components/forms/CreateAchievementForm";
 import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
 import CreateAchievementForm from "../../../create-achievement/createAchievementForm";
 
@@ -28,13 +27,17 @@ export default async function EditAchievementPage({
     redirect("/admin/created-achievement");
   }
 
+  // ✅ Format for editing form
   const formatted = {
     id: achievement.id,
     name: achievement.name,
-    title: achievement.title,
+    fatherName: achievement.fatherName,
+    motherName: achievement.motherName,
+    achievementTitle: achievement.achievementTitle,
     description: achievement.description,
-    image: achievement.image,
+    images: achievement.images ?? [], // array of up to 3
     category: achievement.category,
+    otherCategory: achievement.otherCategory || "",
     isVerified: achievement.isVerified,
     isFeatured: achievement.isFeatured,
     isHallOfFame: achievement.isHallOfFame,
@@ -51,6 +54,8 @@ export default async function EditAchievementPage({
         <h1 className="text-2xl font-bold text-red-700 mb-6">
           Edit Achievement
         </h1>
+
+        {/* ✅ Pass formatted data to your existing form */}
         <CreateAchievementForm initialData={formatted} />
       </div>
     </AdmindashboardLayout>

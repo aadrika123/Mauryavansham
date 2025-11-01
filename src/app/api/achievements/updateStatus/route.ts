@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth"; // <-- Import session
-import { authOptions } from "@/src/lib/auth"; // <-- your NextAuth config path
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/src/lib/auth";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/drizzle/db";
-import { achievements } from "@/src/drizzle/schema";
+import { achievements } from "@/src/drizzle/db/schemas/achievements";
 
 export async function POST(req: Request) {
   try {
-    // ✅ Get session details
+    // ✅ Get user session
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json(
         { success: false, message: "Unauthorized access." },
         { status: 401 }
@@ -18,9 +18,9 @@ export async function POST(req: Request) {
     }
 
     const userName = session.user.name || "Unknown User";
-    const userId = session.user.id || null;
+    const userId = session.user.id;
 
-    // ✅ Get body data
+    // ✅ Parse body
     const { id, status, reason } = await req.json();
 
     if (!id || !status) {
@@ -30,13 +30,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Prepare update object
-    const updateData: any = {
+    // ✅ Build update data object
+    const updateData: Record<string, any> = {
       status,
       updatedAt: new Date(),
+      updatedBy: userName,
+      updatedById: userId,
     };
 
-    // ✅ Add/remove fields based on status
+    // ✅ Handle status-specific logic
     if (status === "inactive" || status === "removed") {
       updateData.removedAt = new Date();
       updateData.removedBy = userName;
@@ -56,7 +58,7 @@ export async function POST(req: Request) {
       .where(eq(achievements.id, id))
       .returning();
 
-    if (!result || result.length === 0) {
+    if (!result?.length) {
       return NextResponse.json(
         { success: false, message: "Achievement not found." },
         { status: 404 }
@@ -69,7 +71,7 @@ export async function POST(req: Request) {
       data: result[0],
     });
   } catch (error: any) {
-    console.error("Error updating achievement status:", error);
+    console.error("❌ Error updating achievement status:", error);
     return NextResponse.json(
       { success: false, message: error.message || "Internal server error." },
       { status: 500 }

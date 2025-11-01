@@ -7,27 +7,33 @@ import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
 import AdminAchievementsPage from "./createdAchievementPage";
 import { achievements } from "@/src/drizzle/schema";
 import { db } from "@/src/drizzle/db";
-import { desc, eq } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 
 export default async function AdsPage() {
   const session = await getServerSession(authOptions);
 
+  // 🔐 Redirect if not logged in
   if (!session?.user?.id) {
     redirect("/sign-in");
   }
+
+  // 🟢 Fetch all achievements (no filter, admin sees all)
   const allAchievements = await db
     .select()
     .from(achievements)
-    // .where(eq(achievements.status, "active")) // ✅ fixed
     .orderBy(desc(achievements.year));
 
+  // 🧩 Format for UI
   const formatted = allAchievements.map((item) => ({
     id: item.id,
     name: item.name,
-    title: item.title,
+    fatherName: item.fatherName,
+    motherName: item.motherName,
+    achievementTitle: item.achievementTitle,
     description: item.description,
-    image: item.image,
+    images: item.images ?? [], // ✅ multiple images (array)
     category: item.category,
+    otherCategory: item.otherCategory || "", // ✅ if user entered custom category
     isVerified: item.isVerified,
     isFeatured: item.isFeatured,
     isHallOfFame: item.isHallOfFame,
@@ -44,8 +50,10 @@ export default async function AdsPage() {
     removedById: item.removedById,
     reason: item.reason,
   }));
-    console.log(formatted, "Formatted Achievements");
 
+  console.log(formatted, "🧾 Formatted Admin Achievements");
+
+  // 🧭 Render
   return (
     <AdmindashboardLayout user={session.user}>
       <div className="container mx-auto px-4 py-4">
@@ -58,6 +66,7 @@ export default async function AdsPage() {
           <span>Create Achievement</span>
         </div>
       </div>
+
       <div className="container mx-auto px-4 py-8">
         <AdminAchievementsPage achievements={formatted} />
       </div>
