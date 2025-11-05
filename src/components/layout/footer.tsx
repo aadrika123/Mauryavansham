@@ -68,7 +68,7 @@ export function Footer() {
   return (
     <footer className="bg-[#8B0000] text-white py-10 sm:py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -244,7 +244,7 @@ export function Footer() {
             <div className="space-y-3 text-red-200 text-sm sm:text-base">
               <div className="flex items-center gap-2">
                 <span className="text-yellow-400">✉</span>
-                <span>Info.mauryavansham@gmail.com</span>
+                <span className="text-xs">Info.mauryavansham@gmail.com</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-yellow-400">📞</span>

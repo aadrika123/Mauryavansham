@@ -81,23 +81,6 @@ export default function AdmindashboardLayout({
       icon: MessageSquare,
     },
     { title: "Manage Users", href: "/admin/users", icon: Users },
-    // {
-    //   title: "Achievements",
-    //   href: "",
-    //   icon: Trophy,
-    //   subItems: [
-    //     {
-    //       title: "Create Achievements",
-    //       href: "/admin/create-achievement",
-    //       icon: Trophy,
-    //     },
-    //     {
-    //       title: " Created Achievements",
-    //       href: "/admin/created-achievement",
-    //       icon: Trophy,
-    //     },
-    //   ],
-    // },
     {
       title: "Events",
       href: "",
@@ -437,7 +420,7 @@ export default function AdmindashboardLayout({
   return (
     <div className="bg-orange-50 min-h-screen">
       {/* Header */}
-      <div className="bg-red-800 text-white p-6 lg:p-6 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-red-700 to-orange-600 text-white p-6 lg:p-6 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* ✅ Hamburger menu for mobile */}
           <button
@@ -450,12 +433,39 @@ export default function AdmindashboardLayout({
               <Menu className="w-6 h-6" />
             )}
           </button>
-          <Crown className="w-8 h-8 text-orange-400" />
+          <Crown className="w-8 h-8 hidden lg:block text-orange-400" />
           <div className="hidden lg:block">
             <h1 className="text-2xl font-bold capitalize">
               Welcome back, {user?.name || ""} ({user?.role})
             </h1>
             {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
+          </div>
+          <div className=" flex items-center gap-2 md:hidden">
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
+                scrollY > 20
+                  ? "bg-gradient-to-br from-red-600 to-orange-500"
+                  : "bg-white/20 backdrop-blur-sm"
+              }`}
+            >
+              <Crown className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1
+                className={`text-base font-bold leading-tight ${
+                  scrollY > 20 ? "text-red-700" : "text-white"
+                }`}
+              >
+                Mauryavansham
+              </h1>
+              <p
+                className={`text-xs leading-tight ${
+                  scrollY > 20 ? "text-orange-600" : "text-orange-100"
+                }`}
+              >
+                मौर्यवंश - गौरवशाली परंपरा
+              </p>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-4">

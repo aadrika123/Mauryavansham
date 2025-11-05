@@ -1,5 +1,6 @@
 "use client";
 
+import { Languages } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Translator() {
@@ -109,7 +110,7 @@ export default function Translator() {
         `}
       </style>
 
-      <div className="flex items-center border border-white rounded-sm shadow-sm">
+      <div className="flex items-center lg:border lg:border-white md:border md:border-white rounded-sm shadow-sm">
         {/* Google Translate required hidden div */}
         <div
           id="google_translate_element"
@@ -117,21 +118,59 @@ export default function Translator() {
         ></div>
 
         <div className="relative">
+          {/* Button */}
           <button
             className="flex items-center justify-center p-2 rounded-md"
             onClick={() => setShowDropdown(!showDropdown)}
           >
-            <span className="mr-2 text-black">🌐</span> Language
+            {/* Mobile View: Only Icon */}
+            {/* Mobile View: Custom A / अ icon */}
+            <span className="block md:hidden">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 48 48"
+                width="26"
+                height="26"
+              >
+                <rect width="48" height="48" rx="10" fill="#f3f4f6" />
+                <text
+                  x="14"
+                  y="30"
+                  fontSize="18"
+                  fontWeight="bold"
+                  fill="#1f2937"
+                  fontFamily="Arial, sans-serif"
+                >
+                  A
+                </text>
+                <text
+                  x="28"
+                  y="30"
+                  fontSize="18"
+                  fontWeight="bold"
+                  fill="#dc2626"
+                  fontFamily="Noto Sans Devanagari, sans-serif"
+                >
+                  अ
+                </text>
+              </svg>
+            </span>
+
+            {/* Desktop View: Icon + Text */}
+            <span className="hidden md:flex items-center text-black">
+              <span className="mr-2 text-xl">🌐</span> Language
+            </span>
           </button>
 
+          {/* Dropdown */}
           {showDropdown && (
-            <div className="absolute top-10 right-0 bg-white shadow-md rounded-md p-2 text-black">
+            <div className="absolute top-10 right-0 bg-white shadow-md rounded-md p-2 text-black w-32">
               <button
                 onClick={() => {
                   changeLanguage("en");
                   setShowDropdown(false);
                 }}
-                className="block px-4 py-2 text-sm hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 English
               </button>
@@ -140,19 +179,19 @@ export default function Translator() {
                   changeLanguage("hi");
                   setShowDropdown(false);
                 }}
-                className="block px-4 py-2 text-sm hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
                 हिन्दी
               </button>
               {/* <button
-                onClick={() => {
-                  changeLanguage("mr");
-                  setShowDropdown(false);
-                }}
-                className="block px-4 py-2 text-sm hover:bg-gray-100"
-              >
-                मराठी
-              </button> */}
+        onClick={() => {
+          changeLanguage("mr");
+          setShowDropdown(false);
+        }}
+        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+      >
+        मराठी
+      </button> */}
             </div>
           )}
         </div>
