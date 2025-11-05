@@ -151,7 +151,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/events" className="hover:text-white">
-                 Events & Calendar
+                  Events & Calendar
                 </Link>
               </li>
             </ul>
@@ -180,7 +180,7 @@ export function Footer() {
                   }}
                   className="hover:text-white text-left"
                 >
-                 Create Matrimonial
+                  Create Matrimonial
                 </button>
               </li>
 
@@ -242,10 +242,13 @@ export function Footer() {
               Contact Us
             </h4>
             <div className="space-y-3 text-red-200 text-sm sm:text-base">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 max-w-[180px] sm:max-w-none">
                 <span className="text-yellow-400">✉</span>
-                <span className="text-xs">Info.mauryavansham@gmail.com</span>
+                <span className="text-xs text-ellipsis overflow-hidden whitespace-nowrap">
+                  Info.mauryavansham@gmail.com
+                </span>
               </div>
+
               <div className="flex items-center gap-2">
                 <span className="text-yellow-400">📞</span>
                 <span>+91 88629 41658</span>

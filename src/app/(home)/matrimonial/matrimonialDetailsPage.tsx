@@ -276,7 +276,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       </div>
 
       {/* Left Ad - hidden on small screens */}
-      <div className=" absolute mt-36 left-6 z-40 w-72">
+      <div className="absolute mt-36 left-6 z-40 w-72 hidden md:block">
         <VerticalAdSlider ads={leftAds} />
       </div>
 
@@ -296,7 +296,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       </div>
 
       {/* CTA */}
-      <div className="container mx-auto px-4 mb-12 ml-14">
+      <div className="container mx-auto px-4 mb-12 lg:ml-14">
         <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] shadow-xl rounded-lg p-6 sm:p-8 text-center text-white max-w-3xl lg:max-w-4xl mx-auto">
           <Heart className="h-12 sm:h-16 w-12 sm:w-16 mx-auto mb-4 text-white" />
           <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
