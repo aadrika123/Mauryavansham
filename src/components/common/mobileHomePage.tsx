@@ -321,14 +321,14 @@ export default function MauryavanshamApp({
 
       {/* Main Content */}
       <div className="px-4 pb-24 pt-4">
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-4 gap-2 mb-6">
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
             <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
               {loading
                 ? "..."
                 : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-xs text-gray-600 mt-1 leading-tight">
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
               Registered Families
             </p>
           </div>
@@ -338,7 +338,7 @@ export default function MauryavanshamApp({
                 ? "..."
                 : `${stats?.successfulMarriages?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-xs text-gray-600 mt-1 leading-tight">
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
               Successful Marriages
             </p>
           </div>
@@ -348,7 +348,7 @@ export default function MauryavanshamApp({
                 ? "..."
                 : `${stats?.countriesConnected?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-xs text-gray-600 mt-1 leading-tight">
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
               Countries Connected
             </p>
           </div>
@@ -358,13 +358,12 @@ export default function MauryavanshamApp({
                 ? "..."
                 : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-xs text-gray-600 mt-1 leading-tight">
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
               Forum Discussions
             </p>
           </div>
         </div>
 
-        {/* Main Categories */}
         {/* Main Categories */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
@@ -391,20 +390,27 @@ export default function MauryavanshamApp({
               return (
                 <button
                   key={cat.id}
-                  onClick={() => router.push(cat.url)} // ✅ Navigate on click
+                  onClick={() => {
+                    if (cat.id === "knowYourCommunity" && !user) {
+                      setShowLoginModal(true); 
+                    } else {
+                      router.push(cat.url);
+                    }
+                  }}
+                  // ✅ Navigate on click
                   className="bg-white rounded-2xl shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-200 overflow-hidden border border-gray-100 text-left"
                 >
-                  <div className="flex items-center p-4 gap-4">
+                  <div className="flex items-center p-2 gap-4">
                     <div
-                      className={`w-14 h-14 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center flex-shrink-0 shadow-md`}
+                      className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center flex-shrink-0 shadow-md`}
                     >
-                      <Icon className="w-7 h-7 text-white" />
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-800 text-sm sm:text-base leading-tight">
+                      <h3 className="font-bold text-gray-800 text-xs sm:text-xs leading-tight">
                         {cat.name}
                       </h3>
-                      <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-tight line-clamp-2">
+                      <p className="text-xs sm:text-xs text-gray-500 mt-1 leading-tight line-clamp-2">
                         {cat.desc}
                       </p>
                     </div>

@@ -27,6 +27,7 @@ import { Button } from "@/src/components/ui/button";
 import { useSession, signOut } from "next-auth/react";
 import { FaSpinner } from "react-icons/fa6";
 import { ToastProvider } from "@/src/components/ui/toastProvider";
+import Translator from "@/src/hooks/googleTranslator";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -151,17 +152,20 @@ export default function MobileLayout({
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <button
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 active:scale-95 transition-all ${
-                    scrollY > 20
-                      ? "bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-md"
-                      : "bg-white text-red-700 shadow-md"
-                  }`}
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  Language
-                </button>
+              <div
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 active:scale-95 transition-all`}
+              >
+                {/* <button
+                               className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 active:scale-95 transition-all ${
+                                 scrollY > 20
+                                   ? "bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-md"
+                                   : "bg-white text-red-700 shadow-md"
+                               }`}
+                             >
+                               <Globe className="w-3.5 h-3.5" />
+                               Language
+                             </button> */}
+                <Translator />
               </div>
             </div>
           </div>
@@ -172,7 +176,6 @@ export default function MobileLayout({
           <ToastProvider>
             <div className="pb-[70px] min-h-screen">{children}</div>
             <Toaster />
-
           </ToastProvider>
         </ThemeProvider>
         <div className="mb-16 -mt-20">
