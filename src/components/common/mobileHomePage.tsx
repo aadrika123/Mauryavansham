@@ -283,6 +283,8 @@ export default function MauryavanshamApp({
       setLoadingEvents((prev) => prev.filter((id) => id !== event.id));
     }
   };
+
+  console.log(upcomingEvents.length, 'upcomingEvents');
   return (
     <div className="min-h-screen bg-orange-50">
       {/* Header */}
@@ -367,7 +369,7 @@ export default function MauryavanshamApp({
         {/* Main Categories */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Our Services</h2>
+            <h2 className="text-xl font-bold text-gray-800">Services</h2>
             <button
               onClick={() => setShowAllServices((prev) => !prev)}
               className="text-sm text-red-600 font-semibold flex items-center gap-1"
@@ -392,7 +394,7 @@ export default function MauryavanshamApp({
                   key={cat.id}
                   onClick={() => {
                     if (cat.id === "knowYourCommunity" && !user) {
-                      setShowLoginModal(true); 
+                      setShowLoginModal(true);
                     } else {
                       router.push(cat.url);
                     }
@@ -478,7 +480,14 @@ export default function MauryavanshamApp({
               <h2 className="text-xl font-bold text-gray-800">
                 Upcoming Events
               </h2>
+              {upcomingEvents.length > 0 && (
               <p className="text-sm text-gray-500">Join & Celebrate</p>
+              )}
+              {upcomingEvents.length == 0 && (
+                <p className="text-sm text-gray-500">
+                  No upcoming events available at the moment.
+                </p>
+              )}
             </div>
 
             {/* 👇 Button sirf tab dikhega jab events > 4 ho */}
