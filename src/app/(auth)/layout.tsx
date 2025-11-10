@@ -1,42 +1,33 @@
-import type { Metadata } from "next";
-import { headers } from "next/headers";
-// import MobileLayoutClient from "./MobileLayoutClient"; // 👈 client component
+"use client";
+
+import React, { useEffect, useState } from "react";
 import MobileLayout from "./mobileViewLayout";
 import AuthLayout from "./webVeiwLayout";
-import MobileLayoutClient from "./MobileLayoutClient";
 
-export const metadata: Metadata = {
-  title: "Mauryavansham - Hindu Maurya Community Portal",
-  description:
-    "A comprehensive digital platform for the Hindu Maurya (Kushwaha) community fostering social connectivity, cultural preservation, and mutual support.",
-};
-
-function isMobileDevice(userAgent: string | null): boolean {
-  if (!userAgent) return false;
-
-  const mobileRegex =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Mobile Safari|MauryaApp/i;
-
-  return mobileRegex.test(userAgent);
-}
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const headerList = await headers();
-  const userAgent = headerList.get("user-agent");
-  const isMobile = isMobileDevice(userAgent);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // ✅ Check if running inside React Native WebView
+    if (typeof window !== "undefined" && (window as any).ReactNativeWebView) {
+      setIsMobile(true);
+    } else {
+      const userAgent = navigator.userAgent;
+      const mobileRegex =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Mobile Safari/i;
+      setIsMobile(mobileRegex.test(userAgent));
+    }
+  }, []);
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         {isMobile ? (
-          // 👇 Client-side wrapper for auto reload
-          <MobileLayoutClient>
-            <MobileLayout>{children}</MobileLayout>
-          </MobileLayoutClient>
+          <MobileLayout>{children}</MobileLayout>
         ) : (
           <AuthLayout>{children}</AuthLayout>
         )}
