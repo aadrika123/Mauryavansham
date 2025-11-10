@@ -25,7 +25,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
-import { useToast } from "../ui/toastProvider";
+// import { useToast } from "../ui/toastProvider";
 
 interface CommunityStats {
   successfulMarriages: number;
@@ -47,7 +47,7 @@ export default function MauryavanshamApp({
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { data: session } = useSession();
   const user = session?.user;
-  const { addToast } = useToast();
+  // const { addToast } = useToast();
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       try {
@@ -258,27 +258,27 @@ export default function MauryavanshamApp({
           )
         );
 
-        addToast({
-          title: "✅ Success",
-          variant: "default",
-          description: data.message || "Registered successfully!",
-        });
+        // addToast({
+        //   title: "✅ Success",
+        //   variant: "default",
+        //   description: data.message || "Registered successfully!",
+        // });
 
         window.location.reload();
       } else {
-        addToast({
-          title: "❌ Error",
-          variant: "destructive",
-          description: data.error || "Failed to register",
-        });
+        // addToast({
+        //   title: "❌ Error",
+        //   variant: "destructive",
+        //   description: data.error || "Failed to register",
+        // });
       }
     } catch (err) {
       console.error(err);
-      addToast({
-        title: "⚠️ Error",
-        variant: "destructive",
-        description: "Something went wrong. Please try again later.",
-      });
+      // addToast({
+      //   title: "⚠️ Error",
+      //   variant: "destructive",
+      //   description: "Something went wrong. Please try again later.",
+      // });
     } finally {
       setLoadingEvents((prev) => prev.filter((id) => id !== event.id));
     }
