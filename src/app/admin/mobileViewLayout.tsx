@@ -110,8 +110,8 @@ export default function MobileLayout({
   };
 
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-gray-50`}>
+    // <html lang="en">
+      <div className={`${inter.className} bg-gray-50`}>
         {/* ===== Mobile Header ===== */}
 
         {/* ===== Page Content ===== */}
@@ -394,7 +394,7 @@ export default function MobileLayout({
             </div>
           </div>
         )}
-      </body>
-    </html>
+      </div>
+    // </html>
   );
 }

@@ -144,8 +144,8 @@ export default function MobileLayout({
   };
 
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-gray-50`}>
+    // <html lang="en">
+      <div className={`${inter.className} bg-gray-50`}>
         {/* ===== Mobile Header ===== */}
         <div
           className={`sticky top-0 z-50 transition-all duration-300 ${
@@ -296,16 +296,6 @@ export default function MobileLayout({
               <div
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 active:scale-95 transition-all`}
               >
-                {/* <button
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 active:scale-95 transition-all ${
-                    scrollY > 20
-                      ? "bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-md"
-                      : "bg-white text-red-700 shadow-md"
-                  }`}
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  Language
-                </button> */}
                 <Translator />
               </div>
             </div>
@@ -319,9 +309,6 @@ export default function MobileLayout({
             <Toaster />
           </ToastProvider>
         </ThemeProvider>
-        {/* <div className="mb-16 -mt-20">
-          <Footer />
-        </div> */}
 
         {/* ===== Bottom Navigation ===== */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 shadow-2xl z-40">
@@ -594,7 +581,7 @@ export default function MobileLayout({
             </div>
           </div>
         )}
-      </body>
-    </html>
+      </div>
+    // </html>
   );
 }

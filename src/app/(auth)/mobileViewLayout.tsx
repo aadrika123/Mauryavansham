@@ -99,8 +99,8 @@ export default function MobileLayout({
   };
 
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-gray-50`}>
+    // <html lang="en">
+      <div className={`${inter.className} bg-gray-50`}>
         {/* ===== Mobile Header ===== */}
         <div
           className={`sticky top-0 z-50 transition-all duration-300 ${
@@ -392,7 +392,7 @@ export default function MobileLayout({
             />
           </div>
         )}
-      </body>
-    </html>
+      </div>
+    // </html>
   );
 }
