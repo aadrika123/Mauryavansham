@@ -178,9 +178,9 @@ export default function MobileLayout({
             <Toaster />
           </ToastProvider>
         </ThemeProvider>
-        <div className="mb-16 -mt-20">
+        {/* <div className="mb-16 -mt-20">
           <Footer />
-        </div>
+        </div> */}
 
         {/* ===== Bottom Navigation ===== */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 shadow-2xl z-40">

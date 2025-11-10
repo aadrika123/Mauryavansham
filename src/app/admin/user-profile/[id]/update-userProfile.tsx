@@ -241,7 +241,7 @@ export default function UserProfilePage({ data }: { data: any }) {
         {/* Basic Info */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
               label="Name"
               name="name"
@@ -255,13 +255,6 @@ export default function UserProfilePage({ data }: { data: any }) {
               value={formData.email}
               disabled
             />
-
-            {/* <PhoneField
-              value={formData.phone}
-              onChange={(val: string) =>
-                setFormData({ ...formData, phone: val })
-              }
-            /> */}
             <div className="space-y-2">
               <Label
                 htmlFor="phone"
@@ -270,7 +263,6 @@ export default function UserProfilePage({ data }: { data: any }) {
                 Phone Number *
               </Label>
               <div className="relative">
-                {/* <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" /> */}
                 <PhoneField
                   value={formData.phone}
                   onChange={(val: string) =>
@@ -320,7 +312,6 @@ export default function UserProfilePage({ data }: { data: any }) {
               options={["Single", "Married", "Divorced", "Widowed"]}
             />
 
-            {/* 🆕 Spouse Name Field - Only show when married */}
             {formData.maritalStatus === "Married" && (
               <InputField
                 label="Spouse Name"
@@ -331,12 +322,6 @@ export default function UserProfilePage({ data }: { data: any }) {
               />
             )}
 
-            {/* <InputField
-              label="Religion"
-              name="religion"
-              value="Hindu"
-              disabled
-            /> */}
             <InputField
               label="Mother Tongue"
               name="motherTongue"
@@ -430,7 +415,7 @@ export default function UserProfilePage({ data }: { data: any }) {
         {/* 🆕 Profession Section */}
         <div>
           <h2 className="text-lg font-semibold mb-4">Profession</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <ProfessionGroupField
               label="Profession Group"
               name="professionGroup"
@@ -452,22 +437,11 @@ export default function UserProfilePage({ data }: { data: any }) {
               onChange={handleChange}
               professionGroup={formData.professionGroup}
             />
-
-            {/* Additional details field for profession - full width */}
-            {/* <div className="col-span-2">
-              <InputField
-                label="Profession Details"
-                name="professionDetails"
-                value={formData.professionDetails}
-                onChange={handleChange}
-                placeholder="e.g., Company name, specialization, experience, etc."
-              />
-            </div> */}
           </div>
         </div>
 
         {/* Siblings */}
-        <div className="border p-4 rounded-md">
+        <div className="">
           <h3 className="font-semibold mb-2">Siblings</h3>
           {formData.siblings.map((sibling: any, idx: number) => {
             // Calculate age based on date of birth
@@ -492,8 +466,8 @@ export default function UserProfilePage({ data }: { data: any }) {
               (sibling.gender === "Brother" && age >= 21);
 
             return (
-              <div key={idx} className="border p-3 rounded mb-3 bg-gray-50">
-                <div className="grid grid-cols-3 gap-3 mb-3">
+              <div key={idx} className="">
+                <div className="gap-3 mb-3 grid grid-cols-1 sm:grid-cols-3 ">
                   {/* Name */}
                   <input
                     type="text"
@@ -530,7 +504,7 @@ export default function UserProfilePage({ data }: { data: any }) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="gap-3 mb-3 grid grid-cols-1 sm:grid-cols-2">
                   {/* Gender (radio buttons) */}
                   <div>
                     <label className="block text-sm font-medium mb-1">
@@ -593,7 +567,7 @@ export default function UserProfilePage({ data }: { data: any }) {
 
                 {/* Conditional Marital Status Fields */}
                 {showMaritalStatus && (
-                  <div className="mt-3 grid grid-cols-2 gap-3 pt-3 border-t border-gray-300">
+                  <div className="mt-3 gap-3 grid grid-cols-1 sm:grid-cols-2 pt-3 border-t border-gray-300">
                     {/* Marital Status */}
                     <div>
                       <label className="block text-sm font-medium mb-1">
@@ -670,7 +644,7 @@ export default function UserProfilePage({ data }: { data: any }) {
         </div>
 
         {/* Children */}
-        <div className="border p-4 rounded-md">
+        <div className="">
           <h3 className="font-semibold mb-2">Children</h3>
           {formData.children.map((child: any, idx: number) => {
             // Calculate age based on date of birth
@@ -695,8 +669,8 @@ export default function UserProfilePage({ data }: { data: any }) {
               (child.gender === "Son" && age >= 21);
 
             return (
-              <div key={idx} className="border p-3 rounded mb-3 bg-gray-50">
-                <div className="grid grid-cols-3 gap-3 mb-3">
+              <div key={idx} className="">
+                <div className="gap-3 mb-3 grid grid-cols-1 sm:grid-cols-2">
                   {/* Name */}
                   <input
                     type="text"
@@ -733,7 +707,7 @@ export default function UserProfilePage({ data }: { data: any }) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="gap-3  grid grid-cols-1 sm:grid-cols-2">
                   {/* Gender (radio buttons) */}
                   <div>
                     <label className="block text-sm font-medium mb-1">
@@ -796,7 +770,7 @@ export default function UserProfilePage({ data }: { data: any }) {
 
                 {/* Conditional Marital Status Fields */}
                 {showMaritalStatus && (
-                  <div className="mt-3 grid grid-cols-2 gap-3 pt-3 border-t border-gray-300">
+                  <div className="mt-3 gap-3  grid grid-cols-1 sm:grid-cols-2 pt-3 border-t border-gray-300">
                     {/* Marital Status */}
                     <div>
                       <label className="block text-sm font-medium mb-1">

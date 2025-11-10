@@ -1,7 +1,14 @@
 "use client";
 
-import { Languages } from "lucide-react";
 import { useEffect, useState } from "react";
+
+declare global {
+  interface Window {
+    google: any;
+    googleTranslateElementInit: () => void;
+  }
+}
+
 
 export default function Translator() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -24,11 +31,11 @@ export default function Translator() {
   // Toolbar hide logic
   const removeGoogleTranslateToolbar = () => {
     const elementsToHide = [
-      ".goog-te-banner-frame", // top yellow banner
-      "#goog-gt-tt", // tooltip
-      ".goog-te-balloon-frame", // popup balloon
-      "body > .skiptranslate", // wrapper div
-      ".goog-logo-link", // Google branding link
+      ".goog-te-banner-frame",
+      "#goog-gt-tt",
+      ".goog-te-balloon-frame",
+      "body > .skiptranslate",
+      ".goog-logo-link",
     ];
 
     elementsToHide.forEach((selector) => {
@@ -38,7 +45,7 @@ export default function Translator() {
       }
     });
 
-    document.body.style.top = "0px"; // Prevents layout shifting
+    document.body.style.top = "0px";
   };
 
   useEffect(() => {
@@ -54,7 +61,6 @@ export default function Translator() {
 
     (window as any).googleTranslateElementInit = googleTranslateElementInit;
 
-    // keep removing toolbar every second
     const interval = setInterval(removeGoogleTranslateToolbar, 1000);
 
     return () => {
@@ -67,26 +73,32 @@ export default function Translator() {
 
   // Language change handler
   const changeLanguage = (selectedLang: string) => {
-    const fireEvent = (element: HTMLElement, eventName: string) => {
-      const event = document.createEvent("HTMLEvents");
-      event.initEvent(eventName, true, true);
-      element.dispatchEvent(event);
-    };
-
     const applyLang = () => {
       const select = document.querySelector(
         ".goog-te-combo"
       ) as HTMLSelectElement;
+
       if (select) {
         select.value = selectedLang;
-        fireEvent(select, "change");
+
+        const event = document.createEvent("HTMLEvents");
+        event.initEvent("change", true, true);
+        select.dispatchEvent(event);
+
+        // ✅ Force reload for mobile browsers (important)
+        const iframe = document.querySelector("iframe.goog-te-menu-frame");
+        if (iframe) {
+          (iframe as HTMLIFrameElement).contentWindow?.location.reload();
+        }
+
         removeGoogleTranslateToolbar();
       } else {
-        setTimeout(applyLang, 500); // retry until loaded
+        // Retry until loaded
+        setTimeout(applyLang, 800);
       }
     };
 
-    applyLang();
+    applyLang(); // ✅ You missed this call earlier!
   };
 
   return (
@@ -111,20 +123,18 @@ export default function Translator() {
       </style>
 
       <div className="flex items-center lg:border lg:border-white md:border md:border-white rounded-sm shadow-sm">
-        {/* Google Translate required hidden div */}
+        {/* Google Translate hidden div */}
         <div
           id="google_translate_element"
           style={{ position: "absolute", left: "-9999px" }}
         ></div>
 
         <div className="relative">
-          {/* Button */}
           <button
             className="flex items-center justify-center p-2 rounded-md"
             onClick={() => setShowDropdown(!showDropdown)}
           >
-            {/* Mobile View: Only Icon */}
-            {/* Mobile View: Custom A / अ icon */}
+            {/* Mobile View: Custom A/अ icon */}
             <span className="block md:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -156,7 +166,7 @@ export default function Translator() {
               </svg>
             </span>
 
-            {/* Desktop View: Icon + Text */}
+            {/* Desktop View */}
             <span className="hidden md:flex items-center text-black">
               <span className="mr-2 text-xl">🌐</span> Language
             </span>
@@ -183,15 +193,6 @@ export default function Translator() {
               >
                 हिन्दी
               </button>
-              {/* <button
-        onClick={() => {
-          changeLanguage("mr");
-          setShowDropdown(false);
-        }}
-        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-      >
-        मराठी
-      </button> */}
             </div>
           )}
         </div>

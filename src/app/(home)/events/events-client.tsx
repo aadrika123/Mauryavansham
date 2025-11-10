@@ -415,16 +415,14 @@ export default function EventsClient({
       )}
 
       <div className="bg-yellow-50 border-b border-gray-200 p-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <Link
-              href="/"
-              className="flex items-center  text-gray-600 hover:text-gray-900"
-            >
-              <ArrowLeft className="w-4 h-4 text-red-700" />
-              <span className="text-red-700">Back to Home / </span>
+        <div className="container mx-auto py-4">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 flex-wrap">
+            <ArrowLeft className="h-4 w-4 text-red-600" />
+            <Link href="/" className="text-red-600 hover:underline">
+              Home
             </Link>
-            <h1 className="text-2xl font-bold text-red-700">
+            <span>/</span>
+            <h1 className="">
               Community Events
             </h1>
           </div>
