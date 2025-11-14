@@ -174,7 +174,6 @@ export default function BusinessDetailsPage({ user }: any) {
     }
   }, [session]);
 
-  console.log(enquireTarget.businesses, "enquireTarget");
 
   const categories = [
     "Health & Beauty",
