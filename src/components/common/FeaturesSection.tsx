@@ -102,7 +102,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-6 md:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -112,15 +112,12 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                 href={ad.adUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full h-full"
+                className="inline-block w-full h-full"
               >
-                <Image
+                <img
                   src={ad.bannerImageUrl}
-                  alt={`Horizontal Ad ${index + 1}`}
-                  width={900}
-                  height={300}
-                  className="w-full h-full rounded-xl shadow-lg object-cover cursor-pointer"
-                  priority={index === 0}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -178,6 +175,18 @@ export function FeaturesSection() {
   console.log("Horizontal Ads (Placement 3):", horizontalAds);
 
   const features = [
+     {
+      icon: Eye,
+      title: "Know your community members",
+      description: "See who is available in the community",
+      href: "/community-directory",
+    },
+     {
+      icon: Eye,
+      title: "Heritage ",
+      description: "Know about your community’s history",
+      href: "/heritage",
+    },
     {
       icon: Users,
       title: "Community Forum",
@@ -190,29 +199,36 @@ export function FeaturesSection() {
       description: "Find your perfect life partner within the community",
       href: "/matrimonial",
     },
-    {
-      title: "Business Forum",
-      icon: ShoppingBag,
-      description: "Promote your business and connect with potential clients",
-      href: "/business",
-    },
-    {
+     {
       icon: Calendar,
       title: "Events & Calendar",
       description: "Stay updated with community events and celebrations",
       href: "/events",
     },
     {
+      title: "Business Forum",
+      icon: ShoppingBag,
+      description: "Promote your business and connect with potential clients",
+      href: "/business",
+    },
+   
+    {
       icon: HandHeart,
-      title: "Donation",
-      description: "Get help or offer assistance to community members",
-      href: "/",
+      title: "Health & Wellness",
+      description: "Access health resources and support within the community",
+      href: "/health-wellness",
+    },
+     {
+      icon: Sparkles,
+      title: "Educations",
+      description: "Explore educational resources and opportunities",
+      href: "/education",
     },
     {
       icon: Trophy,
       title: "Achievements",
       description: "Showcase and celebrate community achievements",
-      href: "/",
+      href: "/achievements",
     },
     {
       icon: Sparkles,
@@ -222,16 +238,12 @@ export function FeaturesSection() {
     },
     {
       icon: Sparkles,
-      title: "Educations",
-      description: "Explore educational resources and opportunities",
+      title: "Donations",
+      description: "Support community initiatives through donations",
       href: "/",
     },
-    {
-      icon: Eye,
-      title: "Know your community members",
-      description: "See who is available in the community",
-      href: "/community-directory",
-    },
+   
+   
   ];
 
   return (
@@ -334,7 +346,7 @@ export function FeaturesSection() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => {
               const isCommunityDirectory =
                 feature.href === "/community-directory";

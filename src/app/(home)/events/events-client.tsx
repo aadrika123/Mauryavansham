@@ -120,13 +120,13 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
   }
 
   return (
-    <div className="mx-auto relative w-full max-w-[900px]">
+    <div className="mx-auto relative w-full max-w-[1200px]">
       <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden">
-        <div className="relative p-4 sm:p-8 text-center h-[200px] sm:h-[250px] md:h-[300px]">
+        <div className="relative p-4 sm:p-8 text-center h-[400px] sm:h-[400px] md:h-[400px]">
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -138,13 +138,10 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                 rel="noopener noreferrer"
                 className="inline-block w-full h-full"
               >
-                <Image
+                <img
                   src={ad.bannerImageUrl}
-                  alt={`Bottom Ad ${index + 1}`}
-                  width={900}
-                  height={300}
-                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
-                  priority={index === 0}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -184,7 +181,7 @@ export default function EventsClient({
   const [activeTab, setActiveTab] = useState("upcoming");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [events, setEvents] = useState(initialEvents);
+  const [events, setEvents] = useState(initialEvents || []);
   const { toast } = useToast();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const Router = useRouter();
@@ -216,15 +213,22 @@ export default function EventsClient({
   const featuredEventIds = upcomingFeaturedEvents.map((ev) => ev.id);
   const allEvents = events.filter((ev) => !featuredEventIds.includes(ev.id));
 
-  const filteredEvents = allEvents.filter((event) => {
-    const matchesSearch =
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter =
-      filterType === "all" ||
-      event.type.toLowerCase() === filterType.toLowerCase();
-    return matchesSearch && matchesFilter;
-  });
+  // Filter only upcoming (not past) events for "All Events"
+  const filteredEvents = allEvents
+    .filter((event) => {
+      const eventDate = new Date(event.date);
+      eventDate.setHours(0, 0, 0, 0);
+      return eventDate >= today; // ✅ Only upcoming or current events
+    })
+    .filter((event) => {
+      const matchesSearch =
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesFilter =
+        filterType === "all" ||
+        event.type.toLowerCase() === filterType.toLowerCase();
+      return matchesSearch && matchesFilter;
+    });
 
   const pastEvents = events
     .filter((event) => {
@@ -422,9 +426,7 @@ export default function EventsClient({
               Home
             </Link>
             <span>/</span>
-            <h1 className="">
-              Community Events
-            </h1>
+            <h1 className="">Community Events</h1>
           </div>
         </div>
       </div>
@@ -785,171 +787,179 @@ export default function EventsClient({
         </div>
 
         {/* All Events */}
-        <div>
-          <h2 className="text-xl font-bold text-red-700 mb-4">All Events</h2>
-          {filteredEvents.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredEvents.map((event) => {
-                const isFull = event.attendees >= event.maxAttendees;
-                const [loading, setLoading] = useState(false);
+        {activeTab !== "calendar" && (
+          <div>
+            <h2 className="text-xl font-bold text-red-700 mb-4">All Events</h2>
+            {filteredEvents.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredEvents.map((event) => {
+                  const isFull = event.attendees >= event.maxAttendees;
+                  // const [loading, setLoading] = useState(false);
 
-                const handleRegister = async () => {
-                  if (!user) {
-                    setShowLoginModal(true);
-                    return;
-                  }
-                  if (isFull || loading) return;
-                  setLoading(true);
-                  try {
-                    const res = await fetch(`/api/events/${event.id}/attend`, {
-                      method: "POST",
-                    });
-                    const data = await res.json();
-
-                    if (res.ok) {
-                      setEvents((prev) =>
-                        prev.map((ev) =>
-                          ev.id === event.id
-                            ? { ...ev, attendees: ev.attendees + 1 }
-                            : ev
-                        )
+                  const handleRegister = async () => {
+                    if (!user) {
+                      setShowLoginModal(true);
+                      return;
+                    }
+                    // if (isFull || loading) return;
+                    // setLoading(true);
+                    try {
+                      const res = await fetch(
+                        `/api/events/${event.id}/attend`,
+                        {
+                          method: "POST",
+                        }
                       );
-                      toast({
-                        title: "✅ Success",
-                        variant: "default",
-                        description: data.message || "Registered successfully!",
-                      });
-                      window.location.reload();
-                    } else {
+                      const data = await res.json();
+
+                      if (res.ok) {
+                        setEvents((prev) =>
+                          prev.map((ev) =>
+                            ev.id === event.id
+                              ? { ...ev, attendees: ev.attendees + 1 }
+                              : ev
+                          )
+                        );
+                        toast({
+                          title: "✅ Success",
+                          variant: "default",
+                          description:
+                            data.message || "Registered successfully!",
+                        });
+                        window.location.reload();
+                      } else {
+                        toast({
+                          title: "❌ Error",
+                          variant: "destructive",
+                          description: data.error || "Failed to register",
+                        });
+                      }
+                    } catch (err) {
+                      console.error(err);
                       toast({
                         title: "❌ Error",
                         variant: "destructive",
-                        description: data.error || "Failed to register",
+                        description: "Something went wrong",
                       });
+                    } finally {
+                      // setLoading(false);
                     }
-                  } catch (err) {
-                    console.error(err);
-                    toast({
-                      title: "❌ Error",
-                      variant: "destructive",
-                      description: "Something went wrong",
-                    });
-                  } finally {
-                    setLoading(false);
-                  }
-                };
+                  };
 
-                return (
-                  <Card
-                    key={event.id}
-                    className="bg-[#FEFCE8] hover:shadow-md transition-shadow overflow-hidden max-h-[420px]"
-                  >
-                    <CardContent className="p-0 flex flex-col h-full">
-                      <div className="relative w-full h-36 bg-gray-100 overflow-hidden">
-                        <Image
-                          src={event.image || "/placeholder.svg"}
-                          alt="Event Banner"
-                          fill
-                          className="object-contain w-full h-full"
-                        />
-                        <div className="absolute top-2 left-2">
-                          <Badge className={getTypeColor(event.type)}>
-                            <span className="mr-1">
-                              {getTypeIcon(event.type)}
-                            </span>
-                            {event.type}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="p-3 flex-1 flex flex-col justify-between">
-                        <div>
-                          <h3 className="text-md font-semibold text-red-700 mb-1 line-clamp-2">
-                            {event.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                            {event.description}
-                          </p>
-
-                          <div className="space-y-1 text-gray-500 text-xs">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              <span>
-                                {formatDate(event.date)} at{" "}
-                                {formatTimeTo12Hr(event.fromTime)} to{" "}
-                                {formatTimeTo12Hr(event.toTime)}
+                  return (
+                    <Card
+                      key={event.id}
+                      className="bg-[#FEFCE8] hover:shadow-md transition-shadow overflow-hidden max-h-[420px]"
+                    >
+                      <CardContent className="p-0 flex flex-col h-full">
+                        <div className="relative w-full h-36 bg-gray-100 overflow-hidden">
+                          <Image
+                            src={event.image || "/placeholder.svg"}
+                            alt="Event Banner"
+                            fill
+                            className="object-contain w-full h-full"
+                          />
+                          <div className="absolute top-2 left-2">
+                            <Badge className={getTypeColor(event.type)}>
+                              <span className="mr-1">
+                                {getTypeIcon(event.type)}
                               </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" />
-                              <span className="truncate">{event.location}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Users className="w-3 h-3" />
-                              <span>
-                                {event.attendeesCount}/{event.maxAttendees}{" "}
-                                attending
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <User className="w-3 h-3" />
-                              <span>{event.organizer} </span>
-                            </div>
+                              {event.type}
+                            </Badge>
                           </div>
                         </div>
 
-                        <div className="flex gap-1 mt-2">
-                          <Button
-                            size="sm"
-                            className={`flex-1 ${
-                              isFull
-                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                : "bg-orange-600 hover:bg-orange-700 text-white"
-                            }`}
-                            onClick={handleRegister}
-                            disabled={isFull || loading}
-                          >
-                            {isFull
+                        <div className="p-3 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h3 className="text-md font-semibold text-red-700 mb-1 line-clamp-2">
+                              {event.title}
+                            </h3>
+                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                              {event.description}
+                            </p>
+
+                            <div className="space-y-1 text-gray-500 text-xs">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                <span>
+                                  {formatDate(event.date)} at{" "}
+                                  {formatTimeTo12Hr(event.fromTime)} to{" "}
+                                  {formatTimeTo12Hr(event.toTime)}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <MapPin className="w-3 h-3" />
+                                <span className="truncate">
+                                  {event.location}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Users className="w-3 h-3" />
+                                <span>
+                                  {event.attendeesCount}/{event.maxAttendees}{" "}
+                                  attending
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <User className="w-3 h-3" />
+                                <span>{event.organizer} </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-1 mt-2">
+                            <Button
+                              size="sm"
+                              className={`flex-1 ${
+                                isFull
+                                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                  : "bg-orange-600 hover:bg-orange-700 text-white"
+                              }`}
+                              onClick={handleRegister}
+                              // disabled={isFull || loading}
+                            >
+                              {/* {isFull
                               ? "Full"
                               : loading
                               ? "Registering..."
-                              : "Register"}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="flex-1 border-gray-300 text-yellow-700 bg-transparent"
-                            onClick={() => {
-                              setSelectedEventAttendees(
-                                event.attendees.map((a) => a.name)
-                              );
-                              setShowAttendeesModal(true);
-                            }}
-                          >
-                            View Attendees
-                          </Button>
+                              : "Register"} */}
+                              {isFull ? "Full" : "Register"}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 border-gray-300 text-yellow-700 bg-transparent"
+                              onClick={() => {
+                                setSelectedEventAttendees(
+                                  event.attendees.map((a) => a.name)
+                                );
+                                setShowAttendeesModal(true);
+                              }}
+                            >
+                              View Attendees
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          ) : (
-            <Card className="p-6 text-center">
-              <div className="space-y-2">
-                <Calendar className="w-12 h-12 mx-auto text-gray-400" />
-                <div>
-                  <p className="text-gray-500 font-medium">No events found</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Try adjusting your search or check back later.
-                  </p>
-                </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
-            </Card>
-          )}
-        </div>
-
+            ) : (
+              <Card className="p-6 text-center">
+                <div className="space-y-2">
+                  <Calendar className="w-12 h-12 mx-auto text-gray-400" />
+                  <div>
+                    <p className="text-gray-500 font-medium">No events found</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Try adjusting your search or check back later.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            )}
+          </div>
+        )}
         {activeTab === "my-events" && (
           <Card className="p-8 text-center">
             <User className="w-16 h-16 mx-auto text-gray-400 mb-4" />

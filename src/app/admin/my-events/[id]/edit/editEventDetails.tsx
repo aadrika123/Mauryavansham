@@ -43,7 +43,7 @@ export default function EditEventPage() {
         const res = await fetch(`/api/events/my-events/${id}`);
         const data = await res.json();
 
-        if (data.status !== "pending") {
+        if (data.status !== "pending" && data.status !== "approved") {
           addToast({
             title: "You cannot edit this event",
             variant: "destructive",
@@ -166,7 +166,9 @@ export default function EditEventPage() {
         <Label>Organizer name</Label>
         <Input
           value={formData.organizer}
-          onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, organizer: e.target.value })
+          }
         />
       </div>
 

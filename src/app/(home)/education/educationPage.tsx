@@ -6,6 +6,8 @@ import { Button } from "@/src/components/ui/button";
 import { Lock, User, X, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/src/components/ui/toastProvider";
+// import { useToast } from "@/src/components/ui/toastProvider";
 
 // 🔸 Book Your Ad (13) Component
 const HorizontalAdSlider13: React.FC<{ ads: any[] }> = ({ ads }) => {
@@ -54,7 +56,7 @@ const HorizontalAdSlider13: React.FC<{ ads: any[] }> = ({ ads }) => {
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -69,7 +71,7 @@ const HorizontalAdSlider13: React.FC<{ ads: any[] }> = ({ ads }) => {
                 <img
                   src={ad.bannerImageUrl}
                   alt={`Ad ${index + 1}`}
-                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -105,6 +107,7 @@ const HorizontalAdSlider13: React.FC<{ ads: any[] }> = ({ ads }) => {
 };
 
 export default function CoachingCentersPage({ user }: any) {
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [centers, setCenters] = useState<any[]>([]);
   const [filteredCenters, setFilteredCenters] = useState<any[]>([]);
@@ -124,6 +127,62 @@ export default function CoachingCentersPage({ user }: any) {
   // 🔹 Know More Modal
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedCenter, setSelectedCenter] = useState<any>(null);
+  // Inside CoachingCentersPage component
+  const [showEnquireModal, setShowEnquireModal] = useState(false);
+  const [enquireComment, setEnquireComment] = useState("");
+  const [enquireTarget, setEnquireTarget] = useState<any>(null);
+
+  const [topCourses, setTopCourses] = useState<string[]>([
+    "Spoken English",
+    "IELTS / TOEFL Preparation",
+    "Digital Marketing",
+    "Web Development",
+    "Data Science",
+    "Graphic Design",
+    "Computer Basics",
+    "Tally & Accounting",
+    "Python Programming",
+    "Java Full Stack",
+    "Frontend Development",
+    "Backend Development",
+    "Mobile App Development",
+    "UI/UX Design",
+    "Content Writing",
+    "Public Speaking",
+    "Soft Skills Training",
+    "NEET / JEE Preparation",
+    "UPSC / IAS Coaching",
+    "Bank / SSC Coaching",
+  ]);
+
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  console.log(enquireTarget, "enq");
+  // Update top courses dynamically based on all centers
+  useEffect(() => {
+    const allCourses = new Set(topCourses);
+    centers.forEach((center) => {
+      center.courses?.forEach((course: string) => allCourses.add(course));
+    });
+    setTopCourses(Array.from(allCourses));
+  }, [centers]);
+
+  // Handle course click to filter centers
+  const handleCourseClick = (course: string) => {
+    if (selectedCourse === course) {
+      // Clicking again resets filter
+      setSelectedCourse(null);
+      setFilteredCenters(centers);
+      return;
+    }
+
+    setSelectedCourse(course);
+    const filtered = centers.filter((center) =>
+      center.courses?.some(
+        (c: string) => c.toLowerCase() === course.toLowerCase()
+      )
+    );
+    setFilteredCenters(filtered);
+  };
 
   const handleKnowMore = (center: any) => {
     setSelectedCenter(center);
@@ -196,43 +255,93 @@ export default function CoachingCentersPage({ user }: any) {
     setShowImageModal(true);
   };
 
-  const handleEnquiry = async (education: any) => {
-    console.log("Enquiry clicked for business:", education);
+  const handleEnquiry = (center: any) => {
+    console.log(center, "center");
     if (!user) {
       setShowLoginModal(true);
       return;
     }
+    setEnquireTarget(center);
+    setEnquireComment("");
+    setShowEnquireModal(true);
+  };
 
-    const message = `${user.name} from ${user.city} ${user.state} (${user.email}) wants to connect with you regarding your registered center.`;
+  // Separate function for sending enquiry
+  const sendEnquiry = async () => {
+    if (!user || !enquireTarget) return;
 
-    // 1️⃣ Send notification
-    const res = await fetch("/api/notifications", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        businessOwnerId: education.userId,
-        type: "education_enquiry",
-        message,
-        currentUser: user,
-      }),
-    });
+    if (!enquireComment.trim()) {
+      addToast({
+        title: "Error",
+        description: "Please write a comment before sending!",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    const data = await res.json();
+    if (enquireComment.trim().split(/\s+/).length > 100) {
+      addToast({
+        title: "Error",
+        description: "Maximum 100 words allowed!",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    if (res.ok) {
-      alert("Enquiry sent successfully!");
-
-      // 2️⃣ Only after notification success, send email
-      await fetch("/api/send-education-query-email", {
+    try {
+      // 1️⃣ Save in DB
+      const res = await fetch("/api/enquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          businessOwnerEmail: education.email,
-          currentUser: user,
+          comment: enquireComment,
+          enquireType: "education",
+          senderUserId: user.id,
+          receiverUserId: enquireTarget.userId,
         }),
       });
-    } else {
-      alert(data.error);
+
+      let data: any = {};
+      const text = await res.text();
+      if (text) {
+        data = JSON.parse(text);
+      }
+
+      if (res.ok) {
+        // Send email
+        await fetch("/api/send-education-query-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessOwnerEmail: enquireTarget.email,
+            currentUser: user,
+          }),
+        });
+
+        addToast({
+          title: "Success",
+          description: "Enquiry sent successfully!",
+          variant: "success",
+        });
+        setShowEnquireModal(false);
+        setEnquireComment("");
+      } else {
+        addToast({
+          title: "Error",
+          description: data.error || "Failed to send enquiry",
+          variant: "destructive",
+        });
+        setShowEnquireModal(false);
+        setEnquireComment("");
+      }
+    } catch (err) {
+      console.error(err);
+      addToast({
+        title: "Error",
+        description: "Something went wrong.",
+        variant: "destructive",
+      });
+      setShowEnquireModal(false);
     }
   };
 
@@ -307,34 +416,23 @@ export default function CoachingCentersPage({ user }: any) {
           </h2>
           {(() => {
             const [showAll, setShowAll] = React.useState(false);
-            const courses = [
-              "Spoken English",
-              "IELTS / TOEFL Preparation",
-              "Digital Marketing",
-              "Web Development",
-              "Data Science",
-              "Graphic Design",
-              "Computer Basics",
-              "Tally & Accounting",
-              "Python Programming",
-              "Java Full Stack",
-              "Frontend Development",
-              "Backend Development",
-              "Mobile App Development",
-              "UI/UX Design",
-              "Content Writing",
-              "Public Speaking",
-              "Soft Skills Training",
-              "NEET / JEE Preparation",
-              "UPSC / IAS Coaching",
-              "Bank / SSC Coaching",
-            ];
-            const displayedCourses = showAll ? courses : courses.slice(0, 10);
+            const displayedCourses = showAll
+              ? topCourses
+              : topCourses.slice(0, 10);
+
             return (
               <>
                 <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 text-gray-700 text-sm">
                   {displayedCourses.map((course, i) => (
-                    <li key={i} className="hover:text-blue-600 cursor-pointer">
+                    <li
+                      key={i}
+                      onClick={() => handleCourseClick(course)}
+                      className={`hover:text-blue-600 cursor-pointer ${
+                        selectedCourse === course
+                          ? "font-bold text-blue-700"
+                          : ""
+                      }`}
+                    >
                       {course}
                     </li>
                   ))}
@@ -391,7 +489,7 @@ export default function CoachingCentersPage({ user }: any) {
         </div>
 
         <h2 className="text-lg sm:text-xl font-bold text-red-700 mb-6">
-          Coaching Center Listings
+          Coaching and Institutes
         </h2>
 
         <div className="space-y-6">
@@ -611,6 +709,52 @@ export default function CoachingCentersPage({ user }: any) {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {showEnquireModal && enquireTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-red-700">
+                Send Enquiry to {enquireTarget.ownerName}
+              </h3>
+              <button
+                onClick={() => setShowEnquireModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="text-gray-600 mb-2">
+              Add a comment (max 400 characters / 100 words)
+            </p>
+            <textarea
+              value={enquireComment}
+              onChange={(e) => setEnquireComment(e.target.value)}
+              maxLength={400}
+              rows={5}
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              placeholder="Write your message..."
+            />
+
+              <div className="mt-4 flex gap-2 justify-end">
+                <Button
+                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                  onClick={sendEnquiry} // ✅ Sirf function call
+                >
+                  Send
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEnquireModal(false)}
+                >
+                  Cancel
+                </Button>
+
+            </div>
           </div>
         </div>
       )}

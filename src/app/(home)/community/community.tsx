@@ -45,8 +45,8 @@ interface Reply {
   createdAt: string;
   likeCount: number;
   isLiked: boolean;
-  parentId?: number; // for nested replies
-  replies: Reply[]; // nested replies
+  parentId?: number;
+  replies: Reply[];
   userName: string;
 }
 
@@ -88,12 +88,11 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % ads.length);
-    }, 5000); // Change every 5 seconds
+    }, 5000);
 
     return () => clearInterval(timer);
   }, [ads.length]);
 
-  // Track view when ad changes
   useEffect(() => {
     if (ads[currentIndex]) {
       fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
@@ -102,21 +101,19 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
 
   if (ads.length === 0) {
     return (
-      <div className="relative w-full h-44 sm:h-60 md:h-72 lg:h-[300px]">
+      <div className="relative w-full h-44 sm:h-60 md:h-72 lg:h-[350px]">
         <div className="bg-gradient-to-br from-amber-50 via-yellow-100 to-amber-50 border-4 border-dashed border-amber-300 rounded-2xl shadow-lg w-full h-full flex items-center justify-center text-center p-6 relative overflow-hidden">
-          {/* Floating sparkles */}
           <Sparkles className="absolute top-6 left-6 h-7 w-7 text-amber-500 animate-pulse" />
           <Star className="absolute top-6 right-6 h-7 w-7 text-amber-500 animate-bounce" />
           <Star className="absolute bottom-8 left-10 h-6 w-6 text-amber-400 animate-ping" />
 
-          {/* Content */}
           <div className="max-w-lg">
             <h3 className="text-2xl md:text-3xl font-extrabold text-amber-800 mb-2 drop-shadow-sm">
               Book Your Ad (5)
             </h3>
             <p className="text-sm sm:text-base text-amber-700 mb-3">
               Recommended size:{" "}
-              <span className="font-semibold">900×300 px</span>
+              <span className="font-semibold">1200×350 px</span>
             </p>
             <p className="text-xs sm:text-sm text-amber-600">
               Go to your dashboard to create and manage ads.
@@ -130,12 +127,11 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
   return (
     <div className="relative group">
       <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-amber-300/50">
-        <div className="relative p-4 sm:p-6 text-center h-44 sm:h-60 md:h-72 lg:h-[300px]">
-          {/* Ad Images */}
+        <div className="relative p-4 sm:p-6 text-center h-44 sm:h-60 md:h-72 lg:h-[350px]">
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-6 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -147,34 +143,27 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
                 rel="noopener noreferrer"
                 className="inline-block w-full h-full"
               >
-                <Image
+                <img
                   src={ad.bannerImageUrl}
-                  alt={ad.title}
-                  width={900}
-                  height={300}
-                  className="w-full h-full rounded-xl shadow-lg transition-all duration-500 group-hover:brightness-105 object-contain"
-                  priority={index === 0}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
           ))}
 
-          {/* Gradient Overlay on Hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition duration-500 rounded-xl pointer-events-none z-20"></div>
 
-          {/* Ad Counter - only show if multiple ads */}
           {ads.length > 1 && (
             <div className="absolute top-8 right-8 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-30">
               {currentIndex + 1} / {ads.length}
             </div>
           )}
 
-          {/* Sponsored Badge */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-amber-600/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md opacity-0 group-hover:opacity-100 transition duration-500 z-30">
+          {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-amber-600/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md opacity-0 group-hover:opacity-100 transition duration-500 z-30">
             Sponsored Ad
-          </div>
+          </div> */}
 
-          {/* Navigation Dots - only show if multiple ads */}
           {ads.length > 1 && (
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 z-30 opacity-0 group-hover:opacity-100 transition duration-300">
               {ads.map((_, index) => (
@@ -198,7 +187,6 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
   );
 };
 
-// Separate Reply Component for better organization
 function ReplyComponent({
   reply,
   user,
@@ -214,32 +202,30 @@ function ReplyComponent({
 }) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState("");
-  const [showReplies, setShowReplies] = useState(depth < 2); // Show nested replies by default for first 2 levels
+  const [showReplies, setShowReplies] = useState(depth < 2);
 
   const handleSubmitReply = () => {
     if (!replyContent.trim()) return;
     onReply(reply.id, replyContent);
     setReplyContent("");
     setShowReplyForm(false);
-    setShowReplies(true); // Show nested replies after posting
+    setShowReplies(true);
   };
 
   const handleMentionUser = (userName: string) => {
     setReplyContent((prev) => prev + `@${userName} `);
   };
-  console.log(reply);
+
   return (
     <div
       className={`${depth > 0 ? "ml-6 border-l-2 border-gray-200 pl-4" : ""}`}
     >
       <div className="bg-white rounded-lg p-3 mb-2 border border-gray-100">
-        {/* Reply Header */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
               {reply?.userName ? reply.userName.charAt(0).toUpperCase() : "?"}
             </div>
-
             <span className="font-semibold text-red-600 text-sm cursor-pointer hover:underline">
               {reply.authorName}
             </span>
@@ -249,14 +235,12 @@ function ReplyComponent({
           </span>
         </div>
 
-        {/* Reply Content */}
         <div className="mb-3">
           <p className="text-gray-700 text-sm leading-relaxed">
             {reply.content}
           </p>
         </div>
 
-        {/* Reply Actions */}
         <div className="flex items-center gap-4 text-xs text-gray-500">
           <button
             onClick={() => onLike(reply.id)}
@@ -298,7 +282,6 @@ function ReplyComponent({
           )}
         </div>
 
-        {/* Reply Form */}
         {showReplyForm && user && (
           <div className="mt-3 p-3 bg-gray-50 rounded-lg">
             <div className="flex gap-2">
@@ -335,7 +318,6 @@ function ReplyComponent({
         )}
       </div>
 
-      {/* Nested Replies */}
       {showReplies &&
         reply.replies &&
         reply.replies.length > 0 &&
@@ -354,7 +336,6 @@ function ReplyComponent({
           </div>
         )}
 
-      {/* Show "View more replies" if depth limit reached */}
       {reply.replies && reply.replies.length > 0 && depth >= 3 && (
         <div className="ml-6 mt-2">
           <button className="text-xs text-blue-600 hover:underline">
@@ -368,29 +349,81 @@ function ReplyComponent({
 }
 
 export default function CommunityForumPage({ user }: Props) {
+  const Router = useRouter();
+  const [showLoginModal, setShowLoginModal] = useState(!user);
+
+  // If user is not logged in, show only the login requirement screen
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-yellow-50 to-orange-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full">
+          <Card className="bg-white shadow-2xl border-4 border-yellow-300">
+            <CardContent className="p-8 text-center">
+              <div className="mb-6">
+                <Lock className="h-20 w-20 text-red-600 mx-auto mb-4" />
+                <Crown className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+              </div>
+
+              <h2 className="text-3xl font-bold text-red-700 mb-4">
+                Community Forum
+              </h2>
+
+              <p className="text-gray-600 mb-6 text-lg">
+                Please login to access our supportive Maurya community forum and
+                participate in discussions.
+              </p>
+
+              <div className="space-y-4">
+                <Button
+                  onClick={() => Router.push("/sign-in")}
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white py-6 text-lg"
+                >
+                  <User className="h-5 w-5 mr-2" />
+                  Login to Continue
+                </Button>
+
+                <Button
+                  onClick={() => Router.push("/")}
+                  variant="outline"
+                  className="w-full py-6 text-lg border-2 border-gray-300"
+                >
+                  <ArrowLeft className="h-5 w-5 mr-2" />
+                  Back to Home
+                </Button>
+              </div>
+
+              <div className="mt-8 p-4 bg-yellow-50 rounded-lg border-2 border-yellow-200">
+                <p className="text-sm text-gray-600">
+                  <strong className="text-red-600">Why login?</strong>
+                  <br />
+                  Access exclusive discussions, connect with community members,
+                  and share your experiences.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Rest of the component code for logged-in users...
   const [selectedCategory, setSelectedCategory] = useState("All Discussions");
   const [searchQuery, setSearchQuery] = useState("");
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
   const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const Router = useRouter();
   const [categories, setCategories] = useState([] as any[]);
   const [apiLoading, setApiLoading] = useState(false);
-
-  // Pagination state
   const [displayCount, setDisplayCount] = useState(4);
   const ITEMS_PER_LOAD = 2;
-
-  // Create Discussion Form State
   const [newDiscussion, setNewDiscussion] = useState({
     title: "",
     content: "",
     category: "Business Help",
     location: "",
   });
-
   const [adPlacements, setAdPlacements] = useState<Ad[]>([]);
   const [openDiscussionId, setOpenDiscussionId] = useState<number | null>(null);
   const [discussionReplies, setDiscussionReplies] = useState<Reply[]>([]);
@@ -405,12 +438,6 @@ export default function CommunityForumPage({ user }: Props) {
     null
   );
 
-  // Mock user mentions list (you can replace with real data)
-  const [availableUsers] = useState([
-    { id: "1", name: "John Doe" },
-    { id: "2", name: "Jane Smith" },
-    { id: "3", name: "Mike Johnson" },
-  ]);
   const forumAds = adPlacements.filter((ad) => ad.placementId === 5);
 
   const openModal = (discussion: Discussion) => {
@@ -432,7 +459,6 @@ export default function CommunityForumPage({ user }: Props) {
     setDisplayCount((prev) => prev + ITEMS_PER_LOAD);
   };
 
-  // Load ad placements
   useEffect(() => {
     fetch("/api/ad-placements/approved")
       .then((res) => res.json())
@@ -442,7 +468,6 @@ export default function CommunityForumPage({ user }: Props) {
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
 
-  // Load discussions and categories
   useEffect(() => {
     loadDiscussions();
   }, [selectedCategory, searchQuery]);
@@ -473,76 +498,70 @@ export default function CommunityForumPage({ user }: Props) {
   }, []);
 
   const loadDiscussions = async (fetchedCategories?: any[]) => {
-  try {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (searchQuery) params.append("search", searchQuery);
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append("search", searchQuery);
 
-    const response = await fetch(`/api/discussions?${params}`);
-    const data = await response.json();
-    const allDiscussionsData: Discussion[] = data.data || [];
+      const response = await fetch(`/api/discussions?${params}`);
+      const data = await response.json();
+      const allDiscussionsData: Discussion[] = data.data || [];
 
-    // Pre-filtered lists
-    const notCompleted = allDiscussionsData.filter((d) => !d.isCompleted);
-    const myDiscussions = allDiscussionsData.filter(
-      (d) => String(d.authorId) === String(user?.id)
-    );
-
-    let filteredDiscussions =
-      selectedCategory === "All Discussions"
-        ? notCompleted
-        : selectedCategory === "My Discussions"
-        ? myDiscussions
-        : notCompleted.filter((d) => d.category === selectedCategory);
-
-    // Apply local search if backend search not active
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      filteredDiscussions = filteredDiscussions.filter(
-        (d) =>
-          d.title?.toLowerCase().includes(q) ||
-          d.content?.toLowerCase().includes(q) ||
-          d.authorName?.toLowerCase().includes(q)
+      const notCompleted = allDiscussionsData.filter((d) => !d.isCompleted);
+      const myDiscussions = allDiscussionsData.filter(
+        (d) => String(d.authorId) === String(user?.id)
       );
+
+      let filteredDiscussions =
+        selectedCategory === "All Discussions"
+          ? notCompleted
+          : selectedCategory === "My Discussions"
+          ? myDiscussions
+          : notCompleted.filter((d) => d.category === selectedCategory);
+
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        filteredDiscussions = filteredDiscussions.filter(
+          (d) =>
+            d.title?.toLowerCase().includes(q) ||
+            d.content?.toLowerCase().includes(q) ||
+            d.authorName?.toLowerCase().includes(q)
+        );
+      }
+
+      setAllDiscussions(filteredDiscussions);
+      setDiscussions(filteredDiscussions.slice(0, displayCount));
+
+      const counts: Record<string, number> = {
+        "All Discussions": notCompleted.length,
+        "My Discussions": myDiscussions.length,
+      };
+
+      notCompleted.forEach((d) => {
+        if (d.category) counts[d.category] = (counts[d.category] || 0) + 1;
+      });
+
+      const updatedCategories = (fetchedCategories || categories).map(
+        (cat) => ({
+          ...cat,
+          count: counts[cat.name] || 0,
+        })
+      );
+
+      setCategories(updatedCategories);
+    } catch (error) {
+      console.error("Failed to load discussions:", error);
+    } finally {
+      setLoading(false);
     }
-
-    setAllDiscussions(filteredDiscussions);
-    setDiscussions(filteredDiscussions.slice(0, displayCount));
-
-    // Count categories
-    const counts: Record<string, number> = {
-      "All Discussions": notCompleted.length,
-      "My Discussions": myDiscussions.length,
-    };
-
-    notCompleted.forEach((d) => {
-      if (d.category) counts[d.category] = (counts[d.category] || 0) + 1;
-    });
-
-    const updatedCategories = (fetchedCategories || categories).map((cat) => ({
-      ...cat,
-      count: counts[cat.name] || 0,
-    }));
-
-    setCategories(updatedCategories);
-  } catch (error) {
-    console.error("Failed to load discussions:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   useEffect(() => {
     setDiscussions(allDiscussions.slice(0, displayCount));
   }, [displayCount, allDiscussions]);
 
   const handleStartDiscussion = () => {
-    if (!user) {
-      setShowLoginModal(true);
-    } else {
-      setShowCreateModal(true);
-    }
+    setShowCreateModal(true);
   };
 
   const handleCreateDiscussion = async () => {
@@ -576,23 +595,18 @@ export default function CommunityForumPage({ user }: Props) {
     }
   };
 
-const handleLikeDiscussion = async (discussionId: number) => {
-  if (!user) {
-    setShowLoginModal(true);
-    return;
-  }
-  try {
-    const response = await fetch(`/api/discussions/${discussionId}/likes`, {
-      method: "POST",
-    });
+  const handleLikeDiscussion = async (discussionId: number) => {
+    try {
+      const response = await fetch(`/api/discussions/${discussionId}/likes`, {
+        method: "POST",
+      });
 
-    if (!response.ok) throw new Error("Failed to like");
-    await loadDiscussions();
-  } catch (error) {
-    console.error("Failed to like discussion:", error);
-  }
-};
-
+      if (!response.ok) throw new Error("Failed to like");
+      await loadDiscussions();
+    } catch (error) {
+      console.error("Failed to like discussion:", error);
+    }
+  };
 
   const fetchReplies = async (discussionId: number) => {
     setRepliesLoading(true);
@@ -600,25 +614,17 @@ const handleLikeDiscussion = async (discussionId: number) => {
       const res = await fetch(`/api/discussions/${discussionId}/replies`);
       const data = await res.json();
 
-      // Debug: Check what API actually returns
-      console.log("API Response:", data.data);
-
       const replies = data.data || [];
       const repliesMap = new Map();
       const rootReplies: Reply[] = [];
 
-      // ✅ FIXED: Don't override like data from API
       replies.forEach((reply: any) => {
         repliesMap.set(reply.id, {
-          ...reply, // This preserves likeCount and isLiked from API
-          replies: [], // Only add empty replies array
-          // ❌ REMOVE these lines:
-          // likeCount: reply.likeCount || 0,
-          // isLiked: reply.isLiked || false,
+          ...reply,
+          replies: [],
         });
       });
 
-      // Second pass: build nested structure (same as before)
       replies.forEach((reply: any) => {
         if (reply.parentId) {
           const parent = repliesMap.get(reply.parentId);
@@ -630,7 +636,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
         }
       });
 
-      console.log("Final nested replies:", rootReplies); // Debug
       setDiscussionReplies(rootReplies);
     } catch (error) {
       console.error("Failed to load replies:", error);
@@ -640,15 +645,10 @@ const handleLikeDiscussion = async (discussionId: number) => {
   };
 
   const handleViewReplies = (discussionId: number) => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
     setOpenDiscussionId(discussionId);
     fetchReplies(discussionId);
   };
 
-  // Enhanced reply posting with parent support
   const handlePostReply = async (parentId?: number, content?: string) => {
     const replyContent = content || newReplyContent;
     if (!replyContent.trim() || !openDiscussionId) return;
@@ -667,7 +667,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
       const data = await res.json();
 
       if (data.success) {
-        // Refresh replies to maintain proper nesting
         fetchReplies(openDiscussionId);
         if (!parentId) {
           setNewReplyContent("");
@@ -680,13 +679,7 @@ const handleLikeDiscussion = async (discussionId: number) => {
     }
   };
 
-  // Handle reply likes
   const handleLikeReply = async (replyId: number) => {
-    if (!user) {
-      setShowLoginModal(true);
-      return;
-    }
-
     try {
       const response = await fetch(
         `/api/discussions/replies/${replyId}/likes`,
@@ -696,7 +689,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
       );
 
       if (response.ok) {
-        // Refresh replies to get updated like counts
         if (openDiscussionId) {
           fetchReplies(openDiscussionId);
         }
@@ -720,7 +712,7 @@ const handleLikeDiscussion = async (discussionId: number) => {
       "bg-gray-100 text-gray-800 border-gray-200"
     );
   };
-  // Confirm close after entering reason
+
   const handleConfirmCloseDiscussion = async () => {
     if (!discussionToClose || !closeReason.trim()) return;
 
@@ -744,7 +736,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
     }
   };
 
-  // Reopen closed discussion
   const handleReopenDiscussion = async (discussionId: number) => {
     try {
       const res = await fetch(`/api/discussions/${discussionId}/reopen`, {
@@ -769,47 +760,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
         </div>
       )}
 
-      {/* Login Modal */}
-      {showLoginModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-red-700 flex items-center gap-2">
-                <Lock className="h-5 w-5" />
-                Login Required
-              </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <p className="text-gray-600 mb-6">
-              Please login to participate in community discussions and create
-              new topics.
-            </p>
-            <div className="space-y-3">
-              <Button
-                onClick={() => Router.push("/sign-in")}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
-              >
-                <User className="h-4 w-4 mr-2" />
-                Login
-              </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="w-full"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Create Discussion Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -926,7 +876,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
         </div>
       )}
 
-      {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
           <ArrowLeft className="h-4 w-4 text-red-600" />
@@ -938,7 +887,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
         </div>
       </div>
 
-      {/* Header */}
       <div className="container mx-auto text-center">
         <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto" />
         <div className="relative">
@@ -952,12 +900,9 @@ const handleLikeDiscussion = async (discussionId: number) => {
         </p>
       </div>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
-          {/* Sidebar */}
           <div className="order-2 lg:order-1 lg:col-span-1 space-y-6">
-            {/* New Discussion */}
             <Card className="bg-yellow-50 border-yellow-200">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3 text-red-700">
@@ -973,7 +918,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
               </CardContent>
             </Card>
 
-            {/* Categories */}
             <Card className="bg-yellow-50 border-yellow-200">
               <CardContent className="p-4">
                 <h3 className="font-bold text-red-700 mb-4">Categories</h3>
@@ -1003,9 +947,7 @@ const handleLikeDiscussion = async (discussionId: number) => {
             </Card>
           </div>
 
-          {/* Main Discussion List */}
           <div className="order-1 lg:order-2 lg:col-span-3">
-            {/* Search bar */}
             <div className="mb-6">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -1018,7 +960,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
               </div>
             </div>
 
-            {/* Discussion Threads */}
             <div className="space-y-4">
               {loading ? (
                 <div className="text-center py-8">
@@ -1146,7 +1087,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
               )}
             </div>
 
-            {/* Load More */}
             {allDiscussions.length > displayCount && (
               <div className="text-center mt-8">
                 <Button
@@ -1160,7 +1100,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
               </div>
             )}
 
-            {/* Show total count when all discussions are loaded */}
             {allDiscussions.length > 0 &&
               displayCount >= allDiscussions.length &&
               allDiscussions.length > 4 && (
@@ -1171,7 +1110,7 @@ const handleLikeDiscussion = async (discussionId: number) => {
                 </div>
               )}
             <div className="mt-10 sm:mt-12">
-              <div className="w-full max-w-5xl mx-auto px-2 sm:px-6">
+              <div className="w-full max-w-6xl mx-auto px-2 sm:px-6">
                 <ForumAdSlider ads={forumAds} />
               </div>
             </div>
@@ -1179,11 +1118,9 @@ const handleLikeDiscussion = async (discussionId: number) => {
         </div>
       </div>
 
-      {/* Enhanced Discussion Replies Modal - Facebook Style */}
       {openDiscussionId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 p-4 rounded-t-lg">
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-semibold text-red-700">
@@ -1199,7 +1136,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
             </div>
 
             <div className="p-4">
-              {/* Loading Spinner */}
               {repliesLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
@@ -1207,7 +1143,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
                 </div>
               ) : (
                 <>
-                  {/* Main Reply Input */}
                   {user && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                       <div className="flex gap-3">
@@ -1237,7 +1172,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
                     </div>
                   )}
 
-                  {/* Replies List */}
                   <div className="space-y-3">
                     {discussionReplies.length === 0 ? (
                       <div className="text-center py-12">
@@ -1266,7 +1200,6 @@ const handleLikeDiscussion = async (discussionId: number) => {
         </div>
       )}
 
-      {/* Selected Discussion Modal */}
       {isModalOpen && selectedDiscussion && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-yellow-50 border-yellow-200 border-4 rounded-lg w-11/12 max-w-2xl p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
@@ -1317,7 +1250,7 @@ const handleLikeDiscussion = async (discussionId: number) => {
           </div>
         </div>
       )}
-      {/* Close Discussion Modal */}
+
       {showCloseModal && discussionToClose && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">

@@ -35,6 +35,7 @@ import {
   BookAIcon,
   AmbulanceIcon,
   Trophy,
+  Users2Icon,
 } from "lucide-react"; // ✅ Added Menu & X icons
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -80,6 +81,20 @@ export default function AdmindashboardLayout({
       href: "/admin/messenger-page",
       icon: MessageSquare,
     },
+    {
+      title: "Enquiries",
+      href: "/admin/enquiries",
+      icon: MessageSquare,
+    },
+   {
+      title: "Achievements",
+      href: "",
+      icon: Trophy,
+      subItems: [
+        { title: "Create Achievements", href: "/admin/create-achievement-general", icon: Calendar },
+        { title: "My Achievements", href: "/admin/created-achievement-general", icon: Calendar },
+      ],
+    },
     { title: "Manage Users", href: "/admin/users", icon: Users },
     {
       title: "Events",
@@ -115,6 +130,7 @@ export default function AdmindashboardLayout({
     // { title: "Create Events", href: "/admin/events", icon: Calendar },
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
+
     // {
     //   title: "Discussions Moderation",
     //   href: "/admin/discussions",
@@ -137,6 +153,7 @@ export default function AdmindashboardLayout({
         },
       ],
     },
+
     {
       title: "Education & Coaching",
       href: "",
@@ -299,7 +316,23 @@ export default function AdmindashboardLayout({
         },
       ],
     },
-
+    {
+      title: "Heritage Master",
+      href: "",
+      icon: Users2Icon,
+      subItems: [
+        {
+          title: "Create Heritage",
+          href: "/admin/createHeritage/formPage",
+          icon: BookAIcon,
+        },
+        {
+          title: "View Heritage List",
+          href: "/admin/createHeritage/list",
+          icon: BookAIcon,
+        },
+      ],
+    },
     { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
     { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
     {

@@ -7,6 +7,8 @@ interface CommunityStats {
   registeredFamilies: number;
   countriesConnected: number;
   forumDiscussions: number;
+  matrimonialProfiles: number;
+  registeredBusinessHouses: number;
 }
 
 export function CommunityStatsSection() {
@@ -55,7 +57,7 @@ export function CommunityStatsSection() {
                   : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
               </div>
               <div className="text-sm sm:text-base text-white/80">
-                Registered Families
+                Registered Members
               </div>
             </div>
 
@@ -64,10 +66,10 @@ export function CommunityStatsSection() {
               <div className="text-3xl sm:text-4xl font-bold mb-2">
                 {loading
                   ? "..."
-                  : `${stats?.successfulMarriages?.toLocaleString() || 0}+`}
+                  : `${stats?.matrimonialProfiles?.toLocaleString() || 0}+`}
               </div>
               <div className="text-sm sm:text-base text-white/80">
-                Successful Marriages
+               Matrimonial Profiles
               </div>
             </div>
 
@@ -76,10 +78,10 @@ export function CommunityStatsSection() {
               <div className="text-3xl sm:text-4xl font-bold mb-2">
                 {loading
                   ? "..."
-                  : `${stats?.countriesConnected?.toLocaleString() || 0}+`}
+                  : `${stats?.registeredBusinessHouses?.toLocaleString() || 0}+`}
               </div>
               <div className="text-sm sm:text-base text-white/80">
-                Countries Connected
+                Registered Business Houses
               </div>
             </div>
 
@@ -91,7 +93,7 @@ export function CommunityStatsSection() {
                   : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
               </div>
               <div className="text-sm sm:text-base text-white/80">
-                Forum Discussions
+                Help Discussions
               </div>
             </div>
           </div>

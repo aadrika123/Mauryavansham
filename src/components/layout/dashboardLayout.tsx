@@ -30,6 +30,8 @@ import {
   ChevronDown,
   BookAIcon,
   AmbulanceIcon,
+  Trophy,
+  Calendar,
 } from "lucide-react";
 import type { User as NextAuthUser } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -59,6 +61,20 @@ export default function DashboardLayout({
       title: "My Inbox",
       href: "/dashboard/messenger-page",
       icon: MessageSquare,
+    },
+    {
+      title: "Enquiries",
+      href: "/dashboard/enquiries",
+      icon: MessageSquare,
+    },
+    {
+      title: "Achievements",
+      href: "",
+      icon: Trophy,
+      subItems: [
+        { title: "Create Achievements", href: "/dashboard/create-achievement-general", icon: Calendar },
+        { title: "My Achievements", href: "/dashboard/created-achievement-general", icon: Calendar },
+      ],
     },
     {
       title: "Matrimonial",

@@ -12,10 +12,7 @@ export async function GET(
     const eventId = Number(params.id);
 
     if (isNaN(eventId)) {
-      return NextResponse.json(
-        { error: "Invalid event id" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid event id" }, { status: 400 });
     }
 
     // ⚡ DB से event fetch
@@ -24,10 +21,7 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { error: "Event not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
 
     return NextResponse.json(event, { status: 200 });
@@ -39,7 +33,6 @@ export async function GET(
     );
   }
 }
-
 
 // PUT /api/events/my-events/[id]
 export async function PUT(
@@ -62,10 +55,12 @@ export async function PUT(
     if (!existingEvent) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
-
-    if (existingEvent.status !== "pending") {
+    if (
+      existingEvent.status !== "pending" &&
+      existingEvent.status !== "approved"
+    ) {
       return NextResponse.json(
-        { error: "Only pending events can be edited" },
+        { error: "Only pending or approved events can be edited" },
         { status: 403 }
       );
     }
@@ -85,7 +80,6 @@ export async function PUT(
         type: body.type,
         category: body.category,
         isFeatured: body.isFeatured,
-        
       })
       .where(eq(events.id, eventId))
       .returning();
@@ -93,6 +87,9 @@ export async function PUT(
     return NextResponse.json(updatedEvent[0], { status: 200 });
   } catch (error) {
     console.error("Error updating event:", error);
-    return NextResponse.json({ error: "Failed to update event" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update event" },
+      { status: 500 }
+    );
   }
 }

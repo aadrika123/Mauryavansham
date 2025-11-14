@@ -24,9 +24,21 @@ import {
   Calendar,
   MapPin,
   Award,
+  Lock,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+// import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/src/components/ui/dialog";
+import CreateAchievementForm from "./createAchievementForm";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 interface Achievement {
   id: number;
   name: string;
@@ -118,7 +130,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -130,13 +142,10 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                 rel="noopener noreferrer"
                 className="inline-block w-full h-full"
               >
-                <Image
+                <img
                   src={ad.bannerImageUrl}
-                  alt={`Bottom Ad ${index + 1}`}
-                  width={900}
-                  height={300}
-                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
-                  priority={index === 0}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -172,12 +181,17 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
 export default function AchievementsClient({
   initialAchievements,
 }: AchievementsClientProps) {
+  const { data: session } = useSession();
+  const Router = useRouter();
   const [activeTab, setActiveTab] = useState("hall-of-fame");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
   const bottomAds = adPlacements.filter((ad) => ad.placementId === 10);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+  const [openForm, setOpenForm] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   console.log(initialAchievements);
 
   useEffect(() => {
@@ -284,7 +298,7 @@ export default function AchievementsClient({
   return (
     <div className="min-h-screen bg-yellow-50">
       {/* Header */}
-      <div className="bg-yellow-50 border-b border-gray-200 p-4">
+      {/* <div className="bg-yellow-50 border-b border-gray-200 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
@@ -299,6 +313,60 @@ export default function AchievementsClient({
             </h1>
           </div>
         </div>
+      </div> */}
+      <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
+        <div className="flex items-center gap-4">
+          <Link
+            href="/"
+            className="flex items-center text-gray-600 hover:text-red-700"
+          >
+            <ArrowLeft className="w-4 h-4 text-red-700" />
+            <span className="text-red-700">Back to Home / </span>
+          </Link>
+          <h1 className="text-2xl font-bold text-red-700">
+            Community Achievements
+          </h1>
+        </div>
+
+        {/* ✅ Add button here */}
+        {/* <Button
+          onClick={() => {
+            if (!session?.user) {
+              setShowLoginModal(true); // ✅ Open login modal if not logged in
+            } else {
+              setOpenForm(true); // ✅ Open achievement form modal if logged in
+            }
+          }}
+          className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" /> Add Achievement
+        </Button> */}
+        <Button
+          onClick={() => {
+            if (!session?.user) {
+              // 🔹 User not logged in → open login modal
+              setShowLoginModal(true);
+              return;
+            }
+
+            // 🔹 User is logged in → navigate based on role
+            const role = session?.user?.role;
+
+            if (role === "admin") {
+              Router.push("/admin/create-achievement-general");
+            } else if (role === "superAdmin") {
+              Router.push("/admin/create-achievement");
+            } else if (role === "user") {
+              Router.push("/dashboard/create-achievement-general");
+            } else {
+              // Optional fallback (unknown role)
+              setShowLoginModal(true);
+            }
+          }}
+           className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" /> Add Achievement
+        </Button>
       </div>
 
       {/* Search and Filter */}
@@ -712,6 +780,58 @@ export default function AchievementsClient({
           <HorizontalAdSlider ads={bottomAds} />
         </div>
       </div>
+
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-red-700 flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Login Required
+              </h3>
+              <button
+                onClick={() => setShowLoginModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-gray-600 mb-6">
+              Please login to participate in community discussions and create
+              new topics.
+            </p>
+            <div className="space-y-3">
+              <Button
+                onClick={() => Router.push("/sign-in")}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Login
+              </Button>
+              <Button
+                onClick={() => setShowLoginModal(false)}
+                variant="outline"
+                className="w-full"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Popup Form */}
+      <Dialog open={openForm} onOpenChange={setOpenForm}>
+        <DialogContent className="max-w-2xl max-h-[90vh] p-6 overflow-y-auto bg-orange-50">
+          <DialogHeader>
+            <DialogTitle>Add New Achievement</DialogTitle>
+          </DialogHeader>
+
+          {/* ✅ Scrollable form area */}
+          <div className="mt-4 overflow-y-auto max-h-[70vh] pr-2">
+            <CreateAchievementForm onClose={() => setOpenForm(false)} />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

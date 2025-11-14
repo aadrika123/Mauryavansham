@@ -134,6 +134,48 @@
       "when": 1761996009979,
       "tag": "0018_late_swarm",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1762942817169,
+      "tag": "0019_ancient_stryfe",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1762943025219,
+      "tag": "0020_sweet_slayback",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1763005916937,
+      "tag": "0021_ordinary_viper",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1763014404403,
+      "tag": "0022_odd_katie_power",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1763050168105,
+      "tag": "0023_lying_slayback",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1763053801666,
+      "tag": "0024_goofy_galactus",
+      "breakpoints": true
     }
   ]
 }

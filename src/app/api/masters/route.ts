@@ -1,10 +1,6 @@
 import { eq, ne, sql } from "drizzle-orm";
-// import { db } from "@/src/db";
-// import { users } from "@/src/db/schema/users";
-// import { profiles } from "@/src/db/schema/profiles";
-import { discussions, users, profiles } from "@/src/drizzle/schema";
+import { discussions, users, profiles, businesses } from "@/src/drizzle/schema";
 import { db } from "@/src/drizzle/db";
-// import { discussions } from "@/src/db/schema/discussions";
 
 export async function GET() {
   try {
@@ -33,6 +29,20 @@ export async function GET() {
       .select({ count: sql`count(*)` })
       .from(discussions);
 
+    // ✅ Matrimonial Profiles (isActive true, isDeleted false)
+    const matrimonialProfilesCount = await db
+      .select({ count: sql`count(*)` })
+      .from(profiles)
+      .where(eq(profiles.isActive, true))
+      .where(eq(profiles.isDeleted, false));
+
+    // ✅ Registered Business Houses (isActive true)
+    const registeredBusinessCount = await db
+      .select({ count: sql`count(*)` })
+      .from(businesses)
+      .where(eq(businesses.isActive, true));
+
+    // ✅ Response
     return Response.json({
       success: true,
       data: {
@@ -40,10 +50,15 @@ export async function GET() {
         registeredFamilies: Number(registeredFamiliesCount[0].count) || 0,
         countriesConnected: uniqueCountries,
         forumDiscussions: Number(forumDiscussionsCount[0].count) || 0,
+        matrimonialProfiles: Number(matrimonialProfilesCount[0].count) || 0,
+        registeredBusinessHouses: Number(registeredBusinessCount[0].count) || 0,
       },
     });
   } catch (error) {
     console.error("Error in master stats API:", error);
-    return Response.json({ success: false, error: "Internal Server Error" }, { status: 500 });
+    return Response.json(
+      { success: false, error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

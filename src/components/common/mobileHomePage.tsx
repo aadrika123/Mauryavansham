@@ -32,6 +32,8 @@ interface CommunityStats {
   registeredFamilies: number;
   countriesConnected: number;
   forumDiscussions: number;
+  registeredBusinessHouses: number;
+  matrimonialProfiles: number;
 }
 export default function MauryavanshamApp({
   children,
@@ -331,27 +333,27 @@ export default function MauryavanshamApp({
                 : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
             </p>
             <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Registered Families
+              Registered Members
             </p>
           </div>
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
             <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
               {loading
                 ? "..."
-                : `${stats?.successfulMarriages?.toLocaleString() || 0}+`}
+                : `${stats?.matrimonialProfiles?.toLocaleString() || 0}+`}
             </p>
             <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Successful Marriages
+              Matrimonial Profiles
             </p>
           </div>
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
             <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
               {loading
                 ? "..."
-                : `${stats?.countriesConnected?.toLocaleString() || 0}+`}
+                : `${stats?.registeredBusinessHouses?.toLocaleString() || 0}+`}
             </p>
             <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Countries Connected
+              Registered Business Houses
             </p>
           </div>
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
@@ -361,7 +363,7 @@ export default function MauryavanshamApp({
                 : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
             </p>
             <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Forum Discussions
+              Help Discussions
             </p>
           </div>
         </div>

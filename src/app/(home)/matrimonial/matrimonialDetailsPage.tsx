@@ -43,7 +43,7 @@ const VerticalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
 
   if (ads.length === 0) {
     return (
-      <div className="  w-full h-[350px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400 text-center text-sm p-2">
+      <div className="  w-full h-[500px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400 text-center text-sm p-2">
         Ad Space (6) <br />
         (350x500 px)
       </div>
@@ -104,6 +104,88 @@ const VerticalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
     </div>
   );
 };
+const VerticalAdSlider2: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % ads.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  useEffect(() => {
+    if (ads[currentIndex]) {
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+    }
+  }, [currentIndex, ads]);
+
+  if (ads.length === 0) {
+    return (
+      <div className="  w-full h-[500px] bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400 text-center text-sm p-2">
+        Ad Space (14) <br />
+        (350x500 px)
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-[350px]  rounded-2xl">
+      {ads.map((ad, index) => (
+        <div
+          key={ad.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentIndex
+              ? "opacity-100 z-10"
+              : "opacity-0 pointer-events-none z-0"
+          }`}
+        >
+          <a
+            href={ad.adUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full h-full"
+          >
+            <Image
+              src={ad.bannerImageUrl}
+              alt={`right Ad ${index + 1}`}
+              width={350}
+              height={500}
+              className="w-full h-full object-cover shadow-lg rounded-2xl"
+              priority={index === 0}
+            />
+          </a>
+        </div>
+      ))}
+
+      {ads.length > 1 && (
+        <>
+          <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
+            {currentIndex + 1} / {ads.length}
+          </div>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+            {ads.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  index === currentIndex
+                    ? "bg-white scale-125"
+                    : "bg-white/50 hover:bg-white/75"
+                }`}
+                aria-label={`Go to ad ${index + 1}`}
+                type="button"
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 // Horizontal Ad Slider Component (Placement 7)
 const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
@@ -127,14 +209,14 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
 
   if (ads.length === 0) {
     return (
-      <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
+      <div className="mx-auto relative w-full max-w-[1200px] h-[200px] sm:h-[250px] md:h-[300px]">
         <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4">
           <div>
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800">
               Book Your Ad (7)
             </h3>
             <span className="text-sm font-normal text-amber-700">
-              Please select image size of (900x300 px)
+              Please select image size of (1200x300 px)
             </span>
           </div>
         </div>
@@ -143,13 +225,13 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
   }
 
   return (
-    <div className="mx-auto relative w-full max-w-[900px]">
+    <div className="mx-auto relative w-full max-w-[1200px]">
       <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden">
-        <div className="relative p-4 sm:p-8 text-center h-[200px] sm:h-[250px] md:h-[300px]">
+        <div className="relative p-4 sm:p-8 text-center h-[400px] sm:h-[4000px] md:h-[400px]">
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -161,13 +243,10 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                 rel="noopener noreferrer"
                 className="inline-block w-full h-full"
               >
-                <Image
+                <img
                   src={ad.bannerImageUrl}
-                  alt={`Bottom Ad ${index + 1}`}
-                  width={900}
-                  height={300}
-                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
-                  priority={index === 0}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -217,6 +296,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
 
   // Filter ads by placement
   const leftAds = adPlacements.filter((ad) => ad.placementId === 6);
+  const rightAds = adPlacements.filter((ad) => ad.placementId === 14);
   const bottomAds = adPlacements.filter((ad) => ad.placementId === 7);
 
   console.log("Left Ads (Placement 6):", leftAds);
@@ -279,7 +359,9 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       <div className="absolute mt-36 left-6 z-40 w-72 hidden md:block">
         <VerticalAdSlider ads={leftAds} />
       </div>
-
+      <div className="absolute mt-36 right-6 z-40 w-72 hidden md:block">
+        <VerticalAdSlider2 ads={rightAds} />
+      </div>
       {/* Header */}
       <div className="container mx-auto text-center mt-6 sm:mt-0 px-4">
         <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto" />
@@ -296,8 +378,8 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
       </div>
 
       {/* CTA */}
-      <div className="container mx-auto px-4 mb-12 lg:ml-14">
-        <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] shadow-xl rounded-lg p-6 sm:p-8 text-center text-white max-w-3xl lg:max-w-4xl mx-auto">
+      <div className="container mx-auto px-4 mb-12 ">
+        <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] shadow-xl rounded-lg p-6 sm:p-8 text-center text-white max-w-2xl lg:max-w-3xl mx-auto">
           <Heart className="h-12 sm:h-16 w-12 sm:w-16 mx-auto mb-4 text-white" />
           <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
             Create Your Matrimonial Profile
@@ -350,6 +432,7 @@ export default function MatrimonialPage({ initialProfiles }: Props) {
           </div>
         </div>
       </div>
+      {/* Right Ad - hidden on small screens */}
 
       <section className="py-8 bg-[#FFFDEF] px-4 sm:px-8">
         <div className="container mx-auto max-w-4xl">

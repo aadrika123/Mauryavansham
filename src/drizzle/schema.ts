@@ -31,5 +31,9 @@ export * from "./db/schemas/connections";
 export * from "./db/schemas/coachingCenters";
 export * from "./db/schemas/health_services"
 export * from "./db/schemas/achievements";
+export * from "./db/schemas/heritage";
+export * from "./db/schemas/enquiries";
+export * from "./db/schemas/queryMessages";
+export * from "./db/schemas/blogReactions";
  
 

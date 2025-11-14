@@ -63,7 +63,10 @@ export default function AdminAchievementsPage({
 
   const activeAchievements = achievements.filter((a) => a.status === "active");
   const removedAchievements = achievements.filter(
-    (a) => a.status === "inactive" || a.status === "removed"
+    (a) => a.status === "inactive"
+  );
+  const inactiveAchievements = achievements.filter(
+    (a) => a.status === "removed"
   );
 
   const openModal = (achievement: Achievement) =>
@@ -71,6 +74,10 @@ export default function AdminAchievementsPage({
   const closeModal = () => setSelectedAchievement(null);
 
   const handleDisableClick = (achievement: Achievement) => {
+    setSelectedAchievement(achievement);
+    setShowReasonModal(true);
+  };
+  const handleRemoveClick = (achievement: Achievement) => {
     setSelectedAchievement(achievement);
     setShowReasonModal(true);
   };
@@ -101,10 +108,36 @@ export default function AdminAchievementsPage({
       setProcessing(false);
     }
   };
+  const handleremove = async (achievement: Achievement) => {
+    try {
+      setProcessing(true);
+      const res = await fetch(`/api/achievements/updateStatus`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: achievement.id,
+          status: "removed",
+          reason: null,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`"${achievement.name}" has been removed.`);
+        window.location.reload();
+      } else {
+        toast.error(data.message || "Failed to remove.");
+      }
+    } catch (err) {
+      toast.error("Error activating achievement.");
+    } finally {
+      setProcessing(false);
+    }
+  };
 
   const submitDisable = async () => {
     if (!disableReason.trim()) {
-      toast.error("Please provide a reason before disabling.");
+      toast.error("Please provide a reason before proceeding.");
       return;
     }
 
@@ -112,27 +145,35 @@ export default function AdminAchievementsPage({
 
     try {
       setProcessing(true);
+
+      // 👇 Detect which tab was active
+      const newStatus = activeTab == "inactive" ? "removed" : "inactive";
+
       const res = await fetch(`/api/achievements/updateStatus`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: selectedAchievement.id,
-          status: "inactive",
+          status: newStatus,
           reason: disableReason,
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        toast.success(`"${selectedAchievement.name}" has been disabled.`);
+        toast.success(
+          `"${selectedAchievement.name}" has been ${
+            newStatus == "removed" ? "removed" : "disabled"
+          }.`
+        );
         setShowReasonModal(false);
         setDisableReason("");
         window.location.reload();
       } else {
-        toast.error(data.message || "Failed to disable.");
+        toast.error(data.message || "Failed to update status.");
       }
     } catch (err) {
-      toast.error("Error disabling achievement.");
+      toast.error("Error updating achievement.");
     } finally {
       setProcessing(false);
     }
@@ -147,7 +188,8 @@ export default function AdminAchievementsPage({
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-gray-100">
           <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="inactive">Disabled / Removed</TabsTrigger>
+          <TabsTrigger value="inactive">Inactive</TabsTrigger>
+          <TabsTrigger value="removed">Removed</TabsTrigger>
         </TabsList>
 
         {/* Active Tab */}
@@ -241,6 +283,95 @@ export default function AdminAchievementsPage({
         <TabsContent value="inactive">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {removedAchievements.map((a) => (
+              <Card
+                key={a.id}
+                className="hover:shadow-md transition-shadow border-red-200"
+              >
+                <CardContent className="p-4">
+                  {a.images?.[0] ? (
+                    <img
+                      src={a.images[0]}
+                      alt={a.name}
+                      className="w-full h-40 object-cover rounded-md mb-4"
+                    />
+                  ) : (
+                    <div className="w-full h-40 bg-gray-100 rounded-md mb-4 flex items-center justify-center text-gray-400">
+                      No Image
+                    </div>
+                  )}
+
+                  <Badge className="mb-2 bg-red-100 text-red-700">
+                    {a.status.toUpperCase()}
+                  </Badge>
+                  <h3 className="font-bold text-lg text-red-700">{a.name}</h3>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-semibold">Father:</span>{" "}
+                    {a.fatherName}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-semibold">Mother:</span>{" "}
+                    {a.motherName}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    <span className="font-semibold">Achievement Title:</span>{" "}
+                    {a.achievementTitle}
+                  </p>
+
+                  <div className="text-sm text-gray-500 mt-3">
+                    <p className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" /> Created On:{" "}
+                      {a.createdAt
+                        ? new Date(a.createdAt).toLocaleString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "—"}
+                    </p>
+
+                    <p className="flex items-center gap-1">
+                      <User className="w-4 h-4" /> Created By:{" "}
+                      {a.createdBy || "—"}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      onClick={() => openModal(a)}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Eye className="w-4 h-4 mr-2" /> View
+                    </Button>
+                    <Link href={`/admin/created-achievement/${a.id}/edit`}>
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
+                        Edit
+                      </Button>
+                    </Link>
+                    <Button
+                      onClick={() => handleActivateClick(a)}
+                      className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                      disabled={processing}
+                    >
+                      Activate
+                    </Button>
+                    <Button
+                      onClick={() => handleRemoveClick(a)}
+                      className="bg-red-600 hover:bg-red-700 text-white flex-1"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="removed">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {inactiveAchievements.map((a) => (
               <Card
                 key={a.id}
                 className="hover:shadow-md transition-shadow border-red-200"

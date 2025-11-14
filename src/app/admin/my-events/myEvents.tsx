@@ -161,7 +161,8 @@ export default function MyEvents() {
                       </Button>
                     </Link>
 
-                    {event.status === "pending" && (
+                    {(event.status === "pending" ||
+                      event.status === "approved") && (
                       <Link href={`/admin/my-events/${event.id}/edit`}>
                         <Button
                           size="sm"

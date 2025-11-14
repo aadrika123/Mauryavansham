@@ -6,6 +6,7 @@ import { Button } from "@/src/components/ui/button";
 import { Lock, User, X, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/src/components/ui/toastProvider";
 
 // 🔸 Book Your Ad (12) Component
 const HorizontalAdSlider12: React.FC<{ ads: any[] }> = ({ ads }) => {
@@ -54,7 +55,7 @@ const HorizontalAdSlider12: React.FC<{ ads: any[] }> = ({ ads }) => {
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -69,7 +70,7 @@ const HorizontalAdSlider12: React.FC<{ ads: any[] }> = ({ ads }) => {
                 <img
                   src={ad.bannerImageUrl}
                   alt={`Ad ${index + 1}`}
-                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -105,6 +106,7 @@ const HorizontalAdSlider12: React.FC<{ ads: any[] }> = ({ ads }) => {
 };
 
 export default function HealthAndWellnessPage({ user }: any) {
+   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [centers, setCenters] = useState<any[]>([]);
   const [filteredCenters, setFilteredCenters] = useState<any[]>([]);
@@ -121,6 +123,10 @@ export default function HealthAndWellnessPage({ user }: any) {
   const [selectedCenter, setSelectedCenter] = useState<any>(null);
   const [adPlacements, setAdPlacements] = useState<any[]>([]);
   const topAds = adPlacements.filter((ad) => ad.placementId === 12);
+
+  const [showEnquireModal, setShowEnquireModal] = useState(false);
+  const [enquireComment, setEnquireComment] = useState("");
+  const [enquireTarget, setEnquireTarget] = useState<any>(null);
 
   useEffect(() => {
     fetch("/api/ad-placements/approved")
@@ -184,47 +190,135 @@ export default function HealthAndWellnessPage({ user }: any) {
   };
 
   // 🔹 Handle Enquiry
-  const handleEnquiry = async (center: any) => {
+  // const handleEnquiry = async (center: any) => {
+  //   if (!user) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+
+  //   const message = `${user.name} from ${user.city || ""} ${
+  //     user.state || ""
+  //   } (${
+  //     user.email
+  //   }) wants to connect with you regarding your registered health/wellness service.`;
+
+  //   // 1️⃣ Send notification (optional)
+  //   const notifyRes = await fetch("/api/notifications", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       businessOwnerId: center.userId,
+  //       type: "health_enquiry",
+  //       message,
+  //       currentUser: user,
+  //     }),
+  //   });
+
+  //   // 2️⃣ Send email
+  //   const emailRes = await fetch("/api/send-health-query-email", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       businessOwnerEmail: center.email,
+  //       currentUser: user,
+  //     }),
+  //   });
+
+  //   if (emailRes.ok) {
+  //     alert("Enquiry sent successfully!");
+  //   } else {
+  //     alert("Failed to send enquiry. Please try again.");
+  //   }
+  // };
+
+ const handleEnquiry = (center: any) => {
+    console.log(center, "center");
     if (!user) {
       setShowLoginModal(true);
       return;
     }
-
-    const message = `${user.name} from ${user.city || ""} ${
-      user.state || ""
-    } (${
-      user.email
-    }) wants to connect with you regarding your registered health/wellness service.`;
-
-    // 1️⃣ Send notification (optional)
-    const notifyRes = await fetch("/api/notifications", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        businessOwnerId: center.userId,
-        type: "health_enquiry",
-        message,
-        currentUser: user,
-      }),
-    });
-
-    // 2️⃣ Send email
-    const emailRes = await fetch("/api/send-health-query-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        businessOwnerEmail: center.email,
-        currentUser: user,
-      }),
-    });
-
-    if (emailRes.ok) {
-      alert("Enquiry sent successfully!");
-    } else {
-      alert("Failed to send enquiry. Please try again.");
-    }
+    setEnquireTarget(center);
+    setEnquireComment("");
+    setShowEnquireModal(true);
   };
 
+  const sendEnquiry = async () => {
+    if (!user || !enquireTarget) return;
+
+    if (!enquireComment.trim()) {
+      addToast({
+        title: "Error",
+        description: "Please write a comment before sending!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (enquireComment.trim().split(/\s+/).length > 100) {
+      addToast({
+        title: "Error",
+        description: "Maximum 100 words allowed!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // 1️⃣ Save in DB
+      const res = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          comment: enquireComment,
+          enquireType: "health",
+          senderUserId: user.id,
+          receiverUserId: enquireTarget.userId,
+        }),
+      });
+
+      let data: any = {};
+      const text = await res.text();
+      if (text) {
+        data = JSON.parse(text);
+      }
+
+      if (res.ok) {
+        // Send email
+        await fetch("/api/send-health-query-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessOwnerEmail: enquireTarget.email,
+            currentUser: user,
+          }),
+        });
+
+        addToast({
+          title: "Success",
+          description: "Enquiry sent successfully!",
+          variant: "success",
+        });
+        setShowEnquireModal(false);
+        setEnquireComment("");
+      } else {
+        addToast({
+          title: "Error",
+          description: data.error || "Failed to send enquiry",
+          variant: "destructive",
+        });
+        setShowEnquireModal(false);
+        setEnquireComment("");
+      }
+    } catch (err) {
+      console.error(err);
+      addToast({
+        title: "Error",
+        description: "Something went wrong.",
+        variant: "destructive",
+      });
+      setShowEnquireModal(false);
+    }
+  };
   if (loading)
     return <p className="p-6 text-gray-500">Loading wellness centers...</p>;
 
@@ -294,9 +388,11 @@ export default function HealthAndWellnessPage({ user }: any) {
           <h2 className="text-lg font-bold mb-3 text-red-700">
             Popular Wellness Categories
           </h2>
+
           {(() => {
             const [showAll, setShowAll] = React.useState(false);
-            const categories = [
+
+            const defaultCategories = [
               "Gym",
               "Yoga Center",
               "Spa",
@@ -312,19 +408,43 @@ export default function HealthAndWellnessPage({ user }: any) {
               "Weight Loss Program",
               "Massage Therapy",
             ];
-            const displayed = showAll ? categories : categories.slice(0, 8);
+
+            const dynamicCategories = Array.from(
+              new Set(centers.map((c) => c.category?.trim()).filter(Boolean))
+            );
+
+            const allCategories = Array.from(
+              new Set([...defaultCategories, ...dynamicCategories])
+            );
+
+            const displayed = showAll
+              ? allCategories
+              : allCategories.slice(0, 8);
+
+            // 🧠 Handle category click
+            const handleCategoryClick = (category: string) => {
+              const filtered = centers.filter(
+                (c) =>
+                  c.category?.toLowerCase() === category.toLowerCase() ||
+                  c.category?.toLowerCase().includes(category.toLowerCase())
+              );
+              setFilteredCenters(filtered);
+            };
+
             return (
               <>
                 <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 text-gray-700 text-sm">
                   {displayed.map((c, i) => (
                     <li
                       key={i}
-                      className="hover:text-orange-600 cursor-pointer"
+                      onClick={() => handleCategoryClick(c)}
+                      className="hover:text-orange-600 cursor-pointer  hover:bg-orange-50  rounded px-2 py-1 text-left transition"
                     >
                       {c}
                     </li>
                   ))}
                 </ul>
+
                 <p
                   onClick={() => setShowAll((prev) => !prev)}
                   className="mt-3 text-red-700 underline text-sm cursor-pointer text-center"
@@ -584,6 +704,52 @@ export default function HealthAndWellnessPage({ user }: any) {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {showEnquireModal && enquireTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-red-700">
+                Send Enquiry to {enquireTarget.ownerName}
+              </h3>
+              <button
+                onClick={() => setShowEnquireModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="text-gray-600 mb-2">
+              Add a comment (max 400 characters / 100 words)
+            </p>
+            <textarea
+              value={enquireComment}
+              onChange={(e) => setEnquireComment(e.target.value)}
+              maxLength={400}
+              rows={5}
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              placeholder="Write your message..."
+            />
+
+            <div className="mt-4 flex gap-2 justify-end">
+              <Button
+                className="bg-orange-500 hover:bg-orange-600 text-white"
+                onClick={sendEnquiry} // ✅ Sirf function call
+              >
+                Send
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => setShowEnquireModal(false)}
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </div>
       )}

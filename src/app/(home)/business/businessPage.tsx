@@ -6,6 +6,7 @@ import { Button } from "@/src/components/ui/button";
 import { useSession } from "next-auth/react";
 import { Lock, User, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/src/components/ui/toastProvider";
 
 interface User {
   id: string;
@@ -73,7 +74,7 @@ const HorizontalAdSlider11: React.FC<{ ads: any[] }> = ({ ads }) => {
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -88,7 +89,7 @@ const HorizontalAdSlider11: React.FC<{ ads: any[] }> = ({ ads }) => {
                 <img
                   src={ad.bannerImageUrl}
                   alt={`Ad ${index + 1}`}
-                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain"
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -124,6 +125,7 @@ const HorizontalAdSlider11: React.FC<{ ads: any[] }> = ({ ads }) => {
 };
 
 export default function BusinessDetailsPage({ user }: any) {
+   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [businesses, setBusinesses] = useState<any[]>([]);
   const [carouselIndexes, setCarouselIndexes] = useState<number[]>([]);
@@ -132,7 +134,8 @@ export default function BusinessDetailsPage({ user }: any) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const Router = useRouter();
   const [showGuidePopup, setShowGuidePopup] = useState(false);
-
+  const [searchType, setSearchType] = useState("state-city");
+  const [searchTerm, setSearchTerm] = useState("");
   // 🔹 Image Modal State
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImages, setModalImages] = useState<string[]>([]);
@@ -141,6 +144,15 @@ export default function BusinessDetailsPage({ user }: any) {
   // New state for Know More Modal
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
+  const [businessList, setBusinessList] = useState<any[]>(businesses);
+  const [filteredList, setFilteredList] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [filteredBusinesses, setFilteredBusinesses] =
+    useState<any[]>(businesses);
+
+  const [showEnquireModal, setShowEnquireModal] = useState(false);
+  const [enquireComment, setEnquireComment] = useState("");
+  const [enquireTarget, setEnquireTarget] = useState<any>(null);
 
   const handleKnowMore = (business: any) => {
     setSelectedBusiness(business);
@@ -162,7 +174,7 @@ export default function BusinessDetailsPage({ user }: any) {
     }
   }, [session]);
 
-  console.log(user, "currentUser");
+  console.log(enquireTarget.businesses, "enquireTarget");
 
   const categories = [
     "Health & Beauty",
@@ -189,6 +201,8 @@ export default function BusinessDetailsPage({ user }: any) {
         const json = await res.json();
         if (json.success) {
           setBusinesses(json.data);
+          setFilteredList(json.data || []);
+          setBusinessList(json.data || []);
         }
       } catch (err) {
         console.error("Error fetching businesses", err);
@@ -198,13 +212,72 @@ export default function BusinessDetailsPage({ user }: any) {
     };
     fetchBusinesses();
   }, []);
+  const dynamicCategories = Array.from(
+    new Set(
+      businesses.map((b) => b.businesses.businessCategory).filter(Boolean)
+    )
+  );
+  console.log(dynamicCategories, "businessList");
+  const allCategories = Array.from(
+    new Set([...categories, ...dynamicCategories])
+  );
 
+  // 🧩 Filter function
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+
+    const filtered = businesses.filter(
+      (b) =>
+        b.businesses?.businessCategory?.toLowerCase() === category.toLowerCase()
+    );
+
+    setFilteredBusinesses(filtered);
+  };
+
+  // 👇 Reset filter (optional)
+  const handleClearFilter = () => {
+    setSelectedCategory(null);
+    setFilteredList(businessList);
+  };
   // Initialize carousel indexes when businesses are loaded
   useEffect(() => {
     if (businesses.length > 0) {
       setCarouselIndexes(businesses.map(() => 0));
     }
   }, [businesses]);
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredBusinesses(businesses);
+      return;
+    }
+
+    const lower = searchTerm.toLowerCase();
+
+    const filtered = businesses.filter((biz) => {
+      const b = biz.businesses || {};
+      const u = biz.users || {};
+
+      if (searchType === "state-city") {
+        return (
+          u.state?.toLowerCase().includes(lower) ||
+          u.city?.toLowerCase().includes(lower)
+        );
+      } else if (searchType === "manufacturer") {
+        return (
+          b.organizationType?.toLowerCase().includes(lower) ||
+          b.businessCategory?.toLowerCase().includes(lower)
+        );
+      } else if (searchType === "service-provider") {
+        return (
+          b.businessCategory?.toLowerCase().includes("service") ||
+          b.organizationType?.toLowerCase().includes("service")
+        );
+      }
+      return false;
+    });
+
+    setFilteredBusinesses(filtered);
+  }, [searchTerm, searchType, businesses]);
 
   const badgeColors: Record<string, string> = {
     Premium: "bg-yellow-400 text-black",
@@ -236,46 +309,56 @@ export default function BusinessDetailsPage({ user }: any) {
       )
     );
   };
-  const handleEnquiry = async (business: any) => {
-    console.log("Enquiry clicked for business:", business);
+   const handleEnquiry = (business: any) => {
+    console.log(business, "business");
     if (!user) {
       setShowLoginModal(true);
       return;
     }
-
-    const message = `${user.name} from ${user.city} ${user.state} (${user.email}) wants to connect with you regarding your registered product.`;
-
-    // 1️⃣ Send notification
-    const res = await fetch("/api/notifications", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        businessOwnerId: business.businesses.userId,
-        type: "business_enquiry",
-        message,
-        currentUser: user,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      alert("Enquiry sent successfully!");
-
-      // 2️⃣ Only after notification success, send email
-      await fetch("/api/send-business-enquiry-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          businessOwnerEmail: business?.users?.email,
-          // businessOwnerEmail: "akshay.aadrika@gmail.com",
-          currentUser: user,
-        }),
-      });
-    } else {
-      alert(data.error);
-    }
+    setEnquireTarget(business);
+    setEnquireComment("");
+    setShowEnquireModal(true);
   };
+  // const handleEnquiry = async (business: any) => {
+  //   console.log("Enquiry clicked for business:", business);
+  //   if (!user) {
+  //     setShowLoginModal(true);
+  //     return;
+  //   }
+
+  //   const message = `${user.name} from ${user.city} ${user.state} (${user.email}) wants to connect with you regarding your registered product.`;
+
+  //   // 1️⃣ Send notification
+  //   const res = await fetch("/api/notifications", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       businessOwnerId: business.businesses.userId,
+  //       type: "business_enquiry",
+  //       message,
+  //       currentUser: user,
+  //     }),
+  //   });
+
+  //   const data = await res.json();
+
+  //   if (res.ok) {
+  //     alert("Enquiry sent successfully!");
+
+  //     // 2️⃣ Only after notification success, send email
+  //     await fetch("/api/send-business-enquiry-email", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         businessOwnerEmail: business?.users?.email,
+  //         // businessOwnerEmail: "akshay.aadrika@gmail.com",
+  //         currentUser: user,
+  //       }),
+  //     });
+  //   } else {
+  //     alert(data.error);
+  //   }
+  // };
   // 🔹 Open Image Modal
   const openImageModal = (images: string[], index: number) => {
     setModalImages(images);
@@ -283,6 +366,84 @@ export default function BusinessDetailsPage({ user }: any) {
     setShowImageModal(true);
   };
 
+  const sendEnquiry = async () => {
+    if (!user || !enquireTarget) return;
+
+    if (!enquireComment.trim()) {
+      addToast({
+        title: "Error",
+        description: "Please write a comment before sending!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (enquireComment.trim().split(/\s+/).length > 100) {
+      addToast({
+        title: "Error",
+        description: "Maximum 100 words allowed!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // 1️⃣ Save in DB
+      const res = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          comment: enquireComment,
+          enquireType: "business",
+          senderUserId: user.id,
+          receiverUserId: enquireTarget?.businesses?.userId,
+        }),
+      });
+
+      let data: any = {};
+      const text = await res.text();
+      if (text) {
+        data = JSON.parse(text);
+      }
+
+      if (res.ok) {
+        // Send email
+        await fetch("/api/send-business-enquiry-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessOwnerEmail: enquireTarget.businesses.email,
+            currentUser: user,
+          }),
+        });
+
+        addToast({
+          title: "Success",
+          description: "Enquiry sent successfully!",
+          variant: "success",
+        });
+        setShowEnquireModal(false);
+        setEnquireComment("");
+      } else {
+        addToast({
+          title: "Error",
+          description: data.error || "Failed to send enquiry",
+          variant: "destructive",
+        });
+        setShowEnquireModal(false);
+        setEnquireComment("");
+      }
+    } catch (err) {
+      console.error(err);
+      addToast({
+        title: "Error",
+        description: "Something went wrong.",
+        variant: "destructive",
+      });
+      setShowEnquireModal(false);
+    }
+  };
+  console.log(filteredList, "filteredList");
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 md:p-6 bg-yellow-50 min-h-screen">
       <button
@@ -379,24 +540,77 @@ export default function BusinessDetailsPage({ user }: any) {
             Top Categories
           </h2>
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2 text-gray-700">
-            {categories.map((cat, i) => (
+            {allCategories.map((cat, i) => (
               <li
                 key={i}
-                className="hover:text-blue-600 cursor-pointer text-sm"
+                className={`hover:text-blue-600 cursor-pointer text-sm ${
+                  selectedCategory === cat ? "text-blue-700 font-semibold" : ""
+                }`}
+                onClick={() => handleCategoryClick(cat)}
               >
                 {cat}
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-red-700 underline text-sm cursor-pointer">
+          <p
+            className="mt-3 text-red-700 underline text-sm cursor-pointer"
+            onClick={() => {
+              setSelectedCategory(null);
+              setFilteredBusinesses(businessList);
+            }}
+          >
             View all Categories
           </p>
         </Card>
       </div>
 
       {/* Main Content */}
+
       <div className="flex-1">
         {/* Banner / Hero */}
+        <div className="w-full bg-white shadow-sm rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center gap-3">
+          <select
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+            className="w-full sm:w-72 border border-gray-300 rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="state-city">State – City</option>
+            <option value="manufacturer">
+              Manufacturer – Distributor – Retailer
+            </option>
+            <option value="service-provider">Service Provider</option>
+          </select>
+
+          <input
+            type="text"
+            placeholder="Search here..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 border border-gray-300 rounded-lg p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+
+          <button
+            onClick={() => setSearchTerm(searchTerm)} // optional since it’s already reactive
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+              />
+            </svg>
+            Search
+          </button>
+        </div>
+
         <div className="mb-6 flex justify-center">
           <HorizontalAdSlider11 ads={topAds} />
         </div>
@@ -406,112 +620,121 @@ export default function BusinessDetailsPage({ user }: any) {
         </h2>
 
         <div className="space-y-6">
-          {businesses.map((biz, i) => {
-            const images = biz.businesses?.photos?.product || [];
-            const current = carouselIndexes[i] || 0;
+          {filteredBusinesses.length > 0 ? (
+            filteredBusinesses.map((biz, i) => {
+              // ✅ Move variables here
+              const images = biz.businesses?.photos?.product || [];
+              const current = carouselIndexes[i] || 0;
 
-            return (
-              <Card
-                key={i}
-                className="relative shadow-lg bg-white border border-yellow-200"
-              >
-                {/* Premium Badge */}
-                {biz.businesses?.premiumCategory && (
-                  <div
-                    className={`absolute top-2 left-2 px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1 z-10 ${
-                      badgeColors[biz.businesses?.premiumCategory] ||
-                      "bg-gray-200"
-                    }`}
-                  >
-                    👑 {biz.businesses.premiumCategory}
-                  </div>
-                )}
+              return (
+                <Card
+                  key={i}
+                  className="relative shadow-lg bg-white border border-yellow-200"
+                >
+                  {/* Premium Badge */}
+                  {biz.businesses?.premiumCategory && (
+                    <div
+                      className={`absolute top-2 left-2 px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1 z-10 ${
+                        badgeColors[biz.businesses?.premiumCategory] ||
+                        "bg-gray-200"
+                      }`}
+                    >
+                      👑 {biz.businesses.premiumCategory}
+                    </div>
+                  )}
 
-                <CardContent className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {/* Left Column */}
-                  <div className="flex justify-center">
-                    {images.length === 1 ? (
-                      <img
-                        src={images[0]}
-                        alt="business"
-                        className="w-32 h-32 sm:w-40 sm:h-40 object-fill rounded border cursor-pointer"
-                        onClick={() => openImageModal(images, current)}
-                      />
-                    ) : images.length > 1 ? (
-                      <div className="relative w-32 h-32 sm:w-48 sm:h-48">
+                  <CardContent className="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Left Column */}
+                    <div className="flex justify-center">
+                      {images.length === 1 ? (
                         <img
-                          src={images[current]}
-                          alt={`business-${current}`}
-                          className="w-full h-full object-fill rounded border cursor-pointer"
+                          src={images[0]}
+                          alt="business"
+                          className="w-32 h-32 sm:w-40 sm:h-40 object-fill rounded border cursor-pointer"
                           onClick={() => openImageModal(images, current)}
                         />
-                        <button
-                          onClick={() => prevSlide(i)}
-                          className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-1 rounded"
-                        >
-                          ‹
-                        </button>
-                        <button
-                          onClick={() => nextSlide(i)}
-                          className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-1 rounded"
-                        >
-                          ›
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center border rounded bg-gray-100 text-xs text-gray-500">
-                        No Image
-                      </div>
-                    )}
-                  </div>
+                      ) : images.length > 1 ? (
+                        <div className="relative w-32 h-32 sm:w-48 sm:h-48">
+                          <img
+                            src={images[current]}
+                            alt={`business-${current}`}
+                            className="w-full h-full object-fill rounded border cursor-pointer"
+                            onClick={() => openImageModal(images, current)}
+                          />
+                          <button
+                            onClick={() => prevSlide(i)}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-1 rounded"
+                          >
+                            ‹
+                          </button>
+                          <button
+                            onClick={() => nextSlide(i)}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-1 rounded"
+                          >
+                            ›
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center border rounded bg-gray-100 text-xs text-gray-500">
+                          No Image
+                        </div>
+                      )}
+                    </div>
 
-                  {/* Middle Column */}
-                  <div className="flex flex-col justify-between">
+                    {/* Middle Column */}
+                    <div className="flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-semibold text-base sm:text-lg">
+                          {biz.businesses?.organizationName}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          {biz.users?.name}
+                        </p>
+                        <div className="mt-2">
+                          <p className="text-sm font-medium">Category:</p>
+                          <p className="text-sm text-gray-700">
+                            {biz.businesses?.businessCategory}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 mt-4">
+                        <Button
+                          onClick={() => handleEnquiry(biz)}
+                          className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-sm px-4 py-2"
+                        >
+                          Enquire
+                        </Button>
+                        <Button
+                          onClick={() => handleKnowMore(biz)}
+                          className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-sm px-4 py-2"
+                        >
+                          Know More
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Right Column */}
                     <div>
-                      <h3 className="font-semibold text-base sm:text-lg">
-                        {biz.businesses?.organizationName}
-                      </h3>
-                      <p className="text-sm text-gray-600">{biz.users?.name}</p>
-                      <div className="mt-2">
-                        <p className="text-sm font-medium">Category:</p>
-                        <p className="text-sm text-gray-700">
-                          {biz.businesses?.businessCategory}
-                        </p>
-                      </div>
+                      {biz.businesses?.businessDescription && (
+                        <>
+                          <p className="text-sm font-medium">Description:</p>
+                          <p className="text-sm text-gray-700 line-clamp-4">
+                            {biz.businesses.businessDescription}
+                          </p>
+                        </>
+                      )}
                     </div>
-                    <div className="flex gap-2 mt-4">
-                      <Button
-                        onClick={() => handleEnquiry(biz)}
-                        className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-sm px-4 py-2"
-                      >
-                        Enquire
-                      </Button>
-                      <Button
-                        onClick={() => handleKnowMore(biz)}
-                        className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white text-sm px-4 py-2"
-                      >
-                        Know More
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Right Column */}
-                  {/* Right Column */}
-                  <div>
-                    {biz.businesses?.businessDescription && (
-                      <>
-                        <p className="text-sm font-medium">Description:</p>
-                        <p className="text-sm text-gray-700 line-clamp-4">
-                          {biz.businesses.businessDescription}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  </CardContent>
+                </Card>
+              );
+            })
+          ) : (
+            <p className="text-gray-600 text-center py-10">
+              No businesses found.
+            </p>
+          )}
         </div>
+
         <section className="py-8 bg-yellow-50 mt-8 border-yellow-200 border px-4 sm:px-8 shadow-lg rounded-md">
           <div className="container mx-auto max-w-4xl">
             <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#8B0000] mb-6">
@@ -884,6 +1107,51 @@ export default function BusinessDetailsPage({ user }: any) {
           </Button>
         </Card>
       </div>
+      {showEnquireModal && enquireTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-red-700">
+                Send Enquiry to {enquireTarget?.users?.name}
+              </h3>
+              <button
+                onClick={() => setShowEnquireModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="text-gray-600 mb-2">
+              Add a comment (max 400 characters / 100 words)
+            </p>
+            <textarea
+              value={enquireComment}
+              onChange={(e) => setEnquireComment(e.target.value)}
+              maxLength={400}
+              rows={5}
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              placeholder="Write your message..."
+            />
+
+            <div className="mt-4 flex gap-2 justify-end">
+              <Button
+                className="bg-orange-500 hover:bg-orange-600 text-white"
+                onClick={sendEnquiry} // ✅ Sirf function call
+              >
+                Send
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => setShowEnquireModal(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

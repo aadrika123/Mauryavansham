@@ -55,14 +55,14 @@ const HeritageAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
   }
 
   return (
-    <div className="relative">
-      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-2 sm:border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-        <div className="relative p-4 sm:p-6 md:p-8 text-center h-[180px] sm:h-[250px] md:h-[300px]">
+     <div className="relative w-full max-w-[900px] mx-auto h-[180px] sm:h-[220px] md:h-[300px]">
+      <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 w-full h-full">
+        <div className="relative p-4 sm:p-6 md:p-8 w-full h-full">
           {/* Ad Images */}
           {ads.map((ad, index) => (
             <div
               key={ad.id}
-              className={`absolute inset-0 p-4 sm:p-6 md:p-8 transition-opacity duration-1000 ${
+              className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
                   ? "opacity-100 z-10"
                   : "opacity-0 pointer-events-none z-0"
@@ -74,13 +74,10 @@ const HeritageAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                 rel="noopener noreferrer"
                 className="inline-block w-full h-full"
               >
-                <Image
+                <img
                   src={ad.bannerImageUrl}
-                  alt={`Heritage Ad ${index + 1}`}
-                  width={900}
-                  height={300}
-                  className="mx-auto rounded-xl shadow-lg w-full h-full object-contain cursor-pointer"
-                  priority={index === 0}
+                  alt={`Ad ${index + 1}`}
+                  className="mx-auto rounded-xl shadow-lg w-full h-full object-fill"
                 />
               </a>
             </div>
@@ -119,6 +116,7 @@ const HeritageAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
 
 export default function HeritagePage() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
+  const [heritageList, setHeritageList] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("/api/ad-placements/approved")
@@ -126,6 +124,16 @@ export default function HeritagePage() {
       .then((data: AdPlacement[]) => setAdPlacements(data))
       .catch(() => console.error("Failed to load ad placements"));
   }, []);
+  useEffect(() => {
+    fetch("/api/heritage/list")
+      .then((res) => res.json())
+      .then((data) => {
+        // Process heritage data if needed
+        console.log("Heritage Data:", data);
+        setHeritageList(data);
+      })
+  }, []);
+
 
   // Filter ads for placement 4 (heritage page banner)
   const heritageAds = adPlacements.filter((ad) => ad.placementId === 4);
@@ -146,134 +154,65 @@ export default function HeritagePage() {
         </div>
       </div>
 
+    <div className="container mx-auto text-center">
       {/* Hero Section */}
-      <div className="container mx-auto text-center">
-        <div className="mb-6">
-          <Crown className="h-16 w-16 sm:h-20 sm:w-20 text-yellow-500 mx-auto " />
-          <div className="relative">
-            <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg"></div>
-            <h1 className="relative text-3xl sm:text-4xl md:text-5xl font-bold text-red-700 mb-4 sm:mb-6">
-              Our Glorious Heritage
-            </h1>
-          </div>
-          <p className="text-base sm:text-lg text-red-600 max-w-3xl mx-auto leading-relaxed px-2">
-            From the divine lineage of Lord Ram to the mighty Mauryan Empire,
-            discover the rich history and proud heritage of the Maurya community
-            that spans over 2500 years
-          </p>
+      <div className="mb-6">
+        <Crown className="h-16 w-16 sm:h-20 sm:w-20 text-yellow-500 mx-auto " />
+        <div className="relative">
+          <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg"></div>
+          <h1 className="relative text-3xl sm:text-4xl md:text-5xl font-bold text-red-700 mb-4 sm:mb-6">
+            Our Glorious Heritage
+          </h1>
         </div>
-
-        {/* Heritage Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 md:px-10 lg:px-36">
-          {/* Card 1 */}
-          <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-            <div className="h-48 sm:h-64 bg-gradient-to-br from-blue-400 to-purple-600 relative overflow-hidden">
-              <Image
-                src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754133157/Gemini_Generated_Image_pe53ibpe53ibpe53_ot4dkc.png"
-                alt="Treta Yuga"
-                fill
-                className="object-cover"
-              />
-              <Crown className="h-12 w-12 sm:h-16 sm:w-16 text-yellow-400 absolute top-4 left-4" />
-            </div>
-            <CardContent className="p-4 sm:p-6 bg-yellow-50">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <h3 className="text-lg sm:text-xl font-bold text-red-700">
-                  Treta Yuga - Lord Ram
-                </h3>
-                <Badge className="bg-yellow-200 text-yellow-800 border-yellow-300 text-xs sm:text-sm">
-                  321-185 BCE
-                </Badge>
-              </div>
-              <p className="text-gray-700 text-sm sm:text-base text-left">
-                Our lineage traces back to Lord Ram, the seventh avatar of Lord
-                Vishnu and the ideal king of Ayodhya.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Card 2 */}
-          <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-            <div className="h-48 sm:h-64 bg-gradient-to-br from-blue-400 to-purple-600 relative overflow-hidden">
-              <Image
-                src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/chandragup_maur_vmo5vb.png"
-                alt="Mauryan Empire"
-                fill
-                className="object-cover"
-              />
-              <Crown className="h-12 w-12 sm:h-16 sm:w-16 text-yellow-400 absolute top-4 left-4" />
-            </div>
-            <CardContent className="p-4 sm:p-6 bg-yellow-50">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <h3 className="text-lg sm:text-xl font-bold text-red-700">
-                  Mauryan Empire
-                </h3>
-                <Badge className="bg-yellow-200 text-yellow-800 border-yellow-300 text-xs sm:text-sm">
-                  321-185 BCE
-                </Badge>
-              </div>
-              <p className="text-gray-700 text-sm sm:text-base text-left">
-                Founded by Chandragupta Maurya, our ancestor who established one
-                of the largest empires in ancient India.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Card 3 */}
-          <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-            <div className="h-48 sm:h-64 bg-gradient-to-br from-purple-400 to-indigo-600 relative overflow-hidden">
-              <Image
-                src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/samrat_ashoka_hekb0f.png"
-                alt="Samrat Ashoka"
-                fill
-                className="object-cover"
-              />
-              <Crown className="h-12 w-12 sm:h-16 sm:w-16 text-yellow-400 absolute top-4 left-4" />
-            </div>
-            <CardContent className="p-4 sm:p-6 bg-yellow-50">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <h3 className="text-lg sm:text-xl font-bold text-red-700">
-                  Samrat Ashoka's Reign
-                </h3>
-                <Badge className="bg-yellow-200 text-yellow-800 border-yellow-300 text-xs sm:text-sm">
-                  Present Day
-                </Badge>
-              </div>
-              <p className="text-gray-700 text-sm sm:text-base text-left">
-                The great Emperor Ashoka spread Buddhism and dharma across the
-                subcontinent and beyond.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Card 4 */}
-          <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-            <div className="h-48 sm:h-64 bg-gradient-to-br from-purple-400 to-indigo-600 relative overflow-hidden">
-              <Image
-                src="https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/mauras_kuswahas_rjabks.png"
-                alt="Modern Era"
-                fill
-                className="object-cover"
-              />
-              <Crown className="h-12 w-12 sm:h-16 sm:w-16 text-yellow-400 absolute top-4 left-4" />
-            </div>
-            <CardContent className="p-4 sm:p-6 bg-yellow-50">
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <h3 className="text-lg sm:text-xl font-bold text-red-700">
-                  Modern Era
-                </h3>
-                <Badge className="bg-yellow-200 text-yellow-800 border-yellow-300 text-xs sm:text-sm">
-                  Present Day
-                </Badge>
-              </div>
-              <p className="text-gray-700 text-sm sm:text-base text-left">
-                Today, Mauryas and Kushwahas continue to contribute to society
-                while preserving our rich cultural heritage and values.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <p className="text-base sm:text-lg text-red-600 max-w-3xl mx-auto leading-relaxed px-2">
+          From the divine lineage of Lord Ram to the mighty Mauryan Empire,
+          discover the rich history and proud heritage of the Maurya community
+          that spans over 2500 years.
+        </p>
       </div>
+
+      {/* Heritage Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 md:px-10 lg:px-36">
+        {heritageList.length === 0 ? (
+          <p className="text-gray-600 text-center col-span-full">
+            No heritage records found.
+          </p>
+        ) : (
+          heritageList.map((item) => (
+            <Card
+              key={item.id}
+              className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+            >
+              <div className="h-48 sm:h-64 bg-gradient-to-br from-blue-400 to-purple-600 relative overflow-hidden">
+                <Image
+                  src={item.imageUrl}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                />
+                <Crown className="h-12 w-12 sm:h-16 sm:w-16 text-yellow-400 absolute top-4 left-4" />
+              </div>
+
+              <CardContent className="p-4 sm:p-6 bg-yellow-50">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-red-700">
+                    {item.title}
+                  </h3>
+                  {item.badge && (
+                    <Badge className="bg-yellow-200 text-yellow-800 border-yellow-300 text-xs sm:text-sm">
+                      {item.badge}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-gray-700 text-sm sm:text-base text-left">
+                  {item.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+    </div>
 
       {/* Ad Banner with Slider */}
       <div className="container mx-auto px-2 sm:px-6 lg:px-8 py-6">
