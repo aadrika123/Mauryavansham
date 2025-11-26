@@ -54,6 +54,7 @@ export default function AdmindashboardLayout({
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   const unreadCount =
     notifications?.filter((n) => !n.isRead || n.isRead === 0).length || 0;
+
   const unreadNotifications = notifications.filter(
     (n) => !n.isRead || n.isRead === 0
   );
@@ -86,13 +87,21 @@ export default function AdmindashboardLayout({
       href: "/admin/enquiries",
       icon: MessageSquare,
     },
-   {
+    {
       title: "Achievements",
       href: "",
       icon: Trophy,
       subItems: [
-        { title: "Create Achievements", href: "/admin/create-achievement-general", icon: Calendar },
-        { title: "My Achievements", href: "/admin/created-achievement-general", icon: Calendar },
+        {
+          title: "Create Achievements",
+          href: "/admin/create-achievement-general",
+          icon: Calendar,
+        },
+        {
+          title: "My Achievements",
+          href: "/admin/created-achievement-general",
+          icon: Calendar,
+        },
       ],
     },
     { title: "Manage Users", href: "/admin/users", icon: Users },
@@ -426,7 +435,12 @@ export default function AdmindashboardLayout({
 
       if (res.ok) {
         // ✅ Update UI instantly
-        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: 1 })));
+        // setNotifications((prev) =>
+        //   prev.map((n) =>
+        //     unread.some((u) => u.id === n.id) ? { ...n, isRead: 1 } : n
+        //   )
+        // );
+
         console.log("✅ Notifications marked as read");
       } else {
         console.error("❌ Failed to mark notifications as read");
@@ -545,7 +559,10 @@ export default function AdmindashboardLayout({
 
                           if (res.ok) {
                             // ✅ Clear all notifications from UI
-                            setNotifications([]);
+                            setNotifications((prev) =>
+                              prev.map((n) => ({ ...n, isRead: 1 }))
+                            );
+
                             console.log(
                               "✅ All notifications marked as read for user:",
                               user?.id

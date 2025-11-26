@@ -3,7 +3,7 @@ import { db } from "@/src/drizzle/db";
 import { notifications } from "@/src/drizzle/db/schemas/notifications";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/src/lib/auth";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { notification_reads } from "@/src/drizzle/db/schemas/notification_reads";
 import { users } from "@/src/drizzle/schema";
 
@@ -29,27 +29,34 @@ export async function GET(req: NextRequest) {
         photo: users.photo,
         email: users.email,
       },
-      // ✅ Check individual read or mark all read
-      isRead: sql<boolean>`
-        CASE 
-          WHEN ${notification_reads.id} IS NOT NULL THEN true
-          WHEN EXISTS (
-            SELECT 1 
-            FROM notification_reads nr
-            WHERE nr.admin_id = ${userId} AND nr.mark_all_read = true
-          ) THEN true
-          ELSE false
-        END
-      `,
+
+     isRead: sql<boolean>`
+  CASE
+    -- Individual read
+    WHEN EXISTS (
+      SELECT 1 
+      FROM notification_reads nr
+      WHERE nr.notification_id = ${notifications.id}
+        AND nr.admin_id = ${userId}
+        AND nr.mark_all_read = false
+    ) THEN false
+
+    -- Admin mark-all-read -> but only for old notifications
+    WHEN ${role} = 'admin' AND EXISTS (
+      SELECT 1 
+      FROM notification_reads nr
+      WHERE nr.admin_id = ${userId}
+        AND nr.mark_all_read = true
+        AND nr.created_at <= ${notifications.createdAt}
+    ) THEN true
+
+    ELSE false
+  END
+`,
+
     })
     .from(notifications)
-    .leftJoin(
-      notification_reads,
-      sql`${notification_reads.notificationId} = ${notifications.id} 
-           AND ${notification_reads.adminId} = ${userId}`
-    )
-    .leftJoin(users, sql`${notifications.senderId} = ${users.id}`)
-    // ✅ Only filter by user role and type, no need for markAllRead in WHERE
+    .leftJoin(users, eq(notifications.senderId, users.id))
     .where(
       role === "user"
         ? sql`${notifications.type} != 'signup' AND ${notifications.userId} = ${userId}`

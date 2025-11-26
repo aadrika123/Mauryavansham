@@ -197,18 +197,18 @@ export default function DashboardLayout({
     if (unread.length === 0) return;
 
     try {
-      const res = await fetch("/api/notifications/mark-read", {
+      const res = await fetch("/api/admin/notifications/mark-read", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
       });
 
       if (res.ok) {
-        setNotifications((prev) =>
-          prev.map((n) =>
-            unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
-          )
-        );
+        // setNotifications((prev) =>
+        //   prev.map((n) =>
+        //     unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
+        //   )
+        // );
         console.log("✅ Notifications marked as read");
       } else {
         console.error("❌ Failed to mark notifications as read");

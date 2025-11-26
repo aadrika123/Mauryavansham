@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   const adminId = Number(session.user.id);
   const body = await req.json();
-  const { notificationIds } = body; // array of IDs
+  const { notificationIds } = body;
 
   if (!notificationIds || notificationIds.length === 0) {
     return NextResponse.json(
@@ -20,10 +20,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Insert all unread notifications for this admin
-  await db.insert(notification_reads).values(
-    notificationIds.map((id: number) => ({ notificationId: id, adminId }))
-  );
+  await db
+    .insert(notification_reads)
+    .values(
+      notificationIds.map((id: number) => ({
+        notificationId: id,
+        adminId,
+      }))
+    )
+    .onConflictDoNothing(); // 🚀 Prevent duplicates
 
   return NextResponse.json({ success: true });
 }
