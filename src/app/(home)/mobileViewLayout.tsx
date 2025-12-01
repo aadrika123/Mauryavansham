@@ -67,10 +67,11 @@ export default function MobileLayout({
   const [isWebView, setIsWebView] = useState(false);
 
   useEffect(() => {
-    // Detect if running inside React Native WebView
-    if (typeof window !== "undefined" && (window as any).ReactNativeWebView) {
-      setIsWebView(true);
-    }
+    const isRNWebView =
+      typeof window !== "undefined" &&
+      (window as any).ReactNativeWebView !== undefined;
+
+    setIsWebView(isRNWebView);
   }, []);
 
   const router = useRouter();
@@ -554,7 +555,7 @@ export default function MobileLayout({
 
                   {open && (
                     <div className="absolute right-0 mt-2 w-48 bg-white text-gray-700 rounded-md shadow-lg overflow-hidden z-50">
-                      {/* Android Option */}
+                      {/* Android */}
                       <a
                         href="https://mauryavansh.com/App/Mauryavansham.apk"
                         className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm"
@@ -563,7 +564,7 @@ export default function MobileLayout({
                         <FaAndroid className="text-green-600" /> Android App
                       </a>
 
-                      {/* iOS Option (Disabled) */}
+                      {/* iOS */}
                       <div className="flex items-center gap-2 px-4 py-2 text-gray-400 text-sm cursor-not-allowed bg-gray-50">
                         <FaApple className="text-gray-400" /> iOS App (Coming
                         Soon)
