@@ -20,6 +20,8 @@ import {
   House,
   User,
   ShoppingBag,
+  BookOpen,
+  ChartBar,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
@@ -68,18 +70,71 @@ export function Header() {
     fetchProfileData();
   }, [loginUser?.id]);
 
+  // const navigationItems = [
+  //   { title: "Home", href: "/", icon: House },
+  //   { title: "Heritage", href: "/heritage", icon: Landmark },
+  //   { title: "Community Forum", href: "/community", icon: Users },
+  //   { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
+  //   { title: "Events & Calendar", href: "/events", icon: Calendar },
+  //   { title: "Business Forum", href: "/business", icon: ShoppingBag },
+  //   { title: "Health & Wellness", href: "/health-wellness", icon: HandHeart },
+  //   { title: "Education", href: "/education", icon: Crown },
+  //   { title: "Achievements", href: "/achievements", icon: Trophy },
+  //   { title: "Blogs", href: "/blogs", icon: ShoppingBag },
+
+  // ];
   const navigationItems = [
     { title: "Home", href: "/", icon: House },
-    { title: "Heritage", href: "/heritage", icon: Landmark },
-    { title: "Community Forum", href: "/community", icon: Users },
+    {
+      title: "Blogs & Heritage",
+      icon: ShoppingBag,
+      children: [
+        { title: "Heritage", href: "/heritage", icon: Landmark },
+        { title: "Blogs", href: "/blogs", icon: ShoppingBag },
+      ],
+    },
+    {
+      title: "Forums",
+      icon: ShoppingBag,
+      children: [
+        { title: "Community Forum", href: "/community", icon: Users },
+        { title: "Business Forum", href: "/business", icon: ShoppingBag },
+      ],
+    },
+    {
+      title: "Health & Education",
+      icon: ShoppingBag,
+      children: [
+        {
+          title: "Health & Wellness",
+          href: "/health-wellness",
+          icon: HandHeart,
+        },
+        { title: "Education", href: "/education", icon: BookOpen },
+      ],
+    },
     { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
     { title: "Events & Calendar", href: "/events", icon: Calendar },
-    { title: "Business Forum", href: "/business", icon: ShoppingBag },
-    { title: "Health & Wellness", href: "/health-wellness", icon: HandHeart },
-    { title: "Education", href: "/education", icon: Crown },
     { title: "Achievements", href: "/achievements", icon: Trophy },
-    { title: "Blogs", href: "/blogs", icon: ShoppingBag },
 
+    {
+      title: "Analytics",
+      href: "/analytics",
+      icon: ChartBar,
+      requiresAuth: true,
+    },
+    {
+      title: "Recommendations",
+      href: "/recommendations",
+      icon: Heart,
+      requiresAuth: true,
+    },
+    {
+      title: "Gamification",
+      href: "/gamification",
+      icon: Crown,
+      requiresAuth: true,
+    },
   ];
 
   const handleSignOut = () => {
@@ -197,7 +252,7 @@ export function Header() {
 
                           {/* User Image */}
                           {!loading ? (
-                             <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
+                            <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
                               <img
                                 src={
                                   profileData?.data?.photo || "/placeholder.svg"
@@ -207,8 +262,9 @@ export function Header() {
                               />
                             </div>
                           ) : (
-                            <p className=""><FaSpinner className="animate-spin w-4 h-4" /></p>
-                           
+                            <p className="">
+                              <FaSpinner className="animate-spin w-4 h-4" />
+                            </p>
                           )}
                         </div>
                       </Link>
@@ -277,28 +333,60 @@ export function Header() {
 
         {/* Navigation Bar (Desktop) */}
         <nav className="bg-gradient-to-r from-red-800 to-red-900 px-4 hidden md:block">
-          <div className="container mx-auto flex">
-            {navigationItems.map((item) => {
-              const isDisabled = item.href === "/" && item.title !== "Home"; // disable only when href="/" but NOT Home
-              return (
-                <Link
-                  key={item.href + item.title}
-                  href={isDisabled ? "#" : item.href}
-                  className={`flex items-center  px-4 text-base py-6 gap-1  transition-colors 
-            ${
-              isDisabled
-                ? "text-gray-300 cursor-not-allowed"
-                : "text-white hover:bg-red-700"
-            }`}
-                  onClick={(e) => {
-                    if (isDisabled) e.preventDefault(); // block navigation
-                  }}
-                >
-                  {item.icon && <item.icon className="h-4 w-4" />}
-                  {item.title}
-                </Link>
-              );
-            })}
+          <div className="container mx-auto flex text-lg">
+            {navigationItems.map((item) =>
+              item.children ? (
+                <div key={item.title} className="relative group ">
+                  <button className="flex items-center gap-1 px-4 py-6 text-white hover:bg-red-700">
+                    {item.icon && <item.icon className="h-4 w-4" />}
+                    {item.title}
+                  </button>
+
+                  {/* Dropdown */}
+                  <div className="absolute left-0 top-full hidden group-hover:block bg-white shadow-lg rounded-md min-w-[180px] z-50">
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.title}
+                        href={child.href}
+                        className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-orange-100"
+                      >
+                        {child.icon && <child.icon className="h-4 w-4" />}
+                        {child.title}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div key={item.title} className="relative group">
+                  {item.requiresAuth && !isAuthenticated ? (
+                    <>
+                      {/* Disabled Menu */}
+                      <div className="flex items-center gap-1 px-4 py-6 text-white/50 cursor-not-allowed">
+                        {item.icon && <item.icon className="h-4 w-4" />}
+                        {item.title}
+                      </div>
+
+                      {/* Tooltip */}
+                      <div
+                        className="absolute top-full left-1/2 -translate-x-1/2 mt-1
+              hidden group-hover:block
+              bg-black text-white text-xs px-2 py-1 rounded shadow-lg z-50"
+                      >
+                        Please login first
+                      </div>
+                    </>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-1 px-4 py-6 text-white hover:bg-red-700"
+                    >
+                      {item.icon && <item.icon className="h-4 w-4" />}
+                      {item.title}
+                    </Link>
+                  )}
+                </div>
+              )
+            )}
           </div>
         </nav>
 
@@ -389,27 +477,45 @@ export function Header() {
               )}
 
               {/* Navigation Items */}
-              {navigationItems.map((item) => {
-                const isHome = item.title === "Home";
-                const isDisabled = !isHome && item.href === "/";
+              {navigationItems.map((item) =>
+                item.children ? (
+                  <div key={item.title} className="space-y-1">
+                    <p className="px-3 py-2 font-semibold text-white">
+                      {item.title}
+                    </p>
 
-                return (
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.title}
+                        href={child.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className="flex items-center gap-2 px-6 py-2 text-white/90 hover:bg-orange-600 rounded"
+                      >
+                        {child.icon && <child.icon className="h-4 w-4" />}
+                        {child.title}
+                      </Link>
+                    ))}
+                  </div>
+                ) : item.requiresAuth && !isAuthenticated ? (
+                  <div
+                    key={item.title}
+                    className="flex items-center gap-2 px-3 py-2 text-white/50 cursor-not-allowed"
+                  >
+                    {item.icon && <item.icon className="h-4 w-4" />}
+                    {item.title}
+                  </div>
+                ) : (
                   <Link
-                    key={item.href}
-                    href={isDisabled ? "#" : item.href} // disabled items won't navigate
-                    onClick={() => {
-                      if (!isDisabled) setSidebarOpen(false);
-                    }}
-                    className={`flex items-center gap-2 px-3 py-2 text-white rounded transition-colors
-          ${
-            isDisabled ? "cursor-not-allowed opacity-60" : "hover:bg-orange-600"
-          }`}
+                    key={item.title}
+                    href={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-white hover:bg-orange-600 rounded"
                   >
                     {item.icon && <item.icon className="h-4 w-4" />}
                     {item.title}
                   </Link>
-                );
-              })}
+                )
+              )}
 
               {/* Auth Buttons */}
               <div className="pt-4 border-t border-white/30">

@@ -1,4 +1,3 @@
-
 import { db } from "@/src/drizzle/db";
 import { coachingCenters } from "@/src/drizzle/schema";
 import { eq } from "drizzle-orm";

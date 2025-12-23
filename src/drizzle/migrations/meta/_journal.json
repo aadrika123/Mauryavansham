@@ -176,6 +176,13 @@
       "when": 1763053801666,
       "tag": "0024_goofy_galactus",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1765889943663,
+      "tag": "0025_shocking_gertrude_yorkes",
+      "breakpoints": true
     }
   ]
 }

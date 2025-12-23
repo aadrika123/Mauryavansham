@@ -69,7 +69,7 @@ async function backfillUserCodes() {
     }
   }
 
-  console.log("🎉 Backfill completed!");
+  console.log("�� Backfill completed!");
   process.exit(0);
 }
 

@@ -492,7 +492,7 @@ export default function MauryavanshamApp({
               )}
             </div>
 
-            {/* 👇 Button sirf tab dikhega jab events > 4 ho */}
+            {/* �� Button sirf tab dikhega jab events > 4 ho */}
             {upcomingEvents.length > 4 && (
               <button className="text-sm text-red-600 font-semibold">
                 View All

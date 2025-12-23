@@ -6,4 +6,3 @@ export async function insertRegistration(data: typeof members.$inferInsert) {
   const [newRegistration] = await db.insert(members).values(data).returning();
   return newRegistration;
 }
-

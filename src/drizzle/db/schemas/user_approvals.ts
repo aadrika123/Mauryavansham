@@ -14,4 +14,3 @@ export const userApprovals = pgTable("user_approvals", {
   createdAt: timestamp("created_at").defaultNow(),
   reason: varchar("reason", { length: 255 }),
 });
-

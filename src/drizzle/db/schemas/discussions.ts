@@ -14,10 +14,12 @@ export const discussions = pgTable("discussions", {
   authorId: varchar("author_id", { length: 50 }).notNull(),
   authorName: varchar("author_name", { length: 100 }).notNull(),
   location: varchar("location", { length: 100 }),
+  userId: integer("user_id"),
 
   // counters
   likes: integer("likes").default(0).notNull(),
   replies: integer("replies").default(0).notNull(),
+  replyCount: integer("reply_count").default(0).notNull(),
 
   // status
   status: discussionStatusEnum("status").default("pending").notNull(),

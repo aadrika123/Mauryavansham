@@ -1,13 +1,5 @@
-import {
-  pgTable,
-  serial,
-  varchar,
-  boolean,
-  timestamp,
-  date,
-  text,
-  integer,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, varchar, boolean, timestamp, date, text, integer } from "drizzle-orm/pg-core"
+import { subscriptionTierEnum, verificationLevelEnum } from "../enums/subscription.enum"
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -41,9 +33,9 @@ export const users = pgTable("users", {
   education: varchar("education", { length: 100 }),
   occupation: varchar("occupation", { length: 100 }),
 
-  // 🆕 Occupation-specific fields
-  jobType: varchar("job_type", { length: 50 }), // Government / Non-Government
-  govSector: varchar("gov_sector", { length: 50 }), // Central / State / UT
+  // Occupation-specific fields
+  jobType: varchar("job_type", { length: 50 }),
+  govSector: varchar("gov_sector", { length: 50 }),
   department: varchar("department", { length: 100 }),
   postingLocation: varchar("posting_location", { length: 100 }),
   designation: varchar("designation", { length: 100 }),
@@ -54,8 +46,8 @@ export const users = pgTable("users", {
   motherName: varchar("mother_name", { length: 100 }),
   spouseName: varchar("spouse_name", { length: 100 }),
 
-  professionGroup: varchar("profession_group", { length: 100 }), // e.g., "Traditional Professions"
-  profession: varchar("profession", { length: 150 }), // e.g., "Doctor", "Engineer"
+  professionGroup: varchar("profession_group", { length: 100 }),
+  profession: varchar("profession", { length: 150 }),
   professionDetails: text("profession_details"),
   facebookLink: varchar("facebook_link", { length: 255 }),
 
@@ -65,11 +57,23 @@ export const users = pgTable("users", {
   country: varchar("country", { length: 50 }),
   zipCode: varchar("zip_code", { length: 15 }),
 
+  // Premium features
+  isPremium: boolean("is_premium").default(false),
+  subscriptionTier: subscriptionTierEnum("subscription_tier").notNull().default("free"),
+  membershipExpiresAt: timestamp("membership_expires_at"),
+
+  // Verification
+  verificationLevel: verificationLevelEnum("verification_level").notNull().default("unverified"),
+  trustScore: integer("trust_score").default(0), // 0-100 trust rating
+
   // Tracking
   lastProfileUpdate: timestamp("last_profile_update"),
   profileCompletion: integer("profile_completion").default(0),
-  isPremium: boolean("is_premium").default(false),
-  membershipExpiresAt: timestamp("membership_expires_at"),
+  profileViews: integer("profile_views").default(0).notNull(),
+
+  // Video profile
+  videoProfileUrl: varchar("video_profile_url", { length: 255 }),
+  videoProfileStatus: varchar("video_profile_status", { length: 20 }).default("pending"), // pending, approved, rejected
 
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -80,4 +84,4 @@ export const users = pgTable("users", {
   currentState: varchar("current_state", { length: 50 }),
   currentCountry: varchar("current_country", { length: 50 }),
   currentZipCode: varchar("current_zip_code", { length: 15 }),
-});
+})
