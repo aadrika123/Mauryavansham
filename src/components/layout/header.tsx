@@ -116,7 +116,12 @@ export function Header() {
     { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
     { title: "Events & Calendar", href: "/events", icon: Calendar },
     { title: "Achievements", href: "/achievements", icon: Trophy },
-
+{
+      title: "Gamification",
+      href: "/gamification",
+      icon: Crown,
+      requiresAuth: true,
+    },
     {
       title: "Analytics",
       href: "/analytics",
@@ -129,12 +134,7 @@ export function Header() {
       icon: Heart,
       requiresAuth: true,
     },
-    {
-      title: "Gamification",
-      href: "/gamification",
-      icon: Crown,
-      requiresAuth: true,
-    },
+    
   ];
 
   const handleSignOut = () => {
@@ -333,7 +333,7 @@ export function Header() {
 
         {/* Navigation Bar (Desktop) */}
         <nav className="bg-gradient-to-r from-red-800 to-red-900 px-4 hidden md:block">
-          <div className="container mx-auto flex text-lg">
+          <div className="container mx-auto flex text-[13px] whitespace-nowrap" >
             {navigationItems.map((item) =>
               item.children ? (
                 <div key={item.title} className="relative group ">
