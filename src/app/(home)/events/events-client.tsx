@@ -31,27 +31,34 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/src/hooks/use-toast';
 
+interface Attendee {
+  id: number;
+  name: string;
+  email: string;
+}
+
 interface Event {
   id: number;
   title: string;
   description: string;
-  image: string;
+  image: string | null;
   date: string;
-  time: string;
+  fromTime: string;
+  toTime: string;
   location: string;
-  attendees: number;
+  attendees: Attendee[];
+  attendeesCount: number;
   maxAttendees: number;
   organizer: string;
-  type: 'In-Person' | 'Virtual' | 'Hybrid';
-  category: string;
-  views: number;
-  placementId: number;
-  link?: string;
-  bannerImageUrl: string;
-  isFeatured: boolean;
-  toTime: string;
-  fromTime: string;
-  attendeesCount: number;
+  type: string;
+  category: string | null;
+  isFeatured: boolean | null;
+  reason?: string | null;
+  rejectedBy?: string | null;
+  userId?: number | null;
+  status: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 interface EventsClientProps {
@@ -66,15 +73,18 @@ interface AdPlacement {
   adUrl: string;
 }
 interface User {
-  id: number;
+  id: string | number;
   name: string;
   email: string;
   phone?: string;
-  role: 'user' | 'admin';
-  isActive: boolean;
-  status: string;
+  role: 'user' | 'admin' | 'superAdmin';
+  isActive?: boolean;
+  status?: string;
   deactivationReason?: string;
   deactivatedReason?: string;
+  profileId?: string;
+  photo?: string;
+  image?: string | null;
 }
 
 const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
@@ -165,7 +175,7 @@ export default function EventsClient({ initialEvents, user }: EventsClientProps 
   const Router = useRouter();
   const [loadingEvents, setLoadingEvents] = useState<number[]>([]);
   const [showAttendeesModal, setShowAttendeesModal] = useState(false);
-  const [selectedEventAttendees, setSelectedEventAttendees] = useState<number[]>([]);
+  const [selectedEventAttendees, setSelectedEventAttendees] = useState<string[]>([]);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
 
   const today = new Date();
@@ -292,7 +302,7 @@ export default function EventsClient({ initialEvents, user }: EventsClientProps 
       return;
     }
 
-    if (event.attendees >= event.maxAttendees || loadingEvents.includes(event.id)) return;
+    if (event.attendeesCount >= event.maxAttendees || loadingEvents.includes(event.id)) return;
 
     setLoadingEvents(prev => [...prev, event.id]);
 
@@ -303,7 +313,7 @@ export default function EventsClient({ initialEvents, user }: EventsClientProps 
       const data = await res.json();
 
       if (res.ok) {
-        setEvents(prev => prev.map(ev => (ev.id === event.id ? { ...ev, attendees: ev.attendees + 1 } : ev)));
+        setEvents(prev => prev.map(ev => (ev.id === event.id ? { ...ev, attendeesCount: ev.attendeesCount + 1 } : ev)));
         toast({
           title: '✅ Success',
           variant: 'default',
@@ -679,7 +689,7 @@ export default function EventsClient({ initialEvents, user }: EventsClientProps 
             {filteredEvents.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredEvents.map(event => {
-                  const isFull = event.attendees >= event.maxAttendees;
+                  const isFull = event.attendeesCount >= event.maxAttendees;
                   // const [loading, setLoading] = useState(false);
 
                   const handleRegister = async () => {
@@ -697,7 +707,7 @@ export default function EventsClient({ initialEvents, user }: EventsClientProps 
 
                       if (res.ok) {
                         setEvents(prev =>
-                          prev.map(ev => (ev.id === event.id ? { ...ev, attendees: ev.attendees + 1 } : ev))
+                          prev.map(ev => (ev.id === event.id ? { ...ev, attendeesCount: ev.attendeesCount + 1 } : ev))
                         );
                         toast({
                           title: '✅ Success',

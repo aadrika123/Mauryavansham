@@ -61,7 +61,7 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
     }
   };
 
-  const canEdit = blog.author.id == currentUserId && (blog.status === 'draft' || blog.status === 'pending');
+  const canEdit = blog.author?.id == currentUserId && (blog.status === 'draft' || blog.status === 'pending');
 
   return (
     <div className="space-y-6">
@@ -90,7 +90,7 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   <User className="h-4 w-4" />
-                  <span>{blog.author.name}</span>
+                  <span>{blog.author?.name || 'Unknown'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />

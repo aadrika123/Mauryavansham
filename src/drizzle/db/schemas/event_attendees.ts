@@ -9,6 +9,6 @@ export const event_attendees = pgTable(
     userId: integer('user_id').notNull()
   },
   table => ({
-    uniqueEventUser: uniqueIndex('unique_event_user', [table.eventId, table.userId])
+    uniqueEventUser: uniqueIndex('unique_event_user').on(table.eventId, table.userId)
   })
 );

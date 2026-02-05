@@ -31,10 +31,25 @@ import { useRouter } from 'next/navigation';
 interface Achievement {
   id: number;
   name: string;
-  title: string;
+  fatherName?: string;
+  motherName?: string;
+  achievementTitle?: string;
+  title?: string;
   description: string;
-  image: string;
-  category: 'Healthcare' | 'Sports' | 'Technology' | 'Education' | 'Business' | 'Arts';
+  image?: string;
+  images?: string[];
+  category:
+    | 'Healthcare'
+    | 'Sports'
+    | 'Technology'
+    | 'Education'
+    | 'Business'
+    | 'Arts'
+    | 'Central Government'
+    | 'PSU'
+    | 'State Government'
+    | 'Other';
+  otherCategory?: string;
   isVerified: boolean;
   isFeatured: boolean;
   isHallOfFame: boolean;
@@ -43,19 +58,18 @@ interface Achievement {
   keyAchievement: string;
   impact: string;
   achievements: string[];
-  status: string;
-  createdBy: string;
-  createdById: string;
+  status?: string;
+  createdBy?: string;
+  createdById?: string;
   removedBy?: string;
   removedById?: string;
   removedAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   reason?: string;
   updatedBy?: string;
   updatedById?: string;
-  images: string[];
-  currentImageIndex: number;
+  currentImageIndex?: number;
 }
 
 interface AchievementsClientProps {
@@ -177,9 +191,10 @@ export default function AchievementsClient({ initialAchievements }: Achievements
   const recentAchievements = achievements.filter(achievement => achievement.year === 2024);
 
   const filteredAchievements = achievements.filter(achievement => {
+    const searchTitle = achievement.title || achievement.achievementTitle || '';
     const matchesSearch =
       achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      achievement.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      searchTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
       achievement.description.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesCategory =

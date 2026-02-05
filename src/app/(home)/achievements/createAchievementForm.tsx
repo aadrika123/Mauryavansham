@@ -38,6 +38,7 @@ interface Achievement {
 interface Props {
   initialData?: Achievement;
   onSuccess?: () => void;
+  onClose?: () => void;
 }
 
 export default function CreateAchievementForm({ initialData, onSuccess }: Props) {

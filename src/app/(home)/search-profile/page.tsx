@@ -17,5 +17,5 @@ export default async function SearchProfilePage() {
     );
   }
 
-  return <SearchProfilesClient initialProfiles={result.data || []} />;
+  return <SearchProfilesClient initialProfiles={result.data?.profiles || []} />;
 }

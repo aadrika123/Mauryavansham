@@ -170,10 +170,11 @@ export async function createProfile(prevState: CreateProfileState, formData: For
     // Check if a profile with the same email already exists for this specific user
     // This prevents duplicate emails for the same user but allows multiple profiles
     console.log('=== CHECKING FOR EXISTING EMAIL ===');
+    const emailToCheck = parsed.data.email ?? '';
     const existingProfile = await db.query.profiles.findFirst({
       where: (fields, { eq, and }) =>
         and(
-          eq(fields.email, parsed.data.email),
+          eq(fields.email, emailToCheck),
           eq(fields.userId, session.user.id),
           eq(fields.isDeleted, false) // Only check active profiles
         )

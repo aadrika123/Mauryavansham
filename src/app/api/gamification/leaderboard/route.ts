@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       .select({
         userId: userReputation.userId,
         name: users.name,
-        profilePicture: users.profilePicture,
+        profilePicture: users.photo,
         totalPoints: userReputation.totalPoints,
         level: userReputation.level,
         rank: userReputation.rank,

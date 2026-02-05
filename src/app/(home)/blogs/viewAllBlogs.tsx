@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loader from '@/src/components/ui/loader';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/src/components/ui/button';
@@ -21,6 +21,7 @@ interface Comment {
   dislikes: number;
   parentId?: string | null;
   replies?: Comment[];
+  author: Author;
 }
 
 interface Blog {
@@ -190,7 +191,7 @@ export default function ViewAllBlogs() {
   };
 
   // 🔁 Recursive render of comments
-  const renderComments = (comments: Comment[], blogId: string, level = 0): JSX.Element[] => {
+  const renderComments = (comments: Comment[], blogId: string, level = 0): React.ReactNode[] => {
     return comments.map(comment => (
       <div key={comment.id} className={`border rounded-lg p-3 mb-3 bg-gray-50 ${level > 0 ? 'ml-6' : ''}`}>
         <p className="text-gray-800 font-semibold">{comment.author.name}</p>

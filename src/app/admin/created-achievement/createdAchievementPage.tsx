@@ -18,7 +18,17 @@ interface Achievement {
   achievementTitle: string;
   description: string;
   images: string[];
-  category: string;
+  category:
+    | 'Healthcare'
+    | 'Sports'
+    | 'Technology'
+    | 'Education'
+    | 'Business'
+    | 'Arts'
+    | 'Central Government'
+    | 'PSU'
+    | 'State Government'
+    | 'Other';
   otherCategory?: string;
   isVerified: boolean;
   isFeatured: boolean;

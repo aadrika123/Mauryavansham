@@ -8,21 +8,21 @@ import { ArrowLeft, Calendar, User, Edit, AlertCircle, CheckCircle } from 'lucid
 import { format } from 'date-fns';
 
 interface Blog {
-  id: string;
+  id: number;
   title: string;
   content: string;
   summary: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
-  createdAt: string;
-  updatedAt: string;
-  approvedAt?: string;
-  rejectionReason?: string;
+  status: 'draft' | 'pending' | 'approved' | 'rejected' | 'removed';
+  createdAt: Date;
+  updatedAt: Date;
+  approvedAt?: Date | null;
+  rejectionReason?: string | null;
   imageUrl?: string;
   author: {
-    id: string;
+    id: number;
     name: string;
     email: string;
-  };
+  } | null;
 }
 
 interface BlogDetailProps {
@@ -62,7 +62,7 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
     }
   };
 
-  const canEdit = blog.author.id == currentUserId && (blog.status == 'draft' || blog.status == 'rejected');
+  const canEdit = blog.author?.id === Number(currentUserId) && (blog.status == 'draft' || blog.status == 'rejected');
   console.log(blog);
 
   return (
@@ -92,7 +92,7 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   <User className="h-4 w-4" />
-                  <span>{blog.author.name}</span>
+                  <span>{blog.author?.name || 'Unknown'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />

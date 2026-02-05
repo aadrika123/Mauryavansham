@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/src/drizzle/db';
 import { achievements } from '@/src/drizzle/schema';
-import { and, ilike, eq, sql } from 'drizzle-orm';
+import { and, eq, sql, type SQL } from 'drizzle-orm';
 
 export async function GET(req: Request) {
   try {
@@ -15,20 +15,17 @@ export async function GET(req: Request) {
     const offset = (page - 1) * limit;
 
     // ✅ Dynamic filters
-    const conditions = [];
+    const conditions: SQL<unknown>[] = [];
 
-    if (status) conditions.push(eq(achievements.status, status));
-    if (category) conditions.push(eq(achievements.category, category));
+    if (status) conditions.push(eq(achievements.status, status as any));
+    if (category) conditions.push(eq(achievements.category, category as any));
 
-    // ✅ Base query
-    let query = db.select().from(achievements);
-
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-
-    // ✅ Execute
-    let allData = await query.orderBy(sql`${achievements.createdAt} DESC`);
+    // ✅ Execute query with conditions
+    let allData = await db
+      .select()
+      .from(achievements)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(sql`${achievements.createdAt} DESC`);
 
     // ✅ Search filter (applied in memory for now)
     if (search.trim()) {
@@ -36,7 +33,7 @@ export async function GET(req: Request) {
       allData = allData.filter(
         a =>
           a.name.toLowerCase().includes(searchLower) ||
-          a.title.toLowerCase().includes(searchLower) ||
+          a.achievementTitle.toLowerCase().includes(searchLower) ||
           a.location.toLowerCase().includes(searchLower)
       );
     }

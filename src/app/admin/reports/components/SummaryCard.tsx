@@ -7,7 +7,7 @@ interface SummaryCardProps {
   title: string;
   value: number;
   color?: string;
-  icon?: JSX.Element;
+  icon?: React.ReactNode;
 }
 
 export default function SummaryCard({ title, value, color = 'text-white', icon }: SummaryCardProps) {

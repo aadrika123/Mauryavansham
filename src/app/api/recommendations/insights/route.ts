@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     const recentReactions = await db
       .select({ count: sql<number>`count(*)` })
       .from(blogReactions)
-      .where(and(eq(blogReactions.userId, userId), gte(blogReactions.createdAt, yesterday)));
+      .where(and(eq(blogReactions.userId, String(userId)), gte(blogReactions.createdAt, yesterday)));
 
     const reactionCount = Number(recentReactions[0]?.count || 0);
     if (reactionCount > 5) compatibilityScore += 10;

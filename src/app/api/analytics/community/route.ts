@@ -12,7 +12,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = Number(session.user.id);
 
     const [userConnections] = await db
       .select({ count: sql<number>`count(*)` })

@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { db } from '@/src/drizzle/db';
 import { blogs, users } from '@/src/drizzle/schema';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc, sql, and, type SQL } from 'drizzle-orm';
 import { authOptions } from '@/src/lib/auth';
 
 export async function GET(request: NextRequest) {
@@ -16,8 +16,13 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const userId = searchParams.get('userId');
 
+    // Build conditions
+    const conditions: SQL<unknown>[] = [];
+    if (userId) conditions.push(eq(blogs.authorId, Number(userId)));
+    if (status) conditions.push(eq(blogs.status, status as any));
+
     // Build base select with subquery for removedByName
-    let query = db
+    const result = await db
       .select({
         id: blogs.id,
         title: blogs.title,
@@ -40,13 +45,8 @@ export async function GET(request: NextRequest) {
       })
       .from(blogs)
       .leftJoin(users, eq(blogs.authorId, users.id))
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(blogs.createdAt));
-
-    // Conditional filters
-    if (userId) query = query.where(eq(blogs.authorId, userId));
-    if (status) query = query.where(eq(blogs.status, status as any));
-
-    const result = await query;
 
     return NextResponse.json({ blogs: result });
   } catch (error) {
@@ -77,8 +77,8 @@ export async function POST(request: NextRequest) {
         title,
         content,
         summary,
-        authorId: session.user.id,
-        status,
+        authorId: Number(session.user.id),
+        status: status as any,
         imageUrl: imageUrl || null
       })
       .returning();

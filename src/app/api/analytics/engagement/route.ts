@@ -12,7 +12,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = Number(session.user.id);
     const { searchParams } = new URL(req.url);
     const days = Number.parseInt(searchParams.get('days') || '30');
 
@@ -53,7 +53,7 @@ export async function GET(req: Request) {
         status: events.status
       })
       .from(events)
-      .where(and(eq(events.userId, userId), gte(events.createdAt, daysAgo)))
+      .where(and(eq(events.userId, userId), gte(events.createdAt, daysAgo as any)))
       .orderBy(sql`${events.createdAt} DESC`)
       .limit(5);
 

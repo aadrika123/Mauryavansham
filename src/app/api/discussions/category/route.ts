@@ -37,8 +37,7 @@ export async function POST(req: Request) {
       .insert(discussionCategories)
       .values({
         name: name.trim(),
-        status: 'active',
-        createdAt: new Date()
+        status: 'active'
       })
       .returning();
 

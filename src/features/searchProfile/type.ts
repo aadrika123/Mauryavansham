@@ -57,12 +57,12 @@ export type DatabaseProfile = {
   profileImage1: string | null;
   profileImage2: string | null;
   profileImage3: string | null;
-  brothersDetails?: string | null;
-  sistersDetails?: string | null;
+  brothersDetails?: unknown;
+  sistersDetails?: unknown;
   isDeleted: boolean | null;
   deactivateReason?: string | null;
   deactivateReview?: string | null;
-  lastActive: Date | null;
+  lastActive?: Date | null;
   education?: string | null;
   location?: string | null;
   age?: number | null;

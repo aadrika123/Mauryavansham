@@ -16,7 +16,7 @@ export default async function AdminBlogDetailPage({ params }: { params: Promise<
   return (
     <AdmindashboardLayout user={session.user}>
       <div className="container mx-auto px-4 py-8">
-        <AdminBlogDetail blogId={params.id} />
+        <AdminBlogDetail blogId={id} />
       </div>
     </AdmindashboardLayout>
   );

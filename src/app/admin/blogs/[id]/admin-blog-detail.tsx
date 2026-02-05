@@ -16,7 +16,7 @@ interface Blog {
   title: string;
   content: string;
   summary: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  status: 'draft' | 'pending' | 'approved' | 'rejected' | 'removed';
   createdAt: string;
   updatedAt: string;
   approvedAt?: string;

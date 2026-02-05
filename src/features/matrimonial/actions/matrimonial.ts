@@ -1,7 +1,9 @@
 'use server';
 
 import { db } from '@/src/drizzle/db';
-import { matrimonialProfiles } from '@/src/drizzle/schema'; // Updated import path
+import { matrimonialProfiles } from '@/src/features/matrimonial/db/matrimonial';
+import { users } from '@/src/drizzle/schema';
+import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 export async function createMatrimonialProfile(formData: FormData) {
@@ -39,16 +41,15 @@ export async function createMatrimonialProfile(formData: FormData) {
 
 export async function getMatrimonialProfiles() {
   try {
-    const profiles = await db.query.matrimonialProfiles.findMany({
-      with: {
-        user: {
-          columns: {
-            name: true,
-            photo: true
-          }
-        }
-      }
-    });
+    const profiles = await db
+      .select({
+        profile: matrimonialProfiles,
+        userName: users.name,
+        userPhoto: users.photo
+      })
+      .from(matrimonialProfiles)
+      .leftJoin(users, eq(matrimonialProfiles.userId, users.id));
+
     return { success: true, profiles };
   } catch (error) {
     console.error('Error fetching matrimonial profiles:', error);

@@ -110,8 +110,8 @@ export function transformToDetailedProfile(dbProfile: DatabaseProfile): Detailed
       familyHistory: dbProfile.familyHistory || 'Not specified',
       communityContributions: dbProfile.communityContributions || 'Not specified',
       familyTraditions: dbProfile.familyTraditions || 'Not specified',
-      brothersDetails: dbProfile.brothersDetails || 'Not specified',
-      sistersDetails: dbProfile.sistersDetails || 'Not specified'
+      brothersDetails: (dbProfile.brothersDetails as string | null) || 'Not specified',
+      sistersDetails: (dbProfile.sistersDetails as string | null) || 'Not specified'
     },
     preferences: {
       musicPreferences: dbProfile.musicPreferences || 'Not specified',
@@ -124,8 +124,9 @@ export function transformToDetailedProfile(dbProfile: DatabaseProfile): Detailed
     // lastActive: formatLastActive(dbProfile.updatedAt),
     lastActive: formatLastActive((dbProfile.updatedAt as any) || dbProfile.createdAt),
     createdAt: dbProfile.createdAt ? dbProfile.createdAt.toISOString() : '',
-    updatedAt: dbProfile.updatedAt ? dbProfile.updatedAt.toISOString() : ''
-    // createdAt: dbProfile.createdAt.toISOString(),
-    // updatedAt: dbProfile.updatedAt.toISOString(),
+    updatedAt: dbProfile.updatedAt ? dbProfile.updatedAt.toISOString() : '',
+    isDeleted: dbProfile.isDeleted || false,
+    deactivateReason: dbProfile.deactivateReason || null,
+    deactivateReview: dbProfile.deactivateReview || null
   };
 }

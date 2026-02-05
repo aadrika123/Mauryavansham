@@ -25,7 +25,10 @@ export async function GET(
     }
 
     // ✅ Fetch all interests where this profile is the receiver
-    const interests = await db.select().from(profileInterests).where(eq(profileInterests.receiverProfileId, profileId));
+    const interests = await db
+      .select()
+      .from(profileInterests)
+      .where(eq(profileInterests.receiverProfileId, String(profileId)));
 
     return NextResponse.json({ success: true, interests });
   } catch (error) {
@@ -55,9 +58,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ profile
     });
 
     // ✅ Fetch receiver user & profile
-    const [receiverUser] = await db.select().from(users).where(eq(users.id, receiverUserId));
+    const [receiverUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, Number(receiverUserId)));
 
-    const [receiverProfile] = await db.select().from(profiles).where(eq(profiles.id, profileId));
+    const [receiverProfile] = await db
+      .select()
+      .from(profiles)
+      .where(eq(profiles.id, Number(profileId)));
 
     // ✅ Check if mutual interest exists
     const [mutualInterest] = await db
@@ -65,8 +74,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ profile
       .from(profileInterests)
       .where(
         and(
-          eq(profileInterests.senderProfileId, profileId), // receiver expressed first
-          eq(profileInterests.receiverProfileId, senderProfileId) // toward sender
+          eq(profileInterests.senderProfileId, String(profileId)), // receiver expressed first
+          eq(profileInterests.receiverProfileId, String(senderProfileId)) // toward sender
         )
       );
 
@@ -74,14 +83,26 @@ export async function POST(req: Request, { params }: { params: Promise<{ profile
       // 🔄 Mutual interest → send emails to both users
 
       // Fetch sender user & profile
-      const [senderUser] = await db.select().from(users).where(eq(users.id, senderUserId));
+      const [senderUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, Number(senderUserId)));
 
-      const [senderProfileData] = await db.select().from(profiles).where(eq(profiles.id, senderProfileId));
+      const [senderProfileData] = await db
+        .select()
+        .from(profiles)
+        .where(eq(profiles.id, Number(senderProfileId)));
 
       // Fetch receiver full profile & user
-      const [receiverUserFull] = await db.select().from(users).where(eq(users.id, receiverUserId));
+      const [receiverUserFull] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, Number(receiverUserId)));
 
-      const [receiverProfileFull] = await db.select().from(profiles).where(eq(profiles.id, profileId));
+      const [receiverProfileFull] = await db
+        .select()
+        .from(profiles)
+        .where(eq(profiles.id, Number(profileId)));
 
       // ✅ Email to original sender
       if (senderUser?.email) {
@@ -101,8 +122,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ profile
             <ul>
               <li><b>Email:</b> ${receiverUserFull?.email}</li>
               <li><b>Phone:</b> ${receiverUserFull?.phone || 'N/A'}</li>
-              <li><b>City:</b> ${receiverProfileFull?.city || 'N/A'}</li>
-              <li><b>State:</b> ${receiverProfileFull?.state || 'N/A'}</li>
+              <li><b>City:</b> ${receiverUserFull?.city || 'N/A'}</li>
+              <li><b>State:</b> ${receiverUserFull?.state || 'N/A'}</li>
             </ul>
             <a href="${process.env.NEXTAUTH_URL}" 
                style="display:inline-block;margin-top:10px;padding:10px 15px;background:#16a34a;color:#fff;text-decoration:none;border-radius:5px;">
@@ -128,8 +149,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ profile
             <p>Contact Details of ${senderProfileData?.name}:</p>
             <ul>
               <li><b>Email:</b> ${senderUser?.email}</li>
-              <li><b>City:</b> ${senderProfileData?.city || 'N/A'}</li>
-              <li><b>State:</b> ${senderProfileData?.state || 'N/A'}</li>
+              <li><b>City:</b> ${senderUser?.city || 'N/A'}</li>
+              <li><b>State:</b> ${senderUser?.state || 'N/A'}</li>
             </ul>
             <a href="${process.env.NEXTAUTH_URL}" 
                style="display:inline-block;margin-top:10px;padding:10px 15px;background:#2563eb;color:#fff;text-decoration:none;border-radius:5px;">

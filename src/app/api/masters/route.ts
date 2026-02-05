@@ -1,4 +1,4 @@
-import { eq, ne, sql } from 'drizzle-orm';
+import { and, eq, ne, sql } from 'drizzle-orm';
 import { discussions, users, profiles, businesses } from '@/src/drizzle/schema';
 import { db } from '@/src/drizzle/db';
 
@@ -14,8 +14,7 @@ export async function GET() {
     const registeredFamiliesCount = await db
       .select({ count: sql`count(*)` })
       .from(users)
-      .where(eq(users.isActive, true))
-      .where(ne(users.status, 'rejected'));
+      .where(and(eq(users.isActive, true), ne(users.status, 'rejected')));
 
     // ✅ Countries Connected
     const countries = await db.select({ country: users.country }).from(users).where(eq(users.isActive, true));
@@ -28,8 +27,7 @@ export async function GET() {
     const matrimonialProfilesCount = await db
       .select({ count: sql`count(*)` })
       .from(profiles)
-      .where(eq(profiles.isActive, true))
-      .where(eq(profiles.isDeleted, false));
+      .where(and(eq(profiles.isActive, true), eq(profiles.isDeleted, false)));
 
     // ✅ Registered Business Houses (isActive true)
     const registeredBusinessCount = await db

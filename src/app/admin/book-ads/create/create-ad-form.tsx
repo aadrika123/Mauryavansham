@@ -311,7 +311,7 @@ export default function CreateAdForm() {
                 <Label htmlFor="fromDate">Start Date</Label>
                 <DatePicker
                   selected={parseDate(formData.fromDate)}
-                  onChange={date =>
+                  onChange={(date: Date | null) =>
                     setFormData({
                       ...formData,
                       fromDate: date ? formatDate(date) : ''
@@ -328,7 +328,7 @@ export default function CreateAdForm() {
                 <Label htmlFor="toDate">End Date</Label>
                 <DatePicker
                   selected={parseDate(formData.toDate)}
-                  onChange={date =>
+                  onChange={(date: Date | null) =>
                     setFormData({
                       ...formData,
                       toDate: date ? formatDate(date) : ''

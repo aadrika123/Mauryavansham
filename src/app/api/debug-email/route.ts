@@ -1,5 +1,12 @@
 // app/api/debug-email/route.ts
-// This is for debugging purposes - remove in production!
+// This is for debugging purposes - disabled in production!
+
+import { NextResponse } from 'next/server';
+
+// Disabled endpoint - returns a message indicating it's disabled
+export async function GET() {
+  return NextResponse.json({ message: 'Debug email endpoint is disabled' }, { status: 403 });
+}
 
 // import { NextRequest, NextResponse } from 'next/server';
 // import { sendWelcomeEmail, testEmailConfig } from '@/src/lib/email';

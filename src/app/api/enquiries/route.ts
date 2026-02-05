@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const userId = Number(session.user.id);
+  const userId = String(session.user.id);
 
   // Fetch all enquiries where user is sender or receiver
   const rows = await db
@@ -22,20 +22,20 @@ export async function GET(req: NextRequest) {
     .orderBy(asc(enquiries.createdAt));
 
   // Map to unique conversation partners with all enquiryTypes and latest message
-  const conversationMap = new Map<number, any>();
+  const conversationMap = new Map<string | null, any>();
 
   rows.forEach(msg => {
-    const senderId = Number(msg.senderUserId);
-    const receiverId = Number(msg.receiverUserId);
+    const senderId = msg.senderUserId;
+    const receiverId = msg.receiverUserId;
 
     // Determine "other user" in this message
     const otherUserId = senderId == userId ? receiverId : senderId;
 
-    const existing = conversationMap.get(otherUserId);
+    const existing = conversationMap.get(otherUserId ?? '');
 
     if (!existing) {
       // First message with this user
-      conversationMap.set(otherUserId, {
+      conversationMap.set(otherUserId ?? '', {
         userId: otherUserId,
         messages: [
           {
@@ -68,12 +68,14 @@ export async function GET(req: NextRequest) {
       }
 
       // Update latest message if newer
-      if (new Date(msg.createdAt).getTime() > new Date(existing.latestCreatedAt).getTime()) {
+      const msgCreatedAt = msg.createdAt ?? new Date(0);
+      const existingCreatedAt = existing.latestCreatedAt ?? new Date(0);
+      if (new Date(msgCreatedAt).getTime() > new Date(existingCreatedAt).getTime()) {
         existing.latestMessage = msg.comment;
         existing.latestCreatedAt = msg.createdAt;
       }
 
-      conversationMap.set(otherUserId, existing);
+      conversationMap.set(otherUserId ?? '', existing);
     }
   });
 
@@ -94,7 +96,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const { comment, enquireType, receiverUserId } = body;
-  const senderUserId = Number(session.user.id);
+  const senderUserId = String(session.user.id);
 
   if (!receiverUserId || !comment || !enquireType) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
@@ -111,7 +113,7 @@ export async function POST(req: NextRequest) {
     .where(
       and(
         eq(enquiries.senderUserId, senderUserId),
-        eq(enquiries.receiverUserId, receiverUserId),
+        eq(enquiries.receiverUserId, String(receiverUserId)),
         eq(enquiries.enquireType, enquireType)
       )
     )
@@ -131,7 +133,7 @@ export async function POST(req: NextRequest) {
     .insert(enquiries)
     .values({
       senderUserId,
-      receiverUserId,
+      receiverUserId: String(receiverUserId),
       comment,
       enquireType,
       createdAt: new Date()

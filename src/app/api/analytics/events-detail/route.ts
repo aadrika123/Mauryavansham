@@ -12,7 +12,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    const userId = Number(session.user.id);
 
     const [attendedCount] = await db
       .select({ count: sql<number>`count(*)` })
@@ -28,7 +28,7 @@ export async function GET(req: Request) {
     const [upcomingCount] = await db
       .select({ count: sql<number>`count(*)` })
       .from(events)
-      .where(and(gte(events.date, today), eq(events.status, 'approved')));
+      .where(and(gte(events.date, today as any), eq(events.status, 'approved' as any)));
 
     const attendedEventIds = await db
       .select({ eventId: event_attendees.eventId })
@@ -42,8 +42,8 @@ export async function GET(req: Request) {
       .from(events)
       .where(
         and(
-          gte(events.date, today),
-          eq(events.status, 'approved'),
+          gte(events.date, today as any),
+          eq(events.status, 'approved' as any),
           attendedIds.length > 0 ? sql`${events.id} NOT IN (${sql.join(attendedIds, sql`, `)})` : sql`true`
         )
       );

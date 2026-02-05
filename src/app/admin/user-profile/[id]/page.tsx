@@ -24,7 +24,7 @@ export default async function ViewUserProfile({ params }: { params: Promise<{ id
   console.log('Fetched user data:', session.user);
 
   return (
-    <AdmindashboardLayout user={session.user} data={result.data}>
+    <AdmindashboardLayout user={session.user}>
       <UserProfilePage data={result.data} />
     </AdmindashboardLayout>
   );

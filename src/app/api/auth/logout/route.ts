@@ -4,7 +4,8 @@ import { cookies } from 'next/headers';
 export async function POST() {
   try {
     const response = NextResponse.json({ message: 'Logged out successfully' }, { status: 200 });
-    cookies().delete('session-token'); // Delete the session cookie
+    const cookieStore = await cookies();
+    cookieStore.delete('session-token'); // Delete the session cookie
     return response;
   } catch (error) {
     console.error('Logout error:', error);

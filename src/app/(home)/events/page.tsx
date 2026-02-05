@@ -40,7 +40,7 @@ export default async function EventsPage() {
       console.warn('Session not available:', err);
     }
 
-    return <EventsClient initialEvents={eventsWithAttendees} user={session?.user} />;
+    return <EventsClient initialEvents={eventsWithAttendees} user={session?.user || null} />;
   } catch (err) {
     console.error('Failed to fetch events:', err);
     // fallback empty state

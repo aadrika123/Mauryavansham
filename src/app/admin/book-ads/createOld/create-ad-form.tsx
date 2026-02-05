@@ -86,10 +86,12 @@ export default function CreateAdForm() {
           }
         });
         setBookedDates(dates);
-        setPlacementBookedDates(prev => ({
-          ...prev,
-          [formData.placementId]: dates
-        }));
+        if (formData.placementId !== null) {
+          setPlacementBookedDates(prev => ({
+            ...prev,
+            [formData.placementId as number]: dates
+          }));
+        }
       })
       .catch(() =>
         //  toast.error("Failed to load booked dates"));
@@ -360,7 +362,7 @@ export default function CreateAdForm() {
                 <Label htmlFor="fromDate">Start Date</Label>
                 <DatePicker
                   selected={parseDate(formData.fromDate)}
-                  onChange={date =>
+                  onChange={(date: Date | null) =>
                     setFormData({
                       ...formData,
                       fromDate: date ? formatDate(date) : ''
@@ -379,7 +381,7 @@ export default function CreateAdForm() {
                 <Label htmlFor="toDate">End Date</Label>
                 <DatePicker
                   selected={parseDate(formData.toDate)}
-                  onChange={date =>
+                  onChange={(date: Date | null) =>
                     setFormData({
                       ...formData,
                       toDate: date ? formatDate(date) : ''

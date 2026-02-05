@@ -19,7 +19,7 @@ export interface Blog {
   summary: string;
   imageUrl?: string;
   authorId: number;
-  status: 'pending' | 'approved' | 'rejected' | 'draft';
+  status: 'pending' | 'approved' | 'rejected' | 'draft' | 'removed';
   rejectionReason: string | null;
   createdAt: Date;
   updatedAt: Date;

@@ -21,7 +21,7 @@ export default async function ViewUserProfile({ params }: { params: Promise<{ id
   console.log('Fetched user data:', result);
 
   return (
-    <DashboardLayout user={session.user} data={result.data}>
+    <DashboardLayout user={session.user}>
       <UserProfilePage data={result.data} />
     </DashboardLayout>
   );

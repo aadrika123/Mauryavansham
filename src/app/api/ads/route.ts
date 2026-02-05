@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId');
 
     const conditions = [];
-    if (userId) conditions.push(eq(ads.userId, userId));
+    if (userId) conditions.push(eq(ads.userId, Number(userId)));
     if (status) conditions.push(eq(ads.status, status as any));
 
     const query = db
@@ -154,11 +154,11 @@ export async function POST(request: NextRequest) {
       .values({
         title: String(title),
         bannerImageUrl: String(bannerImageUrl),
-        fromDate: from,
-        toDate: to,
+        fromDate: from as any,
+        toDate: to as any,
         placementId: Number(placementId),
         userId: Number(session.user.id),
-        status: 'pending',
+        status: 'pending' as any,
         adUrl: adUrl ? String(adUrl) : null
       })
       .returning();

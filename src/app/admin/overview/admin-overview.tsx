@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Badge } from '@/src/components/ui/badge';
 import { FileText, Eye, Clock, CheckCircle, XCircle, Calendar, MessageSquare, Wallet2Icon } from 'lucide-react';
@@ -230,7 +230,7 @@ function SummaryCard({
   title: string;
   value: number;
   color: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 }) {
   return (
     <Card className="text-center">
@@ -255,7 +255,7 @@ function DetailedCard({
 }: {
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   data: any;
   link: string;
 }) {

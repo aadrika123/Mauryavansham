@@ -14,8 +14,8 @@ export async function GET(req: NextRequest) {
   }
 
   const { searchParams } = new URL(req.url);
-  const userId = Number(session.user.id);
-  const otherUserId = Number(searchParams.get('userId'));
+  const userId = String(session.user.id);
+  const otherUserId = String(searchParams.get('userId'));
   const queryType = searchParams.get('queryType'); // optional
 
   if (!otherUserId) {
@@ -57,8 +57,8 @@ export async function POST(req: NextRequest) {
   const [msg] = await db
     .insert(queryMessages)
     .values({
-      senderId: Number(session.user.id),
-      receiverId: Number(receiverId),
+      senderId: String(session.user.id),
+      receiverId: String(receiverId),
       text,
       queryType: queryType || 'general'
     })

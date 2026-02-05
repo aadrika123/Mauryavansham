@@ -31,8 +31,8 @@ export async function GET(request: Request) {
       .where(
         and(
           eq(ads.placementId, placementIdNum),
-          eq(ads.status, 'approved'), // sirf approved hi block karega
-          gte(ads.toDate, today) // sirf future / running ads
+          eq(ads.status, 'approved' as any), // sirf approved hi block karega
+          gte(ads.toDate, today as any) // sirf future / running ads
         )
       );
 

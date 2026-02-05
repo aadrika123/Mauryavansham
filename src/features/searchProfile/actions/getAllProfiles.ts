@@ -6,7 +6,7 @@ import { DatabaseProfile } from '../type';
 import { eq } from 'drizzle-orm';
 import { profiles, blogs, ads } from '@/src/drizzle/schema';
 
-export async function getAllProfiles(userId: number) {
+export async function getAllProfiles(userId?: number) {
   try {
     // ✅ Sare profiles (user ke sabhi)
     const allProfiles: DatabaseProfile[] = await db.query.profiles.findMany({
@@ -14,17 +14,21 @@ export async function getAllProfiles(userId: number) {
       orderBy: (fields, { desc }) => [desc(fields.createdAt)]
     });
 
-    // ✅ Blogs
-    const userBlogs = await db.query.blogs.findMany({
-      where: (fields, { eq }) => eq(fields.authorId, String(userId)),
-      orderBy: (fields, { desc }) => [desc(fields.createdAt)]
-    });
+    // ✅ Blogs (only if userId provided)
+    const userBlogs = userId
+      ? await db.query.blogs.findMany({
+          where: (fields, { eq }) => eq(fields.authorId, userId),
+          orderBy: (fields, { desc }) => [desc(fields.createdAt)]
+        })
+      : [];
 
-    // ✅ Ads
-    const userAds = await db.query.ads.findMany({
-      where: (fields, { eq }) => eq(fields.userId, String(userId)),
-      orderBy: (fields, { desc }) => [desc(fields.createdAt)]
-    });
+    // ✅ Ads (only if userId provided)
+    const userAds = userId
+      ? await db.query.ads.findMany({
+          where: (fields, { eq }) => eq(fields.userId, userId),
+          orderBy: (fields, { desc }) => [desc(fields.createdAt)]
+        })
+      : [];
 
     // ✅ Transform profiles (UI ke liye)
     const transformedProfiles = transformDatabaseProfilesToProfiles(allProfiles);

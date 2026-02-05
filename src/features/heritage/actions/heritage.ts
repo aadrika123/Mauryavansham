@@ -1,9 +1,9 @@
 'use server';
 
 import { db } from '@/src/drizzle/db';
-import { heritageContent } from '@/src/drizzle/schema'; // Updated import path
+import { heritageContent } from '@/src/features/heritage/db/heritage';
 import { revalidatePath } from 'next/cache';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 export async function submitHeritageContribution(formData: FormData) {
   const title = formData.get('title') as string;
@@ -36,14 +36,15 @@ export async function submitHeritageContribution(formData: FormData) {
 
 export async function getHeritageContent(contentType?: string) {
   try {
-    let query = db.query.heritageContent;
+    const conditions = [eq(heritageContent.isPublished, true)];
     if (contentType) {
-      query = query.where(eq(heritageContent.contentType, contentType as any));
+      conditions.push(eq(heritageContent.contentType, contentType as any));
     }
-    const content = await query.findMany({
-      where: eq(heritageContent.isPublished, true),
-      orderBy: heritageContent.featuredOrder
-    });
+
+    const content = await db
+      .select()
+      .from(heritageContent)
+      .where(and(...conditions));
     return { success: true, content };
   } catch (error) {
     console.error('Error fetching heritage content:', error);

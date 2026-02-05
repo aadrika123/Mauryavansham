@@ -1,6 +1,7 @@
 import { Badge } from '@/src/components/ui/badge';
 import { Crown, Shield, Star, Zap } from 'lucide-react';
-import type { SubscriptionTier } from '@/types/subscription';
+import type { SubscriptionTier } from '@/src/types/subscription';
+import type { LucideIcon } from 'lucide-react';
 
 interface SubscriptionBadgeProps {
   tier: SubscriptionTier;
@@ -9,7 +10,7 @@ interface SubscriptionBadgeProps {
   className?: string;
 }
 
-const tierConfig = {
+const tierConfig: Record<SubscriptionTier, { label: string; icon: LucideIcon; color: string; iconColor: string }> = {
   free: {
     label: 'Free',
     icon: Star,

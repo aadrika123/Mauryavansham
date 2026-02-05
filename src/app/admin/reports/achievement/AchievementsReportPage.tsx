@@ -11,7 +11,17 @@ interface Achievement {
   title: string;
   description: string;
   image: string;
-  category: string;
+  category:
+    | 'Healthcare'
+    | 'Sports'
+    | 'Technology'
+    | 'Education'
+    | 'Business'
+    | 'Arts'
+    | 'Central Government'
+    | 'PSU'
+    | 'State Government'
+    | 'Other';
   isVerified: boolean;
   isFeatured: boolean;
   isHallOfFame: boolean;
