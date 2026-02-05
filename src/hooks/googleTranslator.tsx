@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 declare global {
   interface Window {
@@ -8,7 +8,6 @@ declare global {
     googleTranslateElementInit: () => void;
   }
 }
-
 
 export default function Translator() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -18,11 +17,11 @@ export default function Translator() {
     if (window.google && window.google.translate) {
       new window.google.translate.TranslateElement(
         {
-          pageLanguage: "en",
-          includedLanguages: "en,hi",
-          autoDisplay: false,
+          pageLanguage: 'en',
+          includedLanguages: 'en,hi',
+          autoDisplay: false
         },
-        "google_translate_element"
+        'google_translate_element'
       );
       removeGoogleTranslateToolbar();
     }
@@ -31,31 +30,31 @@ export default function Translator() {
   // Toolbar hide logic
   const removeGoogleTranslateToolbar = () => {
     const elementsToHide = [
-      ".goog-te-banner-frame",
-      "#goog-gt-tt",
-      ".goog-te-balloon-frame",
-      "body > .skiptranslate",
-      ".goog-logo-link",
+      '.goog-te-banner-frame',
+      '#goog-gt-tt',
+      '.goog-te-balloon-frame',
+      'body > .skiptranslate',
+      '.goog-logo-link'
     ];
 
     elementsToHide.forEach((selector) => {
       const element = document.querySelector(selector);
       if (element) {
-        (element as HTMLElement).style.display = "none";
+        (element as HTMLElement).style.display = 'none';
       }
     });
 
-    document.body.style.top = "0px";
+    document.body.style.top = '0px';
   };
 
   useEffect(() => {
     // prevent duplicate script
-    if (document.getElementById("google-translate-script")) return;
+    if (document.getElementById('google-translate-script')) return;
 
-    const addScript = document.createElement("script");
-    addScript.id = "google-translate-script";
+    const addScript = document.createElement('script');
+    addScript.id = 'google-translate-script';
     addScript.src =
-      "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
     addScript.async = true;
     document.body.appendChild(addScript);
 
@@ -65,7 +64,7 @@ export default function Translator() {
 
     return () => {
       clearInterval(interval);
-      if (document.getElementById("google-translate-script")) {
+      if (document.getElementById('google-translate-script')) {
         document.body.removeChild(addScript);
       }
     };
@@ -75,18 +74,18 @@ export default function Translator() {
   const changeLanguage = (selectedLang: string) => {
     const applyLang = () => {
       const select = document.querySelector(
-        ".goog-te-combo"
+        '.goog-te-combo'
       ) as HTMLSelectElement;
 
       if (select) {
         select.value = selectedLang;
 
-        const event = document.createEvent("HTMLEvents");
-        event.initEvent("change", true, true);
+        const event = document.createEvent('HTMLEvents');
+        event.initEvent('change', true, true);
         select.dispatchEvent(event);
 
         // ✅ Force reload for mobile browsers (important)
-        const iframe = document.querySelector("iframe.goog-te-menu-frame");
+        const iframe = document.querySelector('iframe.goog-te-menu-frame');
         if (iframe) {
           (iframe as HTMLIFrameElement).contentWindow?.location.reload();
         }
@@ -126,7 +125,7 @@ export default function Translator() {
         {/* Google Translate hidden div */}
         <div
           id="google_translate_element"
-          style={{ position: "absolute", left: "-9999px" }}
+          style={{ position: 'absolute', left: '-9999px' }}
         ></div>
 
         <div className="relative">
@@ -177,7 +176,7 @@ export default function Translator() {
             <div className="absolute top-10 right-0 bg-white shadow-md rounded-md p-2 text-black w-32">
               <button
                 onClick={() => {
-                  changeLanguage("en");
+                  changeLanguage('en');
                   setShowDropdown(false);
                 }}
                 className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
@@ -186,7 +185,7 @@ export default function Translator() {
               </button>
               <button
                 onClick={() => {
-                  changeLanguage("hi");
+                  changeLanguage('hi');
                   setShowDropdown(false);
                 }}
                 className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"

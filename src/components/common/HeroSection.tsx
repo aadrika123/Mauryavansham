@@ -1,15 +1,15 @@
-"use client";
-import React, { useState, useEffect } from "react";
+'use client';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
   Star,
   Crown,
   ChevronLeft,
   ChevronRight,
-  Eye,
-} from "lucide-react";
-import Image from "next/image";
-import Loader from "../ui/loader";
+  Eye
+} from 'lucide-react';
+import Image from 'next/image';
+import Loader from '../ui/loader';
 
 // TypeScript interfaces
 interface CarouselImage {
@@ -35,24 +35,24 @@ interface AdPlacement {
 const carouselImages: CarouselImage[] = [
   {
     id: 1,
-    src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754133157/Gemini_Generated_Image_pe53ibpe53ibpe53_ot4dkc.png",
-    alt: "Ancient Maurya Empire Art",
+    src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754133157/Gemini_Generated_Image_pe53ibpe53ibpe53_ot4dkc.png',
+    alt: 'Ancient Maurya Empire Art'
   },
   {
     id: 2,
-    src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/chandragup_maur_vmo5vb.png",
-    alt: "Lord Ram Temple Ayodhya",
+    src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/chandragup_maur_vmo5vb.png',
+    alt: 'Lord Ram Temple Ayodhya'
   },
   {
     id: 3,
-    src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/samrat_ashoka_hekb0f.png",
-    alt: "Ashoka Pillar in Ancient India",
+    src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/samrat_ashoka_hekb0f.png',
+    alt: 'Ashoka Pillar in Ancient India'
   },
   {
     id: 4,
-    src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/mauras_kuswahas_rjabks.png",
-    alt: "Indian Family Celebration",
-  },
+    src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/mauras_kuswahas_rjabks.png',
+    alt: 'Indian Family Celebration'
+  }
 ];
 
 // Image Carousel Component
@@ -84,10 +84,10 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             key={image.id}
             className={`absolute inset-0 transition-transform duration-700 ease-in-out ${
               index === currentIndex
-                ? "translate-x-0"
+                ? 'translate-x-0'
                 : index < currentIndex
-                ? "-translate-x-full"
-                : "translate-x-full"
+                  ? '-translate-x-full'
+                  : 'translate-x-full'
             }`}
           >
             <Image
@@ -129,8 +129,8 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentIndex
-                  ? "bg-white scale-125"
-                  : "bg-white/50 hover:bg-white/75"
+                  ? 'bg-white scale-125'
+                  : 'bg-white/50 hover:bg-white/75'
               }`}
               aria-label={`Go to slide ${index + 1}`}
               type="button"
@@ -148,10 +148,10 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 };
 
 // Ad Slider Component for Multiple Ads
-const AdSlider: React.FC<{ ads: AdPlacement[]; position: "left" | "right" }> = ({
-  ads,
-  position,
-}) => {
+const AdSlider: React.FC<{
+  ads: AdPlacement[];
+  position: 'left' | 'right';
+}> = ({ ads, position }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -167,14 +167,14 @@ const AdSlider: React.FC<{ ads: AdPlacement[]; position: "left" | "right" }> = (
   // Track view when ad changes
   useEffect(() => {
     if (ads[currentIndex]) {
-      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: 'POST' });
     }
   }, [currentIndex, ads]);
 
   if (ads.length === 0) {
     return (
       <div className="w-full h-[450px] text-center bg-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
-        Ad Space ({position === "left" ? "1" : "2"}) <br />
+        Ad Space ({position === 'left' ? '1' : '2'}) <br />
         Please select image size of (350 x 500 pixels)
       </div>
     );
@@ -186,7 +186,9 @@ const AdSlider: React.FC<{ ads: AdPlacement[]; position: "left" | "right" }> = (
         <div
           key={ad.id}
           className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentIndex ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-0"
+            index === currentIndex
+              ? 'opacity-100 z-10'
+              : 'opacity-0 pointer-events-none z-0'
           }`}
         >
           <a
@@ -223,8 +225,8 @@ const AdSlider: React.FC<{ ads: AdPlacement[]; position: "left" | "right" }> = (
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentIndex
-                  ? "bg-white scale-125"
-                  : "bg-white/50 hover:bg-white/75"
+                  ? 'bg-white scale-125'
+                  : 'bg-white/50 hover:bg-white/75'
               }`}
               aria-label={`Go to ad ${index + 1}`}
               type="button"
@@ -238,19 +240,15 @@ const AdSlider: React.FC<{ ads: AdPlacement[]; position: "left" | "right" }> = (
 
 // Mobile Ad Banner Component with Slider
 const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({
-  adPlacements,
+  adPlacements
 }) => {
   const leftAds = adPlacements.filter((ad) => ad.placementId === 1);
   const rightAds = adPlacements.filter((ad) => ad.placementId === 2);
 
   return (
     <div className="lg:hidden mt-8 flex flex-col gap-4">
-      {leftAds.length > 0 && (
-        <AdSlider ads={leftAds} position="left" />
-      )}
-      {rightAds.length > 0 && (
-        <AdSlider ads={rightAds} position="right" />
-      )}
+      {leftAds.length > 0 && <AdSlider ads={leftAds} position="left" />}
+      {rightAds.length > 0 && <AdSlider ads={rightAds} position="right" />}
     </div>
   );
 };
@@ -261,14 +259,14 @@ const HeroSection: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/ad-placements/approved")
+    fetch('/api/ad-placements/approved')
       .then((res) => res.json())
       .then((data: AdPlacement[]) => {
         setAdPlacements(data);
         setLoading(false);
       })
       .catch(() => {
-        console.error("Failed to load ad placements");
+        console.error('Failed to load ad placements');
         setLoading(false);
       });
   }, []);
@@ -276,9 +274,9 @@ const HeroSection: React.FC = () => {
   const leftAds = adPlacements.filter((ad) => ad.placementId === 1);
   const rightAds = adPlacements.filter((ad) => ad.placementId === 2);
 
-  console.log("Left Ads:", leftAds);
-  console.log("Right Ads:", rightAds);
-  console.log("All adPlacements:", adPlacements);
+  console.log('Left Ads:', leftAds);
+  console.log('Right Ads:', rightAds);
+  console.log('All adPlacements:', adPlacements);
 
   return (
     <section className="relative text-white py-10 overflow-hidden">
@@ -299,11 +297,7 @@ const HeroSection: React.FC = () => {
         <div className="flex gap-2 items-start">
           {/* Left Ad Banner with Slider */}
           <div className="hidden lg:block w-[20rem] flex-shrink-0 relative">
-            {loading ? (
-              <Loader />
-            ) : (
-              <AdSlider ads={leftAds} position="left" />
-            )}
+            {loading ? <Loader /> : <AdSlider ads={leftAds} position="left" />}
           </div>
 
           {/* Main Carousel */}

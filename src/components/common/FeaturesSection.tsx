@@ -1,13 +1,13 @@
-"use client";
-import Link from "next/link";
-import { Button } from "@/src/components/ui/button";
+'use client';
+import Link from 'next/link';
+import { Button } from '@/src/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
+  CardTitle
+} from '@/src/components/ui/card';
 import {
   Users,
   Heart,
@@ -21,13 +21,13 @@ import {
   Crown,
   User,
   Lock,
-  X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import Image from "next/image";
+  X
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 // import "keen-slider/keen-slider.min.css";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface AdPlacement {
   id: number;
@@ -55,7 +55,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
   // Track view when ad changes
   useEffect(() => {
     if (ads[currentIndex]) {
-      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: 'POST' });
     }
   }, [currentIndex, ads]);
 
@@ -104,8 +104,8 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
               key={ad.id}
               className={`absolute inset-0  transition-opacity duration-1000 ${
                 index === currentIndex
-                  ? "opacity-100 z-10"
-                  : "opacity-0 pointer-events-none z-0"
+                  ? 'opacity-100 z-10'
+                  : 'opacity-0 pointer-events-none z-0'
               }`}
             >
               <a
@@ -139,8 +139,8 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                   onClick={() => setCurrentIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-200 ${
                     index === currentIndex
-                      ? "bg-amber-600 scale-125"
-                      : "bg-amber-400/50 hover:bg-amber-400/75"
+                      ? 'bg-amber-600 scale-125'
+                      : 'bg-amber-400/50 hover:bg-amber-400/75'
                   }`}
                   aria-label={`Go to ad ${index + 1}`}
                   type="button"
@@ -161,89 +161,87 @@ export function FeaturesSection() {
   const Router = useRouter();
 
   useEffect(() => {
-    fetch("/api/ad-placements/approved")
+    fetch('/api/ad-placements/approved')
       .then((res) => res.json())
       .then((data: AdPlacement[]) => {
         setAdPlacements(data);
       })
-      .catch(() => console.error("Failed to load ad placements"));
+      .catch(() => console.error('Failed to load ad placements'));
   }, []);
 
   // Filter ads for placement 3 (horizontal banner)
   const horizontalAds = adPlacements.filter((ad) => ad.placementId === 3);
 
-  console.log("Horizontal Ads (Placement 3):", horizontalAds);
+  console.log('Horizontal Ads (Placement 3):', horizontalAds);
 
   const features = [
-     {
+    {
       icon: Eye,
-      title: "Know your community members",
-      description: "See who is available in the community",
-      href: "/community-directory",
+      title: 'Know your community members',
+      description: 'See who is available in the community',
+      href: '/community-directory'
     },
-     {
+    {
       icon: Eye,
-      title: "Heritage ",
-      description: "Know about your community’s history",
-      href: "/heritage",
+      title: 'Heritage ',
+      description: 'Know about your community’s history',
+      href: '/heritage'
     },
     {
       icon: Users,
-      title: "Community Forum",
-      description: "Connect with fellow Maurya community members worldwide",
-      href: "/community",
+      title: 'Community Forum',
+      description: 'Connect with fellow Maurya community members worldwide',
+      href: '/community'
     },
     {
       icon: Heart,
-      title: "Matrimonial",
-      description: "Find your perfect life partner within the community",
-      href: "/matrimonial",
-    },
-     {
-      icon: Calendar,
-      title: "Events & Calendar",
-      description: "Stay updated with community events and celebrations",
-      href: "/events",
+      title: 'Matrimonial',
+      description: 'Find your perfect life partner within the community',
+      href: '/matrimonial'
     },
     {
-      title: "Business Forum",
-      icon: ShoppingBag,
-      description: "Promote your business and connect with potential clients",
-      href: "/business",
+      icon: Calendar,
+      title: 'Events & Calendar',
+      description: 'Stay updated with community events and celebrations',
+      href: '/events'
     },
-   
+    {
+      title: 'Business Forum',
+      icon: ShoppingBag,
+      description: 'Promote your business and connect with potential clients',
+      href: '/business'
+    },
+
     {
       icon: HandHeart,
-      title: "Health & Wellness",
-      description: "Access health resources and support within the community",
-      href: "/health-wellness",
+      title: 'Health & Wellness',
+      description: 'Access health resources and support within the community',
+      href: '/health-wellness'
     },
-     {
+    {
       icon: Sparkles,
-      title: "Educations",
-      description: "Explore educational resources and opportunities",
-      href: "/education",
+      title: 'Educations',
+      description: 'Explore educational resources and opportunities',
+      href: '/education'
     },
     {
       icon: Trophy,
-      title: "Achievements",
-      description: "Showcase and celebrate community achievements",
-      href: "/achievements",
+      title: 'Achievements',
+      description: 'Showcase and celebrate community achievements',
+      href: '/achievements'
     },
     {
       icon: Sparkles,
-      title: "Blogs",
-      description: "Read and share articles on community topics",
-      href: "/blogs",
+      title: 'Blogs',
+      description: 'Read and share articles on community topics',
+      href: '/blogs'
     },
     {
       icon: Sparkles,
-      title: "Donations",
-      description: "Support community initiatives through donations",
-      href: "/",
-    },
-   
-   
+      title: 'Donations',
+      description: 'Support community initiatives through donations',
+      href: '/'
+    }
   ];
 
   return (
@@ -268,7 +266,7 @@ export function FeaturesSection() {
             </p>
             <div className="space-y-3">
               <Button
-                onClick={() => Router.push("/sign-in")}
+                onClick={() => Router.push('/sign-in')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
               >
                 <User className="h-4 w-4 mr-2" />
@@ -293,24 +291,24 @@ export function FeaturesSection() {
             Welcome to Mauryavansham.com
           </h2>
           <p className="text-gray-700 mb-6 leading-relaxed text-justify">
-            MauryaVansham.com is an{" "}
+            MauryaVansham.com is an{' '}
             <strong>exclusive community platform</strong> created by and for
-            members of the{" "}
-            <strong>Kushwaha / Koiri / Maurya / Sakhya / Sainy</strong>{" "}
-            community. Designed, developed, maintained and hosted by{" "}
+            members of the{' '}
+            <strong>Kushwaha / Koiri / Maurya / Sakhya / Sainy</strong>{' '}
+            community. Designed, developed, maintained and hosted by{' '}
             <strong>Aadrika Enterprises</strong>, whose Promoters proudly belong
-            to the same community, this portal has been built with a{" "}
+            to the same community, this portal has been built with a{' '}
             <strong>pure motive of community development and unity</strong> –
             not for profit, but for growth, support, and heritage preservation.
           </p>
 
           <div className="text-justify space-y-3">
             {[
-              "Connect with fellow community members across cities and states",
-              "Explore the Community Directory and discover businesses, professionals, and families",
-              "Find and share opportunities through our Business & Matrimonial sections",
-              "Showcase achievements, preserve family lineage, and strengthen cultural bonds",
-              "Support and grow together through peer-to-peer collaboration",
+              'Connect with fellow community members across cities and states',
+              'Explore the Community Directory and discover businesses, professionals, and families',
+              'Find and share opportunities through our Business & Matrimonial sections',
+              'Showcase achievements, preserve family lineage, and strengthen cultural bonds',
+              'Support and grow together through peer-to-peer collaboration'
             ].map((point, idx) => (
               <div key={idx} className="flex items-start gap-3">
                 <span className="text-yellow-600 text-xl">
@@ -349,9 +347,9 @@ export function FeaturesSection() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => {
               const isCommunityDirectory =
-                feature.href === "/community-directory";
+                feature.href === '/community-directory';
               const isDisabled =
-                feature.href === "/" || (isCommunityDirectory && !session);
+                feature.href === '/' || (isCommunityDirectory && !session);
 
               return (
                 <Card
@@ -383,10 +381,10 @@ export function FeaturesSection() {
                             Router.push(feature.href);
                           }
                         }}
-                        className={"text-orange-600"}
-                        disabled={feature.href === "/"}
+                        className={'text-orange-600'}
+                        disabled={feature.href === '/'}
                       >
-                        {feature.href === "/" ? "Coming Soon" : "Learn More"}
+                        {feature.href === '/' ? 'Coming Soon' : 'Learn More'}
                       </Button>
                     </div>
                   </CardContent>

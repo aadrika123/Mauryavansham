@@ -184,12 +184,14 @@ export function Header() {
             {/* Actions */}
             <div className="hidden md:flex items-center gap-3">
               {!isAuthenticated ? (
-                <Button
-                  variant="outline"
-                  className="border-orange-500 text-orange-600 hover:bg-orange-50"
-                >
-                  <Link href="/sign-in">Login</Link>
-                </Button>
+                <Link href="/sign-in">
+                  <Button
+                    variant="outline"
+                    className="border-orange-500 text-orange-600 hover:bg-orange-50"
+                  >
+                    Login
+                  </Button>
+                </Link>
               ) : (
                 <div className="flex items-center gap-4">
                   {/* Profile Image with Completion Circle */}
