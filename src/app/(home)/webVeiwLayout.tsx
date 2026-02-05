@@ -8,22 +8,13 @@ import { Footer } from '@/src/components/layout/footer';
 import { ConditionalTopHeader } from '@/src/components/layout/conditionalTopHeader';
 import { ToastProvider } from '@/src/components/ui/toastProvider';
 
-export default function WebViewLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function WebViewLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ConditionalTopHeader />
       <Header />
       <ToastProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <Toaster />
           {children}
         </ThemeProvider>

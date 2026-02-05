@@ -4,10 +4,7 @@ import { db } from '@/src/drizzle/db';
 import { discussions } from '@/src/drizzle/db/schemas/discussions';
 import { eq } from 'drizzle-orm';
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   try {
@@ -26,9 +23,6 @@ export async function PATCH(
     });
   } catch (err) {
     console.error('Failed to reopen discussion:', err);
-    return NextResponse.json(
-      { success: false, message: 'Failed to reopen discussion' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to reopen discussion' }, { status: 500 });
   }
 }

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Button } from "@/src/components/ui/button";
-import { useSession } from "next-auth/react";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { Button } from '@/src/components/ui/button';
+import { useSession } from 'next-auth/react';
 
 interface User {
   id: number;
@@ -30,27 +30,22 @@ export default function MessengerPage() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedUserDetails, setSelectedUserDetails] = useState<User | null>(
-    null
-  );
+  const [selectedUserDetails, setSelectedUserDetails] = useState<User | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const [sending, setSending] = useState(false);
-  console.log(selectedUser, "selectedUserselectedUser");
+  console.log(selectedUser, 'selectedUserselectedUser');
 
   // 🔹 Fetch connected users list (profile_connect where current user is receiver)
   useEffect(() => {
     if (!currentUserId) return;
 
     const fetchUsers = async () => {
-      const res = await fetch("/api/admin/notifications");
+      const res = await fetch('/api/admin/notifications');
       const data = await res.json();
 
-      const profileConnects = data.filter(
-        (n: any) =>
-          n.type === "profile_connect" && n.receiverId === currentUserId
-      );
+      const profileConnects = data.filter((n: any) => n.type === 'profile_connect' && n.receiverId === currentUserId);
 
       const uniqueSenders: User[] = [];
       const seen = new Map<number, string>();
@@ -62,19 +57,15 @@ export default function MessengerPage() {
             id: n.sender.id,
             name: n.sender.name,
             photo: n.sender.photo,
-            lastMessage: n.message,
+            lastMessage: n.message
           });
         }
       });
 
       // Sort by most recent message
       uniqueSenders.sort((a, b) => {
-        const timeA = new Date(
-          profileConnects.find((n: any) => n.sender.id === a.id)?.createdAt
-        ).getTime();
-        const timeB = new Date(
-          profileConnects.find((n: any) => n.sender.id === b.id)?.createdAt
-        ).getTime();
+        const timeA = new Date(profileConnects.find((n: any) => n.sender.id === a.id)?.createdAt).getTime();
+        const timeB = new Date(profileConnects.find((n: any) => n.sender.id === b.id)?.createdAt).getTime();
         return timeB - timeA;
       });
 
@@ -94,9 +85,7 @@ export default function MessengerPage() {
     setSelectedUserDetails(data.data);
 
     // 🔹 Check if already connected using /api/connections
-    const connRes = await fetch(
-      `/api/connections?user1Id=${currentUserId}&user2Id=${user.id}`
-    );
+    const connRes = await fetch(`/api/connections?user1Id=${currentUserId}&user2Id=${user.id}`);
     const connData = await connRes.json();
     setIsConnected(connData.connected);
 
@@ -134,23 +123,19 @@ export default function MessengerPage() {
       id: Date.now(),
       senderId: currentUserId,
       text: newMessage,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     };
 
-    setMessages((prev) => [...prev, msg]);
-    setNewMessage("");
+    setMessages(prev => [...prev, msg]);
+    setNewMessage('');
 
-    await fetch("/api/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ receiverId: selectedUser.id, text: newMessage }),
+    await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ receiverId: selectedUser.id, text: newMessage })
     });
 
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id === selectedUser.id ? { ...u, lastMessage: newMessage } : u
-      )
-    );
+    setUsers(prev => prev.map(u => (u.id === selectedUser.id ? { ...u, lastMessage: newMessage } : u)));
   };
 
   // 🔹 Connect Back using /api/connections
@@ -160,34 +145,30 @@ export default function MessengerPage() {
     setSending(true);
 
     try {
-      const res = await fetch("/api/connections", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/connections', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user1Id: currentUserId,
-          user2Id: selectedUser.id,
-        }),
+          user2Id: selectedUser.id
+        })
       });
 
       if (res.ok) {
-        alert("Connection accepted!");
+        alert('Connection accepted!');
         setIsConnected(true);
         fetchMessages(selectedUser.id);
 
         // Update sidebar dynamically
-        setUsers((prev) =>
-          prev.map((u) =>
-            u.id === selectedUser.id
-              ? { ...u, lastMessage: "You are now connected!" }
-              : u
-          )
+        setUsers(prev =>
+          prev.map(u => (u.id === selectedUser.id ? { ...u, lastMessage: 'You are now connected!' } : u))
         );
       } else {
-        alert("Failed to accept connection");
+        alert('Failed to accept connection');
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong!");
+      alert('Something went wrong!');
     } finally {
       setSending(false);
     }
@@ -198,16 +179,16 @@ export default function MessengerPage() {
       {/* LEFT SIDEBAR */}
       <aside className="w-full md:w-72 h-64 md:h-auto bg-red-800 border-r overflow-y-auto">
         <h2 className="p-4 font-bold text-lg border-b text-white">Chats</h2>
-        {users.map((user) => (
+        {users.map(user => (
           <div
             key={user.id}
             onClick={() => handleUserClick(user)}
             className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-200 bg-white ${
-              selectedUser?.id === user.id ? "bg-gray-300" : ""
+              selectedUser?.id === user.id ? 'bg-gray-300' : ''
             }`}
           >
             <Image
-              src={user.photo || "/default-avatar.png"}
+              src={user.photo || '/default-avatar.png'}
               alt={user.name}
               width={40}
               height={40}
@@ -215,9 +196,7 @@ export default function MessengerPage() {
             />
             <div>
               <p className="font-semibold">{user.name}</p>
-              <p className="text-xs text-gray-600 truncate w-40">
-                {user.lastMessage || "No messages yet"}
-              </p>
+              <p className="text-xs text-gray-600 truncate w-40">{user.lastMessage || 'No messages yet'}</p>
             </div>
           </div>
         ))}
@@ -230,40 +209,24 @@ export default function MessengerPage() {
             {/* Profile Header */}
             <div className="flex flex-col md:flex-row items-start md:items-center gap-3 p-4 border-b bg-gray-50">
               <Image
-                src={selectedUserDetails.photo || "/default-avatar.png"}
+                src={selectedUserDetails.photo || '/default-avatar.png'}
                 alt={selectedUserDetails.name}
                 width={80}
                 height={80}
                 className="rounded-full"
               />
               <div className="flex-1">
-                <h2 className="font-bold text-lg">
-                  {selectedUserDetails.name}
-                </h2>
-                {selectedUserDetails.email && (
-                  <p>Email: {selectedUserDetails.email}</p>
-                )}
-                {selectedUserDetails.phone && (
-                  <p>Phone: {selectedUserDetails.phone}</p>
-                )}
-                {selectedUserDetails.city && (
-                  <p>City: {selectedUserDetails.city}</p>
-                )}
+                <h2 className="font-bold text-lg">{selectedUserDetails.name}</h2>
+                {selectedUserDetails.email && <p>Email: {selectedUserDetails.email}</p>}
+                {selectedUserDetails.phone && <p>Phone: {selectedUserDetails.phone}</p>}
+                {selectedUserDetails.city && <p>City: {selectedUserDetails.city}</p>}
                 {selectedUserDetails.profession && (
-                  <p>
-                    Profession:{" "}
-                    {selectedUserDetails.profession ||
-                      selectedUserDetails.designation}
-                  </p>
+                  <p>Profession: {selectedUserDetails.profession || selectedUserDetails.designation}</p>
                 )}
               </div>
               {!isConnected && (
-                <Button
-                  className="ml-auto"
-                  onClick={handleConnectBack}
-                  disabled={sending}
-                >
-                  {sending ? "Connecting..." : "Connect Back"}
+                <Button className="ml-auto" onClick={handleConnectBack} disabled={sending}>
+                  {sending ? 'Connecting...' : 'Connect Back'}
                 </Button>
               )}
             </div>
@@ -282,30 +245,26 @@ export default function MessengerPage() {
                   )}
 
                   {/* 💬 Then show actual chat messages */}
-                  {messages.map((msg) => (
+                  {messages.map(msg => (
                     <div
                       key={msg.id}
-                      className={`flex items-end ${
-                        msg.senderId === currentUserId
-                          ? "justify-end"
-                          : "justify-start"
-                      }`}
+                      className={`flex items-end ${msg.senderId === currentUserId ? 'justify-end' : 'justify-start'}`}
                     >
                       <div className="flex flex-col space-y-1">
                         <div
                           className={`px-4 py-2 rounded-lg max-w-xs break-words ${
                             msg.senderId === currentUserId
-                              ? "bg-blue-500 text-white rounded-br-none"
-                              : "bg-gray-200 text-black rounded-bl-none"
+                              ? 'bg-blue-500 text-white rounded-br-none'
+                              : 'bg-gray-200 text-black rounded-bl-none'
                           }`}
                         >
                           {msg.text}
                         </div>
                         <span className="text-[10px] text-gray-500 self-end">
                           {new Date(msg.createdAt).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: false,
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
                           })}
                         </span>
                       </div>
@@ -317,7 +276,7 @@ export default function MessengerPage() {
                   <input
                     type="text"
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={e => setNewMessage(e.target.value)}
                     placeholder="Type a message..."
                     className="flex-1 border rounded-lg px-3 py-2"
                   />

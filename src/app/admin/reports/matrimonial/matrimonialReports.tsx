@@ -1,12 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/src/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Input } from '@/src/components/ui/input';
 import { Button } from '@/src/components/ui/button';
 import Loader from '@/src/components/ui/loader';
@@ -140,7 +135,7 @@ export default function MatrimonialReports() {
 
   const handleCheckboxChange = (key: string) => {
     if (selectedColumns.includes(key)) {
-      setSelectedColumns(selectedColumns.filter((c) => c !== key));
+      setSelectedColumns(selectedColumns.filter(c => c !== key));
     } else {
       setSelectedColumns([...selectedColumns, key]);
     }
@@ -151,7 +146,7 @@ export default function MatrimonialReports() {
       setSelectedColumns([]);
       setSelectAll(false);
     } else {
-      setSelectedColumns(optionalColumns.map((col) => col.key));
+      setSelectedColumns(optionalColumns.map(col => col.key));
       setSelectAll(true);
     }
   };
@@ -172,34 +167,23 @@ export default function MatrimonialReports() {
         Gender: prof.gender,
         Phone: prof.phoneNo,
         Email: prof.email,
-        'Created At': prof.createdAt
-          ? new Date(prof.createdAt).toLocaleDateString()
-          : '—'
+        'Created At': prof.createdAt ? new Date(prof.createdAt).toLocaleDateString() : '—'
       };
     });
 
-    await exportToExcel(
-      dataToExport,
-      'Matrimonial Report',
-      'matrimonial-report'
-    );
+    await exportToExcel(dataToExport, 'Matrimonial Report', 'matrimonial-report');
   };
 
   if (loading) return <Loader />;
 
   // Merge visible columns
-  const visibleColumns = [
-    ...basicColumns,
-    ...optionalColumns.filter((col) => selectedColumns.includes(col.key))
-  ];
+  const visibleColumns = [...basicColumns, ...optionalColumns.filter(col => selectedColumns.includes(col.key))];
 
   return (
     <div className="p-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">
-            Matrimonial Reports
-          </CardTitle>
+          <CardTitle className="text-lg font-semibold">Matrimonial Reports</CardTitle>
         </CardHeader>
         <CardContent>
           {/* 🔍 Filters */}
@@ -210,43 +194,15 @@ export default function MatrimonialReports() {
               value={filters.search}
               onChange={handleFilterChange}
             />
-            <Input
-              name="city"
-              placeholder="City"
-              value={filters.city}
-              onChange={handleFilterChange}
-            />
-            <Input
-              name="state"
-              placeholder="State"
-              value={filters.state}
-              onChange={handleFilterChange}
-            />
-            <Input
-              name="mobile"
-              placeholder="Mobile"
-              value={filters.mobile}
-              onChange={handleFilterChange}
-            />
-            <Input
-              type="date"
-              name="dateFrom"
-              value={filters.dateFrom}
-              onChange={handleFilterChange}
-            />
-            <Input
-              type="date"
-              name="dateTo"
-              value={filters.dateTo}
-              onChange={handleFilterChange}
-            />
+            <Input name="city" placeholder="City" value={filters.city} onChange={handleFilterChange} />
+            <Input name="state" placeholder="State" value={filters.state} onChange={handleFilterChange} />
+            <Input name="mobile" placeholder="Mobile" value={filters.mobile} onChange={handleFilterChange} />
+            <Input type="date" name="dateFrom" value={filters.dateFrom} onChange={handleFilterChange} />
+            <Input type="date" name="dateTo" value={filters.dateTo} onChange={handleFilterChange} />
           </div>
 
           <div className="flex gap-4 mb-4">
-            <Button
-              onClick={handleSearch}
-              className="bg-[#8B0000] text-white hover:bg-[#a30a0a]"
-            >
+            <Button onClick={handleSearch} className="bg-[#8B0000] text-white hover:bg-[#a30a0a]">
               Apply Filters
             </Button>
             <Button onClick={handleExportToExcel} variant="outline">
@@ -257,20 +213,12 @@ export default function MatrimonialReports() {
           {/* 🧩 Column selector */}
           <div className="border p-3 rounded-md mb-4 bg-gray-50">
             <div className="flex items-center gap-2 mb-2">
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAll}
-                className="cursor-pointer"
-              />
+              <input type="checkbox" checked={selectAll} onChange={handleSelectAll} className="cursor-pointer" />
               <span className="font-medium">Select All Columns</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-2">
-              {optionalColumns.map((col) => (
-                <label
-                  key={col.key}
-                  className="flex items-center gap-2 text-sm cursor-pointer"
-                >
+              {optionalColumns.map(col => (
+                <label key={col.key} className="flex items-center gap-2 text-sm cursor-pointer">
                   <input
                     type="checkbox"
                     checked={selectedColumns.includes(col.key)}
@@ -292,7 +240,7 @@ export default function MatrimonialReports() {
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="border px-4 py-2">#</th>
-                    {visibleColumns.map((col) => (
+                    {visibleColumns.map(col => (
                       <th key={col.key} className="border px-4 py-2">
                         {col.label}
                       </th>
@@ -306,13 +254,11 @@ export default function MatrimonialReports() {
                     return (
                       <tr key={index} className="hover:bg-gray-50">
                         <td className="border px-4 py-2">{index + 1}</td>
-                        {visibleColumns.map((col) => {
+                        {visibleColumns.map(col => {
                           let value = '';
                           if (col.key === 'createdBy') value = u.name || '—';
                           else if (col.key === 'createdAt')
-                            value = prof.createdAt
-                              ? new Date(prof.createdAt).toLocaleDateString()
-                              : '—';
+                            value = prof.createdAt ? new Date(prof.createdAt).toLocaleDateString() : '—';
                           else value = prof[col.key] || '—';
 
                           return (
@@ -336,8 +282,8 @@ export default function MatrimonialReports() {
         totalPages={totalPages}
         totalItems={totalCount}
         pageSize={pageSize}
-        onPageChange={(page) => setCurrentPage(page)}
-        onPageSizeChange={(size) => {
+        onPageChange={page => setCurrentPage(page)}
+        onPageSizeChange={size => {
           setPageSize(size);
           setCurrentPage(1);
         }}

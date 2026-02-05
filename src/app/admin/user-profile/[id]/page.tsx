@@ -8,11 +8,7 @@ import { getUserById } from '@/src/features/getUserById/actions/getUserById';
 import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
 import UserProfilePage from './update-userProfile';
 
-export default async function ViewUserProfile({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function ViewUserProfile({ params }: { params: Promise<{ id: string }> }) {
   // 1. Session fetch
   const session = await getServerSession(authOptions);
 

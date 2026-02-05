@@ -4,10 +4,7 @@ import { events } from '@/src/drizzle/schema'; // ⚡ आपके events table 
 import { eq } from 'drizzle-orm';
 
 // ✅ GET /api/events/my-events/[id]
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const eventId = Number(id);
@@ -28,18 +25,12 @@ export async function GET(
     return NextResponse.json(event, { status: 200 });
   } catch (error) {
     console.error('Error fetching event:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 // PUT /api/events/my-events/[id]
-export async function PUT(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const eventId = Number(id);
@@ -57,14 +48,8 @@ export async function PUT(
     if (!existingEvent) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
-    if (
-      existingEvent.status !== 'pending' &&
-      existingEvent.status !== 'approved'
-    ) {
-      return NextResponse.json(
-        { error: 'Only pending or approved events can be edited' },
-        { status: 403 }
-      );
+    if (existingEvent.status !== 'pending' && existingEvent.status !== 'approved') {
+      return NextResponse.json({ error: 'Only pending or approved events can be edited' }, { status: 403 });
     }
 
     const updatedEvent = await db
@@ -89,9 +74,6 @@ export async function PUT(
     return NextResponse.json(updatedEvent[0], { status: 200 });
   } catch (error) {
     console.error('Error updating event:', error);
-    return NextResponse.json(
-      { error: 'Failed to update event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
   }
 }

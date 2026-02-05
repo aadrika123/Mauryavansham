@@ -1,32 +1,29 @@
 // app/api/coaching-docs/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { cloudinary } from "@/src/lib/cloudinary";
-import { Readable } from "stream";
+import { NextRequest, NextResponse } from 'next/server';
+import { cloudinary } from '@/src/lib/cloudinary';
+import { Readable } from 'stream';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get("image") as File;
+    const file = formData.get('image') as File;
 
     if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
     const uploadPromise = new Promise<string>((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "coaching_docs" },
-        (error, result) => {
-          if (error) {
-            console.error("Cloudinary upload error:", error);
-            reject(error);
-          } else {
-            console.log("Cloudinary upload result:", result);
-            resolve(result?.secure_url || "");
-          }
+      const uploadStream = cloudinary.uploader.upload_stream({ folder: 'coaching_docs' }, (error, result) => {
+        if (error) {
+          console.error('Cloudinary upload error:', error);
+          reject(error);
+        } else {
+          console.log('Cloudinary upload result:', result);
+          resolve(result?.secure_url || '');
         }
-      );
+      });
 
       const readableStream = Readable.from(buffer);
       readableStream.pipe(uploadStream);
@@ -36,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ imageUrl });
   } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    console.error('Upload error:', error);
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 }

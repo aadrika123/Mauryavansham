@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { notifications } from "@/src/drizzle/db/schemas/notifications";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
-import { sql, eq } from "drizzle-orm";
-import { notification_reads } from "@/src/drizzle/db/schemas/notification_reads";
-import { users } from "@/src/drizzle/schema";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { notifications } from '@/src/drizzle/db/schemas/notifications';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
+import { sql, eq } from 'drizzle-orm';
+import { notification_reads } from '@/src/drizzle/db/schemas/notification_reads';
+import { users } from '@/src/drizzle/schema';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -27,10 +27,10 @@ export async function GET(req: NextRequest) {
         id: users.id,
         name: users.name,
         photo: users.photo,
-        email: users.email,
+        email: users.email
       },
 
-     isRead: sql<boolean>`
+      isRead: sql<boolean>`
   CASE
     -- Individual read
     WHEN EXISTS (
@@ -52,16 +52,11 @@ export async function GET(req: NextRequest) {
 
     ELSE false
   END
-`,
-
+`
     })
     .from(notifications)
     .leftJoin(users, eq(notifications.senderId, users.id))
-    .where(
-      role === "user"
-        ? sql`${notifications.type} != 'signup' AND ${notifications.userId} = ${userId}`
-        : undefined
-    )
+    .where(role === 'user' ? sql`${notifications.type} != 'signup' AND ${notifications.userId} = ${userId}` : undefined)
     .orderBy(sql`${notifications.createdAt} DESC`);
 
   return NextResponse.json(userNotifications);

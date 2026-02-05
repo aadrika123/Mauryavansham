@@ -33,9 +33,7 @@ interface HealthService {
 
 export default function HealthReportsPage() {
   const [services, setServices] = useState<HealthService[]>([]);
-  const [allFilteredServices, setAllFilteredServices] = useState<
-    HealthService[]
-  >([]);
+  const [allFilteredServices, setAllFilteredServices] = useState<HealthService[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [cityFilter, setCityFilter] = useState('');
@@ -75,14 +73,7 @@ export default function HealthReportsPage() {
     };
 
     fetchData();
-  }, [
-    statusFilter,
-    cityFilter,
-    stateFilter,
-    searchQuery,
-    currentPage,
-    pageSize
-  ]);
+  }, [statusFilter, cityFilter, stateFilter, searchQuery, currentPage, pageSize]);
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '-';
@@ -95,7 +86,7 @@ export default function HealthReportsPage() {
   const handleExportToExcel = async () => {
     if (allFilteredServices.length === 0) return;
 
-    const dataToExport = allFilteredServices.map((s) => ({
+    const dataToExport = allFilteredServices.map(s => ({
       'Center Name': s.centerName,
       Category: s.category,
       'Owner Name': s.ownerName,
@@ -106,21 +97,14 @@ export default function HealthReportsPage() {
       State: s.state || '-',
       Pincode: s.pincode || '-',
       Offerings: s.offerings?.join(', ') || '-',
-      Branches:
-        s.branches
-          ?.map((b) => `${b.name} (${b.phone || '-'}, ${b.address || '-'})`)
-          .join('; ') || '-',
+      Branches: s.branches?.map(b => `${b.name} (${b.phone || '-'}, ${b.address || '-'})`).join('; ') || '-',
       Logo: s.logoUrl || '-',
       Documents: s.docUrls?.join(', ') || '-',
       Status: s.status,
       'Created On': formatDate(s.createdAt)
     }));
 
-    await exportToExcel(
-      dataToExport,
-      'Health Services',
-      'health-services-report'
-    );
+    await exportToExcel(dataToExport, 'Health Services', 'health-services-report');
   };
 
   return (
@@ -133,15 +117,11 @@ export default function HealthReportsPage() {
           type="text"
           placeholder="Search by name, owner, email..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={e => setSearchQuery(e.target.value)}
           className="border p-2 rounded w-64"
         />
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border p-2 rounded">
           <option value="">All Status</option>
           <option value="active">Active</option>
           <option value="approved">Approved</option>
@@ -153,15 +133,11 @@ export default function HealthReportsPage() {
           type="text"
           placeholder="City"
           value={cityFilter}
-          onChange={(e) => setCityFilter(e.target.value)}
+          onChange={e => setCityFilter(e.target.value)}
           className="border p-2 rounded w-40"
         />
 
-        <select
-          value={stateFilter}
-          onChange={(e) => setStateFilter(e.target.value)}
-          className="border p-2 rounded w-48"
-        >
+        <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="border p-2 rounded w-48">
           <option value="">All States</option>
           {[
             'Bihar',
@@ -180,17 +156,14 @@ export default function HealthReportsPage() {
             'Jharkhand',
             'Odisha',
             'Assam'
-          ].map((state) => (
+          ].map(state => (
             <option key={state} value={state}>
               {state}
             </option>
           ))}
         </select>
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-500 text-white px-4 py-2 rounded">
           Export Excel
         </button>
       </div>
@@ -231,16 +204,10 @@ export default function HealthReportsPage() {
                 ) : (
                   services.map((s, index) => (
                     <tr key={s.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border text-center">
-                        {(currentPage - 1) * pageSize + index + 1}
-                      </td>
+                      <td className="px-4 py-2 border text-center">{(currentPage - 1) * pageSize + index + 1}</td>
                       <td className="px-4 py-2 border text-center">
                         {s.logoUrl ? (
-                          <img
-                            src={s.logoUrl}
-                            alt="logo"
-                            className="w-10 h-10 object-cover rounded"
-                          />
+                          <img src={s.logoUrl} alt="logo" className="w-10 h-10 object-cover rounded" />
                         ) : (
                           '-'
                         )}
@@ -252,9 +219,7 @@ export default function HealthReportsPage() {
                       <td className="px-4 py-2 border">{s.phone}</td>
                       <td className="px-4 py-2 border">{s.city || '-'}</td>
                       <td className="px-4 py-2 border">{s.state || '-'}</td>
-                      <td className="px-4 py-2 border">
-                        {s.offerings?.join(', ') || '-'}
-                      </td>
+                      <td className="px-4 py-2 border">{s.offerings?.join(', ') || '-'}</td>
                       <td className="px-4 py-2 border">
                         {s.branches?.length > 0 ? (
                           <ul className="space-y-1">
@@ -291,12 +256,8 @@ export default function HealthReportsPage() {
                           '-'
                         )}
                       </td>
-                      <td className="px-4 py-2 border capitalize">
-                        {s.status}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {formatDate(s.createdAt)}
-                      </td>
+                      <td className="px-4 py-2 border capitalize">{s.status}</td>
+                      <td className="px-4 py-2 border">{formatDate(s.createdAt)}</td>
                     </tr>
                   ))
                 )}
@@ -309,8 +270,8 @@ export default function HealthReportsPage() {
             totalPages={totalPages}
             totalItems={totalCount}
             pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
+            onPageChange={page => setCurrentPage(page)}
+            onPageSizeChange={size => {
               setPageSize(size);
               setCurrentPage(1);
             }}

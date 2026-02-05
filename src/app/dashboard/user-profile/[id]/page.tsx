@@ -6,11 +6,7 @@ import DashboardLayout from '@/src/components/layout/dashboardLayout';
 import UserProfilePage from './update-userProfile';
 import { getUserById } from '@/src/features/getUserById/actions/getUserById';
 
-export default async function ViewUserProfile({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function ViewUserProfile({ params }: { params: Promise<{ id: string }> }) {
   // 1. Session fetch
   const session = await getServerSession(authOptions);
 

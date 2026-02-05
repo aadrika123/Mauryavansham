@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { enquiries } from "@/src/drizzle/schema";
-import { eq, or, asc, and } from "drizzle-orm";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { enquiries } from '@/src/drizzle/schema';
+import { eq, or, asc, and } from 'drizzle-orm';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
 
 // 🔹 GET: fetch all enquiries/messages for the current user
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const userId = Number(session.user.id);
@@ -18,15 +18,13 @@ export async function GET(req: NextRequest) {
   const rows = await db
     .select()
     .from(enquiries)
-    .where(
-      or(eq(enquiries.senderUserId, userId), eq(enquiries.receiverUserId, userId))
-    )
+    .where(or(eq(enquiries.senderUserId, userId), eq(enquiries.receiverUserId, userId)))
     .orderBy(asc(enquiries.createdAt));
 
   // Map to unique conversation partners with all enquiryTypes and latest message
   const conversationMap = new Map<number, any>();
 
-  rows.forEach((msg) => {
+  rows.forEach(msg => {
     const senderId = Number(msg.senderUserId);
     const receiverId = Number(msg.receiverUserId);
 
@@ -46,12 +44,12 @@ export async function GET(req: NextRequest) {
             receiverUserId: receiverId,
             comment: msg.comment,
             enquireType: msg.enquireType,
-            createdAt: msg.createdAt,
-          },
+            createdAt: msg.createdAt
+          }
         ],
         latestMessage: msg.comment,
         latestCreatedAt: msg.createdAt,
-        enquiryTypes: [msg.enquireType],
+        enquiryTypes: [msg.enquireType]
       });
     } else {
       // Add message
@@ -61,7 +59,7 @@ export async function GET(req: NextRequest) {
         receiverUserId: receiverId,
         comment: msg.comment,
         enquireType: msg.enquireType,
-        createdAt: msg.createdAt,
+        createdAt: msg.createdAt
       });
 
       // Add unique enquiryType
@@ -91,7 +89,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const body = await req.json();
@@ -99,14 +97,11 @@ export async function POST(req: NextRequest) {
   const senderUserId = Number(session.user.id);
 
   if (!receiverUserId || !comment || !enquireType) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
   }
 
   if (senderUserId == receiverUserId) {
-    return NextResponse.json(
-      { error: "You cannot send an enquiry to yourself." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'You cannot send an enquiry to yourself.' }, { status: 400 });
   }
 
   // Check if same enquiryType already exists between sender and receiver
@@ -125,7 +120,7 @@ export async function POST(req: NextRequest) {
   if (existing.length > 0) {
     return NextResponse.json(
       {
-        error: `You have already sent a "${enquireType}" enquiry to this user. Check your enquiries tab for response.`,
+        error: `You have already sent a "${enquireType}" enquiry to this user. Check your enquiries tab for response.`
       },
       { status: 400 }
     );
@@ -139,7 +134,7 @@ export async function POST(req: NextRequest) {
       receiverUserId,
       comment,
       enquireType,
-      createdAt: new Date(),
+      createdAt: new Date()
     })
     .returning();
 

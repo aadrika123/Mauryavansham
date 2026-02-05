@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { db } from "@/src/drizzle/db";
-import { profiles } from "@/src/drizzle/db/schemas/createProfile.schema";
-import { userChildren, users, userSiblings } from "@/src/drizzle/schema";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { db } from '@/src/drizzle/db';
+import { profiles } from '@/src/drizzle/db/schemas/createProfile.schema';
+import { userChildren, users, userSiblings } from '@/src/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 type createUserState = {
   success: boolean;
@@ -13,25 +13,22 @@ type createUserState = {
   data?: any;
   timestamp: number;
   toast?: {
-    type: "success" | "error" | "warning" | "info";
+    type: 'success' | 'error' | 'warning' | 'info';
     title: string;
     message: string;
   };
   errors?: z.ZodIssue[];
 };
 
-export async function updateUserDtlsById(
-  formData: Record<string, any>,
-  id: string
-): Promise<createUserState> {
+export async function updateUserDtlsById(formData: Record<string, any>, id: string): Promise<createUserState> {
   try {
     const updatedFields: Record<string, any> = {};
     const siblings: any[] = formData.siblings || [];
     const children: any[] = formData.children || [];
 
     for (const [key, value] of Object.entries(formData)) {
-      if (!["id", "siblings", "children"].includes(key)) {
-        updatedFields[key] = typeof value === "string" ? value.trim() : value;
+      if (!['id', 'siblings', 'children'].includes(key)) {
+        updatedFields[key] = typeof value === 'string' ? value.trim() : value;
       }
     }
 
@@ -49,13 +46,13 @@ export async function updateUserDtlsById(
     // 🔹 Insert new siblings
     if (siblings.length > 0) {
       await db.insert(userSiblings).values(
-        siblings.map((s) => ({
+        siblings.map(s => ({
           userId: Number(id),
           name: s.name,
           dateOfBirth: s.dateOfBirth || null,
           gender: s.gender || null,
           maritalStatus: s.maritalStatus || null,
-          spouseName: s.spouseName || null,
+          spouseName: s.spouseName || null
         }))
       );
     }
@@ -63,7 +60,7 @@ export async function updateUserDtlsById(
     // 🔹 Insert new children
     if (children.length > 0) {
       await db.insert(userChildren).values(
-        children.map((c) => ({
+        children.map(c => ({
           userId: Number(id),
           name: c.name,
           // dob: c.dateOfBirth ? new Date(c.dob) : null,
@@ -71,7 +68,7 @@ export async function updateUserDtlsById(
           gender: c.gender || null,
           studyingOrWorking: c.studyingOrWorking || null,
           maritalStatus: c.maritalStatus || null,
-          spouseName: c.spouseName || null,
+          spouseName: c.spouseName || null
         }))
       );
     }
@@ -86,16 +83,16 @@ export async function updateUserDtlsById(
 
     return {
       success: true,
-      message: "Profile updated successfully with family details!",
+      message: 'Profile updated successfully with family details!',
       data: updatedProfile[0],
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
   } catch (error) {
-    console.error("Error updating profile:", error);
+    console.error('Error updating profile:', error);
     return {
       success: false,
-      message: "Failed to update profile.",
-      timestamp: Date.now(),
+      message: 'Failed to update profile.',
+      timestamp: Date.now()
     };
   }
 }

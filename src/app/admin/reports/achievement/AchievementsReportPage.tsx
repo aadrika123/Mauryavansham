@@ -35,9 +35,7 @@ interface Achievement {
 
 export default function AchievementsReportPage() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [allFilteredAchievements, setAllFilteredAchievements] = useState<
-    Achievement[]
-  >([]);
+  const [allFilteredAchievements, setAllFilteredAchievements] = useState<Achievement[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,9 +59,7 @@ export default function AchievementsReportPage() {
         if (statusFilter) params.append('status', statusFilter);
         if (categoryFilter) params.append('category', categoryFilter);
 
-        const res = await fetch(
-          `/api/reports/achievements?${params.toString()}`
-        );
+        const res = await fetch(`/api/reports/achievements?${params.toString()}`);
         const data = await res.json();
 
         let records: Achievement[] = data.achievements || [];
@@ -72,7 +68,7 @@ export default function AchievementsReportPage() {
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
           records = records.filter(
-            (a) =>
+            a =>
               a.name.toLowerCase().includes(q) ||
               a.title.toLowerCase().includes(q) ||
               a.category.toLowerCase().includes(q) ||
@@ -82,9 +78,7 @@ export default function AchievementsReportPage() {
 
         setAllFilteredAchievements(records);
         setTotalCount(records.length);
-        setAchievements(
-          records.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        );
+        setAchievements(records.slice((currentPage - 1) * pageSize, currentPage * pageSize));
       } catch (err) {
         console.error('Error fetching achievements:', err);
       } finally {
@@ -99,9 +93,7 @@ export default function AchievementsReportPage() {
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '-';
     const d = new Date(dateStr);
-    return `${String(d.getDate()).padStart(2, '0')}-${String(
-      d.getMonth() + 1
-    ).padStart(2, '0')}-${d.getFullYear()}`;
+    return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
   };
 
   // ✅ Export Excel
@@ -112,7 +104,7 @@ export default function AchievementsReportPage() {
       a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
     );
 
-    const dataToExport = sortedData.map((a) => ({
+    const dataToExport = sortedData.map(a => ({
       Name: a.name,
       Title: a.title,
       Category: a.category,
@@ -143,7 +135,7 @@ export default function AchievementsReportPage() {
       <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow">
         <select
           value={statusFilter}
-          onChange={(e) => {
+          onChange={e => {
             setStatusFilter(e.target.value);
             setCurrentPage(1);
           }}
@@ -157,7 +149,7 @@ export default function AchievementsReportPage() {
 
         <select
           value={categoryFilter}
-          onChange={(e) => {
+          onChange={e => {
             setCategoryFilter(e.target.value);
             setCurrentPage(1);
           }}
@@ -175,7 +167,7 @@ export default function AchievementsReportPage() {
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => {
+          onChange={e => {
             setSearchQuery(e.target.value);
             setCurrentPage(1);
           }}
@@ -183,10 +175,7 @@ export default function AchievementsReportPage() {
           className="border p-2 rounded w-64"
         />
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
           Export Excel
         </button>
       </div>
@@ -230,28 +219,18 @@ export default function AchievementsReportPage() {
                 ) : (
                   achievements.map((a, index) => (
                     <tr key={a.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border">
-                        {(currentPage - 1) * pageSize + index + 1}
-                      </td>
+                      <td className="px-4 py-2 border">{(currentPage - 1) * pageSize + index + 1}</td>
                       <td className="px-4 py-2 border">{a.name}</td>
                       <td className="px-4 py-2 border">{a.title}</td>
                       <td className="px-4 py-2 border">{a.category}</td>
                       <td className="px-4 py-2 border">{a.year}</td>
                       <td className="px-4 py-2 border">{a.location}</td>
-                      <td className="px-4 py-2 border capitalize">
-                        {a.status}
-                      </td>
+                      <td className="px-4 py-2 border capitalize">{a.status}</td>
                       {/* <td className="px-4 py-2 border">{a.isVerified ? "Yes" : "No"}</td> */}
-                      <td className="px-4 py-2 border">
-                        {a.isFeatured ? 'Yes' : 'No'}
-                      </td>
+                      <td className="px-4 py-2 border">{a.isFeatured ? 'Yes' : 'No'}</td>
                       <td className="px-4 py-2 border">{a.createdBy}</td>
-                      <td className="px-4 py-2 border">
-                        {formatDate(a.createdAt)}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {a.updatedBy ? formatDate(a.updatedAt) : '-'}
-                      </td>
+                      <td className="px-4 py-2 border">{formatDate(a.createdAt)}</td>
+                      <td className="px-4 py-2 border">{a.updatedBy ? formatDate(a.updatedAt) : '-'}</td>
                       <td className="px-4 py-2 border">{a.updatedBy || '-'}</td>
                       <td className="px-4 py-2 border">{a.removedBy || '-'}</td>
                       <td className="px-4 py-2 border">{a.reason || '-'}</td>
@@ -268,8 +247,8 @@ export default function AchievementsReportPage() {
             totalPages={totalPages}
             totalItems={totalCount}
             pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
+            onPageChange={page => setCurrentPage(page)}
+            onPageSizeChange={size => {
               setPageSize(size);
               setCurrentPage(1);
             }}

@@ -49,11 +49,7 @@ export default async function AdPage({ params }: AdPageProps) {
   return (
     <DashboardLayout user={session.user}>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <AdDetail
-          ad={ad}
-          currentUserId={session.user.id}
-          userRole={session.user.role}
-        />
+        <AdDetail ad={ad} currentUserId={session.user.id} userRole={session.user.role} />
       </div>
     </DashboardLayout>
   );

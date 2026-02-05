@@ -49,7 +49,7 @@ export default function SignInForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value
     }));
@@ -103,9 +103,7 @@ export default function SignInForm() {
         {/* Error Alert */}
         {error && (
           <Alert className="border-red-200 bg-red-50">
-            <AlertDescription className="text-red-700">
-              {error}
-            </AlertDescription>
+            <AlertDescription className="text-red-700">{error}</AlertDescription>
           </Alert>
         )}
 
@@ -151,11 +149,7 @@ export default function SignInForm() {
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               disabled={isLoading}
             >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </div>
@@ -176,10 +170,7 @@ export default function SignInForm() {
           )}
         </Button>
         <p className="text-sm text-center mt-2">
-          <a
-            href="/forgot-password"
-            className="text-blue-600 hover:underline cursor-pointer"
-          >
+          <a href="/forgot-password" className="text-blue-600 hover:underline cursor-pointer">
             Forgot Password?
           </a>
         </p>
@@ -190,12 +181,8 @@ export default function SignInForm() {
             <DialogHeader>
               <DialogTitle>Status</DialogTitle>
             </DialogHeader>
-            <DialogDescription className="text-center text-orange-400">
-              {modalMessage}
-            </DialogDescription>
-            <DialogClose className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
-              Close
-            </DialogClose>
+            <DialogDescription className="text-center text-orange-400">{modalMessage}</DialogDescription>
+            <DialogClose className="mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</DialogClose>
           </DialogContent>
         </Dialog>
       )}

@@ -36,13 +36,7 @@ import {
 import type { User as NextAuthUser } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
-export default function DashboardLayout({
-  children,
-  user
-}: {
-  children: React.ReactNode;
-  user: NextAuthUser;
-}) {
+export default function DashboardLayout({ children, user }: { children: React.ReactNode; user: NextAuthUser }) {
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
@@ -50,9 +44,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   // unread notifications filter
-  const unreadNotifications = notifications.filter(
-    (n) => !n.isRead || n.isRead === 0
-  );
+  const unreadNotifications = notifications.filter(n => !n.isRead || n.isRead === 0);
   const unreadCount = unreadNotifications.length;
 
   // Track scroll position
@@ -180,28 +172,24 @@ export default function DashboardLayout({
   useEffect(() => {
     if (user?.role === 'user') {
       fetch('/api/admin/notifications')
-        .then((res) => res.json())
-        .then((data) => setNotifications(data || []))
+        .then(res => res.json())
+        .then(data => setNotifications(data || []))
         .catch(() => setNotifications([]));
     }
   }, [user]);
 
   const handleMarkRead = async () => {
-    const unread = notifications.filter((n) => !n.isRead);
+    const unread = notifications.filter(n => !n.isRead);
     if (unread.length === 0) return;
 
     await fetch('/api/admin/notifications/mark-read', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ notificationIds: unread.map((n) => n.id) })
+      body: JSON.stringify({ notificationIds: unread.map(n => n.id) })
     });
 
     // update local state
-    setNotifications((prev) =>
-      prev.map((n) =>
-        unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
-      )
-    );
+    setNotifications(prev => prev.map(n => (unread.find(u => u.id === n.id) ? { ...n, isRead: true } : n)));
   };
 
   // const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -209,14 +197,14 @@ export default function DashboardLayout({
   const handleNotificationsOpen = async (isOpen: boolean) => {
     if (!isOpen) return;
 
-    const unread = notifications.filter((n) => !n.isRead);
+    const unread = notifications.filter(n => !n.isRead);
     if (unread.length === 0) return;
 
     try {
       const res = await fetch('/api/admin/notifications/mark-read', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) })
+        body: JSON.stringify({ notificationIds: unread.map(n => n.id) })
       });
 
       if (res.ok) {
@@ -240,7 +228,7 @@ export default function DashboardLayout({
     window.location.href = '/';
   };
   const toggleMenu = (title: string) => {
-    setOpenMenus((prev) => ({ ...prev, [title]: !prev[title] }));
+    setOpenMenus(prev => ({ ...prev, [title]: !prev[title] }));
   };
 
   return (
@@ -249,46 +237,27 @@ export default function DashboardLayout({
       <div className="bg-gradient-to-r from-red-700 to-orange-600 text-white p-6 lg:p-6 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* ✅ Hamburger menu for mobile */}
-          <button
-            className="lg:hidden p-2 rounded hover:bg-red-700"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+          <button className="lg:hidden p-2 rounded hover:bg-red-700" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
           <Crown className="w-8 hidden lg:block h-8 text-orange-400" />
           <div className="hidden lg:block">
-            <h1 className="text-2xl font-bold capitalize">
-              Welcome back, {user?.name || ''}
-            </h1>
+            <h1 className="text-2xl font-bold capitalize">Welcome back, {user?.name || ''}</h1>
             {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
           </div>
           <div className=" flex items-center gap-2 md:hidden">
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
-                scrollY > 20
-                  ? 'bg-gradient-to-br from-red-600 to-orange-500'
-                  : 'bg-white/20 backdrop-blur-sm'
+                scrollY > 20 ? 'bg-gradient-to-br from-red-600 to-orange-500' : 'bg-white/20 backdrop-blur-sm'
               }`}
             >
               <Crown className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1
-                className={`text-base font-bold leading-tight ${
-                  scrollY > 20 ? 'text-red-700' : 'text-white'
-                }`}
-              >
+              <h1 className={`text-base font-bold leading-tight ${scrollY > 20 ? 'text-red-700' : 'text-white'}`}>
                 Mauryavansham
               </h1>
-              <p
-                className={`text-xs leading-tight ${
-                  scrollY > 20 ? 'text-orange-600' : 'text-orange-100'
-                }`}
-              >
+              <p className={`text-xs leading-tight ${scrollY > 20 ? 'text-orange-600' : 'text-orange-100'}`}>
                 मौर्यवंश - गौरवशाली परंपरा
               </p>
             </div>
@@ -299,11 +268,7 @@ export default function DashboardLayout({
           {user?.role === 'user' && (
             <DropdownMenu onOpenChange={handleNotificationsOpen}>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-red-700 relative"
-                >
+                <Button variant="ghost" size="sm" className="text-white hover:bg-red-700 relative">
                   <Bell className="w-4 h-4 mr-2" />
                   <span className="hidden lg:inline">Notifications</span>
                   {unreadCount > 0 && (
@@ -314,26 +279,18 @@ export default function DashboardLayout({
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                align="end"
-                className="w-72 max-h-96 overflow-y-auto"
-              >
+              <DropdownMenuContent align="end" className="w-72 max-h-96 overflow-y-auto">
                 {notifications.length > 0 && (
                   <div className="flex justify-between px-3 py-2 border-b border-yellow-200 bg-yellow-50 sticky top-0 z-10">
-                    <h3 className="text-sm font-semibold text-red-700">
-                      Notifications
-                    </h3>
+                    <h3 className="text-sm font-semibold text-red-700">Notifications</h3>
                     <button
                       onClick={async () => {
                         try {
-                          const res = await fetch(
-                            '/api/notifications/mark-all-read',
-                            {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ userId: user?.id })
-                            }
-                          );
+                          const res = await fetch('/api/notifications/mark-all-read', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: user?.id })
+                          });
 
                           if (res.ok) {
                             setNotifications([]);
@@ -353,24 +310,18 @@ export default function DashboardLayout({
                 )}
 
                 {unreadNotifications.length > 0 ? (
-                  unreadNotifications.map((n) => (
+                  unreadNotifications.map(n => (
                     <div
                       key={n.id}
                       className={`rounded-md border p-2 m-2 shadow-sm ${
-                        n.isRead
-                          ? 'bg-gray-50 border-gray-200'
-                          : 'bg-yellow-50 border-yellow-300'
+                        n.isRead ? 'bg-gray-50 border-gray-200' : 'bg-yellow-50 border-yellow-300'
                       }`}
                     >
-                      <DropdownMenuItem className="whitespace-normal text-sm">
-                        {n.message}
-                      </DropdownMenuItem>
+                      <DropdownMenuItem className="whitespace-normal text-sm">{n.message}</DropdownMenuItem>
                     </div>
                   ))
                 ) : (
-                  <div className="p-3 text-sm text-gray-500 text-center">
-                    No new notifications
-                  </div>
+                  <div className="p-3 text-sm text-gray-500 text-center">No new notifications</div>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -379,12 +330,7 @@ export default function DashboardLayout({
           {/* Account Menu */}
           {/* ✅ Mobile view: sirf logout icon */}
           <div className="lg:hidden">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-red-700"
-              onClick={() => setIsOpen(true)}
-            >
+            <Button variant="ghost" size="sm" className="text-white hover:bg-red-700" onClick={() => setIsOpen(true)}>
               <LogOut className="w-5 h-5" />
             </Button>
           </div>
@@ -393,20 +339,13 @@ export default function DashboardLayout({
           <div className="hidden lg:block">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-red-700"
-                >
+                <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
                   <Settings className="w-4 h-4 mr-2" /> Account
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => setIsOpen(true)}
-                  className="text-red-600 focus:text-red-600"
-                >
+                <DropdownMenuItem onClick={() => setIsOpen(true)} className="text-red-600 focus:text-red-600">
                   <LogOut className="w-4 h-4 mr-2" /> Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -434,11 +373,7 @@ export default function DashboardLayout({
                 }
               }}
             >
-              <img
-                src={user?.photo || '/placeholder.svg'}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              <img src={user?.photo || '/placeholder.svg'} alt="Profile" className="w-full h-full object-cover" />
             </div>
             <div>
               <h3 className="font-semibold text-red-700">{user?.name}</h3>
@@ -449,7 +384,7 @@ export default function DashboardLayout({
           {/* Scrollable nav */}
 
           <nav className="space-y-2 overflow-y-auto flex-1">
-            {sidebarItems.map((item) => {
+            {sidebarItems.map(item => {
               const hasSubItems = item.subItems && item.subItems.length > 0;
               const isOpen = openMenus[item.title] || false;
 
@@ -472,18 +407,14 @@ export default function DashboardLayout({
                           <span>{item.title}</span>
                         </div>
                         <span className="ml-2">
-                          {isOpen ? (
-                            <ChevronUp className="w-4 h-4" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4" />
-                          )}
+                          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </span>
                       </button>
 
                       {/* Subitems */}
                       {isOpen && (
                         <div className="ml-6 space-y-1">
-                          {item.subItems!.map((sub) => (
+                          {item.subItems!.map(sub => (
                             <Link
                               key={sub.href}
                               href={sub.href}
@@ -496,9 +427,7 @@ export default function DashboardLayout({
                               onClick={() => setSidebarOpen(false)}
                             >
                               <sub.icon className="h-4 w-4" />
-                              <span className="whitespace-pre-wrap w-32">
-                                {sub.title}
-                              </span>
+                              <span className="whitespace-pre-wrap w-32">{sub.title}</span>
                             </Link>
                           ))}
                         </div>
@@ -534,20 +463,12 @@ export default function DashboardLayout({
       {isOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-bold mb-4">
-              Are you sure you want to sign out?
-            </h2>
+            <h2 className="text-lg font-bold mb-4">Are you sure you want to sign out?</h2>
             <div className="flex justify-between space-x-4">
-              <Button
-                onClick={() => setIsOpen(false)}
-                className="w-full bg-gray-300 text-gray-700"
-              >
+              <Button onClick={() => setIsOpen(false)} className="w-full bg-gray-300 text-gray-700">
                 Cancel
               </Button>
-              <Button
-                onClick={handleSignOut}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
-              >
+              <Button onClick={handleSignOut} className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white">
                 Yes, Sign Out
               </Button>
             </div>

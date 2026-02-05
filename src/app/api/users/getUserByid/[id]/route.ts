@@ -45,7 +45,7 @@ const calculateProfileCompletion = (user: any) => {
   fields = [...new Set(fields)];
 
   // Count filled fields
-  const filled = fields.filter((f) => {
+  const filled = fields.filter(f => {
     const val = user[f];
     return val !== null && val !== undefined && val.toString().trim() !== '';
   }).length;
@@ -54,19 +54,13 @@ const calculateProfileCompletion = (user: any) => {
 };
 
 // GET /api/users/[id]
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     console.log('User ID param:', id);
 
     if (!id || isNaN(Number(id))) {
-      return NextResponse.json(
-        { error: 'Valid user ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Valid user ID is required' }, { status: 400 });
     }
 
     const user = await db.query.users.findFirst({
@@ -82,15 +76,9 @@ export async function GET(
     // calculate profile completion
     const completion = calculateProfileCompletion(user);
 
-    return NextResponse.json(
-      { data: user, profileCompletion: completion },
-      { status: 200 }
-    );
+    return NextResponse.json({ data: user, profileCompletion: completion }, { status: 200 });
   } catch (error) {
     console.error('Failed to fetch user by id:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
   }
 }

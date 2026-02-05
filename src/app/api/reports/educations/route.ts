@@ -1,22 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { coachingCenters } from "@/src/drizzle/db/schemas/coachingCenters";
-import { and, eq, ilike, or, sql } from "drizzle-orm";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { coachingCenters } from '@/src/drizzle/db/schemas/coachingCenters';
+import { and, eq, ilike, or, sql } from 'drizzle-orm';
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
     // 📄 Pagination
-    const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
     const offset = (page - 1) * limit;
 
     // 🔍 Filters
-    const status = searchParams.get("status");
-    const city = searchParams.get("city");
-    const state = searchParams.get("state");
-    const search = searchParams.get("search");
+    const status = searchParams.get('status');
+    const city = searchParams.get('city');
+    const state = searchParams.get('state');
+    const search = searchParams.get('search');
 
     // 🧩 Build dynamic filters
     const whereConditions: any[] = [];
@@ -44,8 +44,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const whereClause =
-      whereConditions.length > 0 ? and(...whereConditions) : sql`true`;
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : sql`true`;
 
     // ✅ Get total count
     const totalQuery = await db
@@ -71,13 +70,10 @@ export async function GET(req: NextRequest) {
       currentPage: page,
       pageSize: limit,
       totalPages: Math.ceil(totalCount / limit),
-      data,
+      data
     });
   } catch (error) {
-    console.error("❌ Error fetching education report:", error);
-    return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error('❌ Error fetching education report:', error);
+    return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }
 }

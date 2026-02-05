@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Card } from "@/src/components/ui/card";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select";
-import { Checkbox } from "@/src/components/ui/checkbox";
-import { Slider } from "@/src/components/ui/slider";
-import { Search, Filter } from "lucide-react";
+import { Card } from '@/src/components/ui/card';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
+import { Checkbox } from '@/src/components/ui/checkbox';
+import { Slider } from '@/src/components/ui/slider';
+import { Search, Filter } from 'lucide-react';
 
 interface SearchFiltersProps {
   filters: {
@@ -21,7 +21,7 @@ interface SearchFiltersProps {
     withPhotos: boolean;
     onlineRecently: boolean;
   };
-  onFiltersChange: (filters: Partial<SearchFiltersProps["filters"]>) => void;
+  onFiltersChange: (filters: Partial<SearchFiltersProps['filters']>) => void;
 }
 
 export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) {
@@ -39,14 +39,16 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Search by Name */}
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="searchName">Search by Name</Label>
+          <Label className="text-red-800" htmlFor="searchName">
+            Search by Name
+          </Label>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
               id="searchName"
               placeholder="Enter name..."
               value={filters.searchName}
-              onChange={(e) => onFiltersChange({ searchName: e.target.value })}
+              onChange={e => onFiltersChange({ searchName: e.target.value })}
               className="pl-10"
             />
           </div>
@@ -59,7 +61,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
           </Label>
           <Slider
             value={filters.ageRange}
-            onValueChange={(value) => onFiltersChange({ ageRange: value as [number, number] })}
+            onValueChange={value => onFiltersChange({ ageRange: value as [number, number] })}
             max={60}
             min={18}
             step={1}
@@ -69,8 +71,10 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Location */}
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="location">Location</Label>
-          <Select value={filters.location} onValueChange={(value) => onFiltersChange({ location: value })}>
+          <Label className="text-red-800" htmlFor="location">
+            Location
+          </Label>
+          <Select value={filters.location} onValueChange={value => onFiltersChange({ location: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select city" />
             </SelectTrigger>
@@ -89,8 +93,10 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Education */}
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="education">Education</Label>
-          <Select value={filters.education} onValueChange={(value) => onFiltersChange({ education: value })}>
+          <Label className="text-red-800" htmlFor="education">
+            Education
+          </Label>
+          <Select value={filters.education} onValueChange={value => onFiltersChange({ education: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select education" />
             </SelectTrigger>
@@ -107,8 +113,10 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Occupation */}
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="occupation">Occupation</Label>
-          <Select value={filters.occupation} onValueChange={(value) => onFiltersChange({ occupation: value })}>
+          <Label className="text-red-800" htmlFor="occupation">
+            Occupation
+          </Label>
+          <Select value={filters.occupation} onValueChange={value => onFiltersChange({ occupation: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select occupation" />
             </SelectTrigger>
@@ -127,8 +135,10 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Gotra */}
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="gotra">Gotra</Label>
-          <Select value={filters.gotra} onValueChange={(value) => onFiltersChange({ gotra: value })}>
+          <Label className="text-red-800" htmlFor="gotra">
+            Gotra
+          </Label>
+          <Select value={filters.gotra} onValueChange={value => onFiltersChange({ gotra: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select gotra" />
             </SelectTrigger>
@@ -147,8 +157,10 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Height */}
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="height">Height</Label>
-          <Select value={filters.height} onValueChange={(value) => onFiltersChange({ height: value })}>
+          <Label className="text-red-800" htmlFor="height">
+            Height
+          </Label>
+          <Select value={filters.height} onValueChange={value => onFiltersChange({ height: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select height range" />
             </SelectTrigger>
@@ -165,13 +177,13 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
 
         {/* Advanced Filters */}
         <div className="space-y-3">
-          <Label  className="text-base text-red-800 font-medium">Advanced Filters</Label>
+          <Label className="text-base text-red-800 font-medium">Advanced Filters</Label>
 
           <div className="flex items-center space-x-2">
             <Checkbox
               id="verifiedOnly"
               checked={filters.verifiedOnly}
-              onCheckedChange={(checked) => onFiltersChange({ verifiedOnly: checked === true })}
+              onCheckedChange={checked => onFiltersChange({ verifiedOnly: checked === true })}
             />
             <Label htmlFor="verifiedOnly" className="text-sm font-normal text-red-800">
               Verified profiles only
@@ -182,7 +194,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
             <Checkbox
               id="withPhotos"
               checked={filters.withPhotos}
-              onCheckedChange={(checked) => onFiltersChange({ withPhotos: checked === true })}
+              onCheckedChange={checked => onFiltersChange({ withPhotos: checked === true })}
             />
             <Label htmlFor="withPhotos" className="text-sm font-normal text-red-800">
               With photos
@@ -193,7 +205,7 @@ export function SearchFilters({ filters, onFiltersChange }: SearchFiltersProps) 
             <Checkbox
               id="onlineRecently"
               checked={filters.onlineRecently}
-              onCheckedChange={(checked) => onFiltersChange({ onlineRecently: checked === true })}
+              onCheckedChange={checked => onFiltersChange({ onlineRecently: checked === true })}
             />
             <Label htmlFor="onlineRecently" className="text-sm font-normal text-red-800">
               Online in last 7 days

@@ -1,129 +1,129 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Check, Crown, Star, Zap, TrendingUp } from "lucide-react"
-import { Button } from "@/src/components/ui/button"
-import { Card } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { useState } from 'react';
+import { Check, Crown, Star, Zap, TrendingUp } from 'lucide-react';
+import { Button } from '@/src/components/ui/button';
+import { Card } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const subscriptionPlans = [
   {
-    id: "free",
-    name: "Free",
-    tier: "free",
+    id: 'free',
+    name: 'Free',
+    tier: 'free',
     price: 0,
-    currency: "INR",
-    billing: "monthly",
+    currency: 'INR',
+    billing: 'monthly',
     icon: Star,
-    iconColor: "text-gray-500",
-    bgGradient: "from-gray-50 to-gray-100",
+    iconColor: 'text-gray-500',
+    bgGradient: 'from-gray-50 to-gray-100',
     features: [
-      "Basic profile creation",
-      "View up to 10 profiles/day",
-      "Basic family tree (up to 20 members)",
-      "Access to community forums",
-      "Event viewing",
-      "Basic search filters",
-      "Standard customer support",
+      'Basic profile creation',
+      'View up to 10 profiles/day',
+      'Basic family tree (up to 20 members)',
+      'Access to community forums',
+      'Event viewing',
+      'Basic search filters',
+      'Standard customer support'
     ],
-    limitations: ["Limited profile views", "Ads displayed", "Basic analytics only"],
+    limitations: ['Limited profile views', 'Ads displayed', 'Basic analytics only']
   },
   {
-    id: "basic",
-    name: "Basic",
-    tier: "basic",
+    id: 'basic',
+    name: 'Basic',
+    tier: 'basic',
     price: 99,
-    currency: "INR",
-    billing: "monthly",
+    currency: 'INR',
+    billing: 'monthly',
     icon: Zap,
-    iconColor: "text-blue-600",
-    bgGradient: "from-blue-50 to-blue-100",
+    iconColor: 'text-blue-600',
+    bgGradient: 'from-blue-50 to-blue-100',
     features: [
-      "Everything in Free",
-      "Unlimited profile views",
-      "Advanced family tree (up to 100 members)",
-      "Priority listing in search results",
-      "Ad-free experience",
-      "Profile verification badge",
-      "Advanced search filters",
-      "Email notifications",
-      "Priority customer support",
+      'Everything in Free',
+      'Unlimited profile views',
+      'Advanced family tree (up to 100 members)',
+      'Priority listing in search results',
+      'Ad-free experience',
+      'Profile verification badge',
+      'Advanced search filters',
+      'Email notifications',
+      'Priority customer support'
     ],
-    popular: false,
+    popular: false
   },
   {
-    id: "premium",
-    name: "Premium",
-    tier: "premium",
+    id: 'premium',
+    name: 'Premium',
+    tier: 'premium',
     price: 199,
-    currency: "INR",
-    billing: "monthly",
+    currency: 'INR',
+    billing: 'monthly',
     icon: Crown,
-    iconColor: "text-orange-600",
-    bgGradient: "from-orange-50 to-orange-100",
+    iconColor: 'text-orange-600',
+    bgGradient: 'from-orange-50 to-orange-100',
     features: [
-      "Everything in Basic",
-      "Unlimited family tree members",
-      "AI-powered match recommendations",
-      "Featured profile highlighting",
-      "Video profile upload",
-      "Analytics dashboard",
-      "Direct messaging unlimited",
-      "Event creation access",
-      "Business directory premium listing",
-      "Exclusive community badge",
-      "24/7 premium support",
+      'Everything in Basic',
+      'Unlimited family tree members',
+      'AI-powered match recommendations',
+      'Featured profile highlighting',
+      'Video profile upload',
+      'Analytics dashboard',
+      'Direct messaging unlimited',
+      'Event creation access',
+      'Business directory premium listing',
+      'Exclusive community badge',
+      '24/7 premium support'
     ],
     popular: true,
-    discount: 20,
+    discount: 20
   },
   {
-    id: "elite",
-    name: "Elite",
-    tier: "elite",
+    id: 'elite',
+    name: 'Elite',
+    tier: 'elite',
     price: 499,
-    currency: "INR",
-    billing: "monthly",
+    currency: 'INR',
+    billing: 'monthly',
     icon: TrendingUp,
-    iconColor: "text-purple-600",
-    bgGradient: "from-purple-50 to-purple-100",
+    iconColor: 'text-purple-600',
+    bgGradient: 'from-purple-50 to-purple-100',
     features: [
-      "Everything in Premium",
-      "Personalized matchmaking consultant",
-      "Profile featured on homepage",
-      "Unlimited photo & video uploads",
-      "Advanced genealogy tools & DNA integration",
-      "Early access to new features",
-      "Custom profile URL",
-      "Verified elite badge",
-      "Monthly genealogy reports",
-      "Priority event access",
-      "Dedicated account manager",
-      "API access for developers",
+      'Everything in Premium',
+      'Personalized matchmaking consultant',
+      'Profile featured on homepage',
+      'Unlimited photo & video uploads',
+      'Advanced genealogy tools & DNA integration',
+      'Early access to new features',
+      'Custom profile URL',
+      'Verified elite badge',
+      'Monthly genealogy reports',
+      'Priority event access',
+      'Dedicated account manager',
+      'API access for developers'
     ],
-    popular: false,
-  },
-]
+    popular: false
+  }
+];
 
 export default function PricingPage() {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly")
-  const { data: session } = useSession()
-  const router = useRouter()
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const handleSubscribe = (planId: string) => {
     if (!session) {
-      router.push("/login?redirect=/pricing")
-      return
+      router.push('/login?redirect=/pricing');
+      return;
     }
     // TODO: Integrate payment gateway
-    alert(`Subscribing to ${planId}. Payment integration coming soon!`)
-  }
+    alert(`Subscribing to ${planId}. Payment integration coming soon!`);
+  };
 
   const getYearlyPrice = (monthlyPrice: number) => {
-    return Math.round(monthlyPrice * 12 * 0.8) // 20% discount for yearly
-  }
+    return Math.round(monthlyPrice * 12 * 0.8); // 20% discount for yearly
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/30 to-white py-12 px-4">
@@ -141,20 +141,20 @@ export default function PricingPage() {
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4 mb-8">
-            <span className={`text-sm font-medium ${billingCycle === "monthly" ? "text-gray-900" : "text-gray-500"}`}>
+            <span className={`text-sm font-medium ${billingCycle === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
               Monthly
             </span>
             <button
-              onClick={() => setBillingCycle(billingCycle === "monthly" ? "yearly" : "monthly")}
+              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
               className="relative w-14 h-7 bg-orange-600 rounded-full transition-colors"
             >
               <span
                 className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-transform ${
-                  billingCycle === "yearly" ? "translate-x-7" : ""
+                  billingCycle === 'yearly' ? 'translate-x-7' : ''
                 }`}
               />
             </button>
-            <span className={`text-sm font-medium ${billingCycle === "yearly" ? "text-gray-900" : "text-gray-500"}`}>
+            <span className={`text-sm font-medium ${billingCycle === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
               Yearly
               <Badge className="ml-2 bg-green-100 text-green-800 text-xs">Save 20%</Badge>
             </span>
@@ -163,15 +163,15 @@ export default function PricingPage() {
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {subscriptionPlans.map((plan) => {
-            const Icon = plan.icon
-            const displayPrice = billingCycle === "yearly" ? getYearlyPrice(plan.price) : plan.price
+          {subscriptionPlans.map(plan => {
+            const Icon = plan.icon;
+            const displayPrice = billingCycle === 'yearly' ? getYearlyPrice(plan.price) : plan.price;
 
             return (
               <Card
                 key={plan.id}
                 className={`relative p-6 ${
-                  plan.popular ? "border-2 border-orange-500 shadow-xl scale-105" : "border border-gray-200"
+                  plan.popular ? 'border-2 border-orange-500 shadow-xl scale-105' : 'border border-gray-200'
                 } hover:shadow-lg transition-all bg-gradient-to-br ${plan.bgGradient}`}
               >
                 {plan.popular && (
@@ -187,14 +187,14 @@ export default function PricingPage() {
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                     <div className="flex items-baseline justify-center gap-1">
                       <span className="text-3xl font-bold text-gray-900">
-                        {plan.currency === "INR" ? "₹" : "$"}
+                        {plan.currency === 'INR' ? '₹' : '$'}
                         {displayPrice}
                       </span>
                       {plan.price > 0 && (
-                        <span className="text-gray-600 text-sm">/{billingCycle === "yearly" ? "year" : "month"}</span>
+                        <span className="text-gray-600 text-sm">/{billingCycle === 'yearly' ? 'year' : 'month'}</span>
                       )}
                     </div>
-                    {billingCycle === "yearly" && plan.price > 0 && (
+                    {billingCycle === 'yearly' && plan.price > 0 && (
                       <p className="text-xs text-gray-500 mt-1">
                         ₹{Math.round(displayPrice / 12)}/month billed annually
                       </p>
@@ -216,15 +216,15 @@ export default function PricingPage() {
                     onClick={() => handleSubscribe(plan.id)}
                     className={`w-full ${
                       plan.popular
-                        ? "bg-orange-600 hover:bg-orange-700 text-white"
-                        : "bg-gray-900 hover:bg-gray-800 text-white"
+                        ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                        : 'bg-gray-900 hover:bg-gray-800 text-white'
                     }`}
                   >
-                    {plan.price === 0 ? "Get Started Free" : "Start Free Trial"}
+                    {plan.price === 0 ? 'Get Started Free' : 'Start Free Trial'}
                   </Button>
                 </div>
               </Card>
-            )
+            );
           })}
         </div>
 
@@ -236,7 +236,7 @@ export default function PricingPage() {
               <thead>
                 <tr className="border-b">
                   <th className="py-4 px-4 font-semibold text-gray-900">Feature</th>
-                  {subscriptionPlans.map((plan) => (
+                  {subscriptionPlans.map(plan => (
                     <th key={plan.id} className="py-4 px-4 text-center font-semibold text-gray-900">
                       {plan.name}
                     </th>
@@ -340,5 +340,5 @@ export default function PricingPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

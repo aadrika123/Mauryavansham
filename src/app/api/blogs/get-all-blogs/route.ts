@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { eq, isNotNull, sql } from "drizzle-orm";
-import { blogs, users, blogReactions } from "@/src/drizzle/schema";
-import { db } from "@/src/drizzle/db";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
+import { NextRequest, NextResponse } from 'next/server';
+import { eq, isNotNull, sql } from 'drizzle-orm';
+import { blogs, users, blogReactions } from '@/src/drizzle/schema';
+import { db } from '@/src/drizzle/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,12 +26,12 @@ export async function GET(request: NextRequest) {
         author: {
           id: users.id,
           name: users.name,
-          email: users.email,
-        },
+          email: users.email
+        }
       })
       .from(blogs)
       .leftJoin(users, eq(blogs.authorId, users.id))
-      .where(eq(blogs.status, "approved"))
+      .where(eq(blogs.status, 'approved'))
       .orderBy(blogs.createdAt);
 
     // 2️⃣ Fetch all reactions
@@ -51,31 +51,27 @@ export async function GET(request: NextRequest) {
         createdAt: blogReactions.createdAt,
         authorId: users.id,
         authorName: users.name,
-        authorEmail: users.email,
+        authorEmail: users.email
       })
       .from(blogReactions)
-      .leftJoin(
-        users,
-        sql`${blogReactions.userId} = ${users.id}::text`
-      )
+      .leftJoin(users, sql`${blogReactions.userId} = ${users.id}::text`)
       .where(isNotNull(blogReactions.comment))
       .orderBy(blogReactions.createdAt);
 
     // 4️⃣ Merge blogs + reactions + comments
-    const formatted = result.map((b) => {
-      const blogReacts = allReactions.filter((r) => r.blogId === b.id);
-      const likesCount = blogReacts.filter((r) => r.isLiked).length;
-      const dislikesCount = blogReacts.filter((r) => r.isDisliked).length;
+    const formatted = result.map(b => {
+      const blogReacts = allReactions.filter(r => r.blogId === b.id);
+      const likesCount = blogReacts.filter(r => r.isLiked).length;
+      const dislikesCount = blogReacts.filter(r => r.isDisliked).length;
 
-      const userReaction =
-        blogReacts.find((r) => r.userId === currentUserId) || {
-          isLiked: false,
-          isDisliked: false,
-        };
+      const userReaction = blogReacts.find(r => r.userId === currentUserId) || {
+        isLiked: false,
+        isDisliked: false
+      };
 
       const blogCommentsList = allComments
-        .filter((c) => c.blogId === b.id && c.parentId === null)
-        .map((c) => ({
+        .filter(c => c.blogId === b.id && c.parentId === null)
+        .map(c => ({
           id: c.id,
           blogId: c.blogId,
           userId: c.userId,
@@ -88,11 +84,11 @@ export async function GET(request: NextRequest) {
           author: {
             id: c.authorId,
             name: c.authorName,
-            email: c.authorEmail,
+            email: c.authorEmail
           },
           replies: allComments
-            .filter((r) => r.parentId === c.id)
-            .map((r) => ({
+            .filter(r => r.parentId === c.id)
+            .map(r => ({
               id: r.id,
               blogId: r.blogId,
               userId: r.userId,
@@ -105,9 +101,9 @@ export async function GET(request: NextRequest) {
               author: {
                 id: r.authorId,
                 name: r.authorName,
-                email: r.authorEmail,
-              },
-            })),
+                email: r.authorEmail
+              }
+            }))
         }));
 
       return {
@@ -115,16 +111,13 @@ export async function GET(request: NextRequest) {
         likesCount,
         dislikesCount,
         userReaction,
-        comments: blogCommentsList,
+        comments: blogCommentsList
       };
     });
 
     return NextResponse.json({ blogs: formatted });
   } catch (error) {
-    console.error("Error fetching approved blogs with comments:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error('Error fetching approved blogs with comments:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,29 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/src/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/src/components/ui/dialog";
-import { Textarea } from "@/src/components/ui/textarea";
-import { Input } from "@/src/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/src/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
+import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/src/components/ui/dialog';
+import { Textarea } from '@/src/components/ui/textarea';
+import { Input } from '@/src/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
 
 type Discussion = {
   id: number;
@@ -33,7 +16,7 @@ type Discussion = {
   location: string;
   authorName: string;
   createdAt: string;
-  status: "pending" | "approved" | "rejected";
+  status: 'pending' | 'approved' | 'rejected';
   likeCount: string;
   rejectedBy?: string | null;
   rejectedReason?: string | null;
@@ -47,16 +30,16 @@ export default function AdminDiscussionsPage() {
   // Modal states
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState('');
 
   // Search & Filter
-  const [search, setSearch] = useState("");
-  const [filterCategory, setFilterCategory] = useState("all");
+  const [search, setSearch] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
 
   // ✅ Fetch discussions
   const fetchDiscussions = async () => {
     setLoading(true);
-    const res = await fetch("/api/discussions/all", { cache: "no-store" });
+    const res = await fetch('/api/discussions/all', { cache: 'no-store' });
     const data = await res.json();
     setDiscussions(data.data || []);
     setLoading(false);
@@ -69,9 +52,9 @@ export default function AdminDiscussionsPage() {
   // ✅ Approve
   const approveDiscussion = async (id: number) => {
     await fetch(`/api/discussions/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "approved" }),
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'approved' })
     });
     fetchDiscussions();
   };
@@ -81,16 +64,16 @@ export default function AdminDiscussionsPage() {
     if (!selectedId) return;
 
     await fetch(`/api/discussions/${selectedId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        status: "rejected",
-        rejectedReason: reason,
-      }),
+        status: 'rejected',
+        rejectedReason: reason
+      })
     });
 
     setOpen(false);
-    setReason("");
+    setReason('');
     setSelectedId(null);
     fetchDiscussions();
   };
@@ -98,12 +81,10 @@ export default function AdminDiscussionsPage() {
   // ✅ Filter & Search logic
   const filterData = (status: string) =>
     discussions
-      .filter((d) => d.status === status)
-      .filter((d) =>
-        filterCategory === "all" ? true : d.category === filterCategory
-      )
+      .filter(d => d.status === status)
+      .filter(d => (filterCategory === 'all' ? true : d.category === filterCategory))
       .filter(
-        (d) =>
+        d =>
           d.title.toLowerCase().includes(search.toLowerCase()) ||
           d.content.toLowerCase().includes(search.toLowerCase()) ||
           d.authorName.toLowerCase().includes(search.toLowerCase())
@@ -112,7 +93,7 @@ export default function AdminDiscussionsPage() {
   if (loading) return <p className="p-6">Loading...</p>;
 
   // Unique categories for filter
-  const categories = Array.from(new Set(discussions.map((d) => d.category)));
+  const categories = Array.from(new Set(discussions.map(d => d.category)));
 
   return (
     <div className="p-6 space-y-6">
@@ -121,7 +102,7 @@ export default function AdminDiscussionsPage() {
         <Input
           placeholder="Search by title, content, or author..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="w-full sm:w-1/2"
         />
         <Select value={filterCategory} onValueChange={setFilterCategory}>
@@ -130,7 +111,7 @@ export default function AdminDiscussionsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((c) => (
+            {categories.map(c => (
               <SelectItem key={c} value={c}>
                 {c}
               </SelectItem>
@@ -142,12 +123,8 @@ export default function AdminDiscussionsPage() {
       {/* Tabs for Active & Rejected */}
       <Tabs defaultValue="active">
         <TabsList className="flex flex-wrap">
-          <TabsTrigger value="active">
-            Active ({filterData("approved").length})
-          </TabsTrigger>
-          <TabsTrigger value="rejected">
-            Closed ({filterData("rejected").length})
-          </TabsTrigger>
+          <TabsTrigger value="active">Active ({filterData('approved').length})</TabsTrigger>
+          <TabsTrigger value="rejected">Closed ({filterData('rejected').length})</TabsTrigger>
         </TabsList>
 
         {/* ✅ Active Discussions Table */}
@@ -166,16 +143,14 @@ export default function AdminDiscussionsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filterData("approved").map((d) => (
+                {filterData('approved').map(d => (
                   <tr key={d.id} className="hover:bg-gray-50">
                     <td className="p-2 border">{d.title}</td>
                     <td className="p-2 border">{d.content}</td>
                     <td className="p-2 border">{d.category}</td>
                     <td className="p-2 border">{d.location}</td>
                     <td className="p-2 border">{d.authorName}</td>
-                    <td className="p-2 border">
-                      {new Date(d.createdAt).toLocaleString()}
-                    </td>
+                    <td className="p-2 border">{new Date(d.createdAt).toLocaleString()}</td>
                     <td className="p-2 border">
                       <Button
                         onClick={() => {
@@ -189,12 +164,9 @@ export default function AdminDiscussionsPage() {
                     </td>
                   </tr>
                 ))}
-                {filterData("approved").length === 0 && (
+                {filterData('approved').length === 0 && (
                   <tr>
-                    <td
-                      colSpan={7}
-                      className="p-4 text-center text-gray-500 border"
-                    >
+                    <td colSpan={7} className="p-4 text-center text-gray-500 border">
                       No active discussions found.
                     </td>
                   </tr>
@@ -221,33 +193,25 @@ export default function AdminDiscussionsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filterData("rejected").map((d) => (
+                {filterData('rejected').map(d => (
                   <tr key={d.id} className="hover:bg-gray-50">
                     <td className="p-2 border">{d.title}</td>
                     <td className="p-2 border">{d.content}</td>
                     <td className="p-2 border">{d.category}</td>
                     <td className="p-2 border">{d.location}</td>
                     <td className="p-2 border">{d.authorName}</td>
+                    <td className="p-2 border">{d.rejectedReason || 'No reason'}</td>
+                    <td className="p-2 border">{d.rejectedBy || 'Unknown'}</td>
                     <td className="p-2 border">
-                      {d.rejectedReason || "No reason"}
-                    </td>
-                    <td className="p-2 border">{d.rejectedBy || "Unknown"}</td>
-                    <td className="p-2 border">
-                      <Button
-                        onClick={() => approveDiscussion(d.id)}
-                        className="bg-green-600"
-                      >
+                      <Button onClick={() => approveDiscussion(d.id)} className="bg-green-600">
                         Active
                       </Button>
                     </td>
                   </tr>
                 ))}
-                {filterData("rejected").length === 0 && (
+                {filterData('rejected').length === 0 && (
                   <tr>
-                    <td
-                      colSpan={8}
-                      className="p-4 text-center text-gray-500 border"
-                    >
+                    <td colSpan={8} className="p-4 text-center text-gray-500 border">
                       No rejected discussions found.
                     </td>
                   </tr>
@@ -267,7 +231,7 @@ export default function AdminDiscussionsPage() {
           <Textarea
             placeholder="Enter reason for rejection..."
             value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            onChange={e => setReason(e.target.value)}
           />
           <DialogFooter>
             <Button onClick={() => setOpen(false)} variant="outline">

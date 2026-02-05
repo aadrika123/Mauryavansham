@@ -7,11 +7,11 @@
 // export async function GET() {
 //   try {
 //     console.log('🔍 Starting email debug check...');
-    
+
 //     // Test email configuration and capture error details
 //     let configValid = false;
 //     let configError = null;
-    
+
 //     try {
 //       console.log('🧪 Testing SMTP connection...');
 //       configValid = await testEmailConfig();
@@ -27,7 +27,7 @@
 //         stack: error.stack
 //       };
 //     }
-    
+
 //     // If testEmailConfig returned false but didn't throw, let's test directly
 //     if (!configValid && !configError) {
 //       try {
@@ -45,7 +45,7 @@
 //             rejectUnauthorized: false
 //           }
 //         });
-        
+
 //         await testTransporter.verify();
 //         console.log('✅ Direct test passed');
 //         configValid = true;
@@ -60,7 +60,7 @@
 //         };
 //       }
 //     }
-    
+
 //     const debugInfo = {
 //       timestamp: new Date().toISOString(),
 //       environment: process.env.NODE_ENV,
@@ -76,9 +76,9 @@
 //         secure: false
 //       }
 //     };
-    
+
 //     console.log('📊 Debug info:', debugInfo);
-    
+
 //     return NextResponse.json({
 //       message: 'Email debug information',
 //       debug: debugInfo,
@@ -130,7 +130,7 @@
 //       });
 //     } else {
 //       return NextResponse.json(
-//         { 
+//         {
 //           message: 'Test email failed. Check console logs for details.',
 //           result: response,
 //         },

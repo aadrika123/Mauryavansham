@@ -1,7 +1,7 @@
-import Link from "next/link"
-import { Button } from "@/src/components/ui/button"
-import { Badge } from "@/src/components/ui/badge"
-import { Globe } from "lucide-react"
+import Link from 'next/link';
+import { Button } from '@/src/components/ui/button';
+import { Badge } from '@/src/components/ui/badge';
+import { Globe } from 'lucide-react';
 
 export function CulturalHeritageSection() {
   return (
@@ -32,5 +32,5 @@ export function CulturalHeritageSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

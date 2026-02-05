@@ -16,10 +16,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const userId = Number(id);
@@ -27,7 +24,7 @@ export async function POST(
 
     // 1️⃣ Check if this admin already acted
     const existing = await db.query.userApprovals.findFirst({
-      where: (ua) => and(eq(ua.userId, userId), eq(ua.adminId, adminId))
+      where: ua => and(eq(ua.userId, userId), eq(ua.adminId, adminId))
     });
 
     if (existing) {
@@ -47,15 +44,11 @@ export async function POST(
 
     // 3️⃣ Recalculate approvals
     const approvals = await db.query.userApprovals.findMany({
-      where: (ua) => eq(ua.userId, userId)
+      where: ua => eq(ua.userId, userId)
     });
 
-    const approvedCount = approvals.filter(
-      (a) => a.status === 'approved'
-    ).length;
-    const rejectedCount = approvals.filter(
-      (a) => a.status === 'rejected'
-    ).length;
+    const approvedCount = approvals.filter(a => a.status === 'approved').length;
+    const rejectedCount = approvals.filter(a => a.status === 'rejected').length;
 
     let newStatus: 'pending' | 'approved' | 'rejected' = 'pending';
     let isApproved = false;
@@ -68,10 +61,7 @@ export async function POST(
       isApproved = true;
     }
 
-    await db
-      .update(users)
-      .set({ status: newStatus, isApproved })
-      .where(eq(users.id, userId));
+    await db.update(users).set({ status: newStatus, isApproved }).where(eq(users.id, userId));
 
     // 4️⃣ Fetch user email & name
     const [user] = await db.select().from(users).where(eq(users.id, userId));
@@ -89,8 +79,7 @@ export async function POST(
     const approvedByAdmin = adminName;
 
     if (approvedCount === 1) {
-      subject =
-        'Your www.mauryavansham.com Registration – First Step Completed ✅';
+      subject = 'Your www.mauryavansham.com Registration – First Step Completed ✅';
       html = `
         <p>Dear ${user.name},</p>
         <p>We are pleased to inform you that your registration on <b>www.mauryavansham.com</b> has successfully received its <b>first approval</b> from an Admin Member.</p>
@@ -116,8 +105,7 @@ export async function POST(
         <p>Warm regards,<br/>www.mauryavansham.com Team<br/>(Designed & Hosted by Aadrika Enterprises – A Community Development Initiative)</p>
       `;
     } else if (approvedCount >= 3) {
-      subject =
-        'Welcome to www.mauryavansham.com – Your Profile is Now Active 🌟';
+      subject = 'Welcome to www.mauryavansham.com – Your Profile is Now Active 🌟';
       html = `
        <p>Dear ${user.name},</p>
     <p>Congratulations and welcome aboard! 🎊</p>
@@ -151,9 +139,6 @@ export async function POST(
     });
   } catch (error) {
     console.error('Approve error:', error);
-    return NextResponse.json(
-      { error: 'Failed to approve user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to approve user' }, { status: 500 });
   }
 }

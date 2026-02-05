@@ -1,18 +1,18 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { Trophy, Star, Award, TrendingUp, Users, Target, Loader2 } from "lucide-react"
-import { Card } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { Progress } from "@/src/components/ui/progress"
-import { BADGES, REPUTATION_LEVELS } from "@/src/types/gamification"
+import { useState, useEffect } from 'react';
+import { Trophy, Star, Award, TrendingUp, Users, Target, Loader2 } from 'lucide-react';
+import { Card } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { Progress } from '@/src/components/ui/progress';
+import { BADGES, REPUTATION_LEVELS } from '@/src/types/gamification';
 
 export default function GamificationPage() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const [userStats, setUserStats] = useState({
     totalPoints: 0,
     level: 1,
-    rank: "Newcomer",
+    rank: 'Newcomer',
     earnedBadges: [] as string[],
     contributions: {
       profilesViewed: 0,
@@ -21,37 +21,37 @@ export default function GamificationPage() {
       postsCreated: 0,
       commentsAdded: 0,
       familyTreeMembers: 0,
-      referrals: 0,
+      referrals: 0
     },
     streak: 0,
     longestStreak: 0,
     globalRank: null as number | null,
-    communityRank: null as number | null,
-  })
+    communityRank: null as number | null
+  });
 
   useEffect(() => {
     const fetchGamificationData = async () => {
       try {
-        const response = await fetch("/api/gamification/stats")
-        if (!response.ok) throw new Error("Failed to fetch gamification stats")
+        const response = await fetch('/api/gamification/stats');
+        if (!response.ok) throw new Error('Failed to fetch gamification stats');
 
-        const data = await response.json()
-        setUserStats(data)
+        const data = await response.json();
+        setUserStats(data);
       } catch (error) {
-        console.error("[v0] Error fetching gamification data:", error)
+        console.error('[v0] Error fetching gamification data:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchGamificationData()
-  }, [])
+    fetchGamificationData();
+  }, []);
 
-  const currentLevel = REPUTATION_LEVELS.find((l) => l.level === userStats.level)
-  const nextLevel = REPUTATION_LEVELS.find((l) => l.level === userStats.level + 1)
+  const currentLevel = REPUTATION_LEVELS.find(l => l.level === userStats.level);
+  const nextLevel = REPUTATION_LEVELS.find(l => l.level === userStats.level + 1);
   const progressToNext = nextLevel
     ? ((userStats.totalPoints - currentLevel!.minPoints) / (nextLevel.minPoints - currentLevel!.minPoints)) * 100
-    : 100
+    : 100;
 
   if (loading) {
     return (
@@ -61,7 +61,7 @@ export default function GamificationPage() {
           <p className="text-gray-600">Loading your achievements...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -91,7 +91,7 @@ export default function GamificationPage() {
                 <p className="text-gray-600">
                   {nextLevel
                     ? `${nextLevel.minPoints - userStats.totalPoints} points to ${nextLevel.rank}`
-                    : "Maximum level reached!"}
+                    : 'Maximum level reached!'}
                 </p>
               </div>
             </div>
@@ -136,19 +136,19 @@ export default function GamificationPage() {
             <h2 className="text-3xl font-bold text-gray-900">Your Badges</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {BADGES.map((badge) => {
-              const isEarned = userStats.earnedBadges.includes(badge.type)
+            {BADGES.map(badge => {
+              const isEarned = userStats.earnedBadges.includes(badge.type);
               return (
                 <Card
                   key={badge.id}
                   className={`p-6 ${
                     isEarned
-                      ? "bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-400"
-                      : "bg-gray-50 opacity-60"
+                      ? 'bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-400'
+                      : 'bg-gray-50 opacity-60'
                   } hover:shadow-lg transition-all`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`text-4xl ${isEarned ? "" : "grayscale"}`}>{badge.icon}</div>
+                    <div className={`text-4xl ${isEarned ? '' : 'grayscale'}`}>{badge.icon}</div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-bold text-gray-900">{badge.name}</h3>
@@ -162,7 +162,7 @@ export default function GamificationPage() {
                     </div>
                   </div>
                 </Card>
-              )
+              );
             })}
           </div>
         </div>
@@ -172,23 +172,23 @@ export default function GamificationPage() {
           <h2 className="text-3xl font-bold text-center mb-8">Reputation Levels</h2>
           <div className="space-y-4">
             {REPUTATION_LEVELS.map((level, index) => {
-              const isCurrentLevel = level.level === userStats.level
-              const isAchieved = userStats.totalPoints >= level.minPoints
+              const isCurrentLevel = level.level === userStats.level;
+              const isAchieved = userStats.totalPoints >= level.minPoints;
 
               return (
                 <div
                   key={level.level}
                   className={`flex items-center gap-4 p-4 rounded-lg ${
                     isCurrentLevel
-                      ? "bg-gradient-to-r from-purple-100 to-orange-100 border-2 border-purple-400"
+                      ? 'bg-gradient-to-r from-purple-100 to-orange-100 border-2 border-purple-400'
                       : isAchieved
-                        ? "bg-green-50"
-                        : "bg-gray-50"
+                        ? 'bg-green-50'
+                        : 'bg-gray-50'
                   }`}
                 >
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${
-                      isAchieved ? `bg-${level.color}-600` : "bg-gray-400"
+                      isAchieved ? `bg-${level.color}-600` : 'bg-gray-400'
                     }`}
                   >
                     {level.level}
@@ -207,7 +207,7 @@ export default function GamificationPage() {
                     </div>
                   )}
                 </div>
-              )
+              );
             })}
           </div>
         </div>
@@ -262,5 +262,5 @@ export default function GamificationPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

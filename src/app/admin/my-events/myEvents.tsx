@@ -4,23 +4,10 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Loader from '@/src/components/ui/loader';
 import { Button } from '@/src/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/src/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/src/components/ui/table';
 import Link from 'next/link';
 import { exportToExcel } from '@/src/utils/exportExcel';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from '@/src/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/src/components/ui/dialog';
 
 interface Attendee {
   id: number;
@@ -47,9 +34,7 @@ export default function MyEvents() {
 
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<
-    'pending' | 'approved' | 'rejected'
-  >('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
   const [attendeesModalOpen, setAttendeesModalOpen] = useState(false);
   const [selectedAttendees, setSelectedAttendees] = useState<Attendee[]>([]);
   const [selectedEventTitle, setSelectedEventTitle] = useState('');
@@ -72,7 +57,7 @@ export default function MyEvents() {
     fetchEvents();
   }, [userId]);
 
-  const filteredEvents = events.filter((e) => e.status === activeTab);
+  const filteredEvents = events.filter(e => e.status === activeTab);
 
   const handleViewAttendees = (event: Event) => {
     setSelectedAttendees(event.attendees || []);
@@ -81,7 +66,7 @@ export default function MyEvents() {
   };
 
   const handleExportToExcel = async () => {
-    const data = selectedAttendees.map((attendee) => ({
+    const data = selectedAttendees.map(attendee => ({
       Name: attendee.name,
       Email: attendee.email,
       Phone: attendee.phone || '-',
@@ -106,8 +91,8 @@ export default function MyEvents() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-3 mb-4">
-        {['pending', 'approved', 'rejected'].map((tab) => {
-          const count = events.filter((e) => e.status === tab).length;
+        {['pending', 'approved', 'rejected'].map(tab => {
+          const count = events.filter(e => e.status === tab).length;
           return (
             <Button
               key={tab}
@@ -158,23 +143,16 @@ export default function MyEvents() {
                       </Button>
                     </Link>
 
-                    {(event.status === 'pending' ||
-                      event.status === 'approved') && (
+                    {(event.status === 'pending' || event.status === 'approved') && (
                       <Link href={`/admin/my-events/${event.id}/edit`}>
-                        <Button
-                          size="sm"
-                          className="bg-yellow-500 text-white hover:bg-yellow-600"
-                        >
+                        <Button size="sm" className="bg-yellow-500 text-white hover:bg-yellow-600">
                           Edit
                         </Button>
                       </Link>
                     )}
 
                     {event.status === 'approved' && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleViewAttendees(event)}
-                      >
+                      <Button size="sm" onClick={() => handleViewAttendees(event)}>
                         View Attendees
                       </Button>
                     )}
@@ -188,10 +166,7 @@ export default function MyEvents() {
 
       {/* Attendees Modal */}
       {attendeesModalOpen && (
-        <Dialog
-          open={attendeesModalOpen}
-          onOpenChange={() => setAttendeesModalOpen(false)}
-        >
+        <Dialog open={attendeesModalOpen} onOpenChange={() => setAttendeesModalOpen(false)}>
           <DialogContent className="max-w-4xl">
             <DialogHeader>
               <DialogTitle>Attendees of "{selectedEventTitle}"</DialogTitle>
@@ -219,9 +194,7 @@ export default function MyEvents() {
                       <TableCell>{attendee.phone || '-'}</TableCell>
                       <TableCell>{attendee.fatherName}</TableCell>
                       <TableCell>{attendee.city}</TableCell>
-                      <TableCell>
-                        {attendee.profession || attendee.designation || '-'}
-                      </TableCell>
+                      <TableCell>{attendee.profession || attendee.designation || '-'}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -229,16 +202,10 @@ export default function MyEvents() {
             </div>
 
             <DialogFooter className="flex justify-between mt-4">
-              <Button
-                variant="outline"
-                onClick={() => setAttendeesModalOpen(false)}
-              >
+              <Button variant="outline" onClick={() => setAttendeesModalOpen(false)}>
                 Close
               </Button>
-              <Button
-                className="bg-green-600 hover:bg-green-700"
-                onClick={handleExportToExcel}
-              >
+              <Button className="bg-green-600 hover:bg-green-700" onClick={handleExportToExcel}>
                 Export to Excel
               </Button>
             </DialogFooter>

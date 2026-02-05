@@ -1,13 +1,8 @@
-"use client";
+'use client';
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Badge } from "@/src/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { Badge } from '@/src/components/ui/badge';
 import {
   Heart,
   MessageCircle,
@@ -40,19 +35,19 @@ import {
   Megaphone,
   Edit3,
   DollarSign,
-  Target,
-} from "lucide-react";
+  Target
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import Loader from "@/src/components/ui/loader";
+  DropdownMenuTrigger
+} from '@/src/components/ui/dropdown-menu';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import Loader from '@/src/components/ui/loader';
 
 export default function Dashboard(props: any) {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,7 +55,7 @@ export default function Dashboard(props: any) {
   const [loading, setLoading] = useState(true);
 
   const dashboardData = props?.profileList || [];
-  console.log("dashboardData", dashboardData);
+  console.log('dashboardData', dashboardData);
 
   useEffect(() => {
     if (props?.profileList) {
@@ -80,9 +75,7 @@ export default function Dashboard(props: any) {
     totalBlogs: dashboardData?.blogs.length,
     approvedBlogs: dashboardData?.stats?.blogs?.approved,
     pendingBlogs: dashboardData?.stats?.blogs?.pending, // Assuming 12 likes per approved blog
-    rejectedBlogs:
-      (dashboardData?.stats?.blogs?.rejected ||
-      dashboardData?.stats?.blogs?.removed) || 0, // Assuming 5 comments per approved blog
+    rejectedBlogs: dashboardData?.stats?.blogs?.rejected || dashboardData?.stats?.blogs?.removed || 0, // Assuming 5 comments per approved blog
 
     // Ads
     totalAds: dashboardData?.stats?.ads?.total,
@@ -93,7 +86,7 @@ export default function Dashboard(props: any) {
     // Future features
     donations: 0,
     achievements: 0,
-    helpRequests: 0,
+    helpRequests: 0
   };
   const MotionCard = motion(Card);
   if (loading) {
@@ -108,12 +101,9 @@ export default function Dashboard(props: any) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome to Your Dashboard
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Your Dashboard</h1>
           <p className="text-gray-600">
-            Manage your matrimonial profile, blogs, advertisements, and more all
-            in one place.
+            Manage your matrimonial profile, blogs, advertisements, and more all in one place.
           </p>
         </div>
 
@@ -194,23 +184,23 @@ export default function Dashboard(props: any) {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-12">
           {[
             {
-              title: "Matrimonial",
+              title: 'Matrimonial',
               value: stats.totalProfiles,
               icon: Heart,
-              gradient: "from-rose-500 via-pink-500 to-pink-600",
+              gradient: 'from-rose-500 via-pink-500 to-pink-600'
             },
             {
-              title: "Blog Posts",
+              title: 'Blog Posts',
               value: stats.totalBlogs,
               icon: Camera,
-              gradient: "from-indigo-500 via-blue-500 to-cyan-500",
+              gradient: 'from-indigo-500 via-blue-500 to-cyan-500'
             },
             {
-              title: "Active Ads",
+              title: 'Active Ads',
               value: stats.totalAds,
               icon: Tv,
-              gradient: "from-green-500 via-emerald-500 to-teal-500",
-            },
+              gradient: 'from-green-500 via-emerald-500 to-teal-500'
+            }
             // {
             //   title: "Messages",
             //   value: stats.messages,
@@ -233,15 +223,13 @@ export default function Dashboard(props: any) {
             <MotionCard
               key={idx}
               whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              transition={{ type: 'spring', stiffness: 300 }}
               className={`bg-gradient-to-br ${stat.gradient} text-white rounded-2xl shadow-lg border-0`}
             >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs opacity-80 tracking-wide">
-                      {stat.title}
-                    </p>
+                    <p className="text-xs opacity-80 tracking-wide">{stat.title}</p>
                     <p className="text-3xl font-extrabold">{stat.value}</p>
                   </div>
                   <div className="bg-white/20 p-3 rounded-full">
@@ -264,21 +252,17 @@ export default function Dashboard(props: any) {
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
               <Card className="bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-pink-800 text-sm">
-                    Total Profiles
-                  </CardTitle>
+                  <CardTitle className="text-pink-800 text-sm">Total Profiles</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-pink-700">
-                      {stats.totalProfiles}
-                    </div>
+                    <div className="text-2xl font-bold text-pink-700">{stats.totalProfiles}</div>
                     <p className="text-pink-600 text-xs">total profiles</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-pink-600 hover:bg-pink-700"
-                    onClick={() => router.push("/dashboard/profile-list")}
+                    onClick={() => router.push('/dashboard/profile-list')}
                   >
                     <User className="mr-1 h-3 w-3" />
                     Manage
@@ -288,23 +272,17 @@ export default function Dashboard(props: any) {
 
               <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-green-800 text-sm">
-                    Active Profiles
-                  </CardTitle>
+                  <CardTitle className="text-green-800 text-sm">Active Profiles</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-green-700">
-                      {stats.activeProfiles}
-                    </div>
-                    <p className="text-green-600 text-xs">
-                      total active profiles
-                    </p>
+                    <div className="text-2xl font-bold text-green-700">{stats.activeProfiles}</div>
+                    <p className="text-green-600 text-xs">total active profiles</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => router.push("/dashboard/profile-list")}
+                    onClick={() => router.push('/dashboard/profile-list')}
                   >
                     <User className="mr-1 h-3 w-3" />
                     Manage
@@ -314,9 +292,7 @@ export default function Dashboard(props: any) {
 
               <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-red-800 text-sm">
-                    Deactivated profiles
-                  </CardTitle>
+                  <CardTitle className="text-red-800 text-sm">Deactivated profiles</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
@@ -324,17 +300,13 @@ export default function Dashboard(props: any) {
                     <p className="text-red-600 text-xs">
                       total deactivated profiles
                     </p> */}
-                    <div className="text-2xl font-bold text-red-600">
-                      {stats.deactivatedProfiles || 0}
-                    </div>
-                    <p className="text-red-600 text-xs">
-                      total deactivated profiles
-                    </p>
+                    <div className="text-2xl font-bold text-red-600">{stats.deactivatedProfiles || 0}</div>
+                    <p className="text-red-600 text-xs">total deactivated profiles</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-red-600 hover:bg-red-700"
-                    onClick={() => router.push("/dashboard/profile-list")}
+                    onClick={() => router.push('/dashboard/profile-list')}
                   >
                     <User className="mr-1 h-3 w-3" />
                     Manage
@@ -343,21 +315,17 @@ export default function Dashboard(props: any) {
               </Card>
               <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-purple-800 text-sm">
-                    Create profiles
-                  </CardTitle>
+                  <CardTitle className="text-purple-800 text-sm">Create profiles</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
                     <Plus className="h-8 w-8 text-purple-600 mx-auto mb-1" />
-                    <p className="text-purple-600 text-xs">
-                      create new profile
-                    </p>
+                    <p className="text-purple-600 text-xs">create new profile</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-purple-600 hover:bg-purple-700"
-                    onClick={() => router.push("/dashboard/create-profile")}
+                    onClick={() => router.push('/dashboard/create-profile')}
                   >
                     <Plus className="mr-1 h-3 w-3" />
                     Create
@@ -376,7 +344,7 @@ export default function Dashboard(props: any) {
                 <Button
                   size="sm"
                   className="w-full bg-emerald-600 hover:bg-emerald-700"
-                  onClick={() => router.push("/dashboard/my-blogs")}
+                  onClick={() => router.push('/dashboard/my-blogs')}
                 >
                   <Plus className="mr-1 h-3 w-3" />
                   Write Blog
@@ -386,21 +354,17 @@ export default function Dashboard(props: any) {
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
               <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-blue-800 text-sm">
-                    Total Posts
-                  </CardTitle>
+                  <CardTitle className="text-blue-800 text-sm">Total Posts</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-blue-700">
-                      {stats.totalBlogs}
-                    </div>
+                    <div className="text-2xl font-bold text-blue-700">{stats.totalBlogs}</div>
                     <p className="text-blue-600 text-xs">blog posts</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-blue-600 hover:bg-blue-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push('/dashboard/my-blogs')}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View All
@@ -410,21 +374,17 @@ export default function Dashboard(props: any) {
 
               <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100 border-cyan-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-cyan-800 text-sm">
-                    Active Blog
-                  </CardTitle>
+                  <CardTitle className="text-cyan-800 text-sm">Active Blog</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-cyan-700">
-                      {stats.approvedBlogs}
-                    </div>
+                    <div className="text-2xl font-bold text-cyan-700">{stats.approvedBlogs}</div>
                     <p className="text-cyan-600 text-xs">total active blogs</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-cyan-600 hover:bg-cyan-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push('/dashboard/my-blogs')}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View
@@ -434,21 +394,17 @@ export default function Dashboard(props: any) {
 
               <Card className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-teal-800 text-sm">
-                    Pending Blogs
-                  </CardTitle>
+                  <CardTitle className="text-teal-800 text-sm">Pending Blogs</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-teal-700">
-                      {stats.pendingBlogs}
-                    </div>
+                    <div className="text-2xl font-bold text-teal-700">{stats.pendingBlogs}</div>
                     <p className="text-teal-600 text-xs">total pending blogs</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-teal-600 hover:bg-teal-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push('/dashboard/my-blogs')}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View
@@ -458,25 +414,19 @@ export default function Dashboard(props: any) {
 
               <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-emerald-800 text-sm">
-                    Rejected Blog
-                  </CardTitle>
+                  <CardTitle className="text-emerald-800 text-sm">Rejected Blog</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
                     {/* <Edit3 className="h-8 w-8 text-emerald-600 mx-auto mb-1" />
                     <p className="text-emerald-600 text-xs">write new post</p> */}
-                    <div className="text-2xl font-bold text-emerald-600">
-                      {stats.rejectedBlogs}
-                    </div>
-                    <p className="text-teal-600 text-xs">
-                      total rejected blogs
-                    </p>
+                    <div className="text-2xl font-bold text-emerald-600">{stats.rejectedBlogs}</div>
+                    <p className="text-teal-600 text-xs">total rejected blogs</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-emerald-600 hover:bg-emerald-700"
-                    onClick={() => router.push("/dashboard/my-blogs")}
+                    onClick={() => router.push('/dashboard/my-blogs')}
                   >
                     <BookOpen className="mr-1 h-3 w-3" />
                     View
@@ -495,7 +445,7 @@ export default function Dashboard(props: any) {
                 <Button
                   size="sm"
                   className="w-full bg-amber-600 hover:bg-amber-700"
-                  onClick={() => router.push("/dashboard/book-ads")}
+                  onClick={() => router.push('/dashboard/book-ads')}
                 >
                   <Plus className="mr-1 h-3 w-3" />
                   Book Ad
@@ -505,21 +455,17 @@ export default function Dashboard(props: any) {
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
               <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-green-800 text-sm">
-                    Total Ads
-                  </CardTitle>
+                  <CardTitle className="text-green-800 text-sm">Total Ads</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-green-700">
-                      {stats.totalAds}
-                    </div>
+                    <div className="text-2xl font-bold text-green-700">{stats.totalAds}</div>
                     <p className="text-green-600 text-xs">running ads</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push('/dashboard/book-ads')}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All
@@ -533,15 +479,13 @@ export default function Dashboard(props: any) {
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-lime-700">
-                      {stats.approvedAds}
-                    </div>
+                    <div className="text-2xl font-bold text-lime-700">{stats.approvedAds}</div>
                     <p className="text-lime-600 text-xs">total active ads</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-lime-600 hover:bg-lime-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push('/dashboard/book-ads')}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All
@@ -551,21 +495,17 @@ export default function Dashboard(props: any) {
 
               <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-yellow-800 text-sm">
-                    Pending Ads
-                  </CardTitle>
+                  <CardTitle className="text-yellow-800 text-sm">Pending Ads</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
-                    <div className="text-2xl font-bold text-yellow-700">
-                      {stats.pendingAds}
-                    </div>
+                    <div className="text-2xl font-bold text-yellow-700">{stats.pendingAds}</div>
                     <p className="text-yellow-600 text-xs">total pending ads</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-yellow-600 hover:bg-yellow-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push('/dashboard/book-ads')}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All
@@ -575,23 +515,19 @@ export default function Dashboard(props: any) {
 
               <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-amber-800 text-sm">
-                    Rejected Ads
-                  </CardTitle>
+                  <CardTitle className="text-amber-800 text-sm">Rejected Ads</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center mb-3">
                     {/* <Plus className="h-8 w-8 text-amber-600 mx-auto mb-1" />
                     <p className="text-amber-600 text-xs">create campaign</p> */}
-                    <div className="text-2xl font-bold text-amber-600">
-                      {stats.rejectedAds}
-                    </div>
+                    <div className="text-2xl font-bold text-amber-600">{stats.rejectedAds}</div>
                     <p className="text-amber-600 text-xs">total rejected ads</p>
                   </div>
                   <Button
                     size="sm"
                     className="w-full bg-amber-600 hover:bg-amber-700"
-                    onClick={() => router.push("/dashboard/book-ads")}
+                    onClick={() => router.push('/dashboard/book-ads')}
                   >
                     <Megaphone className="mr-1 h-3 w-3" />
                     View All
@@ -603,9 +539,7 @@ export default function Dashboard(props: any) {
 
           {/* Coming Soon Features */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Coming Soon
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Coming Soon</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 opacity-75">
                 <CardHeader className="pb-3">
@@ -615,9 +549,7 @@ export default function Dashboard(props: any) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-purple-600 text-sm mb-3">
-                    Help others and make a difference in your community.
-                  </p>
+                  <p className="text-purple-600 text-sm mb-3">Help others and make a difference in your community.</p>
                   <Button size="sm" className="w-full" disabled>
                     Coming Soon
                   </Button>
@@ -649,9 +581,7 @@ export default function Dashboard(props: any) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-blue-600 text-sm mb-3">
-                    Get support and help from our community experts.
-                  </p>
+                  <p className="text-blue-600 text-sm mb-3">Get support and help from our community experts.</p>
                   <Button size="sm" className="w-full" disabled>
                     Coming Soon
                   </Button>

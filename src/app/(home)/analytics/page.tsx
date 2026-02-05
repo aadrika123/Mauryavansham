@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   TrendingUp,
   Users,
@@ -12,27 +12,27 @@ import {
   Award,
   Activity,
   ArrowUp,
-  ArrowDown,
-} from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { Progress } from "@/src/components/ui/progress"
-import { Button } from "@/src/components/ui/button"
-import type { JSX } from "react/jsx-runtime" // Import JSX to fix the undeclared variable error
+  ArrowDown
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { Progress } from '@/src/components/ui/progress';
+import { Button } from '@/src/components/ui/button';
+import type { JSX } from 'react/jsx-runtime'; // Import JSX to fix the undeclared variable error
 
 export default function AnalyticsDashboard() {
-  const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d" | "1y">("30d")
-  const [analyticsData, setAnalyticsData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const { data: session } = useSession()
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
-      if (!session?.user?.id) return
+      if (!session?.user?.id) return;
 
-      setLoading(true)
+      setLoading(true);
       try {
-        const days = timeRange === "7d" ? "7" : timeRange === "30d" ? "30" : timeRange === "90d" ? "90" : "365"
+        const days = timeRange === '7d' ? '7' : timeRange === '30d' ? '30' : timeRange === '90d' ? '90' : '365';
 
         const [
           overviewRes,
@@ -41,7 +41,7 @@ export default function AnalyticsDashboard() {
           familyTreeRes,
           communityRes,
           eventsDetailRes,
-          engagementDetailRes,
+          engagementDetailRes
         ] = await Promise.all([
           fetch(`/api/analytics/overview?period=${days}`),
           fetch(`/api/analytics/engagement?days=${days}`),
@@ -49,72 +49,72 @@ export default function AnalyticsDashboard() {
           fetch(`/api/analytics/family-tree`),
           fetch(`/api/analytics/community`),
           fetch(`/api/analytics/events-detail`),
-          fetch(`/api/analytics/engagement-detail`),
-        ])
+          fetch(`/api/analytics/engagement-detail`)
+        ]);
 
-        const overview = await overviewRes.json()
-        const engagement = await engagementRes.json()
-        const topContent = await topContentRes.json()
-        const familyTree = await familyTreeRes.json()
-        const community = await communityRes.json()
-        const eventsDetail = await eventsDetailRes.json()
-        const engagementDetail = await engagementDetailRes.json()
+        const overview = await overviewRes.json();
+        const engagement = await engagementRes.json();
+        const topContent = await topContentRes.json();
+        const familyTree = await familyTreeRes.json();
+        const community = await communityRes.json();
+        const eventsDetail = await eventsDetailRes.json();
+        const engagementDetail = await engagementDetailRes.json();
 
         setAnalyticsData({
           profileViews: {
             total: overview.overview?.profileViews || 0,
             trend: 12.5, // Can be calculated from historical data
-            comparison: "vs last month",
+            comparison: 'vs last month'
           },
           engagement: {
             total: engagementDetail.engagement?.total || 0,
             trend: 8.3, // Can be calculated from historical data
-            comparison: "vs last month",
+            comparison: 'vs last month',
             breakdown: engagementDetail.engagement?.breakdown || {
               likes: 0,
               comments: 0,
               shares: 0,
-              messages: 0,
-            },
+              messages: 0
+            }
           },
           familyTree: familyTree.familyTree || {
             totalMembers: 0,
             newThisMonth: 0,
             completeness: 0,
-            generations: 1,
+            generations: 1
           },
           events: eventsDetail.events || {
             attended: 0,
             created: 0,
             upcoming: 0,
-            invitations: 0,
+            invitations: 0
           },
           community: community.community || {
             connections: 0,
             newConnections: 0,
             profileRank: 0,
-            totalUsers: 0,
+            totalUsers: 0
           },
           content: {
             posts: overview.overview?.totalDiscussions || 0,
             blogs: overview.overview?.totalBlogs || 0,
             comments: engagementDetail.engagement?.breakdown?.comments || 0,
-            reactions: overview.overview?.blogViews || 0,
+            reactions: overview.overview?.blogViews || 0
           },
           isPremium: overview.user?.isPremium || false,
           isVerified: overview.user?.isVerified || false,
           topContent: topContent.topContent || { blogs: [], events: [], discussions: [] },
-          recentActivity: engagement.engagement || {},
-        })
+          recentActivity: engagement.engagement || {}
+        });
       } catch (error) {
-        console.error("[v0] Failed to fetch analytics:", error)
+        console.error('[v0] Failed to fetch analytics:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchAnalytics()
-  }, [session, timeRange])
+    fetchAnalytics();
+  }, [session, timeRange]);
 
   if (loading || !analyticsData) {
     return (
@@ -128,50 +128,50 @@ export default function AnalyticsDashboard() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   const topPerformingContent = [
     ...analyticsData.topContent.blogs.map((blog: any) => ({
       title: blog.title,
-      type: "Blog",
+      type: 'Blog',
       views: blog.views || 0,
       engagement: 0,
-      date: new Date(blog.createdAt).toLocaleDateString(),
+      date: new Date(blog.createdAt).toLocaleDateString()
     })),
     ...analyticsData.topContent.events.map((event: any) => ({
       title: event.title,
-      type: "Event",
+      type: 'Event',
       views: event.maxAttendees || 0,
       engagement: 0,
-      date: new Date(event.date).toLocaleDateString(),
+      date: new Date(event.date).toLocaleDateString()
     })),
     ...analyticsData.topContent.discussions.map((discussion: any) => ({
       title: discussion.title,
-      type: "Discussion",
+      type: 'Discussion',
       views: discussion.replyCount || 0,
       engagement: 0,
-      date: new Date(discussion.createdAt).toLocaleDateString(),
-    })),
-  ].slice(0, 5)
+      date: new Date(discussion.createdAt).toLocaleDateString()
+    }))
+  ].slice(0, 5);
 
   const recentActivity = [
     ...(analyticsData.recentActivity.recentBlogs || []).map((blog: any) => ({
-      action: "New blog post:",
+      action: 'New blog post:',
       user: blog.title,
-      time: new Date(blog.createdAt).toLocaleDateString(),
+      time: new Date(blog.createdAt).toLocaleDateString()
     })),
     ...(analyticsData.recentActivity.recentEvents || []).map((event: any) => ({
-      action: "Event created:",
+      action: 'Event created:',
       user: event.title,
-      time: new Date(event.date).toLocaleDateString(),
+      time: new Date(event.date).toLocaleDateString()
     })),
     ...(analyticsData.recentActivity.recentDiscussions || []).map((discussion: any) => ({
-      action: "Discussion started:",
+      action: 'Discussion started:',
       user: discussion.title,
-      time: new Date(discussion.createdAt).toLocaleDateString(),
-    })),
-  ].slice(0, 5)
+      time: new Date(discussion.createdAt).toLocaleDateString()
+    }))
+  ].slice(0, 5);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-white py-12 px-4">
@@ -188,15 +188,15 @@ export default function AnalyticsDashboard() {
             <p className="text-gray-600">Track your community presence and engagement</p>
           </div>
           <div className="flex gap-2 mt-4 md:mt-0">
-            {(["7d", "30d", "90d", "1y"] as const).map((range) => (
+            {(['7d', '30d', '90d', '1y'] as const).map(range => (
               <Button
                 key={range}
-                variant={timeRange === range ? "default" : "outline"}
+                variant={timeRange === range ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setTimeRange(range)}
-                className={timeRange === range ? "bg-blue-600" : ""}
+                className={timeRange === range ? 'bg-blue-600' : ''}
               >
-                {range === "7d" ? "7 Days" : range === "30d" ? "30 Days" : range === "90d" ? "90 Days" : "1 Year"}
+                {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '90d' ? '90 Days' : '1 Year'}
               </Button>
             ))}
           </div>
@@ -384,7 +384,7 @@ export default function AnalyticsDashboard() {
                       </div>
                       <Badge
                         className={`ml-2 ${
-                          rec.impact === "High" ? "bg-orange-100 text-orange-800" : "bg-blue-100 text-blue-800"
+                          rec.impact === 'High' ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'
                         }`}
                       >
                         {rec.impact}
@@ -423,7 +423,7 @@ export default function AnalyticsDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function MetricCard({
@@ -432,17 +432,17 @@ function MetricCard({
   trend,
   icon,
   color,
-  isRank = false,
+  isRank = false
 }: {
-  title: string
-  value: string
-  trend: number
-  icon: JSX.Element
-  color: string
-  isRank?: boolean
+  title: string;
+  value: string;
+  trend: number;
+  icon: JSX.Element;
+  color: string;
+  isRank?: boolean;
 }) {
-  const isPositive = isRank ? trend < 0 : trend > 0
-  const TrendIcon = isPositive ? ArrowUp : ArrowDown
+  const isPositive = isRank ? trend < 0 : trend > 0;
+  const TrendIcon = isPositive ? ArrowUp : ArrowDown;
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
@@ -451,7 +451,7 @@ function MetricCard({
           <div className={`p-3 rounded-lg bg-${color}-100`}>{icon}</div>
           <div
             className={`flex items-center gap-1 text-sm font-semibold ${
-              isPositive ? "text-green-600" : "text-red-600"
+              isPositive ? 'text-green-600' : 'text-red-600'
             }`}
           >
             <TrendIcon className="w-4 h-4" />
@@ -462,21 +462,11 @@ function MetricCard({
         <p className="text-3xl font-bold text-gray-900">{value}</p>
       </CardContent>
     </Card>
-  )
+  );
 }
 
-function EngagementBar({
-  label,
-  value,
-  total,
-  color,
-}: {
-  label: string
-  value: number
-  total: number
-  color: string
-}) {
-  const percentage = (value / total) * 100
+function EngagementBar({ label, value, total, color }: { label: string; value: number; total: number; color: string }) {
+  const percentage = (value / total) * 100;
 
   return (
     <div>
@@ -488,7 +478,7 @@ function EngagementBar({
         <div className={`${color} h-2 rounded-full transition-all`} style={{ width: `${percentage}%` }} />
       </div>
     </div>
-  )
+  );
 }
 
 function StatCard({ title, value, icon }: { title: string; value: number; icon: JSX.Element }) {
@@ -500,26 +490,26 @@ function StatCard({ title, value, icon }: { title: string; value: number; icon: 
         <p className="text-sm text-gray-600">{title}</p>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 const recommendations = [
   {
-    title: "Complete your profile",
-    description: "Add your education and occupation details",
-    impact: "High",
-    progress: 75,
+    title: 'Complete your profile',
+    description: 'Add your education and occupation details',
+    impact: 'High',
+    progress: 75
   },
   {
-    title: "Expand your network",
-    description: "Connect with 10 more community members",
-    impact: "Medium",
-    progress: 40,
+    title: 'Expand your network',
+    description: 'Connect with 10 more community members',
+    impact: 'Medium',
+    progress: 40
   },
   {
-    title: "Share heritage stories",
+    title: 'Share heritage stories',
     description: "Document your family's cultural traditions",
-    impact: "High",
-    progress: 20,
-  },
-]
+    impact: 'High',
+    progress: 20
+  }
+];

@@ -1,8 +1,8 @@
-import { db } from "@/src/drizzle/db";
-import { events } from "@/src/drizzle/db/schemas/events";
-import { event_attendees, users } from "@/src/drizzle/schema";
-import { NextRequest, NextResponse } from "next/server";
-import { and, eq } from "drizzle-orm";
+import { db } from '@/src/drizzle/db';
+import { events } from '@/src/drizzle/db/schemas/events';
+import { event_attendees, users } from '@/src/drizzle/schema';
+import { NextRequest, NextResponse } from 'next/server';
+import { and, eq } from 'drizzle-orm';
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,17 +26,14 @@ export async function POST(req: NextRequest) {
 
         // 👇 new
         userId: body.userId, // frontend se bhejna
-        status: "pending",
+        status: 'pending'
       })
       .returning();
 
     return NextResponse.json({ success: true, event: newEvent[0] });
   } catch (error) {
-    console.error("Error creating event:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to create event" },
-      { status: 500 }
-    );
+    console.error('Error creating event:', error);
+    return NextResponse.json({ success: false, error: 'Failed to create event' }, { status: 500 });
   }
 }
 
@@ -51,8 +48,8 @@ export async function POST(req: NextRequest) {
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const userId = url.searchParams.get("userId"); // optional filter for user's events
-    const status = url.searchParams.get("status"); // optional filter for status
+    const userId = url.searchParams.get('userId'); // optional filter for user's events
+    const status = url.searchParams.get('status'); // optional filter for status
 
     const conditions: any[] = [];
     if (userId) conditions.push(eq(events.userId, Number(userId)));
@@ -60,7 +57,7 @@ export async function GET(req: Request) {
 
     // 🟢 1️⃣ Fetch events (optionally filtered by userId)
     let allEvents;
-   if (conditions.length > 0) {
+    if (conditions.length > 0) {
       allEvents = await db
         .select()
         .from(events)
@@ -71,7 +68,7 @@ export async function GET(req: Request) {
 
     // 🟢 2️⃣ Attach attendees and organizer info
     const eventsWithDetails = await Promise.all(
-      allEvents.map(async (event) => {
+      allEvents.map(async event => {
         // fetch attendees for this event
         const attendees = await db
           .select({
@@ -84,7 +81,7 @@ export async function GET(req: Request) {
             address: users.address,
             city: users.city,
             profession: users.profession,
-            designation: users.designation,
+            designation: users.designation
           })
           .from(event_attendees)
           .innerJoin(users, eq(event_attendees.userId, users.id))
@@ -104,7 +101,7 @@ export async function GET(req: Request) {
             profession: users.profession,
             designation: users.designation,
             role: users.role,
-            status: users.status,
+            status: users.status
           })
           .from(users)
           .where(eq(users.id, (event.userId as number) || 0))
@@ -114,17 +111,14 @@ export async function GET(req: Request) {
           ...event,
           attendees,
           attendeesCount: attendees.length,
-          organizerInfo: organizerInfo[0] || null, // full organizer details
+          organizerInfo: organizerInfo[0] || null // full organizer details
         };
       })
     );
 
     return NextResponse.json(eventsWithDetails, { status: 200 });
   } catch (error) {
-    console.error("Error fetching events:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch events" },
-      { status: 500 }
-    );
+    console.error('Error fetching events:', error);
+    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
   }
 }

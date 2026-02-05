@@ -1,29 +1,12 @@
-"use client";
-import Link from "next/link";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Youtube,
-  Mail,
-  Phone,
-  MapPin,
-  Crown,
-  Lock,
-  X,
-  User,
-} from "lucide-react";
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaYoutube,
-  FaXTwitter,
-} from "react-icons/fa6";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+'use client';
+import Link from 'next/link';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Crown, Lock, X, User } from 'lucide-react';
+import { FaFacebookF, FaInstagram, FaYoutube, FaXTwitter } from 'react-icons/fa6';
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export function Footer() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -31,7 +14,7 @@ export function Footer() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const Router = useRouter();
 
-  console.log("session", session);
+  console.log('session', session);
   useEffect(() => {
     if (session?.user) {
       setCurrentUser(session.user);
@@ -40,29 +23,29 @@ export function Footer() {
 
   const footerLinks = {
     community: [
-      { name: "Members Directory", href: "/community" },
-      { name: "Family Tree", href: "/family-tree" },
-      { name: "Achievements", href: "/achievements" },
-      { name: "Help Exchange", href: "/help" },
+      { name: 'Members Directory', href: '/community' },
+      { name: 'Family Tree', href: '/family-tree' },
+      { name: 'Achievements', href: '/achievements' },
+      { name: 'Help Exchange', href: '/help' }
     ],
     services: [
-      { name: "Matrimonial", href: "/matrimonial" },
-      { name: "Trading Platform", href: "/trading" },
-      { name: "Events", href: "/events" },
-      { name: "Donations", href: "/donations" },
+      { name: 'Matrimonial', href: '/matrimonial' },
+      { name: 'Trading Platform', href: '/trading' },
+      { name: 'Events', href: '/events' },
+      { name: 'Donations', href: '/donations' }
     ],
     heritage: [
-      { name: "Our History", href: "/heritage/history" },
-      { name: "Cultural Timeline", href: "/heritage/timeline" },
-      { name: "Traditions", href: "/heritage/traditions" },
-      { name: "Notable Figures", href: "/heritage/figures" },
+      { name: 'Our History', href: '/heritage/history' },
+      { name: 'Cultural Timeline', href: '/heritage/timeline' },
+      { name: 'Traditions', href: '/heritage/traditions' },
+      { name: 'Notable Figures', href: '/heritage/figures' }
     ],
     support: [
-      { name: "Help Center", href: "/support" },
-      { name: "Contact Us", href: "/contact" },
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
-    ],
+      { name: 'Help Center', href: '/support' },
+      { name: 'Contact Us', href: '/contact' },
+      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Terms of Service', href: '/terms' }
+    ]
   };
 
   return (
@@ -79,8 +62,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-red-200 mb-4 text-sm sm:text-base">
-              Connecting the global Maurya community and preserving our royal
-              heritage for future generations.
+              Connecting the global Maurya community and preserving our royal heritage for future generations.
             </p>
             <div className="flex gap-3 sm:gap-4">
               <Link
@@ -120,9 +102,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-bold text-yellow-400 mb-4">
-              Quick Links
-            </h4>
+            <h4 className="text-lg font-bold text-yellow-400 mb-4">Quick Links</h4>
             <ul className="space-y-2 text-red-200 text-sm sm:text-base">
               {/* <li>
                 <Link href="/" className="hover:text-white">
@@ -169,13 +149,10 @@ export function Footer() {
                       return;
                     }
 
-                    if (currentUser.role === "user") {
-                      Router.push("/dashboard/create-profile");
-                    } else if (
-                      currentUser.role === "admin" ||
-                      currentUser.role === "superAdmin"
-                    ) {
-                      Router.push("/admin/create-profile");
+                    if (currentUser.role === 'user') {
+                      Router.push('/dashboard/create-profile');
+                    } else if (currentUser.role === 'admin' || currentUser.role === 'superAdmin') {
+                      Router.push('/admin/create-profile');
                     }
                   }}
                   className="hover:text-white text-left"
@@ -192,13 +169,10 @@ export function Footer() {
                       return;
                     }
 
-                    if (currentUser.role === "user") {
-                      Router.push("/dashboard/register-business");
-                    } else if (
-                      currentUser.role === "admin" ||
-                      currentUser.role === "superAdmin"
-                    ) {
-                      Router.push("/admin/register-business");
+                    if (currentUser.role === 'user') {
+                      Router.push('/dashboard/register-business');
+                    } else if (currentUser.role === 'admin' || currentUser.role === 'superAdmin') {
+                      Router.push('/admin/register-business');
                     }
                   }}
                   className="hover:text-white text-left"
@@ -238,9 +212,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="text-lg font-bold text-yellow-400 mb-4">
-              Contact Us
-            </h4>
+            <h4 className="text-lg font-bold text-yellow-400 mb-4">Contact Us</h4>
             <div className="space-y-3 text-red-200 text-sm sm:text-base">
               <div className="flex items-center gap-2 max-w-[180px] sm:max-w-none">
                 <span className="text-yellow-400">✉</span>
@@ -264,8 +236,7 @@ export function Footer() {
         {/* Bottom Footer */}
         <div className="border-t border-red-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-red-200 text-xs sm:text-sm text-center md:text-left">
-            © 2025 Mauryavansh.com. All rights reserved. | Developed &
-            Maintained by{" "}
+            © 2025 Mauryavansh.com. All rights reserved. | Developed & Maintained by{' '}
             <Link
               href="https://aadrikaenterprises.com/"
               className="underline"
@@ -297,20 +268,16 @@ export function Footer() {
                 <Lock className="h-5 w-5" />
                 Login Required
               </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <p className="text-gray-600 mb-6">
-              Please login to participate in community discussions and create
-              new topics.
+              Please login to participate in community discussions and create new topics.
             </p>
             <div className="space-y-3">
               <Button
-                onClick={() => Router.push("/sign-in")}
+                onClick={() => Router.push('/sign-in')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
               >
                 <User className="h-4 w-4 mr-2" />

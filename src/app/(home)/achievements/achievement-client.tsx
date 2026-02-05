@@ -1,17 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Badge } from "@/src/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
+import { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Badge } from '@/src/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
 import {
   ArrowLeft,
   Plus,
@@ -25,33 +19,22 @@ import {
   MapPin,
   Award,
   Lock,
-  X,
-} from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
+  X
+} from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 // import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/src/components/ui/dialog";
-import CreateAchievementForm from "./createAchievementForm";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/src/components/ui/dialog';
+import CreateAchievementForm from './createAchievementForm';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 interface Achievement {
   id: number;
   name: string;
   title: string;
   description: string;
   image: string;
-  category:
-    | "Healthcare"
-    | "Sports"
-    | "Technology"
-    | "Education"
-    | "Business"
-    | "Arts";
+  category: 'Healthcare' | 'Sports' | 'Technology' | 'Education' | 'Business' | 'Arts';
   isVerified: boolean;
   isFeatured: boolean;
   isHallOfFame: boolean;
@@ -94,7 +77,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
     if (ads.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setCurrentIndex(prev => (prev + 1) % ads.length);
     }, 10000);
 
     return () => clearInterval(timer);
@@ -102,7 +85,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
 
   useEffect(() => {
     if (ads[currentIndex]) {
-      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: 'POST' });
     }
   }, [currentIndex, ads]);
 
@@ -111,12 +94,8 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
       <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
         <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4">
           <div>
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800">
-              Book Your Ad (10)
-            </h3>
-            <span className="text-sm font-normal text-amber-700">
-              Please select image size of (900x300 px)
-            </span>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800">Book Your Ad (10)</h3>
+            <span className="text-sm font-normal text-amber-700">Please select image size of (900x300 px)</span>
           </div>
         </div>
       </div>
@@ -131,17 +110,10 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
             <div
               key={ad.id}
               className={`absolute inset-0  transition-opacity duration-1000 ${
-                index === currentIndex
-                  ? "opacity-100 z-10"
-                  : "opacity-0 pointer-events-none z-0"
+                index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
-              <a
-                href={ad.adUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block w-full h-full"
-              >
+              <a href={ad.adUrl} target="_blank" rel="noopener noreferrer" className="inline-block w-full h-full">
                 <img
                   src={ad.bannerImageUrl}
                   alt={`Ad ${index + 1}`}
@@ -162,9 +134,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                     key={index}
                     onClick={() => setCurrentIndex(index)}
                     className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                      index === currentIndex
-                        ? "bg-amber-600 scale-125"
-                        : "bg-amber-400/50 hover:bg-amber-400/75"
+                      index === currentIndex ? 'bg-amber-600 scale-125' : 'bg-amber-400/50 hover:bg-amber-400/75'
                     }`}
                     aria-label={`Go to ad ${index + 1}`}
                     type="button"
@@ -178,16 +148,14 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
     </div>
   );
 };
-export default function AchievementsClient({
-  initialAchievements,
-}: AchievementsClientProps) {
+export default function AchievementsClient({ initialAchievements }: AchievementsClientProps) {
   const { data: session } = useSession();
   const Router = useRouter();
-  const [activeTab, setActiveTab] = useState("hall-of-fame");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterCategory, setFilterCategory] = useState("all");
+  const [activeTab, setActiveTab] = useState('hall-of-fame');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
-  const bottomAds = adPlacements.filter((ad) => ad.placementId === 10);
+  const bottomAds = adPlacements.filter(ad => ad.placementId === 10);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
   const [openForm, setOpenForm] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -195,96 +163,85 @@ export default function AchievementsClient({
   console.log(initialAchievements);
 
   useEffect(() => {
-    fetch("/api/ad-placements/approved")
-      .then((res) => res.json())
+    fetch('/api/ad-placements/approved')
+      .then(res => res.json())
       .then((data: AdPlacement[]) => {
         setAdPlacements(data);
       })
-      .catch(() => console.error("Failed to load ad placements"));
+      .catch(() => console.error('Failed to load ad placements'));
   }, []);
-  const [achievements, setAchievements] = useState<Achievement[]>(
-    initialAchievements || []
-  );
-  const featuredAchievements = achievements.filter(
-    (achievement) => achievement.isFeatured
-  );
+  const [achievements, setAchievements] = useState<Achievement[]>(initialAchievements || []);
+  const featuredAchievements = achievements.filter(achievement => achievement.isFeatured);
 
-  const hallOfFameMembers = achievements.filter(
-    (achievement) => achievement.isHallOfFame || !achievement.isHallOfFame
-  );
-  const recentAchievements = achievements.filter(
-    (achievement) => achievement.year === 2024
-  );
+  const hallOfFameMembers = achievements.filter(achievement => achievement.isHallOfFame || !achievement.isHallOfFame);
+  const recentAchievements = achievements.filter(achievement => achievement.year === 2024);
 
-  const filteredAchievements = achievements.filter((achievement) => {
+  const filteredAchievements = achievements.filter(achievement => {
     const matchesSearch =
       achievement.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       achievement.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       achievement.description.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesCategory =
-      filterCategory === "all" ||
-      achievement.category.toLowerCase() === filterCategory.toLowerCase();
+      filterCategory === 'all' || achievement.category.toLowerCase() === filterCategory.toLowerCase();
 
     return matchesSearch && matchesCategory;
   });
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "Healthcare":
-        return "bg-pink-100 text-pink-800";
-      case "Sports":
-        return "bg-yellow-100 text-yellow-800";
-      case "Technology":
-        return "bg-blue-100 text-blue-800";
-      case "Education":
-        return "bg-green-100 text-green-800";
-      case "Business":
-        return "bg-purple-100 text-purple-800";
-      case "Arts":
-        return "bg-orange-100 text-orange-800";
+      case 'Healthcare':
+        return 'bg-pink-100 text-pink-800';
+      case 'Sports':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Technology':
+        return 'bg-blue-100 text-blue-800';
+      case 'Education':
+        return 'bg-green-100 text-green-800';
+      case 'Business':
+        return 'bg-purple-100 text-purple-800';
+      case 'Arts':
+        return 'bg-orange-100 text-orange-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "Healthcare":
-        return "🏥";
-      case "Sports":
-        return "🏆";
-      case "Technology":
-        return "💻";
-      case "Education":
-        return "📚";
-      case "Business":
-        return "💼";
-      case "Arts":
-        return "🎨";
+      case 'Healthcare':
+        return '🏥';
+      case 'Sports':
+        return '🏆';
+      case 'Technology':
+        return '💻';
+      case 'Education':
+        return '📚';
+      case 'Business':
+        return '💼';
+      case 'Arts':
+        return '🎨';
       default:
-        return "⭐";
+        return '⭐';
     }
   };
   useEffect(() => {
     if (featuredAchievements.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrentFeaturedIndex(
-        (prev) => (prev + 1) % featuredAchievements.length
-      );
+      setCurrentFeaturedIndex(prev => (prev + 1) % featuredAchievements.length);
     }, 10000);
     return () => clearInterval(timer);
   }, [featuredAchievements.length]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setAchievements((prev) =>
-        prev.map((ach) => {
+      setAchievements(prev =>
+        prev.map(ach => {
           if (ach.isFeatured && ach.images && ach.images.length > 1) {
             const currentIndex = ach.currentImageIndex || 0;
             return {
               ...ach,
-              currentImageIndex: (currentIndex + 1) % ach.images.length,
+              currentImageIndex: (currentIndex + 1) % ach.images.length
             };
           }
           return ach;
@@ -316,16 +273,11 @@ export default function AchievementsClient({
       </div> */}
       <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
         <div className="flex items-center gap-4">
-          <Link
-            href="/"
-            className="flex items-center text-gray-600 hover:text-red-700"
-          >
+          <Link href="/" className="flex items-center text-gray-600 hover:text-red-700">
             <ArrowLeft className="w-4 h-4 text-red-700" />
             <span className="text-red-700">Back to Home / </span>
           </Link>
-          <h1 className="text-2xl font-bold text-red-700">
-            Community Achievements
-          </h1>
+          <h1 className="text-2xl font-bold text-red-700">Community Achievements</h1>
         </div>
 
         {/* ✅ Add button here */}
@@ -352,18 +304,18 @@ export default function AchievementsClient({
             // 🔹 User is logged in → navigate based on role
             const role = session?.user?.role;
 
-            if (role === "admin") {
-              Router.push("/admin/create-achievement-general");
-            } else if (role === "superAdmin") {
-              Router.push("/admin/create-achievement");
-            } else if (role === "user") {
-              Router.push("/dashboard/create-achievement-general");
+            if (role === 'admin') {
+              Router.push('/admin/create-achievement-general');
+            } else if (role === 'superAdmin') {
+              Router.push('/admin/create-achievement');
+            } else if (role === 'user') {
+              Router.push('/dashboard/create-achievement-general');
             } else {
               // Optional fallback (unknown role)
               setShowLoginModal(true);
             }
           }}
-           className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
+          className="bg-red-600 hover:bg-red-700 text-white flex items-center gap-2"
         >
           <Plus className="w-4 h-4" /> Add Achievement
         </Button>
@@ -377,7 +329,7 @@ export default function AchievementsClient({
             <Input
               placeholder="Search achievements..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -406,21 +358,21 @@ export default function AchievementsClient({
         <div className="max-w-7xl mx-auto">
           <div className="flex">
             <button
-              onClick={() => setActiveTab("hall-of-fame")}
+              onClick={() => setActiveTab('hall-of-fame')}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "hall-of-fame"
-                  ? "border-orange-600 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                activeTab === 'hall-of-fame'
+                  ? 'border-orange-600 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               Hall of Fame
             </button>
             <button
-              onClick={() => setActiveTab("by-category")}
+              onClick={() => setActiveTab('by-category')}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "by-category"
-                  ? "border-orange-600 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                activeTab === 'by-category'
+                  ? 'border-orange-600 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               By Category
@@ -430,21 +382,19 @@ export default function AchievementsClient({
       </div>
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Achievement */}
-        {featuredAchievements.length > 0 && activeTab === "hall-of-fame" && (
+        {featuredAchievements.length > 0 && activeTab === 'hall-of-fame' && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-red-700 mb-6">
-              Featured Achievements
-            </h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Featured Achievements</h2>
 
             <div className="relative w-full overflow-hidden">
               {/* Slider Container */}
               <div
                 className="flex transition-transform duration-700 ease-in-out"
                 style={{
-                  transform: `translateX(-${currentFeaturedIndex * 100}%)`,
+                  transform: `translateX(-${currentFeaturedIndex * 100}%)`
                 }}
               >
-                {featuredAchievements.map((featuredAchievement) => (
+                {featuredAchievements.map(featuredAchievement => (
                   <div
                     key={featuredAchievement.id}
                     className="w-full flex-shrink-0"
@@ -459,25 +409,12 @@ export default function AchievementsClient({
                             <div
                               className="flex transition-transform duration-700 ease-in-out"
                               style={{
-                                transform: `translateX(-${
-                                  (featuredAchievement.currentImageIndex || 0) *
-                                  100
-                                }%)`,
-                                width: `${
-                                  (featuredAchievement.images?.length || 1) *
-                                  100
-                                }%`,
+                                transform: `translateX(-${(featuredAchievement.currentImageIndex || 0) * 100}%)`,
+                                width: `${(featuredAchievement.images?.length || 1) * 100}%`
                               }}
                             >
-                              {(
-                                featuredAchievement.images || [
-                                  featuredAchievement.image,
-                                ]
-                              ).map((imgUrl, i) => (
-                                <div
-                                  key={i}
-                                  className="flex-shrink-0 w-full flex justify-center items-center"
-                                >
+                              {(featuredAchievement.images || [featuredAchievement.image]).map((imgUrl, i) => (
+                                <div key={i} className="flex-shrink-0 w-full flex justify-center items-center">
                                   <img
                                     src={imgUrl}
                                     alt={`${featuredAchievement.name}-${i}`}
@@ -491,16 +428,8 @@ export default function AchievementsClient({
                           {/* Right Side - Content */}
                           <div className="w-2/3 p-6">
                             <div className="flex items-center gap-2 mb-4">
-                              <Badge
-                                className={getCategoryColor(
-                                  featuredAchievement.category
-                                )}
-                              >
-                                <span className="mr-1">
-                                  {getCategoryIcon(
-                                    featuredAchievement.category
-                                  )}
-                                </span>
+                              <Badge className={getCategoryColor(featuredAchievement.category)}>
+                                <span className="mr-1">{getCategoryIcon(featuredAchievement.category)}</span>
                                 {featuredAchievement.category}
                               </Badge>
                               {featuredAchievement.isVerified && (
@@ -511,30 +440,18 @@ export default function AchievementsClient({
                               )}
                             </div>
 
-                            <h3 className="text-2xl font-bold text-red-700 mb-2">
-                              {featuredAchievement.name}
-                            </h3>
-                            <h4 className="text-lg font-semibold text-red-600 mb-4">
-                              {featuredAchievement.title}
-                            </h4>
+                            <h3 className="text-2xl font-bold text-red-700 mb-2">{featuredAchievement.name}</h3>
+                            <h4 className="text-lg font-semibold text-red-600 mb-4">{featuredAchievement.title}</h4>
 
-                            <p className="text-gray-600 mb-6 leading-relaxed">
-                              {featuredAchievement.description}
-                            </p>
+                            <p className="text-gray-600 mb-6 leading-relaxed">{featuredAchievement.description}</p>
 
                             <div className="mb-6">
-                              <h5 className="font-semibold text-red-700 mb-2">
-                                Key Achievement:
-                              </h5>
-                              <p className="text-gray-700">
-                                {featuredAchievement.keyAchievement}
-                              </p>
+                              <h5 className="font-semibold text-red-700 mb-2">Key Achievement:</h5>
+                              <p className="text-gray-700">{featuredAchievement.keyAchievement}</p>
                             </div>
 
                             <div className="mb-6">
-                              <p className="text-green-600 font-medium">
-                                {featuredAchievement.impact}
-                              </p>
+                              <p className="text-green-600 font-medium">{featuredAchievement.impact}</p>
                             </div>
 
                             <div className="flex items-center gap-6 mb-6 text-gray-600">
@@ -569,9 +486,7 @@ export default function AchievementsClient({
                         key={idx}
                         onClick={() => setCurrentFeaturedIndex(idx)}
                         className={`w-3 h-3 rounded-full transition-all ${
-                          idx === currentFeaturedIndex
-                            ? "bg-orange-600 scale-110"
-                            : "bg-orange-300 hover:bg-orange-400"
+                          idx === currentFeaturedIndex ? 'bg-orange-600 scale-110' : 'bg-orange-300 hover:bg-orange-400'
                         }`}
                       />
                     ))}
@@ -581,9 +496,7 @@ export default function AchievementsClient({
                   <button
                     onClick={() =>
                       setCurrentFeaturedIndex(
-                        (prev) =>
-                          (prev - 1 + featuredAchievements.length) %
-                          featuredAchievements.length
+                        prev => (prev - 1 + featuredAchievements.length) % featuredAchievements.length
                       )
                     }
                     className="absolute left-3 top-1/2 -translate-y-1/2 bg-orange-500/70 text-white rounded-full p-2"
@@ -591,11 +504,7 @@ export default function AchievementsClient({
                     ‹
                   </button>
                   <button
-                    onClick={() =>
-                      setCurrentFeaturedIndex(
-                        (prev) => (prev + 1) % featuredAchievements.length
-                      )
-                    }
+                    onClick={() => setCurrentFeaturedIndex(prev => (prev + 1) % featuredAchievements.length)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 bg-orange-500/70 text-white rounded-full p-2"
                   >
                     ›
@@ -607,17 +516,12 @@ export default function AchievementsClient({
         )}
 
         {/* Hall of Fame Members */}
-        {activeTab === "hall-of-fame" && (
+        {activeTab === 'hall-of-fame' && (
           <div>
-            <h2 className="text-2xl font-bold text-red-700 mb-6">
-              Hall of Fame Members
-            </h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Hall of Fame Members</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {hallOfFameMembers.map((achievement) => (
-                <Card
-                  key={achievement.id}
-                  className="bg-yellow-50 hover:shadow-lg transition-shadow overflow-hidden"
-                >
+              {hallOfFameMembers.map(achievement => (
+                <Card key={achievement.id} className="bg-yellow-50 hover:shadow-lg transition-shadow overflow-hidden">
                   <CardContent className="p-0">
                     <div className="relative p-4">
                       <div className="flex justify-center mb-4 relative w-24 h-24 mx-auto overflow-hidden rounded-lg">
@@ -626,9 +530,7 @@ export default function AchievementsClient({
                             <div
                               className="flex transition-transform duration-700 ease-in-out"
                               style={{
-                                transform: `translateX(-${
-                                  achievement.currentImageIndex ?? 0
-                                }00%)`,
+                                transform: `translateX(-${achievement.currentImageIndex ?? 0}00%)`
                               }}
                             >
                               {achievement.images.map((imgUrl, imgIndex) => (
@@ -651,42 +553,26 @@ export default function AchievementsClient({
                       </div>
 
                       <div className="absolute top-4 left-4 flex gap-2">
-                        <Badge
-                          className={getCategoryColor(achievement.category)}
-                        >
-                          <span className="mr-1">
-                            {getCategoryIcon(achievement.category)}
-                          </span>
+                        <Badge className={getCategoryColor(achievement.category)}>
+                          <span className="mr-1">{getCategoryIcon(achievement.category)}</span>
                           {achievement.category}
                         </Badge>
                       </div>
                     </div>
 
                     <div className="p-4 pt-0">
-                      <h3 className="text-lg font-bold text-red-700 mb-1 text-center">
-                        {achievement.name}
-                      </h3>
-                      <h4 className="text-sm font-semibold text-purple-600 mb-3 text-center">
-                        {achievement.title}
-                      </h4>
+                      <h3 className="text-lg font-bold text-red-700 mb-1 text-center">{achievement.name}</h3>
+                      <h4 className="text-sm font-semibold text-purple-600 mb-3 text-center">{achievement.title}</h4>
 
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {achievement.description}
-                      </p>
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">{achievement.description}</p>
 
                       <div className="mb-4">
-                        <p className="text-xs text-gray-500 mb-1">
-                          Achievement:
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          {achievement.keyAchievement}
-                        </p>
+                        <p className="text-xs text-gray-500 mb-1">Achievement:</p>
+                        <p className="text-sm text-gray-700">{achievement.keyAchievement}</p>
                       </div>
 
                       <div className="mb-4">
-                        <p className="text-sm text-green-600 font-medium">
-                          {achievement.impact}
-                        </p>
+                        <p className="text-sm text-green-600 font-medium">{achievement.impact}</p>
                       </div>
 
                       <div className="flex justify-between items-center text-xs text-gray-500 mb-4">
@@ -703,17 +589,12 @@ export default function AchievementsClient({
         )}
 
         {/* By Category */}
-        {activeTab === "by-category" && (
+        {activeTab === 'by-category' && (
           <div>
-            <h2 className="text-2xl font-bold text-red-700 mb-6">
-              Achievements by Category
-            </h2>
+            <h2 className="text-2xl font-bold text-red-700 mb-6">Achievements by Category</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAchievements.map((achievement) => (
-                <Card
-                  key={achievement.id}
-                  className="bg-white hover:shadow-lg transition-shadow overflow-hidden"
-                >
+              {filteredAchievements.map(achievement => (
+                <Card key={achievement.id} className="bg-white hover:shadow-lg transition-shadow overflow-hidden">
                   <CardContent className="p-4">
                     <div className="flex justify-center mb-4 relative w-24 h-24 mx-auto overflow-hidden rounded-lg">
                       {achievement.images && achievement.images.length > 0 ? (
@@ -721,9 +602,7 @@ export default function AchievementsClient({
                           <div
                             className="flex transition-transform duration-700 ease-in-out"
                             style={{
-                              transform: `translateX(-${
-                                achievement.currentImageIndex ?? 0
-                              }00%)`,
+                              transform: `translateX(-${achievement.currentImageIndex ?? 0}00%)`
                             }}
                           >
                             {achievement.images.map((imgUrl, imgIndex) => (
@@ -744,9 +623,7 @@ export default function AchievementsClient({
                         />
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {achievement.description}
-                    </p>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{achievement.description}</p>
                     <div className="flex justify-between items-center text-xs text-gray-500">
                       <span>{achievement.year}</span>
                       <span>{achievement.location}</span>
@@ -759,15 +636,11 @@ export default function AchievementsClient({
         )}
 
         {/* Nominations Placeholder */}
-        {activeTab === "nominations" && (
+        {activeTab === 'nominations' && (
           <Card className="p-8 text-center">
             <Award className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-red-700 mb-2">
-              Nominations
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Pending nominations and community suggestions will appear here
-            </p>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">Nominations</h3>
+            <p className="text-gray-600 mb-4">Pending nominations and community suggestions will appear here</p>
             <Button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white">
               <Plus className="w-4 h-4 mr-2" />
               Submit Nomination
@@ -789,30 +662,22 @@ export default function AchievementsClient({
                 <Lock className="h-5 w-5" />
                 Login Required
               </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <p className="text-gray-600 mb-6">
-              Please login to participate in community discussions and create
-              new topics.
+              Please login to participate in community discussions and create new topics.
             </p>
             <div className="space-y-3">
               <Button
-                onClick={() => Router.push("/sign-in")}
+                onClick={() => Router.push('/sign-in')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
               >
                 <User className="h-4 w-4 mr-2" />
                 Login
               </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={() => setShowLoginModal(false)} variant="outline" className="w-full">
                 Cancel
               </Button>
             </div>

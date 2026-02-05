@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { Badge } from "@/src/components/ui/badge";
-import { Plus, Edit, Trash2, X } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Card, CardContent } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { Plus, Edit, Trash2, X } from 'lucide-react';
 
 interface Category {
   id: number;
   name: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
   discussionCount?: number;
 }
 
 export default function CategoryMaster() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,16 +28,16 @@ export default function CategoryMaster() {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/discussions/category");
+      const res = await fetch('/api/discussions/category');
       const data = await res.json();
       if (data.success) {
         setCategories(data.data);
       } else {
-        alert(data.message || "Failed to fetch categories");
+        alert(data.message || 'Failed to fetch categories');
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to fetch categories");
+      alert('Failed to fetch categories');
     } finally {
       setLoading(false);
     }
@@ -48,43 +48,43 @@ export default function CategoryMaster() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/discussions/category", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newCategoryName.trim() }),
+      const res = await fetch('/api/discussions/category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCategoryName.trim() })
       });
       const data = await res.json();
 
       if (data.success) {
         setCategories([data.data, ...categories]);
-        setNewCategoryName("");
+        setNewCategoryName('');
       } else {
-        alert(data.message || "Failed to add category");
+        alert(data.message || 'Failed to add category');
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to add category");
+      alert('Failed to add category');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteCategory = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this category?")) return;
+    if (!confirm('Are you sure you want to delete this category?')) return;
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/discussions/category/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/discussions/category/${id}`, { method: 'DELETE' });
       const data = await res.json();
 
       if (data.success) {
-        setCategories(categories.filter((cat) => cat.id !== id));
+        setCategories(categories.filter(cat => cat.id !== id));
       } else {
-        alert(data.message || "Failed to delete category");
+        alert(data.message || 'Failed to delete category');
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to delete category");
+      alert('Failed to delete category');
     } finally {
       setLoading(false);
     }
@@ -101,22 +101,22 @@ export default function CategoryMaster() {
     setLoading(true);
     try {
       const res = await fetch(`/api/discussions/category/${editingCategory.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingCategory),
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingCategory)
       });
       const data = await res.json();
 
       if (data.success) {
-        setCategories(categories.map((cat) => (cat.id === editingCategory.id ? data.data : cat)));
+        setCategories(categories.map(cat => (cat.id === editingCategory.id ? data.data : cat)));
         setModalOpen(false);
         setEditingCategory(null);
       } else {
-        alert(data.message || "Failed to update category");
+        alert(data.message || 'Failed to update category');
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to update category");
+      alert('Failed to update category');
     } finally {
       setLoading(false);
     }
@@ -125,9 +125,7 @@ export default function CategoryMaster() {
   return (
     <div className="p-8 bg-gradient-to-b from-yellow-50 to-orange-50 min-h-screen">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-red-700 mb-6 text-center">
-          Category Master
-        </h1>
+        <h1 className="text-3xl font-bold text-red-700 mb-6 text-center">Category Master</h1>
 
         {/* Add Form */}
         <Card className="mb-8 bg-yellow-50 border-yellow-200 shadow-lg">
@@ -137,7 +135,7 @@ export default function CategoryMaster() {
               <Input
                 placeholder="Category Name"
                 value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
+                onChange={e => setNewCategoryName(e.target.value)}
                 className="flex-1"
                 disabled={loading}
               />
@@ -146,7 +144,13 @@ export default function CategoryMaster() {
                 className="bg-gradient-to-r from-orange-500 to-red-600 text-white hover:from-orange-600 hover:to-red-700 flex items-center gap-2"
                 disabled={loading}
               >
-                {loading ? "Adding..." : <><Plus className="h-4 w-4" /> Add</>}
+                {loading ? (
+                  'Adding...'
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4" /> Add
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
@@ -155,9 +159,7 @@ export default function CategoryMaster() {
         {/* Categories Table */}
         <Card className="bg-yellow-50 border-yellow-200 shadow-lg">
           <CardContent className="p-6">
-            {loading && (
-              <div className="text-center py-4 text-red-600 font-semibold">Loading...</div>
-            )}
+            {loading && <div className="text-center py-4 text-red-600 font-semibold">Loading...</div>}
             <table className="w-full table-auto text-left border-collapse">
               <thead>
                 <tr className="bg-orange-100 text-red-700">
@@ -179,9 +181,9 @@ export default function CategoryMaster() {
                     <td className="py-2 px-4">
                       <Badge
                         className={`${
-                          cat.status === "active"
-                            ? "bg-green-100 text-green-800 border-green-200"
-                            : "bg-red-100 text-red-800 border-red-200"
+                          cat.status === 'active'
+                            ? 'bg-green-100 text-green-800 border-green-200'
+                            : 'bg-red-100 text-red-800 border-red-200'
                         }`}
                       >
                         {cat.status}
@@ -236,9 +238,7 @@ export default function CategoryMaster() {
             <h2 className="text-xl font-semibold mb-4 text-red-600">Edit Category</h2>
             <Input
               value={editingCategory.name}
-              onChange={(e) =>
-                setEditingCategory({ ...editingCategory, name: e.target.value })
-              }
+              onChange={e => setEditingCategory({ ...editingCategory, name: e.target.value })}
               placeholder="Category Name"
               className="mb-4"
               disabled={loading}
@@ -247,11 +247,11 @@ export default function CategoryMaster() {
               <span>Status:</span>
               <Button
                 size="sm"
-                variant={editingCategory.status === "active" ? "default" : "outline"}
+                variant={editingCategory.status === 'active' ? 'default' : 'outline'}
                 onClick={() =>
                   setEditingCategory({
                     ...editingCategory,
-                    status: "active",
+                    status: 'active'
                   })
                 }
                 disabled={loading}
@@ -260,11 +260,11 @@ export default function CategoryMaster() {
               </Button>
               <Button
                 size="sm"
-                variant={editingCategory.status === "inactive" ? "default" : "outline"}
+                variant={editingCategory.status === 'inactive' ? 'default' : 'outline'}
                 onClick={() =>
                   setEditingCategory({
                     ...editingCategory,
-                    status: "inactive",
+                    status: 'inactive'
                   })
                 }
                 disabled={loading}
@@ -273,11 +273,7 @@ export default function CategoryMaster() {
               </Button>
             </div>
             <div className="flex justify-end gap-3">
-              <Button
-                onClick={() => setModalOpen(false)}
-                variant="outline"
-                disabled={loading}
-              >
+              <Button onClick={() => setModalOpen(false)} variant="outline" disabled={loading}>
                 Cancel
               </Button>
               <Button
@@ -285,7 +281,7 @@ export default function CategoryMaster() {
                 className="bg-gradient-to-r from-orange-500 to-red-600 text-white hover:from-orange-600 hover:to-red-700"
                 disabled={loading}
               >
-                {loading ? "Updating..." : "Update"}
+                {loading ? 'Updating...' : 'Update'}
               </Button>
             </div>
           </div>

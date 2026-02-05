@@ -3,10 +3,7 @@ import { db } from '@/src/drizzle/db';
 import { events } from '@/src/drizzle/schema';
 import { eq } from 'drizzle-orm';
 
-export async function PUT(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const eventId = Number(id);
@@ -26,9 +23,6 @@ export async function PUT(
     return NextResponse.json(updated[0], { status: 200 });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: 'Failed to update event' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
   }
 }

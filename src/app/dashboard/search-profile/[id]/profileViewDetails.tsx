@@ -26,10 +26,7 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import Link from 'next/link';
-import type {
-  DetailedProfile,
-  Profile
-} from '@/src/features/searchProfile/type';
+import type { DetailedProfile, Profile } from '@/src/features/searchProfile/type';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Loader from '@/src/components/ui/loader';
@@ -48,7 +45,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
   const getInitials = (name: string): string => {
     return name
       .split(' ')
-      .map((n) => n[0])
+      .map(n => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
@@ -57,27 +54,19 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
   const [expressed, setExpressed] = useState<Record<string, boolean>>({});
   const [showProfileSelectModal, setShowProfileSelectModal] = useState(false);
   const [userProfiles, setUserProfiles] = useState<Profile[]>([]);
-  const [pendingReceiverProfile, setPendingReceiverProfile] = useState<
-    string | null
-  >(null);
-  const [pendingReceiverUser, setPendingReceiverUser] = useState<string | null>(
-    null
-  );
+  const [pendingReceiverProfile, setPendingReceiverProfile] = useState<string | null>(null);
+  const [pendingReceiverUser, setPendingReceiverUser] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const ProfileImageCarousel = ({ profile }: { profile: any }) => {
     // Get all available images, prioritizing profileImage1 as primary
-    const images = [
-      profile.profileImage1,
-      profile.profileImage2,
-      profile.profileImage3
-    ].filter(Boolean); // Remove empty/null images
+    const images = [profile.profileImage1, profile.profileImage2, profile.profileImage3].filter(Boolean); // Remove empty/null images
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const getInitials = (name: string): string => {
       return name
         .split(' ')
-        .map((n) => n[0])
+        .map(n => n[0])
         .join('')
         .toUpperCase()
         .slice(0, 2);
@@ -85,16 +74,12 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
 
     const goToPrevious = (e: React.MouseEvent) => {
       e.stopPropagation(); // Prevent card click
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? images.length - 1 : prev - 1
-      );
+      setCurrentImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
     };
 
     const goToNext = (e: React.MouseEvent) => {
       e.stopPropagation(); // Prevent card click
-      setCurrentImageIndex((prev) =>
-        prev === images.length - 1 ? 0 : prev + 1
-      );
+      setCurrentImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
     };
 
     const goToImage = (index: number, e: React.MouseEvent) => {
@@ -111,7 +96,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
               src={images[currentImageIndex]}
               alt={`${profile.name}'s profile`}
               className="max-w-full max-h-full object-contain transition-all duration-500 group-hover:scale-105"
-              onError={(e) => {
+              onError={e => {
                 // Fallback to initials if image fails to load
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
@@ -150,7 +135,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                   {images.map((_, index) => (
                     <button
                       key={index}
-                      onClick={(e) => goToImage(index, e)}
+                      onClick={e => goToImage(index, e)}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
                         currentImageIndex === index
                           ? 'bg-white scale-110 shadow-lg'
@@ -178,9 +163,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
         ) : (
           // Fallback when no images available
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
-            <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
-              {getInitials(profile.name)}
-            </div>
+            <div className="text-orange-600 text-3xl lg:text-4xl font-bold">{getInitials(profile.name)}</div>
           </div>
         )}
 
@@ -205,10 +188,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
       </div>
     );
   };
-  const handleExpressInterest = async (
-    receiverProfileId: string,
-    receiverUserId: string
-  ) => {
+  const handleExpressInterest = async (receiverProfileId: string, receiverUserId: string) => {
     setPendingReceiverProfile(receiverProfileId);
     setPendingReceiverUser(receiverUserId);
 
@@ -238,32 +218,29 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
 
     setLoading(true); // show loader for POST request
     try {
-      const res = await fetch(
-        `/api/profile-interest/${pendingReceiverProfile}/interests`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            senderUserId: session?.user?.id, // correct field name
-            senderProfileId: profileId, // profile id of sender
-            receiverUserId: pendingReceiverUser, // correct field name
-            senderProfile: {
-              name: session?.user?.name,
-              email: session?.user?.email,
-              phone: (session?.user as any)?.phone,
-              city: (session?.user as any)?.city,
-              dob: (session?.user as any)?.dob,
-              address: (session?.user as any)?.address,
-              fatherName: (session?.user as any)?.fatherName,
-              state: (session?.user as any)?.state
-            }
-          })
-        }
-      );
+      const res = await fetch(`/api/profile-interest/${pendingReceiverProfile}/interests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderUserId: session?.user?.id, // correct field name
+          senderProfileId: profileId, // profile id of sender
+          receiverUserId: pendingReceiverUser, // correct field name
+          senderProfile: {
+            name: session?.user?.name,
+            email: session?.user?.email,
+            phone: (session?.user as any)?.phone,
+            city: (session?.user as any)?.city,
+            dob: (session?.user as any)?.dob,
+            address: (session?.user as any)?.address,
+            fatherName: (session?.user as any)?.fatherName,
+            state: (session?.user as any)?.state
+          }
+        })
+      });
 
       const data = await res.json();
       if (data.success) {
-        setExpressed((prev) => ({
+        setExpressed(prev => ({
           ...prev,
           [pendingReceiverProfile]: true
         }));
@@ -331,12 +308,8 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     </div>
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      {profile.name}
-                    </h1>
-                    {profile.nickName && (
-                      <p className="text-gray-600">"{profile.nickName}"</p>
-                    )}
+                    <h1 className="text-2xl font-bold text-gray-900">{profile.name}</h1>
+                    {profile.nickName && <p className="text-gray-600">"{profile.nickName}"</p>}
                     <div className="flex items-center justify-center gap-4 text-sm text-gray-600 mt-2">
                       <span>{profile.age} years</span>
                       <span>•</span>
@@ -347,24 +320,18 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                         <span>{profile.location}</span>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-500 mt-2">
-                      Last seen {profile.lastActive}
-                    </p>
+                    <p className="text-sm text-gray-500 mt-2">Last seen {profile.lastActive}</p>
                   </div>
                   <div className="flex flex-col gap-3 pt-4">
                     <Button
                       variant="outline"
                       size="sm"
                       disabled={expressed[profile.id]}
-                      onClick={() =>
-                        handleExpressInterest(profile.id, profile.userId)
-                      }
+                      onClick={() => handleExpressInterest(profile.id, profile.userId)}
                       className="flex items-center gap-2"
                     >
                       <Heart className="w-4 h-4" />
-                      {expressed[profile.id]
-                        ? 'Interest Sent'
-                        : 'Express Interest'}
+                      {expressed[profile.id] ? 'Interest Sent' : 'Express Interest'}
                     </Button>
                     <Button
                       onClick={handleSendMessage}
@@ -397,9 +364,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gray-500" />
-                    <span>
-                      Born: {new Date(profile.dob).toLocaleDateString()}
-                    </span>
+                    <span>Born: {new Date(profile.dob).toLocaleDateString()}</span>
                   </div>
                 </div>
               </Card>
@@ -409,27 +374,17 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
             <div className="lg:col-span-2 space-y-6">
               {/* About Me */}
               <Card className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  About Me
-                </h2>
-                <p className="text-gray-700 leading-relaxed">
-                  {profile.aboutMe}
-                </p>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">About Me</h2>
+                <p className="text-gray-700 leading-relaxed">{profile.aboutMe}</p>
               </Card>
 
               {/* Interests */}
               {profile.interests.length > 0 && (
                 <Card className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    Interests & Hobbies
-                  </h2>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">Interests & Hobbies</h2>
                   <div className="flex flex-wrap gap-2">
                     {profile.interests.map((interest, index) => (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="text-sm"
-                      >
+                      <Badge key={index} variant="secondary" className="text-sm">
                         {interest}
                       </Badge>
                     ))}
@@ -439,44 +394,30 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
 
               {/* Professional Details */}
               <Card className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Professional Details
-                </h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Professional Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Occupation
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Occupation</label>
                     <p className="text-gray-900">{profile.occupation}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Company
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Company</label>
                     <p className="text-gray-900">{profile.company}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Designation
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Designation</label>
                     <p className="text-gray-900">{profile.designation}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Work Location
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Work Location</label>
                     <p className="text-gray-900">{profile.workLocation}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Annual Income
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Annual Income</label>
                     <p className="text-gray-900">{profile.income} Lakhs</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Work Experience
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Work Experience</label>
                     <p className="text-gray-900">{profile.workExperience}</p>
                   </div>
                 </div>
@@ -484,59 +425,36 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
 
               {/* Personal Details */}
               <Card className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Personal Details
-                </h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Personal Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Height & Weight
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Height & Weight</label>
                     <p className="text-gray-900">
                       {profile.height}, {profile.weight} kg
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Complexion
-                    </label>
-                    <p className="text-gray-900 capitalize">
-                      {profile.personalDetails.complexion}
-                    </p>
+                    <label className="text-sm font-medium text-gray-600">Complexion</label>
+                    <p className="text-gray-900 capitalize">{profile.personalDetails.complexion}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Body Type
-                    </label>
-                    <p className="text-gray-900 capitalize">
-                      {profile.personalDetails.bodyType}
-                    </p>
+                    <label className="text-sm font-medium text-gray-600">Body Type</label>
+                    <p className="text-gray-900 capitalize">{profile.personalDetails.bodyType}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Marital Status
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Marital Status</label>
                     <p className="text-gray-900 capitalize">
                       {profile.personalDetails.maritalStatus.replace('-', ' ')}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Languages Known
-                    </label>
-                    <p className="text-gray-900">
-                      {profile.personalDetails.languagesKnown.join(', ')}
-                    </p>
+                    <label className="text-sm font-medium text-gray-600">Languages Known</label>
+                    <p className="text-gray-900">{profile.personalDetails.languagesKnown.join(', ')}</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Religious Beliefs
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Religious Beliefs</label>
                     <p className="text-gray-900 capitalize">
-                      {profile.personalDetails.religiousBeliefs.replace(
-                        '-',
-                        ' '
-                      )}
+                      {profile.personalDetails.religiousBeliefs.replace('-', ' ')}
                     </p>
                   </div>
                 </div>
@@ -548,36 +466,28 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     <Utensils className="w-4 h-4 text-gray-500" />
                     <div>
                       <p className="text-xs text-gray-600">Diet</p>
-                      <p className="text-sm font-medium capitalize">
-                        {profile.personalDetails.diet.replace('-', ' ')}
-                      </p>
+                      <p className="text-sm font-medium capitalize">{profile.personalDetails.diet.replace('-', ' ')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 text-gray-500">🚬</div>
                     <div>
                       <p className="text-xs text-gray-600">Smoking</p>
-                      <p className="text-sm font-medium capitalize">
-                        {profile.personalDetails.smoking}
-                      </p>
+                      <p className="text-sm font-medium capitalize">{profile.personalDetails.smoking}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 text-gray-500">🍷</div>
                     <div>
                       <p className="text-xs text-gray-600">Drinking</p>
-                      <p className="text-sm font-medium capitalize">
-                        {profile.personalDetails.drinking}
-                      </p>
+                      <p className="text-sm font-medium capitalize">{profile.personalDetails.drinking}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Dumbbell className="w-4 h-4 text-gray-500" />
                     <div>
                       <p className="text-xs text-gray-600">Exercise</p>
-                      <p className="text-sm font-medium capitalize">
-                        {profile.personalDetails.exercise}
-                      </p>
+                      <p className="text-sm font-medium capitalize">{profile.personalDetails.exercise}</p>
                     </div>
                   </div>
                 </div>
@@ -585,56 +495,31 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
 
               {/* Family Details */}
               <Card className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Family Details
-                </h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Family Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Father
-                    </label>
+                    <label className="text-sm font-medium text-gray-600">Father</label>
+                    <p className="text-gray-900">{profile.familyDetails.fatherName}</p>
+                    <p className="text-sm text-gray-600">{profile.familyDetails.fatherOccupation}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">Mother</label>
+                    <p className="text-gray-900">{profile.familyDetails.motherName}</p>
+                    <p className="text-sm text-gray-600">{profile.familyDetails.motherOccupation}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">Siblings</label>
                     <p className="text-gray-900">
-                      {profile.familyDetails.fatherName}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {profile.familyDetails.fatherOccupation}
+                      {profile.familyDetails.brothers} Brothers, {profile.familyDetails.sisters} Sisters
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Mother
-                    </label>
-                    <p className="text-gray-900">
-                      {profile.familyDetails.motherName}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {profile.familyDetails.motherOccupation}
-                    </p>
+                    <label className="text-sm font-medium text-gray-600">Family Income</label>
+                    <p className="text-gray-900">{profile.familyDetails.familyIncome} Lakhs</p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Siblings
-                    </label>
-                    <p className="text-gray-900">
-                      {profile.familyDetails.brothers} Brothers,{' '}
-                      {profile.familyDetails.sisters} Sisters
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Family Income
-                    </label>
-                    <p className="text-gray-900">
-                      {profile.familyDetails.familyIncome} Lakhs
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Ancestral Village
-                    </label>
-                    <p className="text-gray-900">
-                      {profile.familyDetails.ancestralVillage}
-                    </p>
+                    <label className="text-sm font-medium text-gray-600">Ancestral Village</label>
+                    <p className="text-gray-900">{profile.familyDetails.ancestralVillage}</p>
                   </div>
                 </div>
 
@@ -642,89 +527,58 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                   <>
                     <Separator className="my-4" />
                     <div>
-                      <label className="text-sm font-medium text-gray-600">
-                        Family History
-                      </label>
-                      <p className="text-gray-700 mt-1">
-                        {profile.familyDetails.familyHistory}
-                      </p>
+                      <label className="text-sm font-medium text-gray-600">Family History</label>
+                      <p className="text-gray-700 mt-1">{profile.familyDetails.familyHistory}</p>
                     </div>
                   </>
                 )}
 
                 {profile.familyDetails.familyTraditions !== 'Not specified' && (
                   <div className="mt-4">
-                    <label className="text-sm font-medium text-gray-600">
-                      Family Traditions
-                    </label>
-                    <p className="text-gray-700 mt-1">
-                      {profile.familyDetails.familyTraditions}
-                    </p>
+                    <label className="text-sm font-medium text-gray-600">Family Traditions</label>
+                    <p className="text-gray-700 mt-1">{profile.familyDetails.familyTraditions}</p>
                   </div>
                 )}
 
-                {profile.familyDetails.communityContributions !==
-                  'Not specified' && (
+                {profile.familyDetails.communityContributions !== 'Not specified' && (
                   <div className="mt-4">
-                    <label className="text-sm font-medium text-gray-600">
-                      Community Contributions
-                    </label>
-                    <p className="text-gray-700 mt-1">
-                      {profile.familyDetails.communityContributions}
-                    </p>
+                    <label className="text-sm font-medium text-gray-600">Community Contributions</label>
+                    <p className="text-gray-700 mt-1">{profile.familyDetails.communityContributions}</p>
                   </div>
                 )}
                 {/* Siblings Details */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4 text-gray-900 mt-4">
-                    Sibling Details
-                  </h3>
+                  <h3 className="text-lg font-semibold mb-4 text-gray-900 mt-4">Sibling Details</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
                     {/* Brothers */}
                     <div className="space-y-3 bg-sky-50 p-4 rounded-lg">
                       <h4 className="font-bold text-gray-900 mb-3">Brothers</h4>
                       {Array.isArray(profile?.familyDetails?.brothersDetails) &&
                       profile.familyDetails.brothersDetails.length > 0 ? (
-                        profile.familyDetails.brothersDetails.map(
-                          (brother: any, index: number) => (
-                            <div key={index} className="mb-4 border-b pb-2">
-                              <p className="text-gray-700">
-                                Name:{' '}
-                                <span className="font-medium capitalize">
-                                  {brother.name}
-                                </span>
-                              </p>
-                              <p className="text-gray-700">
-                                Occupation:{' '}
-                                <span className="font-medium capitalize">
-                                  {brother.occupation}
-                                </span>
-                              </p>
-                              <p className="text-gray-700">
-                                Marital Status:{' '}
-                                <span className="font-medium capitalize">
-                                  {brother.maritalStatus}
-                                </span>
-                              </p>
-                              {brother.maritalStatus === 'married' && (
-                                <>
-                                  <p className="text-gray-700">
-                                    Spouse Name:{' '}
-                                    <span className="font-medium capitalize">
-                                      {brother.spouseName}
-                                    </span>
-                                  </p>
-                                  <p className="text-gray-700">
-                                    Spouse Occupation:{' '}
-                                    <span className="font-medium capitalize">
-                                      {brother.spouseOccupation}
-                                    </span>
-                                  </p>
-                                </>
-                              )}
-                            </div>
-                          )
-                        )
+                        profile.familyDetails.brothersDetails.map((brother: any, index: number) => (
+                          <div key={index} className="mb-4 border-b pb-2">
+                            <p className="text-gray-700">
+                              Name: <span className="font-medium capitalize">{brother.name}</span>
+                            </p>
+                            <p className="text-gray-700">
+                              Occupation: <span className="font-medium capitalize">{brother.occupation}</span>
+                            </p>
+                            <p className="text-gray-700">
+                              Marital Status: <span className="font-medium capitalize">{brother.maritalStatus}</span>
+                            </p>
+                            {brother.maritalStatus === 'married' && (
+                              <>
+                                <p className="text-gray-700">
+                                  Spouse Name: <span className="font-medium capitalize">{brother.spouseName}</span>
+                                </p>
+                                <p className="text-gray-700">
+                                  Spouse Occupation:{' '}
+                                  <span className="font-medium capitalize">{brother.spouseOccupation}</span>
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        ))
                       ) : (
                         <p className="text-gray-500">No brothers added</p>
                       )}
@@ -733,46 +587,30 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     {/* Sisters */}
                     {Array.isArray(profile?.familyDetails?.sistersDetails) &&
                     profile.familyDetails.sistersDetails.length > 0 ? (
-                      profile.familyDetails.sistersDetails.map(
-                        (sister: any, index: number) => (
-                          <div key={index} className="mb-4 border-b pb-2">
-                            <p className="text-gray-700">
-                              Name:{' '}
-                              <span className="font-medium capitalize">
-                                {sister.name}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Occupation:{' '}
-                              <span className="font-medium capitalize">
-                                {sister.occupation}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Marital Status:{' '}
-                              <span className="font-medium capitalize">
-                                {sister.maritalStatus}
-                              </span>
-                            </p>
-                            {sister.maritalStatus === 'married' && (
-                              <>
-                                <p className="text-gray-700">
-                                  Spouse Name:{' '}
-                                  <span className="font-medium capitalize">
-                                    {sister.spouseName}
-                                  </span>
-                                </p>
-                                <p className="text-gray-700">
-                                  Spouse Occupation:{' '}
-                                  <span className="font-medium capitalize">
-                                    {sister.spouseOccupation}
-                                  </span>
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        )
-                      )
+                      profile.familyDetails.sistersDetails.map((sister: any, index: number) => (
+                        <div key={index} className="mb-4 border-b pb-2">
+                          <p className="text-gray-700">
+                            Name: <span className="font-medium capitalize">{sister.name}</span>
+                          </p>
+                          <p className="text-gray-700">
+                            Occupation: <span className="font-medium capitalize">{sister.occupation}</span>
+                          </p>
+                          <p className="text-gray-700">
+                            Marital Status: <span className="font-medium capitalize">{sister.maritalStatus}</span>
+                          </p>
+                          {sister.maritalStatus === 'married' && (
+                            <>
+                              <p className="text-gray-700">
+                                Spouse Name: <span className="font-medium capitalize">{sister.spouseName}</span>
+                              </p>
+                              <p className="text-gray-700">
+                                Spouse Occupation:{' '}
+                                <span className="font-medium capitalize">{sister.spouseOccupation}</span>
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      ))
                     ) : (
                       <p className="text-gray-500">No sisters added</p>
                     )}
@@ -782,44 +620,34 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
 
               {/* Preferences */}
               <Card className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  Preferences & Interests
-                </h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Preferences & Interests</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-start gap-3">
                     <Music className="w-5 h-5 text-orange-600 mt-1" />
                     <div>
                       <h4 className="font-medium text-gray-900">Music</h4>
-                      <p className="text-gray-600 text-sm">
-                        {profile.preferences.musicPreferences}
-                      </p>
+                      <p className="text-gray-600 text-sm">{profile.preferences.musicPreferences}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Film className="w-5 h-5 text-orange-600 mt-1" />
                     <div>
                       <h4 className="font-medium text-gray-900">Movies</h4>
-                      <p className="text-gray-600 text-sm">
-                        {profile.preferences.moviePreferences}
-                      </p>
+                      <p className="text-gray-600 text-sm">{profile.preferences.moviePreferences}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Book className="w-5 h-5 text-orange-600 mt-1" />
                     <div>
                       <h4 className="font-medium text-gray-900">Reading</h4>
-                      <p className="text-gray-600 text-sm">
-                        {profile.preferences.readingInterests}
-                      </p>
+                      <p className="text-gray-600 text-sm">{profile.preferences.readingInterests}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Plane className="w-5 h-5 text-orange-600 mt-1" />
                     <div>
                       <h4 className="font-medium text-gray-900">Travel</h4>
-                      <p className="text-gray-600 text-sm">
-                        {profile.preferences.travelInterests}
-                      </p>
+                      <p className="text-gray-600 text-sm">{profile.preferences.travelInterests}</p>
                     </div>
                   </div>
                 </div>
@@ -827,9 +655,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                 <Separator className="my-4" />
 
                 <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Partner Preferences
-                  </label>
+                  <label className="text-sm font-medium text-gray-600">Partner Preferences</label>
                   <p className="text-gray-700 mt-1 capitalize">
                     {profile.preferences.castPreferences.replace('-', ' ')}
                   </p>
@@ -842,16 +668,12 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
       {showProfileSelectModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white p-6 rounded-lg w-80 max-h-[80vh] overflow-y-auto space-y-4">
-            <h2 className="text-lg font-semibold text-red-900">
-              Select Your Profile
-            </h2>
+            <h2 className="text-lg font-semibold text-red-900">Select Your Profile</h2>
             <div className="space-y-2">
               {userProfiles.length === 0 ? (
-                <p className="text-gray-500 text-sm">
-                  Create at least one profile to express interest
-                </p>
+                <p className="text-gray-500 text-sm">Create at least one profile to express interest</p>
               ) : (
-                userProfiles.map((profile) => (
+                userProfiles.map(profile => (
                   <div
                     key={profile.id}
                     className="p-2 border rounded hover:bg-red-50 cursor-pointer"

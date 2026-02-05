@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface NavItem {
   label: string;
@@ -20,7 +20,7 @@ export default function MobileBottomNav({ navItems }: MobileBottomNavProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 shadow-2xl z-40">
       <div className="flex justify-around items-center max-w-md mx-auto">
-        {navItems.map((item) => {
+        {navItems.map(item => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
           return (
@@ -31,24 +31,12 @@ export default function MobileBottomNav({ navItems }: MobileBottomNavProps) {
             >
               <div
                 className={`p-2 rounded-xl transition-all ${
-                  isActive
-                    ? "bg-gradient-to-r from-red-600 to-orange-500"
-                    : ""
+                  isActive ? 'bg-gradient-to-r from-red-600 to-orange-500' : ''
                 }`}
               >
-                <Icon
-                  className={`w-5 h-5 ${
-                    isActive ? "text-white" : "text-gray-600"
-                  }`}
-                />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-600'}`} />
               </div>
-              <span
-                className={`text-xs ${
-                  isActive
-                    ? "text-red-600 font-semibold"
-                    : "text-gray-600"
-                }`}
-              >
+              <span className={`text-xs ${isActive ? 'text-red-600 font-semibold' : 'text-gray-600'}`}>
                 {item.label}
               </span>
             </button>

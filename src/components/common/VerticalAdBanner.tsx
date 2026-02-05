@@ -1,5 +1,5 @@
-import { Sparkles, Star } from "lucide-react";
-import React from "react";
+import { Sparkles, Star } from 'lucide-react';
+import React from 'react';
 
 export const VerticalAdBanner = () => {
   return (
@@ -16,9 +16,7 @@ export const VerticalAdBanner = () => {
             {/* Content */}
             <div className="text-center relative z-10">
               <div className=" relative border-2 border-dashed border-amber-400 rounded-lg p-8 bg-gradient-to-br from-amber-50 to-yellow-100">
-                <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">
-                  Book Your Ad
-                </h3>
+                <h3 className="text-xl md:text-3xl font-bold text-amber-800 mb-4">Book Your Ad</h3>
 
                 <div className="space-y-4">
                   <div className="absolute top-4 left-4">

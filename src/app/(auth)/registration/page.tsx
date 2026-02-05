@@ -1,4 +1,4 @@
-import RegistrationForm  from "@/src/features/registration/components/RegistrationForm";
+import RegistrationForm from '@/src/features/registration/components/RegistrationForm';
 
 export default async function RegistrationPage() {
   return (

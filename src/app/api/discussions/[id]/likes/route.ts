@@ -12,10 +12,7 @@ export async function GET(req: Request) {
     const discussionId = searchParams.get('discussionId');
 
     if (!discussionId) {
-      return NextResponse.json(
-        { success: false, message: 'discussionId is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'discussionId is required' }, { status: 400 });
     }
 
     const [{ count }] = await db
@@ -28,18 +25,12 @@ export async function GET(req: Request) {
     return NextResponse.json({ success: true, count });
   } catch (error) {
     console.error('Error fetching likes:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to fetch likes' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to fetch likes' }, { status: 500 });
   }
 }
 
 // ✅ Like a discussion (One user can like only once)
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -53,23 +44,13 @@ export async function POST(
     const existing = await db
       .select()
       .from(discussionLikes)
-      .where(
-        and(
-          eq(discussionLikes.discussionId, discussionId),
-          eq(discussionLikes.userId, session.user.id)
-        )
-      );
+      .where(and(eq(discussionLikes.discussionId, discussionId), eq(discussionLikes.userId, session.user.id)));
 
     if (existing.length > 0) {
       // Unlike
       await db
         .delete(discussionLikes)
-        .where(
-          and(
-            eq(discussionLikes.discussionId, discussionId),
-            eq(discussionLikes.userId, session.user.id)
-          )
-        );
+        .where(and(eq(discussionLikes.discussionId, discussionId), eq(discussionLikes.userId, session.user.id)));
 
       return NextResponse.json({ success: true, liked: false });
     } else {
@@ -83,9 +64,6 @@ export async function POST(
     }
   } catch (error) {
     console.error('Error liking discussion:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

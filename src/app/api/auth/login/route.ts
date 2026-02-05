@@ -21,10 +21,7 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
     // Query database for user by email
@@ -33,28 +30,19 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
     // Check account status
     if (user.status !== 'active') {
-      return NextResponse.json(
-        { error: 'Account is not active. Please contact support.' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Account is not active. Please contact support.' }, { status: 403 });
     }
 
     // Create a session token (JWT)
@@ -73,10 +61,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Update last login timestamp
-    await db
-      .update(users)
-      .set({ lastActive: new Date() })
-      .where(eq(users.id, user.id));
+    await db.update(users).set({ lastActive: new Date() }).where(eq(users.id, user.id));
 
     // Return success response and set session cookie
     const { password: _, ...userResponse } = user; // Exclude password from response
@@ -97,9 +82,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Login error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

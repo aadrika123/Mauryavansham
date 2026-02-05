@@ -2,21 +2,9 @@
 
 import Link from 'next/link';
 import { Button } from '@/src/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/src/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Badge } from '@/src/components/ui/badge';
-import {
-  ArrowLeft,
-  Calendar,
-  User,
-  Edit,
-  AlertCircle,
-  CheckCircle
-} from 'lucide-react';
+import { ArrowLeft, Calendar, User, Edit, AlertCircle, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Blog {
@@ -42,11 +30,7 @@ interface BlogDetailProps {
   userRole?: string;
 }
 
-export default function BlogDetail({
-  blog,
-  currentUserId,
-  userRole
-}: BlogDetailProps) {
+export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetailProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft':
@@ -77,9 +61,7 @@ export default function BlogDetail({
     }
   };
 
-  const canEdit =
-    blog.author.id == currentUserId &&
-    (blog.status === 'draft' || blog.status === 'pending');
+  const canEdit = blog.author.id == currentUserId && (blog.status === 'draft' || blog.status === 'pending');
 
   return (
     <div className="space-y-6">
@@ -112,19 +94,11 @@ export default function BlogDetail({
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  <span>
-                    Created{' '}
-                    {format(
-                      new Date(blog.createdAt),
-                      "MMM d, yyyy 'at' h:mm a"
-                    )}
-                  </span>
+                  <span>Created {format(new Date(blog.createdAt), "MMM d, yyyy 'at' h:mm a")}</span>
                 </div>
               </div>
             </div>
-            <Badge className={getStatusColor(blog.status)}>
-              {getStatusText(blog.status)}
-            </Badge>
+            <Badge className={getStatusColor(blog.status)}>{getStatusText(blog.status)}</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -136,9 +110,7 @@ export default function BlogDetail({
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Content</h3>
             <div className="prose max-w-none">
-              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                {blog.content}
-              </div>
+              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">{blog.content}</div>
             </div>
           </div>
 
@@ -146,9 +118,7 @@ export default function BlogDetail({
             <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
               <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-red-800 mb-1">
-                  Rejection Reason
-                </h4>
+                <h4 className="font-medium text-red-800 mb-1">Rejection Reason</h4>
                 <p className="text-red-700">{blog.rejectionReason}</p>
               </div>
             </div>
@@ -160,8 +130,7 @@ export default function BlogDetail({
               <div>
                 <h4 className="font-medium text-green-800 mb-1">Approved</h4>
                 <p className="text-green-700">
-                  This blog was approved on{' '}
-                  {format(new Date(blog.approvedAt), "MMM d, yyyy 'at' h:mm a")}
+                  This blog was approved on {format(new Date(blog.approvedAt), "MMM d, yyyy 'at' h:mm a")}
                 </p>
               </div>
             </div>
@@ -169,10 +138,7 @@ export default function BlogDetail({
 
           <div className="pt-4 border-t border-gray-200">
             <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>
-                Last updated:{' '}
-                {format(new Date(blog.updatedAt), "MMM d, yyyy 'at' h:mm a")}
-              </span>
+              <span>Last updated: {format(new Date(blog.updatedAt), "MMM d, yyyy 'at' h:mm a")}</span>
             </div>
           </div>
         </CardContent>

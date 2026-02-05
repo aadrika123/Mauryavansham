@@ -10,21 +10,13 @@ import DashboardLayout from '@/src/components/layout/dashboardLayout';
 import CreateAchievementForm from '../../../create-achievement-general/createAchievementForm';
 // import CreateAchievementForm from "../../../create-achievement/createAchievementForm";
 
-export default async function EditAchievementPage({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EditAchievementPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: paramId } = await params;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect('/sign-in');
 
   const id = Number(paramId);
-  const existing = await db
-    .select()
-    .from(achievements)
-    .where(eq(achievements.id, id))
-    .limit(1);
+  const existing = await db.select().from(achievements).where(eq(achievements.id, id)).limit(1);
 
   const achievement = existing[0];
   if (!achievement) {
@@ -55,9 +47,7 @@ export default async function EditAchievementPage({
   return (
     <DashboardLayout user={session.user}>
       <div className="container mx-auto px-6 py-6">
-        <h1 className="text-2xl font-bold text-red-700 mb-6">
-          Edit Achievement
-        </h1>
+        <h1 className="text-2xl font-bold text-red-700 mb-6">Edit Achievement</h1>
 
         {/* ✅ Pass formatted data to your existing form */}
         <CreateAchievementForm initialData={formatted} />

@@ -1,11 +1,11 @@
 // /api/discussions/all/route.ts
-import { db } from "@/src/drizzle/db";
-import { eq, desc, sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
-import { discussions } from "@/src/drizzle/db/schemas/discussions";
-import { discussionLikes } from "@/src/drizzle/schema";
+import { db } from '@/src/drizzle/db';
+import { eq, desc, sql } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
+import { discussions } from '@/src/drizzle/db/schemas/discussions';
+import { discussionLikes } from '@/src/drizzle/schema';
 
 export async function GET() {
   try {
@@ -20,25 +20,19 @@ export async function GET() {
         authorName: discussions.authorName,
         createdAt: discussions.createdAt,
         status: discussions.status, // ✅ admin ko status bhi dikhana hoga
-        likeCount: sql<number>`COUNT(${discussionLikes.id})`.as("likeCount"),
+        likeCount: sql<number>`COUNT(${discussionLikes.id})`.as('likeCount'),
         rejectedBy: discussions.rejectedBy, // ✅ agar rejected hai to kisko reject kiya
         rejectedReason: discussions.rejectionReason, // ✅ reason bhi dikhana hoga
-        approvedBy: discussions.approvedBy, // ✅ agar approved hai to kisko approve kiya
+        approvedBy: discussions.approvedBy // ✅ agar approved hai to kisko approve kiya
       })
       .from(discussions)
-      .leftJoin(
-        discussionLikes,
-        eq(discussions.id, discussionLikes.discussionId)
-      )
+      .leftJoin(discussionLikes, eq(discussions.id, discussionLikes.discussionId))
       .groupBy(discussions.id)
       .orderBy(desc(discussions.createdAt));
 
     return NextResponse.json({ success: true, data: allDiscussions });
   } catch (error) {
-    console.error("Error fetching all discussions:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to fetch discussions" },
-      { status: 500 }
-    );
+    console.error('Error fetching all discussions:', error);
+    return NextResponse.json({ success: false, message: 'Failed to fetch discussions' }, { status: 500 });
   }
 }

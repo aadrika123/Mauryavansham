@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import Loader from "@/src/components/ui/loader";
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import Loader from '@/src/components/ui/loader';
 
 interface Event {
   id: string;
@@ -34,7 +34,7 @@ export default function EventDetailsPage() {
         setEvent(data);
         fetchUser(data.userId);
       } catch (error) {
-        console.error("Error fetching event:", error);
+        console.error('Error fetching event:', error);
       } finally {
         setLoading(false);
       }
@@ -44,15 +44,15 @@ export default function EventDetailsPage() {
   }, [id]);
 
   const fetchUser = async (userId: number) => {
-    console.log("Fetching user details for profileId:", userId);
+    console.log('Fetching user details for profileId:', userId);
     try {
       const res = await fetch(`/api/users/profile/${userId}`);
       if (res.ok) {
         const userData = await res.json();
-        console.log("User Data:", userData); // ✅ actual response body
+        console.log('User Data:', userData); // ✅ actual response body
         setUserDetails(userData);
       } else {
-        console.error("Failed to fetch user details");
+        console.error('Failed to fetch user details');
       }
     } catch (err) {
       console.error(err);
@@ -76,20 +76,14 @@ export default function EventDetailsPage() {
           <span className="font-semibold">Date:</span> {event.date}
         </p>
         <p className="text-gray-600">
-          <span className="font-semibold">Location:</span>{" "}
-          {event.location || "Not specified"}
+          <span className="font-semibold">Location:</span> {event.location || 'Not specified'}
         </p>
         <p className="text-gray-600">
-          <span className="font-semibold">Created By:</span>{" "}
-          {userDetails?.name || "Unknown"}
+          <span className="font-semibold">Created By:</span> {userDetails?.name || 'Unknown'}
         </p>
         <p className="text-gray-600">
-          <span className="font-semibold">Status:</span>{" "}
-          <span
-            className={`${
-              event.status === "pending" ? "text-yellow-600" : "text-green-600"
-            } font-medium`}
-          >
+          <span className="font-semibold">Status:</span>{' '}
+          <span className={`${event.status === 'pending' ? 'text-yellow-600' : 'text-green-600'} font-medium`}>
             {event.status}
           </span>
         </p>
@@ -102,11 +96,7 @@ export default function EventDetailsPage() {
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-2">Image</h2>
         {event.image ? (
-          <img
-            src={event.image}
-            alt={event.title}
-            className="max-w-full h-auto"
-          />
+          <img src={event.image} alt={event.title} className="max-w-full h-auto" />
         ) : (
           <p>No image available</p>
         )}

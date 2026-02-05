@@ -35,9 +35,7 @@ interface CoachingCenter {
 
 export default function EducationReportsPage() {
   const [centers, setCenters] = useState<CoachingCenter[]>([]);
-  const [allFilteredCenters, setAllFilteredCenters] = useState<
-    CoachingCenter[]
-  >([]);
+  const [allFilteredCenters, setAllFilteredCenters] = useState<CoachingCenter[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [cityFilter, setCityFilter] = useState('');
@@ -78,14 +76,7 @@ export default function EducationReportsPage() {
     };
 
     fetchCenters();
-  }, [
-    statusFilter,
-    cityFilter,
-    stateFilter,
-    searchQuery,
-    currentPage,
-    pageSize
-  ]);
+  }, [statusFilter, cityFilter, stateFilter, searchQuery, currentPage, pageSize]);
 
   // ✅ Format date
   const formatDate = (dateStr: string) => {
@@ -105,7 +96,7 @@ export default function EducationReportsPage() {
       a.centerName.localeCompare(b.centerName, 'en', { sensitivity: 'base' })
     );
 
-    const dataToExport = sortedCenters.map((c) => ({
+    const dataToExport = sortedCenters.map(c => ({
       'Center Name': c.centerName,
       'Owner Name': c.ownerName,
       Email: c.email,
@@ -115,10 +106,7 @@ export default function EducationReportsPage() {
       State: c.state,
       Pincode: c.pincode,
       'Courses Offered': c.courses?.join(', ') || '-',
-      Branches:
-        c.branches
-          ?.map((b) => `${b.name} (${b.phone || '-'}, ${b.address || '-'})`)
-          .join('; ') || '-',
+      Branches: c.branches?.map(b => `${b.name} (${b.phone || '-'}, ${b.address || '-'})`).join('; ') || '-',
       Logo: c.logoUrl || '-',
       Documents: c.docUrls?.join(', ') || '-',
       Status: c.status,
@@ -139,15 +127,11 @@ export default function EducationReportsPage() {
           type="text"
           placeholder="Search by name, owner, email..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={e => setSearchQuery(e.target.value)}
           className="border p-2 rounded w-64"
         />
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border p-2 rounded">
           <option value="">All Status</option>
           <option value="active">Active</option>
           <option value="approved">Approved</option>
@@ -159,15 +143,11 @@ export default function EducationReportsPage() {
           type="text"
           placeholder="City"
           value={cityFilter}
-          onChange={(e) => setCityFilter(e.target.value)}
+          onChange={e => setCityFilter(e.target.value)}
           className="border p-2 rounded w-40"
         />
 
-        <select
-          value={stateFilter}
-          onChange={(e) => setStateFilter(e.target.value)}
-          className="border p-2 rounded w-48"
-        >
+        <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="border p-2 rounded w-48">
           <option value="">All States</option>
           {[
             'Andhra Pradesh',
@@ -198,17 +178,14 @@ export default function EducationReportsPage() {
             'Uttar Pradesh',
             'Uttarakhand',
             'West Bengal'
-          ].map((state) => (
+          ].map(state => (
             <option key={state} value={state}>
               {state}
             </option>
           ))}
         </select>
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-500 text-white px-4 py-2 rounded">
           Export Excel
         </button>
       </div>
@@ -251,18 +228,12 @@ export default function EducationReportsPage() {
                 ) : (
                   centers.map((c, index) => (
                     <tr key={c.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border text-center">
-                        {(currentPage - 1) * pageSize + index + 1}
-                      </td>
+                      <td className="px-4 py-2 border text-center">{(currentPage - 1) * pageSize + index + 1}</td>
 
                       {/* ✅ Logo */}
                       <td className="px-4 py-2 border text-center">
                         {c.logoUrl ? (
-                          <img
-                            src={c.logoUrl}
-                            alt="logo"
-                            className="w-10 h-10 object-cover rounded"
-                          />
+                          <img src={c.logoUrl} alt="logo" className="w-10 h-10 object-cover rounded" />
                         ) : (
                           '-'
                         )}
@@ -276,9 +247,7 @@ export default function EducationReportsPage() {
                       <td className="px-4 py-2 border">{c.state}</td>
 
                       {/* ✅ Courses */}
-                      <td className="px-4 py-2 border">
-                        {c.courses?.length > 0 ? c.courses.join(', ') : '-'}
-                      </td>
+                      <td className="px-4 py-2 border">{c.courses?.length > 0 ? c.courses.join(', ') : '-'}</td>
 
                       {/* ✅ Branches */}
                       <td className="px-4 py-2 border">
@@ -320,12 +289,8 @@ export default function EducationReportsPage() {
                         )}
                       </td>
 
-                      <td className="px-4 py-2 border capitalize">
-                        {c.status}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {formatDate(c.createdAt)}
-                      </td>
+                      <td className="px-4 py-2 border capitalize">{c.status}</td>
+                      <td className="px-4 py-2 border">{formatDate(c.createdAt)}</td>
                     </tr>
                   ))
                 )}
@@ -339,8 +304,8 @@ export default function EducationReportsPage() {
             totalPages={totalPages}
             totalItems={totalCount}
             pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
+            onPageChange={page => setCurrentPage(page)}
+            onPageSizeChange={size => {
               setPageSize(size);
               setCurrentPage(1);
             }}

@@ -1,20 +1,19 @@
 // dashboard/page.tsx
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/src/lib/auth";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
-import MyRegisteredHealthServices from "@/src/features/healthandwellness/components/myRegisteredHealthServices";
-import DashboardLayout from "@/src/components/layout/dashboardLayout";
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/src/lib/auth';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
+import MyRegisteredHealthServices from '@/src/features/healthandwellness/components/myRegisteredHealthServices';
+import DashboardLayout from '@/src/components/layout/dashboardLayout';
 
 export default async function RegisterCoachingIndex() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
-
 
   return (
     <DashboardLayout user={session.user}>

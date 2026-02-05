@@ -1,25 +1,19 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/src/components/ui/button";
-import { useToast } from "@/src/hooks/use-toast";
-import { Input } from "@/src/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/src/components/ui/dialog";
-import { Textarea } from "@/src/components/ui/textarea";
-import Pagination from "@/src/components/common/Pagination";
+import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { useToast } from '@/src/hooks/use-toast';
+import { Input } from '@/src/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/src/components/ui/dialog';
+import { Textarea } from '@/src/components/ui/textarea';
+import Pagination from '@/src/components/common/Pagination';
 
 interface User {
   id: number;
   name: string;
   email: string;
   phone?: string;
-  role: "user" | "admin";
+  role: 'user' | 'admin';
   isActive: boolean;
   status: string;
   deactivatedReason?: string;
@@ -30,10 +24,10 @@ export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
-  const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin">("all");
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'user' | 'admin'>('all');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -43,9 +37,7 @@ export default function ManageUsersPage() {
   const fetchUsers = async (page = 1, limit = pageSize) => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `/api/users?page=${page}&limit=${limit}&search=${search}&role=${roleFilter}`
-      );
+      const res = await fetch(`/api/users?page=${page}&limit=${limit}&search=${search}&role=${roleFilter}`);
       const json = await res.json();
 
       setUsers(json.data);
@@ -69,30 +61,30 @@ export default function ManageUsersPage() {
     userId: number,
     updates: Partial<{
       isActive: boolean;
-      role: "user" | "admin";
+      role: 'user' | 'admin';
       deactivationReason?: string;
     }>
   ) => {
     setActionLoading(userId);
     try {
       const res = await fetch(`/api/admin/update-user/${userId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
       });
       const json = await res.json();
       if (res.ok) {
         toast({
-          title: "Success",
+          title: 'Success',
           description: json.message,
-          variant: "default",
+          variant: 'default'
         });
         fetchUsers(currentPage, pageSize); // ✅ update ke baad wahi page reload
       } else {
         toast({
-          title: "Error",
-          description: json.error || "Something went wrong",
-          variant: "destructive",
+          title: 'Error',
+          description: json.error || 'Something went wrong',
+          variant: 'destructive'
         });
       }
     } catch (err) {
@@ -100,7 +92,7 @@ export default function ManageUsersPage() {
     } finally {
       setActionLoading(null);
       setSelectedUser(null);
-      setReason("");
+      setReason('');
     }
   };
 
@@ -113,23 +105,17 @@ export default function ManageUsersPage() {
         <Input
           placeholder="Search by name, email, phone..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="w-full sm:w-1/3"
         />
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setSearch("")}
-            disabled={!search}
-          >
+          <Button variant="outline" onClick={() => setSearch('')} disabled={!search}>
             Clear
           </Button>
 
           <select
             value={roleFilter}
-            onChange={(e) =>
-              setRoleFilter(e.target.value as "all" | "user" | "admin")
-            }
+            onChange={e => setRoleFilter(e.target.value as 'all' | 'user' | 'admin')}
             className="border rounded-md px-3 py-2 text-sm w-full sm:w-auto"
           >
             <option value="all">All Roles</option>
@@ -158,16 +144,14 @@ export default function ManageUsersPage() {
               </tr>
             </thead>
             <tbody>
-              {users.map((u) => (
+              {users.map(u => (
                 <tr key={u.id} className="hover:bg-gray-100 text-sm">
                   <td className="p-3 border-b">{u.name}</td>
                   <td className="p-3 border-b">{u.email}</td>
-                  <td className="p-3 border-b">{u.phone || "-"}</td>
+                  <td className="p-3 border-b">{u.phone || '-'}</td>
                   <td className="p-3 border-b">{u.role}</td>
-                  <td className="p-3 border-b">
-                    {u.isActive ? "Active" : "Inactive"}
-                  </td>
-                  <td className="p-3 border-b">{u.deactivatedReason || "-"}</td>
+                  <td className="p-3 border-b">{u.isActive ? 'Active' : 'Inactive'}</td>
+                  <td className="p-3 border-b">{u.deactivatedReason || '-'}</td>
                   <td className="p-3 border-b flex flex-wrap gap-2">
                     {/* Toggle Active/Inactive */}
                     <label className="inline-flex items-center cursor-pointer">
@@ -175,24 +159,20 @@ export default function ManageUsersPage() {
                         type="checkbox"
                         className="sr-only"
                         checked={u.isActive}
-                        onChange={(e) => {
+                        onChange={e => {
                           if (e.target.checked) {
                             updateUser(u.id, { isActive: true });
                           } else {
                             setSelectedUser(u);
-                            setReason("");
+                            setReason('');
                           }
                         }}
                         disabled={actionLoading === u.id}
                       />
-                      <div
-                        className={`w-11 h-6 rounded-full transition ${
-                          u.isActive ? "bg-green-600" : "bg-red-600"
-                        }`}
-                      >
+                      <div className={`w-11 h-6 rounded-full transition ${u.isActive ? 'bg-green-600' : 'bg-red-600'}`}>
                         <div
                           className={`w-5 h-5 mt-0.5 bg-white rounded-full transform transition ${
-                            u.isActive ? "translate-x-5" : "translate-x-1"
+                            u.isActive ? 'translate-x-5' : 'translate-x-1'
                           }`}
                         />
                       </div>
@@ -201,22 +181,18 @@ export default function ManageUsersPage() {
                     {/* Role Change Button */}
                     <Button
                       className={`${
-                        u.role === "user"
-                          ? "bg-green-600 hover:bg-green-700 text-white"
-                          : "bg-orange-500 hover:bg-orange-600 text-white"
+                        u.role === 'user'
+                          ? 'bg-green-600 hover:bg-green-700 text-white'
+                          : 'bg-orange-500 hover:bg-orange-600 text-white'
                       }`}
                       disabled={actionLoading === u.id}
                       onClick={() =>
                         updateUser(u.id, {
-                          role: u.role === "user" ? "admin" : "user",
+                          role: u.role === 'user' ? 'admin' : 'user'
                         })
                       }
                     >
-                      {actionLoading === u.id
-                        ? "..."
-                        : u.role === "user"
-                        ? "Make Admin"
-                        : "Make User"}
+                      {actionLoading === u.id ? '...' : u.role === 'user' ? 'Make Admin' : 'Make User'}
                     </Button>
                   </td>
                 </tr>
@@ -231,8 +207,8 @@ export default function ManageUsersPage() {
               totalPages={totalPages}
               totalItems={totalCount}
               pageSize={pageSize}
-              onPageChange={(page) => setCurrentPage(page)}
-              onPageSizeChange={(size) => {
+              onPageChange={page => setCurrentPage(page)}
+              onPageSizeChange={size => {
                 setPageSize(size);
                 setCurrentPage(1);
               }}
@@ -248,14 +224,8 @@ export default function ManageUsersPage() {
             <DialogTitle>Deactivate {selectedUser?.name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <p className="text-sm text-gray-600">
-              Please provide a reason for deactivation:
-            </p>
-            <Textarea
-              placeholder="Enter reason..."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
+            <p className="text-sm text-gray-600">Please provide a reason for deactivation:</p>
+            <Textarea placeholder="Enter reason..." value={reason} onChange={e => setReason(e.target.value)} />
           </div>
           <DialogFooter className="mt-4 flex justify-end gap-2">
             <Button variant="outline" onClick={() => setSelectedUser(null)}>
@@ -268,7 +238,7 @@ export default function ManageUsersPage() {
                 if (selectedUser) {
                   updateUser(selectedUser.id, {
                     isActive: false,
-                    deactivationReason: reason,
+                    deactivationReason: reason
                   });
                 }
               }}

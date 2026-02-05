@@ -1,13 +1,13 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { hash } from "bcryptjs";
-import { db } from "@/src/drizzle/db";
-import { users } from "@/src/drizzle/db/schemas/users.schema";
-import { eq } from "drizzle-orm";
-import { sendWelcomeEmail } from "@/src/lib/email";
-import { sendWhatsAppMessage } from "@/src/lib/whatsapp";
-import { notifications } from "@/src/drizzle/schema";
-import { sendAdminSignupEmail } from "@/src/lib/sendAdminSignupEmail";
-import { generateUserCode } from "@/src/utils/generateUserCode";
+import { type NextRequest, NextResponse } from 'next/server';
+import { hash } from 'bcryptjs';
+import { db } from '@/src/drizzle/db';
+import { users } from '@/src/drizzle/db/schemas/users.schema';
+import { eq } from 'drizzle-orm';
+import { sendWelcomeEmail } from '@/src/lib/email';
+import { sendWhatsAppMessage } from '@/src/lib/whatsapp';
+import { notifications } from '@/src/drizzle/schema';
+import { sendAdminSignupEmail } from '@/src/lib/sendAdminSignupEmail';
+import { generateUserCode } from '@/src/utils/generateUserCode';
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,34 +30,25 @@ export async function POST(request: NextRequest) {
       currentState,
       currentCountry,
       currentZipCode,
-      facebookLink,
+      facebookLink
     } = await request.json();
 
     // Validation
     if (!name || !email || !password) {
-      return NextResponse.json(
-        { error: "Name, email, and password are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Name, email, and password are required' }, { status: 400 });
     }
 
     if (password.length < 6) {
-      return NextResponse.json(
-        { error: "Password must be at least 6 characters long" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Password must be at least 6 characters long' }, { status: 400 });
     }
 
     // Check if user already exists
     const existingUser = await db.query.users.findFirst({
-      where: eq(users.email, email),
+      where: eq(users.email, email)
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "User with this email already exists" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'User with this email already exists' }, { status: 400 });
     }
 
     // Hash password
@@ -85,7 +76,7 @@ export async function POST(request: NextRequest) {
         currentCountry,
         currentZipCode,
         gender,
-        facebookLink: facebookLink || null,
+        facebookLink: facebookLink || null
       })
       .returning({
         id: users.id,
@@ -103,26 +94,26 @@ export async function POST(request: NextRequest) {
         currentCountry: users.currentCountry,
         gender: users.gender,
         userCode: users.userCode,
-        facebookLink: users.facebookLink,
+        facebookLink: users.facebookLink
       });
 
     // ✅ Insert notification for admins
     const [notification] = await db
       .insert(notifications)
       .values({
-        type: "signup",
+        type: 'signup',
         message: `New user signed up: ${newUser[0].name} (${newUser[0].email})`,
-        userId: newUser[0].id,
+        userId: newUser[0].id
       })
       .returning();
 
     // ✅ Emit real-time notification to admins
     const io = (request as any)?.socket?.server?.io;
     if (io) {
-      io.emit("new-notification", {
+      io.emit('new-notification', {
         id: notification.id,
         message: notification.message,
-        type: notification.type,
+        type: notification.type
       });
     }
 
@@ -131,16 +122,16 @@ export async function POST(request: NextRequest) {
       const emailResult = await sendWelcomeEmail({
         name: newUser[0].name,
         email: newUser[0].email,
-        password, // original password in plain text
+        password // original password in plain text
       });
 
-      console.log("Welcome email send result:", emailResult);
+      console.log('Welcome email send result:', emailResult);
     } catch (emailError) {
-      console.error("Error sending welcome email:", emailError);
+      console.error('Error sending welcome email:', emailError);
     }
     // ✅ Send WhatsApp & email message to all ADMINS & SUPERADMINS
     const adminUsers = await db.query.users.findMany({
-      where: (u, { inArray }) => inArray(u.role, ["admin", "superAdmin"]),
+      where: (u, { inArray }) => inArray(u.role, ['admin', 'superAdmin'])
     });
 
     for (const admin of adminUsers) {
@@ -159,16 +150,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "User created successfully",
-        user: newUser[0],
+        message: 'User created successfully',
+        user: newUser[0]
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Signup error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error('Signup error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

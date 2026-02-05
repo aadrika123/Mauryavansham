@@ -61,9 +61,7 @@ export default function EventReportsPage() {
         const eventData = data || [];
         setAllFilteredEvents(eventData);
         setTotalCount(eventData.length);
-        setEvents(
-          eventData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        );
+        setEvents(eventData.slice((currentPage - 1) * pageSize, currentPage * pageSize));
       } catch (err) {
         console.error(err);
       } finally {
@@ -93,7 +91,7 @@ export default function EventReportsPage() {
       a.title.localeCompare(b.title, 'en', { sensitivity: 'base' })
     );
 
-    const dataToExport = sortedEvents.map((e) => ({
+    const dataToExport = sortedEvents.map(e => ({
       'Event Title': e.title,
       Description: e.description || '-',
       'Event Date': formatDate(e.eventDate),
@@ -102,7 +100,7 @@ export default function EventReportsPage() {
       Location: e.location || '-',
       'Created By': e.organizerInfo.name || '-',
       'Total Attendees': e.attendeesCount || 0,
-      'Attendee Names': e.attendees?.map((a) => a.name).join(', ') || '-',
+      'Attendee Names': e.attendees?.map(a => a.name).join(', ') || '-',
       'Created On': formatDate(e.createdAt),
       Status: e.status || '-',
       'Rejected By': e.rejectedBy || '-',
@@ -118,20 +116,13 @@ export default function EventReportsPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border p-2 rounded">
           <option value="">All Status</option>
           <option value="approved">Approved</option>
           <option value="rejected">Rejected</option>
         </select>
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-500 text-white px-4 py-2 rounded">
           Export Excel
         </button>
       </div>
@@ -151,32 +142,18 @@ export default function EventReportsPage() {
                 <tr>
                   <th className="px-4 py-2 border">Sl.No</th>
                   <th className="px-4 py-2 border">Event Title</th>
-                  <th className="px-4 py-2 border  sm:table-cell">
-                    Description
-                  </th>
+                  <th className="px-4 py-2 border  sm:table-cell">Description</th>
                   <th className="px-4 py-2 border">Event Date</th>
-                  <th className="px-4 py-2 border  md:table-cell">
-                    Event from
-                  </th>
+                  <th className="px-4 py-2 border  md:table-cell">Event from</th>
                   <th className="px-4 py-2 border  md:table-cell">Event to</th>
-                  <th className="px-4 py-2 border  lg:table-cell">
-                    Event Type
-                  </th>
+                  <th className="px-4 py-2 border  lg:table-cell">Event Type</th>
                   <th className="px-4 py-2 border">Location</th>
-                  <th className="px-4 py-2 border  sm:table-cell">
-                    Created By
-                  </th>
+                  <th className="px-4 py-2 border  sm:table-cell">Created By</th>
                   <th className="px-4 py-2 border">Attendees Count</th>
-                  <th className="px-4 py-2 border  sm:table-cell">
-                    Created On
-                  </th>
+                  <th className="px-4 py-2 border  sm:table-cell">Created On</th>
                   <th className="px-4 py-2 border  md:table-cell">Status</th>
-                  <th className="px-4 py-2 border  lg:table-cell">
-                    Rejected By
-                  </th>
-                  <th className="px-4 py-2 border  lg:table-cell">
-                    Rejected Reason
-                  </th>
+                  <th className="px-4 py-2 border  lg:table-cell">Rejected By</th>
+                  <th className="px-4 py-2 border  lg:table-cell">Rejected Reason</th>
                 </tr>
               </thead>
               <tbody>
@@ -189,42 +166,20 @@ export default function EventReportsPage() {
                 ) : (
                   events.map((e, index) => (
                     <tr key={e.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border">
-                        {(currentPage - 1) * pageSize + index + 1}
-                      </td>
+                      <td className="px-4 py-2 border">{(currentPage - 1) * pageSize + index + 1}</td>
                       <td className="px-4 py-2 border">{e.title}</td>
-                      <td className="px-4 py-2 border  sm:table-cell">
-                        {e.description || '-'}
-                      </td>
+                      <td className="px-4 py-2 border  sm:table-cell">{e.description || '-'}</td>
                       <td className="px-4 py-2 border">{formatDate(e.date)}</td>
-                      <td className="px-4 py-2 border  md:table-cell">
-                        {e.fromTime}
-                      </td>
-                      <td className="px-4 py-2 border  md:table-cell">
-                        {e.toTime}
-                      </td>
-                      <td className="px-4 py-2 border  lg:table-cell">
-                        {e.type}
-                      </td>
+                      <td className="px-4 py-2 border  md:table-cell">{e.fromTime}</td>
+                      <td className="px-4 py-2 border  md:table-cell">{e.toTime}</td>
+                      <td className="px-4 py-2 border  lg:table-cell">{e.type}</td>
                       <td className="px-4 py-2 border">{e.location || '-'}</td>
-                      <td className="px-4 py-2 border  sm:table-cell">
-                        {e.organizerInfo.name || '-'}
-                      </td>
-                      <td className="px-4 py-2 border text-center">
-                        {e.attendeesCount || 0}
-                      </td>
-                      <td className="px-4 py-2 border  sm:table-cell">
-                        {formatDate(e.createdAt)}
-                      </td>
-                      <td className="px-4 py-2 border  md:table-cell capitalize">
-                        {e.status || '-'}
-                      </td>
-                      <td className="px-4 py-2 border  lg:table-cell">
-                        {e.rejectedBy || '-'}
-                      </td>
-                      <td className="px-4 py-2 border  lg:table-cell">
-                        {e.reason || '-'}
-                      </td>
+                      <td className="px-4 py-2 border  sm:table-cell">{e.organizerInfo.name || '-'}</td>
+                      <td className="px-4 py-2 border text-center">{e.attendeesCount || 0}</td>
+                      <td className="px-4 py-2 border  sm:table-cell">{formatDate(e.createdAt)}</td>
+                      <td className="px-4 py-2 border  md:table-cell capitalize">{e.status || '-'}</td>
+                      <td className="px-4 py-2 border  lg:table-cell">{e.rejectedBy || '-'}</td>
+                      <td className="px-4 py-2 border  lg:table-cell">{e.reason || '-'}</td>
                     </tr>
                   ))
                 )}
@@ -238,8 +193,8 @@ export default function EventReportsPage() {
             totalPages={totalPages}
             totalItems={totalCount}
             pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
+            onPageChange={page => setCurrentPage(page)}
+            onPageSizeChange={size => {
               setPageSize(size);
               setCurrentPage(1);
             }}

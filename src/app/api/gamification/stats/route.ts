@@ -1,23 +1,23 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { db } from "@/src/drizzle/db"
-import { userReputation, userBadges } from "@/src/drizzle/schema"
-import { eq } from "drizzle-orm"
-import { authOptions } from "@/src/lib/auth"
+import { type NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { db } from '@/src/drizzle/db';
+import { userReputation, userBadges } from '@/src/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import { authOptions } from '@/src/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = Number.parseInt(session.user.id)
+    const userId = Number.parseInt(session.user.id);
 
     // Fetch user reputation data
     let reputation = await db.query.userReputation.findFirst({
-      where: eq(userReputation.userId, userId),
-    })
+      where: eq(userReputation.userId, userId)
+    });
 
     // If no reputation exists, create one
     if (!reputation) {
@@ -27,20 +27,20 @@ export async function GET(request: NextRequest) {
           userId,
           totalPoints: 0,
           level: 1,
-          rank: "Newcomer",
+          rank: 'Newcomer'
         })
-        .returning()
-      reputation = newReputation
+        .returning();
+      reputation = newReputation;
     }
 
     // Fetch earned badges
     const earnedBadges = await db.query.userBadges.findMany({
       where: eq(userBadges.userId, userId),
-      orderBy: (badges, { desc }) => [desc(badges.earnedAt)],
-    })
+      orderBy: (badges, { desc }) => [desc(badges.earnedAt)]
+    });
 
     // Map badges to badge types
-    const earnedBadgeTypes = earnedBadges.map((b) => b.badgeType)
+    const earnedBadgeTypes = earnedBadges.map(b => b.badgeType);
 
     return NextResponse.json({
       totalPoints: reputation.totalPoints,
@@ -54,15 +54,15 @@ export async function GET(request: NextRequest) {
         postsCreated: reputation.postsCreated,
         commentsAdded: reputation.commentsAdded,
         familyTreeMembers: reputation.familyTreeMembers,
-        referrals: reputation.referrals,
+        referrals: reputation.referrals
       },
       streak: reputation.streak,
       longestStreak: reputation.longestStreak,
       globalRank: reputation.globalRank,
-      communityRank: reputation.communityRank,
-    })
+      communityRank: reputation.communityRank
+    });
   } catch (error) {
-    console.error("[v0] Error fetching gamification stats:", error)
-    return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 })
+    console.error('[v0] Error fetching gamification stats:', error);
+    return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }
 }

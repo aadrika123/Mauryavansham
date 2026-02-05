@@ -1,24 +1,21 @@
-import { db } from "@/src/drizzle/db";
-import { eq, desc, and, count, sql, inArray } from "drizzle-orm";
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
-import { discussionReplies } from "@/src/drizzle/db/schemas/discussionReplies";
-import { discussionReplyLikes } from "@/src/drizzle/db/schemas/discussionReplyLikes";
+import { db } from '@/src/drizzle/db';
+import { eq, desc, and, count, sql, inArray } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
+import { discussionReplies } from '@/src/drizzle/db/schemas/discussionReplies';
+import { discussionReplyLikes } from '@/src/drizzle/db/schemas/discussionReplyLikes';
 
 // ✅ OPTIMIZED: Get replies with likes using batch queries
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const url = new URL(req.url);
-    const pathSegments = url.pathname.split("/");
+    const pathSegments = url.pathname.split('/');
     const discussionId = pathSegments[3];
 
     if (!discussionId) {
-      return NextResponse.json(
-        { success: false, message: "discussionId is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'discussionId is required' }, { status: 400 });
     }
 
     // Step 1: Get all replies for the discussion
@@ -51,12 +48,7 @@ export async function GET(req: Request) {
       userLikes = await db
         .select({ replyId: discussionReplyLikes.replyId })
         .from(discussionReplyLikes)
-        .where(
-          and(
-            inArray(discussionReplyLikes.replyId, replyIds),
-            eq(discussionReplyLikes.userId, session.user.id)
-          )
-        );
+        .where(and(inArray(discussionReplyLikes.replyId, replyIds), eq(discussionReplyLikes.userId, session.user.id)));
     }
 
     // Step 5: Create lookup maps for efficient processing
@@ -83,13 +75,9 @@ export async function GET(req: Request) {
     console.log('Replies with likes (optimized):', transformedReplies);
 
     return NextResponse.json({ success: true, data: transformedReplies });
-
   } catch (error) {
-    console.error("Error fetching replies:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to fetch replies" },
-      { status: 500 }
-    );
+    console.error('Error fetching replies:', error);
+    return NextResponse.json({ success: false, message: 'Failed to fetch replies' }, { status: 500 });
   }
 }
 
@@ -98,35 +86,22 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
     const { discussionId, content, parentId } = body;
 
     if (!discussionId || !content) {
-      return NextResponse.json(
-        { success: false, message: "Missing fields" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'Missing fields' }, { status: 400 });
     }
 
     // Validate parentId exists if provided
     if (parentId) {
-      const parentReply = await db
-        .select()
-        .from(discussionReplies)
-        .where(eq(discussionReplies.id, parentId))
-        .limit(1);
+      const parentReply = await db.select().from(discussionReplies).where(eq(discussionReplies.id, parentId)).limit(1);
 
       if (parentReply.length === 0) {
-        return NextResponse.json(
-          { success: false, message: "Parent reply not found" },
-          { status: 400 }
-        );
+        return NextResponse.json({ success: false, message: 'Parent reply not found' }, { status: 400 });
       }
     }
 
@@ -136,8 +111,8 @@ export async function POST(req: Request) {
         discussionId,
         content,
         userId: session.user.id,
-        userName: session.user.name || "Anonymous",
-        parentId: parentId || null,
+        userName: session.user.name || 'Anonymous',
+        parentId: parentId || null
       })
       .returning();
 
@@ -153,10 +128,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, data: transformedReply });
   } catch (error) {
-    console.error("Error posting reply:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to post reply" },
-      { status: 500 }
-    );
+    console.error('Error posting reply:', error);
+    return NextResponse.json({ success: false, message: 'Failed to post reply' }, { status: 500 });
   }
 }

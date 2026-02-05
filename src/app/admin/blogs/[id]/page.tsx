@@ -5,11 +5,7 @@ import AdminBlogDetail from './admin-blog-detail';
 import { authOptions } from '@/src/lib/auth';
 import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
 
-export default async function AdminBlogDetailPage({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function AdminBlogDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   const { id } = await params;
 

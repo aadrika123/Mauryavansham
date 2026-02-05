@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { useSession } from "next-auth/react";
-import { toast } from "react-hot-toast";
-import Loader from "@/src/components/ui/loader";
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+import Loader from '@/src/components/ui/loader';
 
 interface Branch {
   name: string;
@@ -31,19 +31,19 @@ export default function RegisterHealthService() {
   const { data: session } = useSession();
 
   const [form, setForm] = useState<FormDataState>({
-    centerName: "",
-    category: "",
-    ownerName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-    offeringsInput: "",
+    centerName: '',
+    category: '',
+    ownerName: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    offeringsInput: '',
     offerings: [],
-    branches: [{ name: "", address: "", phone: "" }],
-    about: "",
+    branches: [{ name: '', address: '', phone: '' }],
+    about: ''
   });
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -53,61 +53,59 @@ export default function RegisterHealthService() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const states = [
-   "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal'
   ];
 
   const categories = [
-    "Clinic",
-    "Hospital",
-    "Gym",
-    "Yoga Center",
-    "Nutrition",
-    "Spa",
-    "Physiotherapy",
-    "Meditation Center",
-    "Other",
+    'Clinic',
+    'Hospital',
+    'Gym',
+    'Yoga Center',
+    'Nutrition',
+    'Spa',
+    'Physiotherapy',
+    'Meditation Center',
+    'Other'
   ];
 
   // Generic field change
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   // Numeric-only input
   const handleNumericChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (/^\d*$/.test(value)) {
-      setForm((s) => ({ ...s, [name]: value }));
+      setForm(s => ({ ...s, [name]: value }));
     }
   };
 
@@ -115,34 +113,34 @@ export default function RegisterHealthService() {
   const addOffering = () => {
     const trimmed = form.offeringsInput.trim();
     if (!trimmed) return;
-    setForm((s) => ({
+    setForm(s => ({
       ...s,
       offerings: [...s.offerings, trimmed],
-      offeringsInput: "",
+      offeringsInput: ''
     }));
   };
 
   const removeOffering = (i: number) => {
-    setForm((s) => ({ ...s, offerings: s.offerings.filter((_, idx) => idx !== i) }));
+    setForm(s => ({ ...s, offerings: s.offerings.filter((_, idx) => idx !== i) }));
   };
 
   // Branches
   const updateBranch = (i: number, field: keyof Branch, value: string) => {
     const updated = [...form.branches];
     updated[i] = { ...updated[i], [field]: value };
-    setForm((s) => ({ ...s, branches: updated }));
+    setForm(s => ({ ...s, branches: updated }));
   };
 
   const addBranch = () =>
-    setForm((s) => ({
+    setForm(s => ({
       ...s,
-      branches: [...s.branches, { name: "", address: "", phone: "" }],
+      branches: [...s.branches, { name: '', address: '', phone: '' }]
     }));
 
   const removeBranch = (i: number) =>
-    setForm((s) => ({
+    setForm(s => ({
       ...s,
-      branches: s.branches.filter((_, idx) => idx !== i),
+      branches: s.branches.filter((_, idx) => idx !== i)
     }));
 
   // File inputs
@@ -155,29 +153,28 @@ export default function RegisterHealthService() {
 
   const handleDocsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setDocs((d) => [...d, ...files]);
+    setDocs(d => [...d, ...files]);
   };
 
   const removeDoc = (i: number) => {
-    setDocs((d) => d.filter((_, idx) => idx !== i));
+    setDocs(d => d.filter((_, idx) => idx !== i));
   };
 
   // Validation
   const validate = () => {
     const err: Record<string, string> = {};
-    if (!form.centerName) err.centerName = "Center name required";
-    if (!form.category) err.category = "Category required";
-    if (!form.ownerName) err.ownerName = "Owner name required";
-    if (!form.phone) err.phone = "Phone required";
-    else if (!/^\d{10}$/.test(form.phone)) err.phone = "Phone must be 10 digits";
-    if (!form.city) err.city = "City required";
-    if (!form.state) err.state = "State required";
-    if (!form.pincode) err.pincode = "Pincode required";
-    else if (!/^\d{6}$/.test(form.pincode)) err.pincode = "Pincode must be 6 digits";
-    if (form.offerings.length === 0)
-      err.offerings = "Add at least one offering/service";
-    if (!form.about) err.about = "About section required";
-    if (docs.length === 0) err.docs = "Upload at least one document";
+    if (!form.centerName) err.centerName = 'Center name required';
+    if (!form.category) err.category = 'Category required';
+    if (!form.ownerName) err.ownerName = 'Owner name required';
+    if (!form.phone) err.phone = 'Phone required';
+    else if (!/^\d{10}$/.test(form.phone)) err.phone = 'Phone must be 10 digits';
+    if (!form.city) err.city = 'City required';
+    if (!form.state) err.state = 'State required';
+    if (!form.pincode) err.pincode = 'Pincode required';
+    else if (!/^\d{6}$/.test(form.pincode)) err.pincode = 'Pincode must be 6 digits';
+    if (form.offerings.length === 0) err.offerings = 'Add at least one offering/service';
+    if (!form.about) err.about = 'About section required';
+    if (docs.length === 0) err.docs = 'Upload at least one document';
     setErrors(err);
     return Object.keys(err).length === 0;
   };
@@ -185,9 +182,9 @@ export default function RegisterHealthService() {
   // Upload helper
   const uploadFile = async (file: File) => {
     const formData = new FormData();
-    formData.append("image", file);
-    const res = await fetch("/api/health-docs", { method: "POST", body: formData });
-    if (!res.ok) throw new Error("Upload failed");
+    formData.append('image', file);
+    const res = await fetch('/api/health-docs', { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Upload failed');
     const result = await res.json();
     return result.imageUrl;
   };
@@ -206,42 +203,42 @@ export default function RegisterHealthService() {
         ...form,
         logoUrl,
         docUrls,
-        userId: session?.user?.id || null,
+        userId: session?.user?.id || null
       };
 
-      const res = await fetch("/api/health-services", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const res = await fetch('/api/health-services', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
       if (data.success) {
-        toast.success("Health & Wellness Center Registered!");
+        toast.success('Health & Wellness Center Registered!');
         setForm({
-          centerName: "",
-          category: "",
-          ownerName: "",
-          email: "",
-          phone: "",
-          address: "",
-          city: "",
-          state: "",
-          pincode: "",
-          offeringsInput: "",
+          centerName: '',
+          category: '',
+          ownerName: '',
+          email: '',
+          phone: '',
+          address: '',
+          city: '',
+          state: '',
+          pincode: '',
+          offeringsInput: '',
           offerings: [],
-          branches: [{ name: "", address: "", phone: "" }],
-          about: "",
+          branches: [{ name: '', address: '', phone: '' }],
+          about: ''
         });
         setLogoFile(null);
         setLogoPreview(null);
         setDocs([]);
       } else {
-        toast.error(data.error || "Something went wrong");
+        toast.error(data.error || 'Something went wrong');
       }
     } catch (err) {
       console.error(err);
-      toast.error("Submission failed");
+      toast.error('Submission failed');
     } finally {
       setSubmitting(false);
     }
@@ -273,14 +270,9 @@ export default function RegisterHealthService() {
 
           <div>
             <label className="block text-sm font-medium">Category *</label>
-            <select
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              className="border p-2 rounded w-full"
-            >
+            <select name="category" value={form.category} onChange={handleChange} className="border p-2 rounded w-full">
               <option value="">Select Category</option>
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -302,12 +294,7 @@ export default function RegisterHealthService() {
 
           <div>
             <label className="block text-sm font-medium">Email</label>
-            <input
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              className="border p-2 rounded w-full"
-            />
+            <input name="email" value={form.email} onChange={handleChange} className="border p-2 rounded w-full" />
           </div>
 
           <div>
@@ -343,14 +330,9 @@ export default function RegisterHealthService() {
             onChange={handleChange}
             className="border p-2 rounded"
           />
-          <select
-            name="state"
-            value={form.state}
-            onChange={handleChange}
-            className="border p-2 rounded"
-          >
+          <select name="state" value={form.state} onChange={handleChange} className="border p-2 rounded">
             <option value="">Select State</option>
-            {states.map((s) => (
+            {states.map(s => (
               <option key={s}>{s}</option>
             ))}
           </select>
@@ -370,15 +352,11 @@ export default function RegisterHealthService() {
           <div className="flex gap-2 mt-1">
             <input
               value={form.offeringsInput}
-              onChange={(e) => setForm((s) => ({ ...s, offeringsInput: e.target.value }))}
+              onChange={e => setForm(s => ({ ...s, offeringsInput: e.target.value }))}
               className="border p-2 rounded flex-1"
               placeholder="e.g. Yoga, Gym Training, Physiotherapy"
             />
-            <button
-              type="button"
-              onClick={addOffering}
-              className="bg-blue-600 text-white px-3 py-1 rounded"
-            >
+            <button type="button" onClick={addOffering} className="bg-blue-600 text-white px-3 py-1 rounded">
               Add
             </button>
           </div>
@@ -399,11 +377,7 @@ export default function RegisterHealthService() {
         <div>
           <div className="flex justify-between items-center">
             <label className="text-sm font-medium">Branches</label>
-            <button
-              type="button"
-              className="text-blue-600 text-sm"
-              onClick={addBranch}
-            >
+            <button type="button" className="text-blue-600 text-sm" onClick={addBranch}>
               + Add Branch
             </button>
           </div>
@@ -413,11 +387,7 @@ export default function RegisterHealthService() {
               <div className="flex justify-between">
                 <span className="text-sm font-medium">Branch #{i + 1}</span>
                 {form.branches.length > 1 && (
-                  <button
-                    type="button"
-                    className="text-red-600 text-sm"
-                    onClick={() => removeBranch(i)}
-                  >
+                  <button type="button" className="text-red-600 text-sm" onClick={() => removeBranch(i)}>
                     Remove
                   </button>
                 )}
@@ -426,19 +396,19 @@ export default function RegisterHealthService() {
                 <input
                   placeholder="Branch name"
                   value={b.name}
-                  onChange={(e) => updateBranch(i, "name", e.target.value)}
+                  onChange={e => updateBranch(i, 'name', e.target.value)}
                   className="border p-2 rounded"
                 />
                 <input
                   placeholder="Branch address"
                   value={b.address}
-                  onChange={(e) => updateBranch(i, "address", e.target.value)}
+                  onChange={e => updateBranch(i, 'address', e.target.value)}
                   className="border p-2 rounded"
                 />
                 <input
                   placeholder="Branch phone"
                   value={b.phone}
-                  onChange={(e) => updateBranch(i, "phone", e.target.value)}
+                  onChange={e => updateBranch(i, 'phone', e.target.value)}
                   className="border p-2 rounded"
                 />
               </div>
@@ -464,9 +434,7 @@ export default function RegisterHealthService() {
           <div>
             <label className="block text-sm font-medium">Logo</label>
             <input type="file" accept="image/*" onChange={handleLogoChange} className="mt-1" />
-            {logoPreview && (
-              <img src={logoPreview} className="mt-2 w-24 h-24 rounded object-cover" />
-            )}
+            {logoPreview && <img src={logoPreview} className="mt-2 w-24 h-24 rounded object-cover" />}
           </div>
           <div>
             <label className="block text-sm font-medium">Documents *</label>
@@ -487,12 +455,8 @@ export default function RegisterHealthService() {
 
         {/* Submit */}
         <div className="flex justify-end mt-4">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-          >
-            {submitting ? "Submitting..." : "Register Center"}
+          <button type="submit" disabled={submitting} className="bg-green-600 text-white px-4 py-2 rounded">
+            {submitting ? 'Submitting...' : 'Register Center'}
           </button>
         </div>
       </form>

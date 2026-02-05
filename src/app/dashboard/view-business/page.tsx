@@ -1,27 +1,24 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
-import { redirect } from "next/navigation";
-import DashboardLayout from "@/src/components/layout/dashboardLayout";
-import MyBusinessesPage from "./ViewBusinessPage";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
+import { redirect } from 'next/navigation';
+import DashboardLayout from '@/src/components/layout/dashboardLayout';
+import MyBusinessesPage from './ViewBusinessPage';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 export default async function ViewBusinessIndex() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
-  console.log("session", session);
+  console.log('session', session);
 
   return (
     <DashboardLayout user={session.user}>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-1">
-          <Link
-            href="/dashboard"
-            className="flex items-center  text-gray-600 hover:text-gray-900"
-          >
+          <Link href="/dashboard" className="flex items-center  text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-4 h-4 text-red-700" />
             <span className="text-red-700">Back to dashboard / </span>
           </Link>

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { healthServices } from "@/src/drizzle/db/schemas/health_services";
-import { eq, and } from "drizzle-orm";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { healthServices } from '@/src/drizzle/db/schemas/health_services';
+import { eq, and } from 'drizzle-orm';
 
 // ✅ POST → Register a new health/wellness center
 export async function POST(req: NextRequest) {
@@ -22,15 +22,12 @@ export async function POST(req: NextRequest) {
       branches,
       about,
       logoUrl,
-      docUrls,
+      docUrls
     } = body;
 
     // Basic validation
     if (!centerName || !category || !ownerName || !phone)
-      return NextResponse.json(
-        { success: false, error: "Required fields missing" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Required fields missing' }, { status: 400 });
 
     // ✅ Always set status = "active" when creating new record
     await db.insert(healthServices).values({
@@ -49,26 +46,23 @@ export async function POST(req: NextRequest) {
       about,
       logoUrl,
       docUrls,
-      status: "active", // 👈 added
+      status: 'active' // 👈 added
     });
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Error registering health/wellness service:", err);
-    return NextResponse.json(
-      { success: false, error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error('Error registering health/wellness service:', err);
+    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
 // ✅ GET → Fetch active centers (optionally by user)
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId");
+  const userId = req.nextUrl.searchParams.get('userId');
 
   try {
     // Always filter by active status
-    const conditions: any = [eq(healthServices.status, "active")];
+    const conditions: any = [eq(healthServices.status, 'active')];
 
     if (userId) {
       conditions.push(eq(healthServices.userId, userId));
@@ -82,10 +76,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Error fetching centers:", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch centers" },
-      { status: 500 }
-    );
+    console.error('Error fetching centers:', error);
+    return NextResponse.json({ success: false, error: 'Failed to fetch centers' }, { status: 500 });
   }
 }

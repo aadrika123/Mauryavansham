@@ -4,11 +4,7 @@ import React, { useEffect, useState } from 'react';
 import MobileLayout from './mobileViewLayout';
 import AuthLayout from './webVeiwLayout';
 
-export default function RootLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -17,15 +13,10 @@ export default function RootLayout({
       setIsMobile(true);
     } else {
       const userAgent = navigator.userAgent;
-      const mobileRegex =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Mobile Safari/i;
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Mobile Safari/i;
       setIsMobile(mobileRegex.test(userAgent));
     }
   }, []);
 
-  return isMobile ? (
-    <MobileLayout>{children}</MobileLayout>
-  ) : (
-    <AuthLayout>{children}</AuthLayout>
-  );
+  return isMobile ? <MobileLayout>{children}</MobileLayout> : <AuthLayout>{children}</AuthLayout>;
 }

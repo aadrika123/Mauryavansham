@@ -105,7 +105,7 @@
 
 /* Sidebar thin scrollbar */
 .sidebar::-webkit-scrollbar {
-  width: 6px;  /* patla scrollbar */
+  width: 6px; /* patla scrollbar */
 }
 
 .sidebar::-webkit-scrollbar-track {

@@ -6,20 +6,14 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/src/lib/auth';
 
 // 🟡 UPDATE ACHIEVEMENT (PUT)
-export async function PUT(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: paramId } = await params;
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized access' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Unauthorized access' }, { status: 401 });
     }
 
     const id = Number(paramId);
@@ -50,55 +44,34 @@ export async function PUT(
       })
       .where(eq(achievements.id, id));
 
-    return NextResponse.json(
-      { success: true, message: 'Achievement updated successfully' },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true, message: 'Achievement updated successfully' }, { status: 200 });
   } catch (err) {
     console.error('❌ Error updating achievement:', err);
-    return NextResponse.json(
-      { success: false, message: 'Failed to update achievement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to update achievement' }, { status: 500 });
   }
 }
 
 // 🔵 GET SINGLE ACHIEVEMENT
-export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: paramId } = await params;
     const id = Number(paramId);
 
-    const [achievement] = await db
-      .select()
-      .from(achievements)
-      .where(eq(achievements.id, id));
+    const [achievement] = await db.select().from(achievements).where(eq(achievements.id, id));
 
     if (!achievement) {
-      return NextResponse.json(
-        { success: false, message: 'Achievement not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, message: 'Achievement not found' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: achievement });
   } catch (err) {
     console.error('❌ Error fetching achievement:', err);
-    return NextResponse.json(
-      { success: false, message: 'Failed to fetch achievement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to fetch achievement' }, { status: 500 });
   }
 }
 
 // 🔴 DELETE (soft delete)
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: paramId } = await params;
     const session = await getServerSession(authOptions);
@@ -106,10 +79,7 @@ export async function DELETE(
     const id = Number(paramId);
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized access' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Unauthorized access' }, { status: 401 });
     }
 
     await db
@@ -122,15 +92,9 @@ export async function DELETE(
       })
       .where(eq(achievements.id, id));
 
-    return NextResponse.json(
-      { success: true, message: 'Achievement removed successfully' },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true, message: 'Achievement removed successfully' }, { status: 200 });
   } catch (err) {
     console.error('❌ Error deleting achievement:', err);
-    return NextResponse.json(
-      { success: false, message: 'Failed to remove achievement' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to remove achievement' }, { status: 500 });
   }
 }

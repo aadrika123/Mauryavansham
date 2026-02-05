@@ -1,37 +1,27 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import {
-  Calendar,
-  dateFnsLocalizer,
-  Event as BigCalendarEvent,
-} from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Button } from "@/src/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/src/components/ui/dialog";
-import { Input } from "@/src/components/ui/input";
-import Loader from "@/src/components/ui/loader";
-import { useToast } from "@/src/components/ui/toastProvider";
+import { useState, useEffect } from 'react';
+import { Calendar, dateFnsLocalizer, Event as BigCalendarEvent } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Button } from '@/src/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/src/components/ui/dialog';
+import { Input } from '@/src/components/ui/input';
+import Loader from '@/src/components/ui/loader';
+import { useToast } from '@/src/components/ui/toastProvider';
 
 interface RateData {
   date: string;
   rate?: number;
 }
 
-const locales = { "en-US": require("date-fns/locale/en-US") };
+const locales = { 'en-US': require('date-fns/locale/en-US') };
 const localizer = dateFnsLocalizer({
   format,
   parse,
   startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 0 }),
   getDay,
-  locales,
+  locales
 });
 
 const CustomToolbar = ({ label, onNavigate }: any) => (
@@ -40,13 +30,13 @@ const CustomToolbar = ({ label, onNavigate }: any) => (
     <div className="flex gap-2">
       <button
         className="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        onClick={() => onNavigate("TODAY")}
+        onClick={() => onNavigate('TODAY')}
       >
         Today
       </button>
       <button
         className="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        onClick={() => onNavigate("NEXT")}
+        onClick={() => onNavigate('NEXT')}
       >
         Next
       </button>
@@ -59,48 +49,46 @@ export default function AdRatePage() {
   const [events, setEvents] = useState<BigCalendarEvent[]>([]);
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [currentRate, setCurrentRate] = useState<number | "">("");
+  const [currentRate, setCurrentRate] = useState<number | ''>('');
   const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
-
 
   // Fetch rates from API
   useEffect(() => {
     const fetchRates = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/admin/ad-rates");
+        const res = await fetch('/api/admin/ad-rates');
         const data: RateData[] = await res.json();
         setRates(data);
         setEvents(
-          data.map((d) => ({
+          data.map(d => ({
             start: new Date(d.date),
             end: new Date(d.date),
-            title: `₹${d.rate}`,
+            title: `₹${d.rate}`
           }))
         );
         // alert({ title: "Rates fetched successfully!", variant: "success" });
         addToast({
-          title: "Rates fetched successfully!",
-          variant: "success",
+          title: 'Rates fetched successfully!',
+          variant: 'success'
         });
-
       } catch {
         // alert({ title: "Failed to fetch rates", variant: "destructive" });
-         addToast({
-          title: "Failed to fetch rates",
-          variant: "destructive",
+        addToast({
+          title: 'Failed to fetch rates',
+          variant: 'destructive'
         });
       } finally {
         setLoading(false);
       }
     };
     fetchRates();
-  }, [ ]);
+  }, []);
 
   const handleSelectSlot = (slotInfo: any) => {
-    const dateStr = format(slotInfo.start, "yyyy-MM-dd");
-    const existingRate = rates.find((r) => r.date === dateStr)?.rate ?? "";
+    const dateStr = format(slotInfo.start, 'yyyy-MM-dd');
+    const existingRate = rates.find(r => r.date === dateStr)?.rate ?? '';
     setSelectedDay(dateStr);
     setCurrentRate(existingRate);
     setModalOpen(true);
@@ -108,18 +96,18 @@ export default function AdRatePage() {
 
   const handleSaveRate = () => {
     if (!selectedDay) return;
-    const updatedRates = rates.filter((r) => r.date !== selectedDay);
+    const updatedRates = rates.filter(r => r.date !== selectedDay);
     updatedRates.push({
       date: selectedDay,
-      rate: currentRate === "" ? undefined : currentRate,
+      rate: currentRate === '' ? undefined : currentRate
     });
 
     setRates(updatedRates);
     setEvents(
-      updatedRates.map((d) => ({
+      updatedRates.map(d => ({
         start: new Date(d.date),
         end: new Date(d.date),
-        title: `₹${d.rate}`,
+        title: `₹${d.rate}`
       }))
     );
     setModalOpen(false);
@@ -130,38 +118,38 @@ export default function AdRatePage() {
     if (rates.length === 0) {
       // alert({ title: "No rates to save", variant: "destructive" });
       addToast({
-        title: "No rates to save",
-        variant: "destructive",
+        title: 'No rates to save',
+        variant: 'destructive'
       });
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/ad-rates", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(rates),
+      const res = await fetch('/api/admin/ad-rates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rates)
       });
 
       if (res.ok) {
         // alert({ title: "Rates saved successfully!", variant: "success" });
         addToast({
-          title: "Rates saved successfully!",
-          variant: "success",
+          title: 'Rates saved successfully!',
+          variant: 'success'
         });
       } else {
         // alert({ title: "Failed to save rates", variant: "destructive" });
         addToast({
-          title: "Failed to save rates",
-          variant: "destructive",
+          title: 'Failed to save rates',
+          variant: 'destructive'
         });
       }
     } catch {
       // alert({ title: "Error saving rates", variant: "destructive" });
       addToast({
-        title: "Error saving rates",
-        variant: "destructive",
+        title: 'Error saving rates',
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
@@ -179,10 +167,10 @@ export default function AdRatePage() {
           events={events}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 600, backgroundColor: "#f9fafb" }}
+          style={{ height: 600, backgroundColor: '#f9fafb' }}
           selectable
           onSelectSlot={handleSelectSlot}
-          views={["month"]}
+          views={['month']}
           components={{ toolbar: CustomToolbar }}
         />
 
@@ -199,15 +187,11 @@ export default function AdRatePage() {
             <div className="space-y-4">
               <div>
                 <label className="block mb-1">Date</label>
-                <Input value={selectedDay || ""} disabled />
+                <Input value={selectedDay || ''} disabled />
               </div>
               <div>
                 <label className="block mb-1">Rate (per day)</label>
-                <Input
-                  type="number"
-                  value={currentRate}
-                  onChange={(e) => setCurrentRate(Number(e.target.value))}
-                />
+                <Input type="number" value={currentRate} onChange={e => setCurrentRate(Number(e.target.value))} />
               </div>
             </div>
             <DialogFooter>

@@ -49,11 +49,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
   return (
     <DashboardLayout user={session.user}>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <BlogDetail
-          blog={blog}
-          currentUserId={session.user.id}
-          userRole={session.user.role}
-        />
+        <BlogDetail blog={blog} currentUserId={session.user.id} userRole={session.user.role} />
       </div>
     </DashboardLayout>
   );

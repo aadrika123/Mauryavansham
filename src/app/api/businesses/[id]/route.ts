@@ -5,18 +5,12 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/src/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return Response.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return Response.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
     const business = await db.query.businesses.findFirst({
@@ -27,35 +21,23 @@ export async function GET(
     });
 
     if (!business) {
-      return Response.json(
-        { success: false, message: 'Business not found' },
-        { status: 404 }
-      );
+      return Response.json({ success: false, message: 'Business not found' }, { status: 404 });
     }
 
     return Response.json({ success: true, data: business });
   } catch (error) {
     console.error('GET /api/businesses/[id] Error:', error);
-    return Response.json(
-      { success: false, message: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return Response.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, message: 'User not authenticated' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'User not authenticated' }, { status: 401 });
     }
 
     const businessId = Number(id);
@@ -78,18 +60,12 @@ export async function PATCH(
       .returning();
 
     if (!updated.length) {
-      return NextResponse.json(
-        { success: false, message: 'Business not found or not authorized' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, message: 'Business not found or not authorized' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data: updated[0] });
   } catch (error: any) {
     console.error('PATCH /api/businesses/[id] Error:', error);
-    return NextResponse.json(
-      { success: false, message: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }

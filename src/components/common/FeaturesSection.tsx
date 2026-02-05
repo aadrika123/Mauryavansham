@@ -1,13 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { Button } from '@/src/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/src/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
 import {
   Users,
   Heart,
@@ -46,7 +40,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
     if (ads.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setCurrentIndex(prev => (prev + 1) % ads.length);
     }, 5000); // Change every 5 seconds
 
     return () => clearInterval(timer);
@@ -69,9 +63,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
               <div className="relative border-2 border-dashed border-amber-400 rounded-lg p-4 sm:p-6 md:p-8 bg-gradient-to-br from-amber-50 to-yellow-100 w-full">
                 <h3 className="text-lg sm:text-xl md:text-3xl font-bold text-amber-800 mb-4">
                   Book Your Ad (3) <br />
-                  <p className="text-xs sm:text-sm">
-                    (Recommended size: 900x300px)
-                  </p>
+                  <p className="text-xs sm:text-sm">(Recommended size: 900x300px)</p>
                 </h3>
                 <div className="space-y-4 relative">
                   <div className="absolute top-4 left-4">
@@ -103,17 +95,10 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
             <div
               key={ad.id}
               className={`absolute inset-0  transition-opacity duration-1000 ${
-                index === currentIndex
-                  ? 'opacity-100 z-10'
-                  : 'opacity-0 pointer-events-none z-0'
+                index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
-              <a
-                href={ad.adUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block w-full h-full"
-              >
+              <a href={ad.adUrl} target="_blank" rel="noopener noreferrer" className="inline-block w-full h-full">
                 <img
                   src={ad.bannerImageUrl}
                   alt={`Ad ${index + 1}`}
@@ -138,9 +123,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                   key={index}
                   onClick={() => setCurrentIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentIndex
-                      ? 'bg-amber-600 scale-125'
-                      : 'bg-amber-400/50 hover:bg-amber-400/75'
+                    index === currentIndex ? 'bg-amber-600 scale-125' : 'bg-amber-400/50 hover:bg-amber-400/75'
                   }`}
                   aria-label={`Go to ad ${index + 1}`}
                   type="button"
@@ -162,7 +145,7 @@ export function FeaturesSection() {
 
   useEffect(() => {
     fetch('/api/ad-placements/approved')
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((data: AdPlacement[]) => {
         setAdPlacements(data);
       })
@@ -170,7 +153,7 @@ export function FeaturesSection() {
   }, []);
 
   // Filter ads for placement 3 (horizontal banner)
-  const horizontalAds = adPlacements.filter((ad) => ad.placementId === 3);
+  const horizontalAds = adPlacements.filter(ad => ad.placementId === 3);
 
   console.log('Horizontal Ads (Placement 3):', horizontalAds);
 
@@ -254,16 +237,11 @@ export function FeaturesSection() {
                 <Lock className="h-5 w-5" />
                 Login Required
               </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <p className="text-gray-600 mb-6">
-              Please login to access the Community Directory.
-            </p>
+            <p className="text-gray-600 mb-6">Please login to access the Community Directory.</p>
             <div className="space-y-3">
               <Button
                 onClick={() => Router.push('/sign-in')}
@@ -272,11 +250,7 @@ export function FeaturesSection() {
                 <User className="h-4 w-4 mr-2" />
                 Login
               </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={() => setShowLoginModal(false)} variant="outline" className="w-full">
                 Cancel
               </Button>
             </div>
@@ -291,15 +265,11 @@ export function FeaturesSection() {
             Welcome to Mauryavansham.com
           </h2>
           <p className="text-gray-700 mb-6 leading-relaxed text-justify">
-            MauryaVansham.com is an{' '}
-            <strong>exclusive community platform</strong> created by and for
-            members of the{' '}
-            <strong>Kushwaha / Koiri / Maurya / Sakhya / Sainy</strong>{' '}
-            community. Designed, developed, maintained and hosted by{' '}
-            <strong>Aadrika Enterprises</strong>, whose Promoters proudly belong
-            to the same community, this portal has been built with a{' '}
-            <strong>pure motive of community development and unity</strong> –
-            not for profit, but for growth, support, and heritage preservation.
+            MauryaVansham.com is an <strong>exclusive community platform</strong> created by and for members of the{' '}
+            <strong>Kushwaha / Koiri / Maurya / Sakhya / Sainy</strong> community. Designed, developed, maintained and
+            hosted by <strong>Aadrika Enterprises</strong>, whose Promoters proudly belong to the same community, this
+            portal has been built with a <strong>pure motive of community development and unity</strong> – not for
+            profit, but for growth, support, and heritage preservation.
           </p>
 
           <div className="text-justify space-y-3">
@@ -320,8 +290,7 @@ export function FeaturesSection() {
           </div>
 
           <p className="mt-8 text-lg font-medium text-[#8B4513] text-justify">
-            Together, let us build a stronger, more connected, and empowered
-            Maurya Vansh community.
+            Together, let us build a stronger, more connected, and empowered Maurya Vansh community.
           </p>
         </div>
       </section>
@@ -335,21 +304,17 @@ export function FeaturesSection() {
         {/* Community Section */}
         <div className="container mx-auto px-4 mt-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-[#8B0000]">
-              Community Services
-            </h2>
+            <h2 className="text-3xl font-bold mb-4 text-[#8B0000]">Community Services</h2>
             <p className="text-[#8B4513] max-w-2xl mx-auto">
-              Strengthening our Maurya community through digital connectivity,
-              preserving our heritage, and fostering meaningful relationships
+              Strengthening our Maurya community through digital connectivity, preserving our heritage, and fostering
+              meaningful relationships
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => {
-              const isCommunityDirectory =
-                feature.href === '/community-directory';
-              const isDisabled =
-                feature.href === '/' || (isCommunityDirectory && !session);
+              const isCommunityDirectory = feature.href === '/community-directory';
+              const isDisabled = feature.href === '/' || (isCommunityDirectory && !session);
 
               return (
                 <Card
@@ -361,15 +326,11 @@ export function FeaturesSection() {
                       <div className="p-2 bg-orange-100 rounded-lg">
                         <feature.icon className="h-6 w-6 text-orange-600" />
                       </div>
-                      <CardTitle className="text-lg text-[#8B0000]">
-                        {feature.title}
-                      </CardTitle>
+                      <CardTitle className="text-lg text-[#8B0000]">{feature.title}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="mb-4">
-                      {feature.description}
-                    </CardDescription>
+                    <CardDescription className="mb-4">{feature.description}</CardDescription>
                     <div className="flex flex-col items-start gap-1">
                       <Button
                         variant="outline"

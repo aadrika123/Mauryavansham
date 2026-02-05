@@ -149,10 +149,7 @@ export function Header() {
           <div className="container mx-auto flex items-center justify-between">
             {/* Logo + Mobile Menu */}
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="md:hidden text-orange-700"
-              >
+              <button onClick={() => setSidebarOpen(true)} className="md:hidden text-orange-700">
                 <Menu className="h-6 w-6" />
               </button>
               <Link href="/" className="flex items-center gap-3">
@@ -163,9 +160,7 @@ export function Header() {
                   <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 to-red-700 bg-clip-text text-transparent">
                     Mauryavansham
                   </h1>
-                  <p className="text-md font-semibold text-red-700">
-                    मौर्यवंश - गौरवशाली परंपरा
-                  </p>
+                  <p className="text-md font-semibold text-red-700">मौर्यवंश - गौरवशाली परंपरा</p>
                 </div>
               </Link>
             </div>
@@ -185,10 +180,7 @@ export function Header() {
             <div className="hidden md:flex items-center gap-3">
               {!isAuthenticated ? (
                 <Link href="/sign-in">
-                  <Button
-                    variant="outline"
-                    className="border-orange-500 text-orange-600 hover:bg-orange-50"
-                  >
+                  <Button variant="outline" className="border-orange-500 text-orange-600 hover:bg-orange-50">
                     Login
                   </Button>
                 </Link>
@@ -200,8 +192,7 @@ export function Header() {
                     <div className="flex flex-col items-center">
                       <Link
                         href={
-                          profileData?.data?.role === 'admin' ||
-                          profileData?.data?.role === 'superAdmin'
+                          profileData?.data?.role === 'admin' || profileData?.data?.role === 'superAdmin'
                             ? `/admin/user-profile/${loginUser?.id}`
                             : `/dashboard/user-profile/${loginUser?.id}`
                         }
@@ -222,13 +213,7 @@ export function Header() {
                               className="text-green-500"
                               strokeWidth="4"
                               strokeDasharray={2 * Math.PI * 28}
-                              strokeDashoffset={
-                                2 *
-                                Math.PI *
-                                28 *
-                                (1 -
-                                  (profileData?.profileCompletion || 0) / 100)
-                              }
+                              strokeDashoffset={2 * Math.PI * 28 * (1 - (profileData?.profileCompletion || 0) / 100)}
                               strokeLinecap="round"
                               stroke="url(#gradient)"
                               fill="transparent"
@@ -238,13 +223,7 @@ export function Header() {
                             />
                             {/* Gradient definition */}
                             <defs>
-                              <linearGradient
-                                id="gradient"
-                                x1="0%"
-                                y1="0%"
-                                x2="100%"
-                                y2="0%"
-                              >
+                              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" stopColor="orange" />
                                 <stop offset="100%" stopColor="green" />
                               </linearGradient>
@@ -255,9 +234,7 @@ export function Header() {
                           {!loading ? (
                             <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
                               <img
-                                src={
-                                  profileData?.data?.photo || '/placeholder.svg'
-                                }
+                                src={profileData?.data?.photo || '/placeholder.svg'}
                                 alt="Profile"
                                 className="w-full h-full object-cover"
                               />
@@ -287,8 +264,7 @@ export function Header() {
 
                     {/* User Name */}
                     <span className="font-semibold text-lg text-orange-600">
-                      <span className="font-medium italic">Hello,</span>{' '}
-                      {userName}
+                      <span className="font-medium italic">Hello,</span> {userName}
                     </span>
                   </div>
 
@@ -305,23 +281,16 @@ export function Header() {
               {isAuthenticated ? (
                 userDetails?.role == 'user' ? (
                   <Link href={`/dashboard`}>
-                    <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
-                      Main Panel
-                    </Button>
+                    <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">Main Panel</Button>
                   </Link>
-                ) : userDetails?.role == 'admin' ||
-                  userDetails?.role == 'superAdmin' ? (
+                ) : userDetails?.role == 'admin' || userDetails?.role == 'superAdmin' ? (
                   <Link href={`/admin/overview`}>
-                    <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
-                      Admin Panel
-                    </Button>
+                    <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">Admin Panel</Button>
                   </Link>
                 ) : null
               ) : (
                 <Link href="/sign-up">
-                  <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
-                    Sign Up
-                  </Button>
+                  <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">Sign Up</Button>
                 </Link>
               )}
             </div>
@@ -331,7 +300,7 @@ export function Header() {
         {/* Navigation Bar (Desktop) */}
         <nav className="bg-gradient-to-r from-red-800 to-red-900 px-4 hidden md:block">
           <div className="container mx-auto flex text-[13px] whitespace-nowrap">
-            {navigationItems.map((item) =>
+            {navigationItems.map(item =>
               item.children ? (
                 <div key={item.title} className="relative group ">
                   <button className="flex items-center gap-1 px-4 py-6 text-white hover:bg-red-700">
@@ -341,7 +310,7 @@ export function Header() {
 
                   {/* Dropdown */}
                   <div className="absolute left-0 top-full hidden group-hover:block bg-white shadow-lg rounded-md min-w-[180px] z-50">
-                    {item.children.map((child) => (
+                    {item.children.map(child => (
                       <Link
                         key={child.title}
                         href={child.href}
@@ -373,10 +342,7 @@ export function Header() {
                       </div>
                     </>
                   ) : (
-                    <Link
-                      href={item.href}
-                      className="flex items-center gap-1 px-4 py-6 text-white hover:bg-red-700"
-                    >
+                    <Link href={item.href} className="flex items-center gap-1 px-4 py-6 text-white hover:bg-red-700">
                       {item.icon && <item.icon className="h-4 w-4" />}
                       {item.title}
                     </Link>
@@ -426,12 +392,7 @@ export function Header() {
                         className="text-green-500"
                         strokeWidth="4"
                         strokeDasharray={2 * Math.PI * 36}
-                        strokeDashoffset={
-                          2 *
-                          Math.PI *
-                          36 *
-                          (1 - (profileData?.profileCompletion || 0) / 100)
-                        }
+                        strokeDashoffset={2 * Math.PI * 36 * (1 - (profileData?.profileCompletion || 0) / 100)}
                         strokeLinecap="round"
                         stroke="url(#gradientMobile)"
                         fill="transparent"
@@ -440,13 +401,7 @@ export function Header() {
                         cy="40"
                       />
                       <defs>
-                        <linearGradient
-                          id="gradientMobile"
-                          x1="0%"
-                          y1="0%"
-                          x2="100%"
-                          y2="0%"
-                        >
+                        <linearGradient id="gradientMobile" x1="0%" y1="0%" x2="100%" y2="0%">
                           <stop offset="0%" stopColor="orange" />
                           <stop offset="100%" stopColor="green" />
                         </linearGradient>
@@ -474,14 +429,12 @@ export function Header() {
               )}
 
               {/* Navigation Items */}
-              {navigationItems.map((item) =>
+              {navigationItems.map(item =>
                 item.children ? (
                   <div key={item.title} className="space-y-1">
-                    <p className="px-3 py-2 font-semibold text-white">
-                      {item.title}
-                    </p>
+                    <p className="px-3 py-2 font-semibold text-white">{item.title}</p>
 
-                    {item.children.map((child) => (
+                    {item.children.map(child => (
                       <Link
                         key={child.title}
                         href={child.href}
@@ -494,10 +447,7 @@ export function Header() {
                     ))}
                   </div>
                 ) : item.requiresAuth && !isAuthenticated ? (
-                  <div
-                    key={item.title}
-                    className="flex items-center gap-2 px-3 py-2 text-white/50 cursor-not-allowed"
-                  >
+                  <div key={item.title} className="flex items-center gap-2 px-3 py-2 text-white/50 cursor-not-allowed">
                     {item.icon && <item.icon className="h-4 w-4" />}
                     {item.title}
                   </div>
@@ -519,14 +469,10 @@ export function Header() {
                 {!isAuthenticated ? (
                   <>
                     <Link href="/sign-in" onClick={() => setSidebarOpen(false)}>
-                      <Button className="bg-white text-red-600  w-full">
-                        Login
-                      </Button>
+                      <Button className="bg-white text-red-600  w-full">Login</Button>
                     </Link>
                     <Link href="/sign-up" onClick={() => setSidebarOpen(false)}>
-                      <Button className="bg-white text-red-600  w-full mt-2">
-                        Sign Up
-                      </Button>
+                      <Button className="bg-white text-red-600  w-full mt-2">Sign Up</Button>
                     </Link>
                   </>
                 ) : (
@@ -535,18 +481,10 @@ export function Header() {
                     <div className="pt-4 border-t border-white/30 space-y-2">
                       {!isAuthenticated ? (
                         <>
-                          <Link
-                            href="/sign-in"
-                            onClick={() => setSidebarOpen(false)}
-                          >
-                            <Button className="bg-white text-red-600 w-full">
-                              Login
-                            </Button>
+                          <Link href="/sign-in" onClick={() => setSidebarOpen(false)}>
+                            <Button className="bg-white text-red-600 w-full">Login</Button>
                           </Link>
-                          <Link
-                            href="/sign-up"
-                            onClick={() => setSidebarOpen(false)}
-                          >
+                          <Link href="/sign-up" onClick={() => setSidebarOpen(false)}>
                             <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full">
                               Sign Up
                             </Button>
@@ -556,22 +494,13 @@ export function Header() {
                         <>
                           {/* ✅ Main Panel / Admin Panel */}
                           {userDetails?.role === 'user' ? (
-                            <Link
-                              href={`/dashboard`}
-                              passHref
-                              onClick={() => setSidebarOpen(false)}
-                            >
+                            <Link href={`/dashboard`} passHref onClick={() => setSidebarOpen(false)}>
                               <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full">
                                 Main Panel
                               </Button>
                             </Link>
-                          ) : userDetails?.role === 'admin' ||
-                            userDetails?.role === 'superAdmin' ? (
-                            <Link
-                              href={`/admin/overview`}
-                              passHref
-                              onClick={() => setSidebarOpen(false)}
-                            >
+                          ) : userDetails?.role === 'admin' || userDetails?.role === 'superAdmin' ? (
+                            <Link href={`/admin/overview`} passHref onClick={() => setSidebarOpen(false)}>
                               <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full">
                                 Admin Panel
                               </Button>
@@ -609,9 +538,7 @@ export function Header() {
             {/* Overlay */}
             <div
               className={`flex-1 transition-opacity duration-300 ease-in-out ${
-                sidebarOpen
-                  ? 'bg-black bg-opacity-50 pointer-events-auto'
-                  : 'bg-transparent pointer-events-none'
+                sidebarOpen ? 'bg-black bg-opacity-50 pointer-events-auto' : 'bg-transparent pointer-events-none'
               }`}
               onClick={() => setSidebarOpen(false)}
             />
@@ -622,20 +549,12 @@ export function Header() {
         {isOpen && (
           <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-              <h2 className="text-lg font-bold mb-4">
-                Are you sure you want to sign out?
-              </h2>
+              <h2 className="text-lg font-bold mb-4">Are you sure you want to sign out?</h2>
               <div className="flex justify-between space-x-4">
-                <Button
-                  onClick={() => setIsOpen(false)}
-                  className="w-full bg-gray-300 text-gray-700"
-                >
+                <Button onClick={() => setIsOpen(false)} className="w-full bg-gray-300 text-gray-700">
                   Cancel
                 </Button>
-                <Button
-                  onClick={handleSignOut}
-                  className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
-                >
+                <Button onClick={handleSignOut} className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white">
                   Yes, Sign Out
                 </Button>
               </div>

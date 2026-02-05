@@ -1,12 +1,12 @@
-import { db } from "@/src/drizzle/db";
-import { businesses } from "@/src/drizzle/db/schemas/businesses";
-import { users } from "@/src/drizzle/schema";
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
-import { gte, lte, and } from "drizzle-orm";
+import { db } from '@/src/drizzle/db';
+import { businesses } from '@/src/drizzle/db/schemas/businesses';
+import { users } from '@/src/drizzle/schema';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { eq } from 'drizzle-orm';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
+import { gte, lte, and } from 'drizzle-orm';
 // import { db } from "@/db";
 // import { businesses, users } from "@/db/schema";
 
@@ -22,15 +22,15 @@ const businessSchema = z.object({
   registeredAddress: z.object({
     office: z.string(),
     branch: z.string().optional(),
-    location: z.string().optional(),
+    location: z.string().optional()
   }),
   photos: z.object({
     product: z.array(z.string().url()).optional(),
-    office: z.array(z.string().url()).optional(),
+    office: z.array(z.string().url()).optional()
   }),
-  premiumCategory: z.enum(["Platinum", "Gold", "Silver", "General"]),
+  premiumCategory: z.enum(['Platinum', 'Gold', 'Silver', 'General']),
   paymentStatus: z.boolean().optional(),
-  isActive: z.boolean().optional(),
+  isActive: z.boolean().optional()
 });
 
 // POST
@@ -39,10 +39,7 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, message: "User not authenticated" },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'User not authenticated' }, { status: 401 });
     }
 
     const body = await req.json();
@@ -53,20 +50,14 @@ export async function POST(req: NextRequest) {
       userId: session.user.id, // session se uthaya
       paymentStatus: false,
       isActive: true,
-      createdAt: new Date(),
+      createdAt: new Date()
     };
 
-    const inserted = await db
-      .insert(businesses)
-      .values(dataToInsert)
-      .returning();
+    const inserted = await db.insert(businesses).values(dataToInsert).returning();
 
     return NextResponse.json({ success: true, data: inserted });
   } catch (error: any) {
-    return NextResponse.json(
-      { success: false, message: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 
@@ -74,17 +65,15 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
-    const status = url.searchParams.get("status"); // "true" | "false" | null
-    const from = url.searchParams.get("from"); // yyyy-mm-dd
-    const to = url.searchParams.get("to"); // yyyy-mm-dd
+    const status = url.searchParams.get('status'); // "true" | "false" | null
+    const from = url.searchParams.get('from'); // yyyy-mm-dd
+    const to = url.searchParams.get('to'); // yyyy-mm-dd
 
-    const isActive =
-      status === "true" ? true : status === "false" ? false : undefined;
+    const isActive = status === 'true' ? true : status === 'false' ? false : undefined;
 
-    let conditions: any[] = [];
+    const conditions: any[] = [];
 
-    if (isActive !== undefined)
-      conditions.push(eq(businesses.isActive, isActive));
+    if (isActive !== undefined) conditions.push(eq(businesses.isActive, isActive));
     if (from) conditions.push(gte(businesses.createdAt, new Date(from)));
 
     if (to) {
@@ -101,9 +90,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ success: true, data: businessesWithUser });
   } catch (error: any) {
-    return NextResponse.json(
-      { success: false, message: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }

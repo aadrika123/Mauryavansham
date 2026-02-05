@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import Loader from "@/src/components/ui/loader";
-import { useToast } from "@/src/components/ui/toastProvider";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import Loader from '@/src/components/ui/loader';
+import { useToast } from '@/src/components/ui/toastProvider';
+import { useRouter } from 'next/navigation';
 
 interface Achievement {
   id?: number;
@@ -13,16 +13,16 @@ interface Achievement {
   achievementTitle: string;
   description: string;
   category:
-    | "Healthcare"
-    | "Sports"
-    | "Technology"
-    | "Education"
-    | "Business"
-    | "Arts"
-    | "Central Government"
-    | "PSU"
-    | "State Government"
-    | "Other";
+    | 'Healthcare'
+    | 'Sports'
+    | 'Technology'
+    | 'Education'
+    | 'Business'
+    | 'Arts'
+    | 'Central Government'
+    | 'PSU'
+    | 'State Government'
+    | 'Other';
   otherCategory?: string;
   images: string[];
   isVerified: boolean;
@@ -40,45 +40,34 @@ interface Props {
   onSuccess?: () => void;
 }
 
-export default function CreateAchievementForm({
-  initialData,
-  onSuccess,
-}: Props) {
+export default function CreateAchievementForm({ initialData, onSuccess }: Props) {
   const { addToast } = useToast();
   const router = useRouter();
 
   // ✅ default form
   const emptyForm: Achievement = {
-    name: "",
-    fatherName: "",
-    motherName: "",
-    achievementTitle: "",
-    description: "",
-    category: "Education",
-    otherCategory: "",
+    name: '',
+    fatherName: '',
+    motherName: '',
+    achievementTitle: '',
+    description: '',
+    category: 'Education',
+    otherCategory: '',
     images: [],
     isVerified: false,
     isFeatured: false,
     isHallOfFame: false,
     year: new Date().getFullYear(),
-    location: "",
-    keyAchievement: "",
-    impact: "",
-    achievements: [],
+    location: '',
+    keyAchievement: '',
+    impact: '',
+    achievements: []
   };
 
   const [form, setForm] = useState<Achievement>(initialData || emptyForm);
-  const [imageFiles, setImageFiles] = useState<(File | null)[]>([
-    null,
-    null,
-    null,
-  ]);
-  const [imagePreviews, setImagePreviews] = useState<(string | null)[]>([
-    null,
-    null,
-    null,
-  ]);
-  const [achievementInput, setAchievementInput] = useState("");
+  const [imageFiles, setImageFiles] = useState<(File | null)[]>([null, null, null]);
+  const [imagePreviews, setImagePreviews] = useState<(string | null)[]>([null, null, null]);
+  const [achievementInput, setAchievementInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -89,30 +78,25 @@ export default function CreateAchievementForm({
       setImagePreviews([
         initialData.images?.[0] || null,
         initialData.images?.[1] || null,
-        initialData.images?.[2] || null,
+        initialData.images?.[2] || null
       ]);
     }
   }, [initialData]);
 
   // ✅ handle text inputs
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   // ✅ handle checkbox
   const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: checked }));
+    setForm(prev => ({ ...prev, [name]: checked }));
   };
 
   // ✅ handle images
-  const handleImageChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -130,40 +114,35 @@ export default function CreateAchievementForm({
   const handleAddAchievement = () => {
     const trimmed = achievementInput.trim();
     if (!trimmed) return;
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
-      achievements: [...prev.achievements, trimmed],
+      achievements: [...prev.achievements, trimmed]
     }));
-    setAchievementInput("");
+    setAchievementInput('');
   };
 
   const removeAchievement = (idx: number) => {
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
-      achievements: prev.achievements.filter((_, i) => i !== idx),
+      achievements: prev.achievements.filter((_, i) => i !== idx)
     }));
   };
 
   // ✅ Validation
   const validate = () => {
     const err: Record<string, string> = {};
-    if (!form.name.trim()) err.name = "Name is required";
+    if (!form.name.trim()) err.name = 'Name is required';
     if (!form.fatherName.trim()) err.fatherName = "Father's name is required";
     if (!form.motherName.trim()) err.motherName = "Mother's name is required";
-    if (!form.achievementTitle.trim())
-      err.achievementTitle = "Achievement Title is required";
-    if (!form.description.trim()) err.description = "Description is required";
-    if (!form.location.trim()) err.location = "Location is required";
-    if (!form.keyAchievement.trim())
-      err.keyAchievement = "Key Achievement is required";
-    if (!form.impact.trim()) err.impact = "Impact is required";
-    if (!form.year) err.year = "Year is required";
-    if (!form.images?.[0] && !imageFiles[0])
-      err.image1 = "At least 1 image is mandatory";
-    if (form.achievements.length === 0)
-      err.achievements = "Add at least one achievement point";
-    if (form.category === "Other" && !form.otherCategory?.trim())
-      err.otherCategory = "Please specify category";
+    if (!form.achievementTitle.trim()) err.achievementTitle = 'Achievement Title is required';
+    if (!form.description.trim()) err.description = 'Description is required';
+    if (!form.location.trim()) err.location = 'Location is required';
+    if (!form.keyAchievement.trim()) err.keyAchievement = 'Key Achievement is required';
+    if (!form.impact.trim()) err.impact = 'Impact is required';
+    if (!form.year) err.year = 'Year is required';
+    if (!form.images?.[0] && !imageFiles[0]) err.image1 = 'At least 1 image is mandatory';
+    if (form.achievements.length === 0) err.achievements = 'Add at least one achievement point';
+    if (form.category === 'Other' && !form.otherCategory?.trim()) err.otherCategory = 'Please specify category';
     setErrors(err);
     return Object.keys(err).length === 0;
   };
@@ -171,13 +150,13 @@ export default function CreateAchievementForm({
   // ✅ upload single image
   const uploadFile = async (file: File): Promise<string> => {
     const formData = new FormData();
-    formData.append("image", file);
-    const res = await fetch("/api/achievement-upload", {
-      method: "POST",
-      body: formData,
+    formData.append('image', file);
+    const res = await fetch('/api/achievement-upload', {
+      method: 'POST',
+      body: formData
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Upload failed");
+    if (!res.ok) throw new Error(data.error || 'Upload failed');
     return data.url;
   };
 
@@ -198,45 +177,41 @@ export default function CreateAchievementForm({
 
       const payload = {
         ...form,
-        images: uploadedUrls.filter((url): url is string => !!url),
+        images: uploadedUrls.filter((url): url is string => !!url)
       };
 
-      const method = initialData ? "PUT" : "POST";
-      const url = initialData
-        ? `/api/achievements/${initialData.id}`
-        : "/api/achievements/general";
+      const method = initialData ? 'PUT' : 'POST';
+      const url = initialData ? `/api/achievements/${initialData.id}` : '/api/achievements/general';
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
       const result = await res.json();
 
       if (result.success) {
         addToast({
-          title: "Success",
-          description: initialData
-            ? "Achievement updated successfully!"
-            : "Achievement added successfully!",
-          variant: "success",
+          title: 'Success',
+          description: initialData ? 'Achievement updated successfully!' : 'Achievement added successfully!',
+          variant: 'success'
         });
-        router.push("/admin/created-achievement-general");
+        router.push('/admin/created-achievement-general');
         onSuccess?.();
       } else {
         addToast({
-          title: "Error",
-          description: result.error || "Something went wrong",
-          variant: "destructive",
+          title: 'Error',
+          description: result.error || 'Something went wrong',
+          variant: 'destructive'
         });
       }
     } catch (err) {
-      console.error("Error:", err);
+      console.error('Error:', err);
       addToast({
-        title: "Error",
-        description: "Submission failed",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Submission failed',
+        variant: 'destructive'
       });
     } finally {
       setSubmitting(false);
@@ -255,19 +230,18 @@ export default function CreateAchievementForm({
         {/* ✅ Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { name: "name", label: "Name", required: true },
-            { name: "fatherName", label: "Father's Name", required: true },
-            { name: "motherName", label: "Mother's Name", required: true },
+            { name: 'name', label: 'Name', required: true },
+            { name: 'fatherName', label: "Father's Name", required: true },
+            { name: 'motherName', label: "Mother's Name", required: true },
             {
-              name: "achievementTitle",
-              label: "Achievement Title",
-              required: true,
-            },
-          ].map((field) => (
+              name: 'achievementTitle',
+              label: 'Achievement Title',
+              required: true
+            }
+          ].map(field => (
             <div key={field.name}>
               <label className="block font-medium mb-1">
-                {field.label}{" "}
-                {field.required && <span className="text-red-500">*</span>}
+                {field.label} {field.required && <span className="text-red-500">*</span>}
               </label>
               <input
                 name={field.name}
@@ -275,11 +249,7 @@ export default function CreateAchievementForm({
                 onChange={handleChange}
                 className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
               />
-              {errors[field.name] && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors[field.name]}
-                </p>
-              )}
+              {errors[field.name] && <p className="text-red-500 text-sm mt-1">{errors[field.name]}</p>}
             </div>
           ))}
         </div>
@@ -296,23 +266,23 @@ export default function CreateAchievementForm({
             className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
           >
             {[
-              "Education",
-              "Technology",
-              "Healthcare",
-              "Business",
-              "Sports",
-              "Arts",
-              "Central Government",
-              "PSU",
-              "State Government",
-              "Other",
-            ].map((cat) => (
+              'Education',
+              'Technology',
+              'Healthcare',
+              'Business',
+              'Sports',
+              'Arts',
+              'Central Government',
+              'PSU',
+              'State Government',
+              'Other'
+            ].map(cat => (
               <option key={cat} value={cat}>
                 {cat}
               </option>
             ))}
           </select>
-          {form.category === "Other" && (
+          {form.category === 'Other' && (
             <input
               name="otherCategory"
               placeholder="Specify category"
@@ -397,7 +367,7 @@ export default function CreateAchievementForm({
           <div className="flex flex-col sm:flex-row gap-2">
             <input
               value={achievementInput}
-              onChange={(e) => setAchievementInput(e.target.value)}
+              onChange={e => setAchievementInput(e.target.value)}
               placeholder="Add achievement point"
               className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 outline-none"
             />
@@ -413,11 +383,7 @@ export default function CreateAchievementForm({
             {form.achievements.map((a, i) => (
               <li key={i} className="flex justify-between items-center">
                 <span>{a}</span>
-                <button
-                  type="button"
-                  onClick={() => removeAchievement(i)}
-                  className="text-red-500"
-                >
+                <button type="button" onClick={() => removeAchievement(i)} className="text-red-500">
                   ✕
                 </button>
               </li>
@@ -427,16 +393,15 @@ export default function CreateAchievementForm({
 
         {/* ✅ Images */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2].map(i => (
             <div key={i}>
               <label className="block font-medium mb-1">
-                Image {i + 1}{" "}
-                {i === 0 && <span className="text-red-500">*</span>}
+                Image {i + 1} {i === 0 && <span className="text-red-500">*</span>}
               </label>
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleImageChange(e, i)}
+                onChange={e => handleImageChange(e, i)}
                 className="border p-1 rounded w-full"
               />
               {imagePreviews[i] && (
@@ -477,13 +442,7 @@ export default function CreateAchievementForm({
             disabled={submitting}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-md transition"
           >
-            {submitting ? (
-              <Loader />
-            ) : initialData ? (
-              "Update Achievement"
-            ) : (
-              "Submit Achievement"
-            )}
+            {submitting ? <Loader /> : initialData ? 'Update Achievement' : 'Submit Achievement'}
           </button>
         </div>
       </form>

@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { db } from "@/src/drizzle/db";
-import { profiles } from "@/src/drizzle/schema"; // Adjust path as needed
-import { eq } from "drizzle-orm";
+import { db } from '@/src/drizzle/db';
+import { profiles } from '@/src/drizzle/schema'; // Adjust path as needed
+import { eq } from 'drizzle-orm';
 // import { transformToDetailedProfile } from "../utils/transformDetailedProfile"
-import type { DatabaseProfile } from "../type";
-import { transformToDetailedProfile } from "../utils/transformToDetailedProfile";
+import type { DatabaseProfile } from '../type';
+import { transformToDetailedProfile } from '../utils/transformToDetailedProfile';
 
 export async function getProfileById(id: string) {
   try {
@@ -13,51 +13,47 @@ export async function getProfileById(id: string) {
     if (isNaN(numericId)) {
       return {
         success: false,
-        message: "Invalid profile ID",
-        data: null,
+        message: 'Invalid profile ID',
+        data: null
       };
     }
 
-    const profile: DatabaseProfile | undefined =
-      await db.query.profiles.findFirst({
-        where: eq(profiles.id, Number(numericId.toString())), // Convert to string
-      });
+    const profile: DatabaseProfile | undefined = await db.query.profiles.findFirst({
+      where: eq(profiles.id, Number(numericId.toString())) // Convert to string
+    });
 
-    console.log("Fetched profile from database:", profile);
+    console.log('Fetched profile from database:', profile);
 
     if (!profile) {
       return {
         success: false,
-        message: "Profile not found",
-        data: null,
+        message: 'Profile not found',
+        data: null
       };
     }
 
     const transformedProfile = transformToDetailedProfile(profile);
-    console.log("Transformed profile for UI:", transformedProfile);
+    console.log('Transformed profile for UI:', transformedProfile);
 
     if (!transformedProfile) {
       return {
         success: false,
-        message: "Unable to process profile data",
-        data: null,
+        message: 'Unable to process profile data',
+        data: null
       };
     }
 
     return {
       success: true,
       data: transformedProfile,
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
   } catch (error) {
-    console.error("Error fetching profile:", error);
+    console.error('Error fetching profile:', error);
     return {
       success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred.",
-      data: null,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred.',
+      data: null
     };
   }
 }

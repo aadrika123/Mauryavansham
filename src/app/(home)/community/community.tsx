@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Badge } from "@/src/components/ui/badge";
-import { Card, CardContent } from "@/src/components/ui/card";
+import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Badge } from '@/src/components/ui/badge';
+import { Card, CardContent } from '@/src/components/ui/card';
 import {
   ArrowLeft,
   Crown,
@@ -20,12 +20,12 @@ import {
   Eye,
   Reply,
   ThumbsUp,
-  Send,
-} from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import Loader from "@/src/components/ui/loader";
+  Send
+} from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import Loader from '@/src/components/ui/loader';
 
 interface Ad {
   id: number;
@@ -87,7 +87,7 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
     if (ads.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setCurrentIndex(prev => (prev + 1) % ads.length);
     }, 5000);
 
     return () => clearInterval(timer);
@@ -95,7 +95,7 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
 
   useEffect(() => {
     if (ads[currentIndex]) {
-      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: 'POST' });
     }
   }, [currentIndex, ads]);
 
@@ -108,16 +108,11 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
           <Star className="absolute bottom-8 left-10 h-6 w-6 text-amber-400 animate-ping" />
 
           <div className="max-w-lg">
-            <h3 className="text-2xl md:text-3xl font-extrabold text-amber-800 mb-2 drop-shadow-sm">
-              Book Your Ad (5)
-            </h3>
+            <h3 className="text-2xl md:text-3xl font-extrabold text-amber-800 mb-2 drop-shadow-sm">Book Your Ad (5)</h3>
             <p className="text-sm sm:text-base text-amber-700 mb-3">
-              Recommended size:{" "}
-              <span className="font-semibold">1200×350 px</span>
+              Recommended size: <span className="font-semibold">1200×350 px</span>
             </p>
-            <p className="text-xs sm:text-sm text-amber-600">
-              Go to your dashboard to create and manage ads.
-            </p>
+            <p className="text-xs sm:text-sm text-amber-600">Go to your dashboard to create and manage ads.</p>
           </div>
         </div>
       </div>
@@ -132,17 +127,10 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
             <div
               key={ad.id}
               className={`absolute inset-0  transition-opacity duration-1000 ${
-                index === currentIndex
-                  ? "opacity-100 z-10"
-                  : "opacity-0 pointer-events-none z-0"
+                index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
-              <a
-                href={ad.adUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block w-full h-full"
-              >
+              <a href={ad.adUrl} target="_blank" rel="noopener noreferrer" className="inline-block w-full h-full">
                 <img
                   src={ad.bannerImageUrl}
                   alt={`Ad ${index + 1}`}
@@ -171,9 +159,7 @@ const ForumAdSlider: React.FC<{ ads: Ad[] }> = ({ ads }) => {
                   key={index}
                   onClick={() => setCurrentIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentIndex
-                      ? "bg-amber-600 scale-125"
-                      : "bg-amber-400/50 hover:bg-amber-400/75"
+                    index === currentIndex ? 'bg-amber-600 scale-125' : 'bg-amber-400/50 hover:bg-amber-400/75'
                   }`}
                   aria-label={`Go to ad ${index + 1}`}
                   type="button"
@@ -192,7 +178,7 @@ function ReplyComponent({
   user,
   onReply,
   onLike,
-  depth = 0,
+  depth = 0
 }: {
   reply: Reply;
   user?: User;
@@ -201,57 +187,49 @@ function ReplyComponent({
   depth?: number;
 }) {
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const [replyContent, setReplyContent] = useState("");
+  const [replyContent, setReplyContent] = useState('');
   const [showReplies, setShowReplies] = useState(depth < 2);
 
   const handleSubmitReply = () => {
     if (!replyContent.trim()) return;
     onReply(reply.id, replyContent);
-    setReplyContent("");
+    setReplyContent('');
     setShowReplyForm(false);
     setShowReplies(true);
   };
 
   const handleMentionUser = (userName: string) => {
-    setReplyContent((prev) => prev + `@${userName} `);
+    setReplyContent(prev => prev + `@${userName} `);
   };
 
   return (
-    <div
-      className={`${depth > 0 ? "ml-6 border-l-2 border-gray-200 pl-4" : ""}`}
-    >
+    <div className={`${depth > 0 ? 'ml-6 border-l-2 border-gray-200 pl-4' : ''}`}>
       <div className="bg-white rounded-lg p-3 mb-2 border border-gray-100">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-              {reply?.userName ? reply.userName.charAt(0).toUpperCase() : "?"}
+              {reply?.userName ? reply.userName.charAt(0).toUpperCase() : '?'}
             </div>
             <span className="font-semibold text-red-600 text-sm cursor-pointer hover:underline">
               {reply.authorName}
             </span>
           </div>
-          <span className="text-xs text-gray-500">
-            {new Date(reply.createdAt).toLocaleString("en-GB")}
-          </span>
+          <span className="text-xs text-gray-500">{new Date(reply.createdAt).toLocaleString('en-GB')}</span>
         </div>
 
         <div className="mb-3">
-          <p className="text-gray-700 text-sm leading-relaxed">
-            {reply.content}
-          </p>
+          <p className="text-gray-700 text-sm leading-relaxed">{reply.content}</p>
         </div>
 
         <div className="flex items-center gap-4 text-xs text-gray-500">
           <button
             onClick={() => onLike(reply.id)}
             className={`flex items-center gap-1 hover:text-blue-600 transition-colors ${
-              reply.isLiked ? "text-blue-600" : ""
+              reply.isLiked ? 'text-blue-600' : ''
             }`}
           >
-            <ThumbsUp
-              className={`h-3 w-3 ${reply.isLiked ? "fill-current" : ""}`}
-            />
-            <span>{reply.likeCount > 0 ? reply.likeCount : "Like"}</span>
+            <ThumbsUp className={`h-3 w-3 ${reply.isLiked ? 'fill-current' : ''}`} />
+            <span>{reply.likeCount > 0 ? reply.likeCount : 'Like'}</span>
           </button>
 
           {user && (
@@ -264,10 +242,7 @@ function ReplyComponent({
             </button>
           )}
 
-          <button
-            onClick={() => handleMentionUser(reply.authorName)}
-            className="hover:text-red-600 transition-colors"
-          >
+          <button onClick={() => handleMentionUser(reply.authorName)} className="hover:text-red-600 transition-colors">
             @{reply.authorName}
           </button>
 
@@ -276,8 +251,7 @@ function ReplyComponent({
               onClick={() => setShowReplies(!showReplies)}
               className="hover:text-red-600 transition-colors font-medium"
             >
-              {showReplies ? "Hide" : "Show"} {reply.replies.length}{" "}
-              {reply.replies.length === 1 ? "reply" : "replies"}
+              {showReplies ? 'Hide' : 'Show'} {reply.replies.length} {reply.replies.length === 1 ? 'reply' : 'replies'}
             </button>
           )}
         </div>
@@ -286,7 +260,7 @@ function ReplyComponent({
           <div className="mt-3 p-3 bg-gray-50 rounded-lg">
             <div className="flex gap-2">
               <div className="w-6 h-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                {user?.name ? user.name.charAt(0).toUpperCase() : "?"}
+                {user?.name ? user.name.charAt(0).toUpperCase() : '?'}
               </div>
               <div className="flex-1">
                 <textarea
@@ -294,7 +268,7 @@ function ReplyComponent({
                   placeholder={`Reply to ${reply.authorName}...`}
                   className="w-full p-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
                   value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
+                  onChange={e => setReplyContent(e.target.value)}
                 />
                 <div className="flex justify-end gap-2 mt-2">
                   <button
@@ -318,29 +292,25 @@ function ReplyComponent({
         )}
       </div>
 
-      {showReplies &&
-        reply.replies &&
-        reply.replies.length > 0 &&
-        depth < 3 && (
-          <div className="space-y-2">
-            {reply.replies.map((nestedReply) => (
-              <ReplyComponent
-                key={nestedReply.id}
-                reply={nestedReply}
-                user={user}
-                onReply={onReply}
-                onLike={onLike}
-                depth={depth + 1}
-              />
-            ))}
-          </div>
-        )}
+      {showReplies && reply.replies && reply.replies.length > 0 && depth < 3 && (
+        <div className="space-y-2">
+          {reply.replies.map(nestedReply => (
+            <ReplyComponent
+              key={nestedReply.id}
+              reply={nestedReply}
+              user={user}
+              onReply={onReply}
+              onLike={onLike}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
 
       {reply.replies && reply.replies.length > 0 && depth >= 3 && (
         <div className="ml-6 mt-2">
           <button className="text-xs text-blue-600 hover:underline">
-            View {reply.replies.length} more{" "}
-            {reply.replies.length === 1 ? "reply" : "replies"}
+            View {reply.replies.length} more {reply.replies.length === 1 ? 'reply' : 'replies'}
           </button>
         </div>
       )}
@@ -351,6 +321,137 @@ function ReplyComponent({
 export default function CommunityForumPage({ user }: Props) {
   const Router = useRouter();
   const [showLoginModal, setShowLoginModal] = useState(!user);
+
+  // All hooks must be declared at the top (before any early returns)
+  const [selectedCategory, setSelectedCategory] = useState('All Discussions');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [categories, setCategories] = useState([] as any[]);
+  const [apiLoading, setApiLoading] = useState(false);
+  const [displayCount, setDisplayCount] = useState(4);
+  const ITEMS_PER_LOAD = 2;
+  const [newDiscussion, setNewDiscussion] = useState({
+    title: '',
+    content: '',
+    category: 'Business Help',
+    location: ''
+  });
+  const [adPlacements, setAdPlacements] = useState<Ad[]>([]);
+  const [openDiscussionId, setOpenDiscussionId] = useState<number | null>(null);
+  const [discussionReplies, setDiscussionReplies] = useState<Reply[]>([]);
+  const [repliesLoading, setRepliesLoading] = useState(false);
+  const [newReplyContent, setNewReplyContent] = useState('');
+  const [selectedDiscussion, setSelectedDiscussion] = useState<Discussion | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [closeReason, setCloseReason] = useState('');
+  const [discussionToClose, setDiscussionToClose] = useState<number | null>(null);
+
+  const loadDiscussions = async (fetchedCategories?: any[]) => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+
+      const response = await fetch(`/api/discussions?${params}`);
+      const data = await response.json();
+      const allDiscussionsData: Discussion[] = data.data || [];
+
+      const notCompleted = allDiscussionsData.filter(d => !d.isCompleted);
+      const myDiscussions = allDiscussionsData.filter(d => String(d.authorId) === String(user?.id));
+
+      let filteredDiscussions =
+        selectedCategory === 'All Discussions'
+          ? notCompleted
+          : selectedCategory === 'My Discussions'
+            ? myDiscussions
+            : notCompleted.filter(d => d.category === selectedCategory);
+
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        filteredDiscussions = filteredDiscussions.filter(
+          d =>
+            d.title?.toLowerCase().includes(q) ||
+            d.content?.toLowerCase().includes(q) ||
+            d.authorName?.toLowerCase().includes(q)
+        );
+      }
+
+      setAllDiscussions(filteredDiscussions);
+      setDiscussions(filteredDiscussions.slice(0, displayCount));
+
+      const counts: Record<string, number> = {
+        'All Discussions': notCompleted.length,
+        'My Discussions': myDiscussions.length
+      };
+
+      notCompleted.forEach(d => {
+        if (d.category) counts[d.category] = (counts[d.category] || 0) + 1;
+      });
+
+      const updatedCategories = (fetchedCategories || categories).map(cat => ({
+        ...cat,
+        count: counts[cat.name] || 0
+      }));
+
+      setCategories(updatedCategories);
+    } catch (error) {
+      console.error('Failed to load discussions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // All useEffects must also be before early returns
+  useEffect(() => {
+    if (!user) return; // Skip effects when user is not logged in
+    fetch('/api/ad-placements/approved')
+      .then(res => res.json())
+      .then((data: Ad[]) => {
+        setAdPlacements(data);
+      })
+      .catch(() => console.error('Failed to load ad placements'));
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    loadDiscussions();
+  }, [selectedCategory, searchQuery, user]);
+
+  useEffect(() => {
+    if (!user) return;
+    setDisplayCount(4);
+  }, [selectedCategory, searchQuery, user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/discussions/category');
+        const data = await res.json();
+        if (data.success) {
+          const allCategories = [
+            { id: 0, name: 'All Discussions', count: 0 },
+            { id: -1, name: 'My Discussions', count: 0 },
+            ...data.data.map((cat: any) => ({ ...cat, count: 0 }))
+          ];
+          setCategories(allCategories);
+          loadDiscussions(allCategories);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCategories();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    setDiscussions(allDiscussions.slice(0, displayCount));
+  }, [displayCount, allDiscussions, user]);
 
   // If user is not logged in, show only the login requirement screen
   if (!user) {
@@ -364,18 +465,15 @@ export default function CommunityForumPage({ user }: Props) {
                 <Crown className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
               </div>
 
-              <h2 className="text-3xl font-bold text-red-700 mb-4">
-                Community Forum
-              </h2>
+              <h2 className="text-3xl font-bold text-red-700 mb-4">Community Forum</h2>
 
               <p className="text-gray-600 mb-6 text-lg">
-                Please login to access our supportive Maurya community forum and
-                participate in discussions.
+                Please login to access our supportive Maurya community forum and participate in discussions.
               </p>
 
               <div className="space-y-4">
                 <Button
-                  onClick={() => Router.push("/sign-in")}
+                  onClick={() => Router.push('/sign-in')}
                   className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white py-6 text-lg"
                 >
                   <User className="h-5 w-5 mr-2" />
@@ -383,7 +481,7 @@ export default function CommunityForumPage({ user }: Props) {
                 </Button>
 
                 <Button
-                  onClick={() => Router.push("/")}
+                  onClick={() => Router.push('/')}
                   variant="outline"
                   className="w-full py-6 text-lg border-2 border-gray-300"
                 >
@@ -396,8 +494,7 @@ export default function CommunityForumPage({ user }: Props) {
                 <p className="text-sm text-gray-600">
                   <strong className="text-red-600">Why login?</strong>
                   <br />
-                  Access exclusive discussions, connect with community members,
-                  and share your experiences.
+                  Access exclusive discussions, connect with community members, and share your experiences.
                 </p>
               </div>
             </CardContent>
@@ -407,38 +504,8 @@ export default function CommunityForumPage({ user }: Props) {
     );
   }
 
-  // Rest of the component code for logged-in users...
-  const [selectedCategory, setSelectedCategory] = useState("All Discussions");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [discussions, setDiscussions] = useState<Discussion[]>([]);
-  const [allDiscussions, setAllDiscussions] = useState<Discussion[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [categories, setCategories] = useState([] as any[]);
-  const [apiLoading, setApiLoading] = useState(false);
-  const [displayCount, setDisplayCount] = useState(4);
-  const ITEMS_PER_LOAD = 2;
-  const [newDiscussion, setNewDiscussion] = useState({
-    title: "",
-    content: "",
-    category: "Business Help",
-    location: "",
-  });
-  const [adPlacements, setAdPlacements] = useState<Ad[]>([]);
-  const [openDiscussionId, setOpenDiscussionId] = useState<number | null>(null);
-  const [discussionReplies, setDiscussionReplies] = useState<Reply[]>([]);
-  const [repliesLoading, setRepliesLoading] = useState(false);
-  const [newReplyContent, setNewReplyContent] = useState("");
-  const [selectedDiscussion, setSelectedDiscussion] =
-    useState<Discussion | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showCloseModal, setShowCloseModal] = useState(false);
-  const [closeReason, setCloseReason] = useState("");
-  const [discussionToClose, setDiscussionToClose] = useState<number | null>(
-    null
-  );
-
-  const forumAds = adPlacements.filter((ad) => ad.placementId === 5);
+  // Helper variables and functions for logged-in users
+  const forumAds = adPlacements.filter(ad => ad.placementId === 5);
 
   const openModal = (discussion: Discussion) => {
     setSelectedDiscussion(discussion);
@@ -456,109 +523,8 @@ export default function CommunityForumPage({ user }: Props) {
   };
 
   const handleLoadMore = () => {
-    setDisplayCount((prev) => prev + ITEMS_PER_LOAD);
+    setDisplayCount(prev => prev + ITEMS_PER_LOAD);
   };
-
-  useEffect(() => {
-    fetch("/api/ad-placements/approved")
-      .then((res) => res.json())
-      .then((data: Ad[]) => {
-        setAdPlacements(data);
-      })
-      .catch(() => console.error("Failed to load ad placements"));
-  }, []);
-
-  useEffect(() => {
-    loadDiscussions();
-  }, [selectedCategory, searchQuery]);
-
-  useEffect(() => {
-    setDisplayCount(4);
-  }, [selectedCategory, searchQuery]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("/api/discussions/category");
-        const data = await res.json();
-        if (data.success) {
-          const allCategories = [
-            { id: 0, name: "All Discussions", count: 0 },
-            { id: -1, name: "My Discussions", count: 0 },
-            ...data.data.map((cat: any) => ({ ...cat, count: 0 })),
-          ];
-          setCategories(allCategories);
-          loadDiscussions(allCategories);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  const loadDiscussions = async (fetchedCategories?: any[]) => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (searchQuery) params.append("search", searchQuery);
-
-      const response = await fetch(`/api/discussions?${params}`);
-      const data = await response.json();
-      const allDiscussionsData: Discussion[] = data.data || [];
-
-      const notCompleted = allDiscussionsData.filter((d) => !d.isCompleted);
-      const myDiscussions = allDiscussionsData.filter(
-        (d) => String(d.authorId) === String(user?.id)
-      );
-
-      let filteredDiscussions =
-        selectedCategory === "All Discussions"
-          ? notCompleted
-          : selectedCategory === "My Discussions"
-          ? myDiscussions
-          : notCompleted.filter((d) => d.category === selectedCategory);
-
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        filteredDiscussions = filteredDiscussions.filter(
-          (d) =>
-            d.title?.toLowerCase().includes(q) ||
-            d.content?.toLowerCase().includes(q) ||
-            d.authorName?.toLowerCase().includes(q)
-        );
-      }
-
-      setAllDiscussions(filteredDiscussions);
-      setDiscussions(filteredDiscussions.slice(0, displayCount));
-
-      const counts: Record<string, number> = {
-        "All Discussions": notCompleted.length,
-        "My Discussions": myDiscussions.length,
-      };
-
-      notCompleted.forEach((d) => {
-        if (d.category) counts[d.category] = (counts[d.category] || 0) + 1;
-      });
-
-      const updatedCategories = (fetchedCategories || categories).map(
-        (cat) => ({
-          ...cat,
-          count: counts[cat.name] || 0,
-        })
-      );
-
-      setCategories(updatedCategories);
-    } catch (error) {
-      console.error("Failed to load discussions:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setDiscussions(allDiscussions.slice(0, displayCount));
-  }, [displayCount, allDiscussions]);
 
   const handleStartDiscussion = () => {
     setShowCreateModal(true);
@@ -569,27 +535,27 @@ export default function CommunityForumPage({ user }: Props) {
     setApiLoading(true);
 
     try {
-      const response = await fetch("/api/discussions", {
-        method: "POST",
+      const response = await fetch('/api/discussions', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newDiscussion),
+        body: JSON.stringify(newDiscussion)
       });
 
       if (response.ok) {
         setShowCreateModal(false);
         setNewDiscussion({
-          title: "",
-          content: "",
-          category: "Business Help",
-          location: "",
+          title: '',
+          content: '',
+          category: 'Business Help',
+          location: ''
         });
         setDisplayCount(4);
         loadDiscussions();
       }
     } catch (error) {
-      console.error("Failed to create discussion:", error);
+      console.error('Failed to create discussion:', error);
     } finally {
       setApiLoading(false);
     }
@@ -598,13 +564,13 @@ export default function CommunityForumPage({ user }: Props) {
   const handleLikeDiscussion = async (discussionId: number) => {
     try {
       const response = await fetch(`/api/discussions/${discussionId}/likes`, {
-        method: "POST",
+        method: 'POST'
       });
 
-      if (!response.ok) throw new Error("Failed to like");
+      if (!response.ok) throw new Error('Failed to like');
       await loadDiscussions();
     } catch (error) {
-      console.error("Failed to like discussion:", error);
+      console.error('Failed to like discussion:', error);
     }
   };
 
@@ -621,7 +587,7 @@ export default function CommunityForumPage({ user }: Props) {
       replies.forEach((reply: any) => {
         repliesMap.set(reply.id, {
           ...reply,
-          replies: [],
+          replies: []
         });
       });
 
@@ -638,7 +604,7 @@ export default function CommunityForumPage({ user }: Props) {
 
       setDiscussionReplies(rootReplies);
     } catch (error) {
-      console.error("Failed to load replies:", error);
+      console.error('Failed to load replies:', error);
     } finally {
       setRepliesLoading(false);
     }
@@ -655,13 +621,13 @@ export default function CommunityForumPage({ user }: Props) {
 
     try {
       const res = await fetch(`/api/discussions/${openDiscussionId}/replies`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           discussionId: openDiscussionId,
           content: replyContent,
-          parentId: parentId || null,
-        }),
+          parentId: parentId || null
+        })
       });
 
       const data = await res.json();
@@ -669,24 +635,21 @@ export default function CommunityForumPage({ user }: Props) {
       if (data.success) {
         fetchReplies(openDiscussionId);
         if (!parentId) {
-          setNewReplyContent("");
+          setNewReplyContent('');
         }
       } else {
-        console.error("Failed to post reply:", data.message);
+        console.error('Failed to post reply:', data.message);
       }
     } catch (error) {
-      console.error("Failed to post reply:", error);
+      console.error('Failed to post reply:', error);
     }
   };
 
   const handleLikeReply = async (replyId: number) => {
     try {
-      const response = await fetch(
-        `/api/discussions/replies/${replyId}/likes`,
-        {
-          method: "POST",
-        }
-      );
+      const response = await fetch(`/api/discussions/replies/${replyId}/likes`, {
+        method: 'POST'
+      });
 
       if (response.ok) {
         if (openDiscussionId) {
@@ -694,23 +657,20 @@ export default function CommunityForumPage({ user }: Props) {
         }
       }
     } catch (error) {
-      console.error("Failed to like reply:", error);
+      console.error('Failed to like reply:', error);
     }
   };
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      "Business Help": "bg-blue-100 text-blue-800 border-blue-200",
-      "Community Connect": "bg-green-100 text-green-800 border-green-200",
-      "Culture & Traditions": "bg-purple-100 text-purple-800 border-purple-200",
-      Education: "bg-orange-100 text-orange-800 border-orange-200",
-      "Matrimonial Advice": "bg-pink-100 text-pink-800 border-pink-200",
-      "Health & Wellness": "bg-teal-100 text-teal-800 border-teal-200",
+      'Business Help': 'bg-blue-100 text-blue-800 border-blue-200',
+      'Community Connect': 'bg-green-100 text-green-800 border-green-200',
+      'Culture & Traditions': 'bg-purple-100 text-purple-800 border-purple-200',
+      Education: 'bg-orange-100 text-orange-800 border-orange-200',
+      'Matrimonial Advice': 'bg-pink-100 text-pink-800 border-pink-200',
+      'Health & Wellness': 'bg-teal-100 text-teal-800 border-teal-200'
     };
-    return (
-      colors[category as keyof typeof colors] ||
-      "bg-gray-100 text-gray-800 border-gray-200"
-    );
+    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
   const handleConfirmCloseDiscussion = async () => {
@@ -718,18 +678,18 @@ export default function CommunityForumPage({ user }: Props) {
 
     try {
       const res = await fetch(`/api/discussions/${discussionToClose}/close`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rejectionReason: closeReason }),
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rejectionReason: closeReason })
       });
 
       if (res.ok) {
         setShowCloseModal(false);
-        setCloseReason("");
+        setCloseReason('');
         setDiscussionToClose(null);
         loadDiscussions();
       } else {
-        console.error("Failed to close discussion");
+        console.error('Failed to close discussion');
       }
     } catch (error) {
       console.error(error);
@@ -739,13 +699,13 @@ export default function CommunityForumPage({ user }: Props) {
   const handleReopenDiscussion = async (discussionId: number) => {
     try {
       const res = await fetch(`/api/discussions/${discussionId}/reopen`, {
-        method: "PATCH",
+        method: 'PATCH'
       });
 
       if (res.ok) {
         loadDiscussions();
       } else {
-        console.error("Failed to reopen discussion");
+        console.error('Failed to reopen discussion');
       }
     } catch (error) {
       console.error(error);
@@ -764,29 +724,22 @@ export default function CommunityForumPage({ user }: Props) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-red-700">
-                Start New Discussion
-              </h3>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <h3 className="text-lg font-semibold text-red-700">Start New Discussion</h3>
+              <button onClick={() => setShowCreateModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Discussion Title
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Discussion Title</label>
                 <Input
                   placeholder="Enter discussion title..."
                   value={newDiscussion.title}
-                  onChange={(e) =>
+                  onChange={e =>
                     setNewDiscussion({
                       ...newDiscussion,
-                      title: e.target.value,
+                      title: e.target.value
                     })
                   }
                   className="w-full"
@@ -794,26 +747,20 @@ export default function CommunityForumPage({ user }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                 <select
                   value={newDiscussion.category}
-                  onChange={(e) =>
+                  onChange={e =>
                     setNewDiscussion({
                       ...newDiscussion,
-                      category: e.target.value,
+                      category: e.target.value
                     })
                   }
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 >
                   {categories
-                    .filter(
-                      (cat) =>
-                        cat.name !== "All Discussions" &&
-                        cat.name !== "My Discussions"
-                    )
-                    .map((cat) => (
+                    .filter(cat => cat.name !== 'All Discussions' && cat.name !== 'My Discussions')
+                    .map(cat => (
                       <option key={cat.id} value={cat.name}>
                         {cat.name}
                       </option>
@@ -822,16 +769,14 @@ export default function CommunityForumPage({ user }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Location
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                 <Input
                   placeholder="Enter location..."
                   value={newDiscussion.location}
-                  onChange={(e) =>
+                  onChange={e =>
                     setNewDiscussion({
                       ...newDiscussion,
-                      location: e.target.value,
+                      location: e.target.value
                     })
                   }
                   className="w-full"
@@ -839,16 +784,14 @@ export default function CommunityForumPage({ user }: Props) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Content
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
                 <textarea
                   placeholder="Write your discussion content..."
                   value={newDiscussion.content}
-                  onChange={(e) =>
+                  onChange={e =>
                     setNewDiscussion({
                       ...newDiscussion,
-                      content: e.target.value,
+                      content: e.target.value
                     })
                   }
                   rows={6}
@@ -865,10 +808,7 @@ export default function CommunityForumPage({ user }: Props) {
               >
                 Create Discussion
               </Button>
-              <Button
-                onClick={() => setShowCreateModal(false)}
-                variant="outline"
-              >
+              <Button onClick={() => setShowCreateModal(false)} variant="outline">
                 Cancel
               </Button>
             </div>
@@ -891,9 +831,7 @@ export default function CommunityForumPage({ user }: Props) {
         <Crown className="h-16 sm:h-20 w-16 sm:w-20 text-yellow-500 mx-auto" />
         <div className="relative">
           <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg"></div>
-          <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-red-700 mb-4">
-            Community Forum
-          </h1>
+          <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-bold text-red-700 mb-4">Community Forum</h1>
         </div>
         <p className="text-base sm:text-lg text-red-600 max-w-3xl mx-auto leading-relaxed mb-4 px-2">
           Connect, share, and help each other in our supportive Maurya community
@@ -922,23 +860,19 @@ export default function CommunityForumPage({ user }: Props) {
               <CardContent className="p-4">
                 <h3 className="font-bold text-red-700 mb-4">Categories</h3>
                 <div className="space-y-1">
-                  {categories.map((category) => (
+                  {categories.map(category => (
                     <button
                       key={category.name}
                       onClick={() => setSelectedCategory(category.name)}
                       className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
                         selectedCategory === category.name
-                          ? "bg-gradient-to-r from-orange-500 to-red-600 text-white"
-                          : "text-red-700 hover:bg-orange-100"
+                          ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white'
+                          : 'text-red-700 hover:bg-orange-100'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                          {category.name}
-                        </span>
-                        <span className="text-xs opacity-75">
-                          ({category.count})
-                        </span>
+                        <span className="text-sm font-medium">{category.name}</span>
+                        <span className="text-xs opacity-75">({category.count})</span>
                       </div>
                     </button>
                   ))}
@@ -954,7 +888,7 @@ export default function CommunityForumPage({ user }: Props) {
                 <Input
                   placeholder="Search discussions..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className="pl-10 bg-white border-gray-300 focus:border-red-500 w-full"
                 />
               </div>
@@ -969,17 +903,15 @@ export default function CommunityForumPage({ user }: Props) {
               ) : discussions.length === 0 ? (
                 <div className="text-center py-12">
                   <MessageCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-600 mb-2">
-                    No discussions found
-                  </h3>
+                  <h3 className="text-lg font-medium text-gray-600 mb-2">No discussions found</h3>
                   <p className="text-gray-500">
-                    {searchQuery || selectedCategory !== "All Discussions"
-                      ? "Try adjusting your search or category filter"
-                      : "Be the first to start a discussion!"}
+                    {searchQuery || selectedCategory !== 'All Discussions'
+                      ? 'Try adjusting your search or category filter'
+                      : 'Be the first to start a discussion!'}
                   </p>
                 </div>
               ) : (
-                discussions.map((discussion) => (
+                discussions.map(discussion => (
                   <Card
                     key={discussion.id}
                     className="bg-yellow-50 border-yellow-200 hover:shadow-md transition-shadow"
@@ -995,26 +927,18 @@ export default function CommunityForumPage({ user }: Props) {
                           </h2>
                           <p className="text-base mb-1">
                             <span className="text-red-500">
-                              {discussion.authorName} {""}
+                              {discussion.authorName} {''}
                             </span>
                             <span className="text-gray-600"> • </span>
-                            <span className="text-gray-600">
-                              {discussion.location}{" "}
-                            </span>
+                            <span className="text-gray-600">{discussion.location} </span>
                             <span className="text-gray-600">•</span>
                             <span className="text-gray-600">
-                              {new Date(discussion.createdAt)
-                                .toLocaleDateString("en-GB")
-                                .replaceAll("/", "-")}
+                              {new Date(discussion.createdAt).toLocaleDateString('en-GB').replaceAll('/', '-')}
                             </span>
                           </p>
-                          <p className="text-gray-600 text-base mb-3 line-clamp-2">
-                            {discussion.content}
-                          </p>
+                          <p className="text-gray-600 text-base mb-3 line-clamp-2">{discussion.content}</p>
                           <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                            <span className="font-medium text-red-600">
-                              {discussion.author}
-                            </span>
+                            <span className="font-medium text-red-600">{discussion.author}</span>
                           </div>
                           <div className="flex items-center gap-4 text-sm text-gray-500">
                             <button
@@ -1026,24 +950,18 @@ export default function CommunityForumPage({ user }: Props) {
                             </button>
 
                             <button
-                              onClick={() =>
-                                handleLikeDiscussion(discussion.id)
-                              }
+                              onClick={() => handleLikeDiscussion(discussion.id)}
                               className={`flex items-center gap-1 hover:text-red-600 ${
-                                discussion.isLiked ? "text-red-600" : ""
+                                discussion.isLiked ? 'text-red-600' : ''
                               }`}
                             >
-                              <Heart
-                                className={`h-4 w-4 ${
-                                  discussion.isLiked ? "fill-current" : ""
-                                }`}
-                              />
+                              <Heart className={`h-4 w-4 ${discussion.isLiked ? 'fill-current' : ''}`} />
                               <span>{discussion.likeCount} likes</span>
                             </button>
 
                             {discussion.authorId === user?.id &&
                               !discussion.isCompleted &&
-                              selectedCategory == "My Discussions" && (
+                              selectedCategory == 'My Discussions' && (
                                 <button
                                   onClick={() => {
                                     setDiscussionToClose(discussion.id);
@@ -1055,31 +973,20 @@ export default function CommunityForumPage({ user }: Props) {
                                 </button>
                               )}
 
-                            {discussion.authorId === user?.id &&
-                              discussion.isCompleted && (
-                                <div className="ml-4 flex items-center gap-2">
-                                  <span className="px-2 py-1 bg-red-500 text-white rounded text-sm">
-                                    Closed
-                                  </span>
-                                  <button
-                                    onClick={() =>
-                                      handleReopenDiscussion(discussion.id)
-                                    }
-                                    className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
-                                  >
-                                    Reopen
-                                  </button>
-                                </div>
-                              )}
+                            {discussion.authorId === user?.id && discussion.isCompleted && (
+                              <div className="ml-4 flex items-center gap-2">
+                                <span className="px-2 py-1 bg-red-500 text-white rounded text-sm">Closed</span>
+                                <button
+                                  onClick={() => handleReopenDiscussion(discussion.id)}
+                                  className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+                                >
+                                  Reopen
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <Badge
-                          className={`${getCategoryColor(
-                            discussion.category
-                          )} ml-4`}
-                        >
-                          {discussion.category}
-                        </Badge>
+                        <Badge className={`${getCategoryColor(discussion.category)} ml-4`}>{discussion.category}</Badge>
                       </div>
                     </CardContent>
                   </Card>
@@ -1094,21 +1001,16 @@ export default function CommunityForumPage({ user }: Props) {
                   variant="outline"
                   className="border-orange-500 text-orange-600 hover:bg-orange-50 bg-transparent px-6 sm:px-8"
                 >
-                  Load More Discussions ({displayCount} of{" "}
-                  {allDiscussions.length})
+                  Load More Discussions ({displayCount} of {allDiscussions.length})
                 </Button>
               </div>
             )}
 
-            {allDiscussions.length > 0 &&
-              displayCount >= allDiscussions.length &&
-              allDiscussions.length > 4 && (
-                <div className="text-center mt-4">
-                  <p className="text-gray-600 text-sm">
-                    Showing all {allDiscussions.length} discussions
-                  </p>
-                </div>
-              )}
+            {allDiscussions.length > 0 && displayCount >= allDiscussions.length && allDiscussions.length > 4 && (
+              <div className="text-center mt-4">
+                <p className="text-gray-600 text-sm">Showing all {allDiscussions.length} discussions</p>
+              </div>
+            )}
             <div className="mt-10 sm:mt-12">
               <div className="w-full max-w-6xl mx-auto px-2 sm:px-6">
                 <ForumAdSlider ads={forumAds} />
@@ -1123,9 +1025,7 @@ export default function CommunityForumPage({ user }: Props) {
           <div className="bg-white rounded-lg w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-4 rounded-t-lg">
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-semibold text-red-700">
-                  Discussion Replies
-                </h3>
+                <h3 className="text-xl font-semibold text-red-700">Discussion Replies</h3>
                 <button
                   onClick={closeRepliesModal}
                   className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
@@ -1155,7 +1055,7 @@ export default function CommunityForumPage({ user }: Props) {
                             placeholder="Write a reply..."
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 resize-none"
                             value={newReplyContent}
-                            onChange={(e) => setNewReplyContent(e.target.value)}
+                            onChange={e => setNewReplyContent(e.target.value)}
                           />
                           <div className="flex justify-end mt-2">
                             <Button
@@ -1176,12 +1076,10 @@ export default function CommunityForumPage({ user }: Props) {
                     {discussionReplies.length === 0 ? (
                       <div className="text-center py-12">
                         <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-500">
-                          No replies yet. Be the first to reply!
-                        </p>
+                        <p className="text-gray-500">No replies yet. Be the first to reply!</p>
                       </div>
                     ) : (
-                      discussionReplies.map((reply) => (
+                      discussionReplies.map(reply => (
                         <ReplyComponent
                           key={reply.id}
                           reply={reply}
@@ -1203,35 +1101,27 @@ export default function CommunityForumPage({ user }: Props) {
       {isModalOpen && selectedDiscussion && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-yellow-50 border-yellow-200 border-4 rounded-lg w-11/12 max-w-2xl p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={closeModal}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-            >
+            <button onClick={closeModal} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
               ✖
             </button>
 
-            <h2 className="text-2xl font-bold mb-4">
-              {selectedDiscussion.title}
-            </h2>
+            <h2 className="text-2xl font-bold mb-4">{selectedDiscussion.title}</h2>
 
             <p className="text-gray-700 mb-2">
-              <span className="font-semibold">Author:</span>{" "}
-              {selectedDiscussion.authorName}
+              <span className="font-semibold">Author:</span> {selectedDiscussion.authorName}
             </p>
 
             <p className="text-gray-700 mb-2">
-              <span className="font-semibold">Location:</span>{" "}
-              {selectedDiscussion.location}
+              <span className="font-semibold">Location:</span> {selectedDiscussion.location}
             </p>
 
             <p className="text-gray-700 mb-2">
-              <span className="font-semibold">Created At:</span>{" "}
-              {new Date(selectedDiscussion.createdAt).toLocaleString("en-GB")}
+              <span className="font-semibold">Created At:</span>{' '}
+              {new Date(selectedDiscussion.createdAt).toLocaleString('en-GB')}
             </p>
 
             <p className="text-gray-700 mb-4">
-              <span className="font-semibold">Content:</span>{" "}
-              {selectedDiscussion.content}
+              <span className="font-semibold">Content:</span> {selectedDiscussion.content}
             </p>
 
             <div className="flex gap-4 text-sm text-gray-600">
@@ -1239,12 +1129,10 @@ export default function CommunityForumPage({ user }: Props) {
               <span>{selectedDiscussion.likeCount} likes</span>
               <span
                 className={`px-2 py-1 rounded ${
-                  selectedDiscussion.isCompleted
-                    ? "bg-red-500 text-white"
-                    : "bg-green-500 text-white"
+                  selectedDiscussion.isCompleted ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
                 }`}
               >
-                {selectedDiscussion.isCompleted ? "Closed" : "Active"}
+                {selectedDiscussion.isCompleted ? 'Closed' : 'Active'}
               </span>
             </div>
           </div>
@@ -1255,13 +1143,11 @@ export default function CommunityForumPage({ user }: Props) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-red-700">
-                Close Discussion
-              </h3>
+              <h3 className="text-lg font-semibold text-red-700">Close Discussion</h3>
               <button
                 onClick={() => {
                   setShowCloseModal(false);
-                  setCloseReason("");
+                  setCloseReason('');
                   setDiscussionToClose(null);
                 }}
                 className="text-gray-500 hover:text-gray-700"
@@ -1270,13 +1156,11 @@ export default function CommunityForumPage({ user }: Props) {
               </button>
             </div>
 
-            <p className="text-gray-600 mb-3">
-              Please provide a reason for closing this discussion.
-            </p>
+            <p className="text-gray-600 mb-3">Please provide a reason for closing this discussion.</p>
 
             <textarea
               value={closeReason}
-              onChange={(e) => setCloseReason(e.target.value)}
+              onChange={e => setCloseReason(e.target.value)}
               rows={4}
               placeholder="Enter reason for closing..."
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 mb-4"
@@ -1287,7 +1171,7 @@ export default function CommunityForumPage({ user }: Props) {
                 variant="outline"
                 onClick={() => {
                   setShowCloseModal(false);
-                  setCloseReason("");
+                  setCloseReason('');
                   setDiscussionToClose(null);
                 }}
               >

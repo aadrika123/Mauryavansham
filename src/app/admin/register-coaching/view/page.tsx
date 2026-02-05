@@ -1,20 +1,19 @@
 // dashboard/page.tsx
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/src/lib/auth";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
-import CoachingExperienceCenterRegistration from "@/src/features/coachingAndExperiance/components/CoachingExperienceCenterRegistration";
-import MyregisteredCoaching from "@/src/features/coachingAndExperiance/components/MyregisteredCoaching";
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/src/lib/auth';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
+import CoachingExperienceCenterRegistration from '@/src/features/coachingAndExperiance/components/CoachingExperienceCenterRegistration';
+import MyregisteredCoaching from '@/src/features/coachingAndExperiance/components/MyregisteredCoaching';
 
 export default async function RegisterCoachingIndex() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
-
 
   return (
     <AdmindashboardLayout user={session.user}>

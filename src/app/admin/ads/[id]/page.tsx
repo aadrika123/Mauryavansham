@@ -5,11 +5,7 @@ import AdminAdDetail from './admin-ad-detail';
 import { authOptions } from '@/src/lib/auth';
 import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
 
-export default async function AdminAdDetailPage({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function AdminAdDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
 

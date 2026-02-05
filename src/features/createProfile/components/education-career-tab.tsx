@@ -1,28 +1,28 @@
-"use client"
+'use client';
 
-import { GraduationCap } from "lucide-react"
-import { Input } from "@/src/components/ui/input"
-import { Textarea } from "@/src/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { Label } from "@/src/components/ui/label"
+import { GraduationCap } from 'lucide-react';
+import { Input } from '@/src/components/ui/input';
+import { Textarea } from '@/src/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
+import { Label } from '@/src/components/ui/label';
 
 interface EducationCareerTabProps {
   data: {
-    highestEducation: string
-    collegeUniversity: string
-    occupation: string
-    companyOrganization: string
-    designation: string
-    workLocation: string
-    annualIncome: string
-    workExperience: string
-    website: string
-  }
-  onUpdate: (data: Partial<EducationCareerTabProps["data"]>) => void
+    highestEducation: string;
+    collegeUniversity: string;
+    occupation: string;
+    companyOrganization: string;
+    designation: string;
+    workLocation: string;
+    annualIncome: string;
+    workExperience: string;
+    website: string;
+  };
+  onUpdate: (data: Partial<EducationCareerTabProps['data']>) => void;
 }
 
 export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) {
-  const isEmpty = (val: string | undefined) => !val || val.trim() === "";
+  const isEmpty = (val: string | undefined) => !val || val.trim() === '';
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -38,7 +38,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
           <Label className="text-red-800" htmlFor="highestEducation">
             Highest Education <span className="text-red-500">*</span>
           </Label>
-          <Select value={data.highestEducation} onValueChange={(value) => onUpdate({ highestEducation: value })}>
+          <Select value={data.highestEducation} onValueChange={value => onUpdate({ highestEducation: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select education level" />
             </SelectTrigger>
@@ -57,12 +57,14 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="collegeUniversity">College/University</Label>
+          <Label className="text-red-800" htmlFor="collegeUniversity">
+            College/University
+          </Label>
           <Input
             id="collegeUniversity"
             placeholder="Name of your college/university"
             value={data.collegeUniversity}
-            onChange={(e) => onUpdate({ collegeUniversity: e.target.value })}
+            onChange={e => onUpdate({ collegeUniversity: e.target.value })}
           />
         </div>
 
@@ -70,7 +72,7 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
           <Label className="text-red-800" htmlFor="occupation">
             Occupation <span className="text-red-500">*</span>
           </Label>
-          <Select value={data.occupation} onValueChange={(value) => onUpdate({ occupation: value })}>
+          <Select value={data.occupation} onValueChange={value => onUpdate({ occupation: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select occupation" />
             </SelectTrigger>
@@ -83,28 +85,30 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
               <SelectItem value="other">Other</SelectItem>
             </SelectContent>
           </Select>
-          {isEmpty(data.occupation) && (
-            <p className="text-sm text-red-600">Please select your occupation</p>
-          )}
+          {isEmpty(data.occupation) && <p className="text-sm text-red-600">Please select your occupation</p>}
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="companyOrganization">Company/Organization</Label>
+          <Label className="text-red-800" htmlFor="companyOrganization">
+            Company/Organization
+          </Label>
           <Input
             id="companyOrganization"
             placeholder="Current company or organization"
             value={data.companyOrganization}
-            onChange={(e) => onUpdate({ companyOrganization: e.target.value })}
+            onChange={e => onUpdate({ companyOrganization: e.target.value })}
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="designation">Designation</Label>
+          <Label className="text-red-800" htmlFor="designation">
+            Designation
+          </Label>
           <Input
             id="designation"
             placeholder="Your current position/title"
             value={data.designation}
-            onChange={(e) => onUpdate({ designation: e.target.value })}
+            onChange={e => onUpdate({ designation: e.target.value })}
           />
         </div>
         <div className="space-y-2">
@@ -115,24 +119,28 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
             id="website"
             placeholder="Enter website URL"
             value={data.website}
-            onChange={(e) => onUpdate({ website: e.target.value })}
+            onChange={e => onUpdate({ website: e.target.value })}
             type="url"
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="workLocation">Work Location</Label>
+          <Label className="text-red-800" htmlFor="workLocation">
+            Work Location
+          </Label>
           <Input
             id="workLocation"
             placeholder="City where you work"
             value={data.workLocation}
-            onChange={(e) => onUpdate({ workLocation: e.target.value })}
+            onChange={e => onUpdate({ workLocation: e.target.value })}
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="annualIncome">Annual Income</Label>
-          <Select value={data.annualIncome} onValueChange={(value) => onUpdate({ annualIncome: value })}>
+          <Label className="text-red-800" htmlFor="annualIncome">
+            Annual Income
+          </Label>
+          <Select value={data.annualIncome} onValueChange={value => onUpdate({ annualIncome: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Select income range" />
             </SelectTrigger>
@@ -148,16 +156,18 @@ export function EducationCareerTab({ data, onUpdate }: EducationCareerTabProps) 
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label className="text-red-800" htmlFor="workExperience">Work Experience</Label>
+          <Label className="text-red-800" htmlFor="workExperience">
+            Work Experience
+          </Label>
           <Textarea
             id="workExperience"
             placeholder="Brief description of your work experience and achievements"
             value={data.workExperience}
-            onChange={(e) => onUpdate({ workExperience: e.target.value })}
+            onChange={e => onUpdate({ workExperience: e.target.value })}
             rows={4}
           />
         </div>
       </div>
     </div>
-  )
+  );
 }

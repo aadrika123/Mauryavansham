@@ -1,17 +1,17 @@
-import { getServerSession } from "next-auth"
+import { getServerSession } from 'next-auth';
 // import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import { authOptions } from "@/src/lib/auth"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout"
-import HeritageListPage from "./viewCreatedlist"
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/src/lib/auth';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
+import HeritageListPage from './viewCreatedlist';
 
 export default async function AdsPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in")
+    redirect('/sign-in');
   }
 
   return (
@@ -26,9 +26,9 @@ export default async function AdsPage() {
           <span>Heritage List</span>
         </div>
       </div>
-    <div className="container mx-auto px-4 py-8">
-      <HeritageListPage  />
-    </div>
+      <div className="container mx-auto px-4 py-8">
+        <HeritageListPage />
+      </div>
     </AdmindashboardLayout>
-  )
+  );
 }

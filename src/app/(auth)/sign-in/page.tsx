@@ -1,9 +1,9 @@
-"use client";
-import { Suspense } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
-import { Crown } from "lucide-react";
-import Link from "next/link";
-import SignInForm from "./signin-form"; // client component
+'use client';
+import { Suspense } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Crown } from 'lucide-react';
+import Link from 'next/link';
+import SignInForm from './signin-form'; // client component
 
 export default function SignInPage() {
   return (
@@ -28,7 +28,7 @@ export default function SignInPage() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                Don't have an account?{' '}
                 <Link href="/sign-up" className="text-red-600 hover:underline font-medium">
                   Create one here
                 </Link>

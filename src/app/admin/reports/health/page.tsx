@@ -1,20 +1,19 @@
 //report page
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/src/lib/auth";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
-import HealthReportsPage from "./healthIndex";
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/src/lib/auth';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
+import HealthReportsPage from './healthIndex';
 // import EducationReportsPage from "./educationIndex";
 
 export default async function ReportsIndex() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
-
 
   return (
     <AdmindashboardLayout user={session.user}>

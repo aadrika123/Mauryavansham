@@ -21,7 +21,7 @@ export async function createRegistration(prevState: any, formData: FormData) {
       businessName: z.string().optional(),
       familyMembers: z.coerce.number().optional(),
       agreeToTerms: z.coerce.boolean().optional(),
-      roles: z.string().optional(),
+      roles: z.string().optional()
     });
 
     const parsedData = registrationSchema.parse({
@@ -37,12 +37,12 @@ export async function createRegistration(prevState: any, formData: FormData) {
       businessName: formData.get('businessName') || '',
       familyMembers: formData.get('familyMembers') ? Number(formData.get('familyMembers')) : undefined,
       agreeToTerms: formData.get('agreeToTerms') === 'on',
-      roles: 'member',
+      roles: 'member'
     });
 
     // ✅ Check if email already exists
     const existing = await db.query.members.findFirst({
-      where: (fields, { eq }) => eq(fields.email, parsedData.email),
+      where: (fields, { eq }) => eq(fields.email, parsedData.email)
     });
 
     if (existing) {
@@ -50,7 +50,7 @@ export async function createRegistration(prevState: any, formData: FormData) {
         success: false,
         message: 'Registration already exists for this email.',
         data: existing,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       };
     }
 
@@ -68,14 +68,14 @@ export async function createRegistration(prevState: any, formData: FormData) {
       businessName: parsedData.businessName,
       familyMembers: parsedData.familyMembers,
       agreeToTerms: parsedData.agreeToTerms,
-      createdAt: new Date(),
+      createdAt: new Date()
     });
 
     revalidatePath('/registration/list'); // if using a read/listing page
     return {
       success: true,
       message: 'Registration successful',
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
   } catch (error) {
     console.error('Error creating registration:', error);
@@ -83,7 +83,7 @@ export async function createRegistration(prevState: any, formData: FormData) {
       success: false,
       message: 'Failed to register, please try again later.',
       error: error,
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
   }
 }

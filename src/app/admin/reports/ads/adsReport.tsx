@@ -51,9 +51,7 @@ export default function AdsReportPage() {
         const adsData = data.ads || [];
         setAllFilteredAds(adsData);
         setTotalCount(adsData.length);
-        setAds(
-          adsData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        );
+        setAds(adsData.slice((currentPage - 1) * pageSize, currentPage * pageSize));
       } catch (err) {
         console.error(err);
       } finally {
@@ -77,11 +75,9 @@ export default function AdsReportPage() {
     if (allFilteredAds.length === 0) return;
 
     // Sort alphabetically by Ad Title
-    const sortedAds = [...allFilteredAds].sort((a, b) =>
-      a.title.localeCompare(b.title, 'en', { sensitivity: 'base' })
-    );
+    const sortedAds = [...allFilteredAds].sort((a, b) => a.title.localeCompare(b.title, 'en', { sensitivity: 'base' }));
 
-    const dataToExport = sortedAds.map((ad) => ({
+    const dataToExport = sortedAds.map(ad => ({
       'Ad Title': ad.title,
       'Advertiser Name': ad.user?.name || '-',
       'Advertiser Email': ad.user?.email || '-',
@@ -102,21 +98,14 @@ export default function AdsReportPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border p-2 rounded">
           <option value="">All Status</option>
           <option value="approved">Approved</option>
           <option value="pending">Pending</option>
           <option value="rejected">Rejected</option>
         </select>
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-500 text-white px-4 py-2 rounded">
           Export Excel
         </button>
       </div>
@@ -153,26 +142,14 @@ export default function AdsReportPage() {
                 ) : (
                   ads.map((ad, index) => (
                     <tr key={ad.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border">
-                        {(currentPage - 1) * pageSize + index + 1}
-                      </td>
+                      <td className="px-4 py-2 border">{(currentPage - 1) * pageSize + index + 1}</td>
                       <td className="px-4 py-2 border">{ad.title}</td>
-                      <td className="px-4 py-2 border">
-                        {ad.user?.name || '-'}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {formatDate(ad.fromDate)}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {formatDate(ad.toDate)}
-                      </td>
-                      <td className="px-4 py-2 border capitalize">
-                        {ad.status}
-                      </td>
+                      <td className="px-4 py-2 border">{ad.user?.name || '-'}</td>
+                      <td className="px-4 py-2 border">{formatDate(ad.fromDate)}</td>
+                      <td className="px-4 py-2 border">{formatDate(ad.toDate)}</td>
+                      <td className="px-4 py-2 border capitalize">{ad.status}</td>
                       <td className="px-4 py-2 border">{ad.viewCount}</td>
-                      <td className="px-4 py-2 border">
-                        {ad.daysLeft ? `${ad.daysLeft} days` : '-'}
-                      </td>
+                      <td className="px-4 py-2 border">{ad.daysLeft ? `${ad.daysLeft} days` : '-'}</td>
                     </tr>
                   ))
                 )}
@@ -186,8 +163,8 @@ export default function AdsReportPage() {
             totalPages={totalPages}
             totalItems={totalCount}
             pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
+            onPageChange={page => setCurrentPage(page)}
+            onPageSizeChange={size => {
               setPageSize(size);
               setCurrentPage(1);
             }}

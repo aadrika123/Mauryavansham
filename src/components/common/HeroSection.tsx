@@ -1,13 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import {
-  Sparkles,
-  Star,
-  Crown,
-  ChevronLeft,
-  ChevronRight,
-  Eye
-} from 'lucide-react';
+import { Sparkles, Star, Crown, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 import Image from 'next/image';
 import Loader from '../ui/loader';
 
@@ -61,19 +54,17 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentIndex(prevIndex => (prevIndex + 1) % images.length);
     }, 4000);
     return () => clearInterval(timer);
   }, [images.length]);
 
   const goToPrevious = (): void => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
+    setCurrentIndex(prevIndex => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
   };
 
   const goToNext = (): void => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    setCurrentIndex(prevIndex => (prevIndex + 1) % images.length);
   };
 
   return (
@@ -83,11 +74,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
           <div
             key={image.id}
             className={`absolute inset-0 transition-transform duration-700 ease-in-out ${
-              index === currentIndex
-                ? 'translate-x-0'
-                : index < currentIndex
-                  ? '-translate-x-full'
-                  : 'translate-x-full'
+              index === currentIndex ? 'translate-x-0' : index < currentIndex ? '-translate-x-full' : 'translate-x-full'
             }`}
           >
             <Image
@@ -128,9 +115,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                index === currentIndex
-                  ? 'bg-white scale-125'
-                  : 'bg-white/50 hover:bg-white/75'
+                index === currentIndex ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
               }`}
               aria-label={`Go to slide ${index + 1}`}
               type="button"
@@ -158,7 +143,7 @@ const AdSlider: React.FC<{
     if (ads.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setCurrentIndex(prev => (prev + 1) % ads.length);
     }, 5000); // Change every 5 seconds
 
     return () => clearInterval(timer);
@@ -186,17 +171,10 @@ const AdSlider: React.FC<{
         <div
           key={ad.id}
           className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentIndex
-              ? 'opacity-100 z-10'
-              : 'opacity-0 pointer-events-none z-0'
+            index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
           }`}
         >
-          <a
-            href={ad.adUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full h-full"
-          >
+          <a href={ad.adUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
             <Image
               src={ad.bannerImageUrl}
               alt={`${position} Ad ${index + 1}`}
@@ -224,9 +202,7 @@ const AdSlider: React.FC<{
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                index === currentIndex
-                  ? 'bg-white scale-125'
-                  : 'bg-white/50 hover:bg-white/75'
+                index === currentIndex ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
               }`}
               aria-label={`Go to ad ${index + 1}`}
               type="button"
@@ -239,11 +215,9 @@ const AdSlider: React.FC<{
 };
 
 // Mobile Ad Banner Component with Slider
-const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({
-  adPlacements
-}) => {
-  const leftAds = adPlacements.filter((ad) => ad.placementId === 1);
-  const rightAds = adPlacements.filter((ad) => ad.placementId === 2);
+const MobileAdBanner: React.FC<{ adPlacements: AdPlacement[] }> = ({ adPlacements }) => {
+  const leftAds = adPlacements.filter(ad => ad.placementId === 1);
+  const rightAds = adPlacements.filter(ad => ad.placementId === 2);
 
   return (
     <div className="lg:hidden mt-8 flex flex-col gap-4">
@@ -260,7 +234,7 @@ const HeroSection: React.FC = () => {
 
   useEffect(() => {
     fetch('/api/ad-placements/approved')
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((data: AdPlacement[]) => {
         setAdPlacements(data);
         setLoading(false);
@@ -271,8 +245,8 @@ const HeroSection: React.FC = () => {
       });
   }, []);
 
-  const leftAds = adPlacements.filter((ad) => ad.placementId === 1);
-  const rightAds = adPlacements.filter((ad) => ad.placementId === 2);
+  const leftAds = adPlacements.filter(ad => ad.placementId === 1);
+  const rightAds = adPlacements.filter(ad => ad.placementId === 2);
 
   console.log('Left Ads:', leftAds);
   console.log('Right Ads:', rightAds);
@@ -307,11 +281,7 @@ const HeroSection: React.FC = () => {
 
           {/* Right Ad Banner with Slider */}
           <div className="hidden lg:block w-[20rem] flex-shrink-0">
-            {loading ? (
-              <Loader />
-            ) : (
-              <AdSlider ads={rightAds} position="right" />
-            )}
+            {loading ? <Loader /> : <AdSlider ads={rightAds} position="right" />}
           </div>
         </div>
 

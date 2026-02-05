@@ -3,23 +3,13 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // Routes that require authentication
-const protectedRoutes = [
-  '/dashboard',
-  '/admin',
-  '/create-profile',
-  '/edit-profile'
-];
+const protectedRoutes = ['/dashboard', '/admin', '/create-profile', '/edit-profile'];
 
 // Routes that require admin/superAdmin role
 const adminRoutes = ['/admin'];
 
 // Public routes that don't require authentication
-const publicRoutes = [
-  '/sign-in',
-  '/sign-up',
-  '/forgot-password',
-  '/registration'
-];
+const publicRoutes = ['/sign-in', '/sign-up', '/forgot-password', '/registration'];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -31,17 +21,13 @@ export async function proxy(request: NextRequest) {
   });
 
   // Check if it's a protected route
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
   // Check if it's an admin route
-  const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
+  const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route));
 
   // Check if it's a public route
-  const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
   // If user is not authenticated and trying to access protected route
   if (isProtectedRoute && !token) {

@@ -38,9 +38,7 @@ interface Business {
 
 export default function BusinessReportsPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [allFilteredBusinesses, setAllFilteredBusinesses] = useState<
-    Business[]
-  >([]);
+  const [allFilteredBusinesses, setAllFilteredBusinesses] = useState<Business[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,9 +85,7 @@ export default function BusinessReportsPage() {
         if (fromDate) queryParams.append('from', fromDate);
         if (toDate) queryParams.append('to', toDate);
 
-        const res = await fetch(
-          `/api/register-business?${queryParams.toString()}`
-        );
+        const res = await fetch(`/api/register-business?${queryParams.toString()}`);
         const data = await res.json();
 
         if (data.success && Array.isArray(data.data)) {
@@ -100,9 +96,7 @@ export default function BusinessReportsPage() {
 
           setAllFilteredBusinesses(mapped);
           setTotalCount(mapped.length);
-          setBusinesses(
-            mapped.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-          );
+          setBusinesses(mapped.slice((currentPage - 1) * pageSize, currentPage * pageSize));
         } else {
           setAllFilteredBusinesses([]);
           setBusinesses([]);
@@ -122,9 +116,7 @@ export default function BusinessReportsPage() {
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '-';
     const d = new Date(dateStr);
-    return `${String(d.getDate()).padStart(2, '0')}-${String(
-      d.getMonth() + 1
-    ).padStart(2, '0')}-${d.getFullYear()}`;
+    return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
   };
 
   // ✅ Excel export
@@ -137,14 +129,13 @@ export default function BusinessReportsPage() {
       })
     );
 
-    const dataToExport = sorted.map((b) => ({
+    const dataToExport = sorted.map(b => ({
       'Organization Name': b.organizationName,
       'Organization Type': b.organizationType,
       'Business Category': b.businessCategory,
       Description: b.businessDescription,
-      Partners: b.partners?.map((p) => p.name).join(', ') || '-',
-      Categories:
-        b.categories?.map((c) => `${c.main}, ${c.sub}`).join(', ') || '-',
+      Partners: b.partners?.map(p => p.name).join(', ') || '-',
+      Categories: b.categories?.map(c => `${c.main}, ${c.sub}`).join(', ') || '-',
       'Date of Establishment': formatDate(b.dateOfestablishment || null),
       Website: b.companyWebsite || '-',
       'Official Email': b.officialEmail || '-',
@@ -162,7 +153,7 @@ export default function BusinessReportsPage() {
   // ✅ Column selection handlers
   const handleCheckboxChange = (key: string) => {
     if (selectedColumns.includes(key)) {
-      setSelectedColumns(selectedColumns.filter((c) => c !== key));
+      setSelectedColumns(selectedColumns.filter(c => c !== key));
     } else {
       setSelectedColumns([...selectedColumns, key]);
     }
@@ -173,15 +164,12 @@ export default function BusinessReportsPage() {
       setSelectedColumns([]);
       setSelectAll(false);
     } else {
-      setSelectedColumns(optionalColumns.map((col) => col.key));
+      setSelectedColumns(optionalColumns.map(col => col.key));
       setSelectAll(true);
     }
   };
 
-  const visibleColumns = [
-    ...basicColumns,
-    ...optionalColumns.filter((c) => selectedColumns.includes(c.key))
-  ];
+  const visibleColumns = [...basicColumns, ...optionalColumns.filter(c => selectedColumns.includes(c.key))];
 
   return (
     <div className="p-6 space-y-6">
@@ -189,11 +177,7 @@ export default function BusinessReportsPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border p-2 rounded">
           <option value="">All Status</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
@@ -204,7 +188,7 @@ export default function BusinessReportsPage() {
           <input
             type="date"
             value={fromDate}
-            onChange={(e) => {
+            onChange={e => {
               setFromDate(e.target.value);
               setCurrentPage(1);
             }}
@@ -217,7 +201,7 @@ export default function BusinessReportsPage() {
           <input
             type="date"
             value={toDate}
-            onChange={(e) => {
+            onChange={e => {
               setToDate(e.target.value);
               setCurrentPage(1);
             }}
@@ -225,10 +209,7 @@ export default function BusinessReportsPage() {
           />
         </div>
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-500 text-white px-4 py-2 rounded">
           Export Excel
         </button>
 
@@ -248,22 +229,14 @@ export default function BusinessReportsPage() {
       {/* Column Selector */}
       <div className="border p-3 rounded-md bg-gray-50 shadow-sm">
         <div className="flex items-center gap-2 mb-2">
-          <input
-            type="checkbox"
-            checked={selectAll}
-            onChange={handleSelectAll}
-            className="cursor-pointer"
-          />
+          <input type="checkbox" checked={selectAll} onChange={handleSelectAll} className="cursor-pointer" />
           <span className="font-medium text-sm">Select All Columns</span>
         </div>
 
         <div className="max-h-56 overflow-y-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2">
-            {optionalColumns.map((col) => (
-              <label
-                key={col.key}
-                className="flex items-center gap-2 text-sm cursor-pointer"
-              >
+            {optionalColumns.map(col => (
+              <label key={col.key} className="flex items-center gap-2 text-sm cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selectedColumns.includes(col.key)}
@@ -290,7 +263,7 @@ export default function BusinessReportsPage() {
               <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
                   <th className="px-4 py-2 border">#</th>
-                  {visibleColumns.map((col) => (
+                  {visibleColumns.map(col => (
                     <th key={col.key} className="px-4 py-2 border">
                       {col.label}
                     </th>
@@ -300,20 +273,15 @@ export default function BusinessReportsPage() {
               <tbody>
                 {businesses.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={visibleColumns.length + 1}
-                      className="text-center p-4"
-                    >
+                    <td colSpan={visibleColumns.length + 1} className="text-center p-4">
                       No businesses found
                     </td>
                   </tr>
                 ) : (
                   businesses.map((b, index) => (
                     <tr key={b.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border">
-                        {(currentPage - 1) * pageSize + index + 1}
-                      </td>
-                      {visibleColumns.map((col) => {
+                      <td className="px-4 py-2 border">{(currentPage - 1) * pageSize + index + 1}</td>
+                      {visibleColumns.map(col => {
                         let value = '-';
                         switch (col.key) {
                           case 'createdBy':
@@ -329,14 +297,10 @@ export default function BusinessReportsPage() {
                             value = formatDate(b.dateOfestablishment || null);
                             break;
                           case 'partners':
-                            value =
-                              b.partners?.map((p) => p.name).join(', ') || '-';
+                            value = b.partners?.map(p => p.name).join(', ') || '-';
                             break;
                           case 'categories':
-                            value =
-                              b.categories
-                                ?.map((c) => `${c.main}, ${c.sub}`)
-                                .join(', ') || '-';
+                            value = b.categories?.map(c => `${c.main}, ${c.sub}`).join(', ') || '-';
                             break;
                           case 'paymentStatus':
                             value = b.paymentStatus ? 'Paid' : 'Pending';
@@ -365,8 +329,8 @@ export default function BusinessReportsPage() {
             totalPages={totalPages}
             totalItems={totalCount}
             pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
+            onPageChange={page => setCurrentPage(page)}
+            onPageSizeChange={size => {
               setPageSize(size);
               setCurrentPage(1);
             }}

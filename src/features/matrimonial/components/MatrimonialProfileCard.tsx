@@ -1,20 +1,20 @@
-import { Card, CardContent } from "@/src/components/ui/card"
-import { Button } from "@/src/components/ui/button"
-import { MapPin, Briefcase, GraduationCap, Users } from "lucide-react"
-import Image from "next/image"
+import { Card, CardContent } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { MapPin, Briefcase, GraduationCap, Users } from 'lucide-react';
+import Image from 'next/image';
 
 interface MatrimonialProfileCardProps {
   profile: {
-    id: number
-    name: string
-    age: number
-    gotra: string
-    location: string
-    profession: string
-    education: string
-    familyType: string
-    image: string
-  }
+    id: number;
+    name: string;
+    age: number;
+    gotra: string;
+    location: string;
+    profession: string;
+    education: string;
+    familyType: string;
+    image: string;
+  };
 }
 
 export function MatrimonialProfileCard({ profile }: MatrimonialProfileCardProps) {
@@ -24,7 +24,7 @@ export function MatrimonialProfileCard({ profile }: MatrimonialProfileCardProps)
         <div className="relative mb-4">
           <div className="w-24 h-24 mx-auto rounded-full border-4 border-yellow-400 overflow-hidden">
             <Image
-              src={profile.image || "/placeholder.svg?height=96&width=96&text=Profile"}
+              src={profile.image || '/placeholder.svg?height=96&width=96&text=Profile'}
               alt={profile.name}
               width={96}
               height={96}
@@ -64,5 +64,5 @@ export function MatrimonialProfileCard({ profile }: MatrimonialProfileCardProps)
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

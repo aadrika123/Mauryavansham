@@ -7,52 +7,31 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/src/lib/auth';
 
 // ✅ Toggle like on a reply
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ replyId: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ replyId: string }> }) {
   try {
     const { replyId: replyIdParam } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
     const replyId = parseInt(replyIdParam);
     if (!replyId) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid reply ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'Invalid reply ID' }, { status: 400 });
     }
 
     // Check if reply exists
-    const reply = await db
-      .select()
-      .from(discussionReplies)
-      .where(eq(discussionReplies.id, replyId))
-      .limit(1);
+    const reply = await db.select().from(discussionReplies).where(eq(discussionReplies.id, replyId)).limit(1);
 
     if (reply.length === 0) {
-      return NextResponse.json(
-        { success: false, message: 'Reply not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, message: 'Reply not found' }, { status: 404 });
     }
 
     // Check if user already liked this reply
     const existingLike = await db
       .select()
       .from(discussionReplyLikes)
-      .where(
-        and(
-          eq(discussionReplyLikes.replyId, replyId),
-          eq(discussionReplyLikes.userId, session.user.id)
-        )
-      )
+      .where(and(eq(discussionReplyLikes.replyId, replyId), eq(discussionReplyLikes.userId, session.user.id)))
       .limit(1);
 
     let isLiked = false;
@@ -62,12 +41,7 @@ export async function POST(
       // Unlike - remove the like
       await db
         .delete(discussionReplyLikes)
-        .where(
-          and(
-            eq(discussionReplyLikes.replyId, replyId),
-            eq(discussionReplyLikes.userId, session.user.id)
-          )
-        );
+        .where(and(eq(discussionReplyLikes.replyId, replyId), eq(discussionReplyLikes.userId, session.user.id)));
       isLiked = false;
     } else {
       // Like - add the like
@@ -96,9 +70,6 @@ export async function POST(
     });
   } catch (error) {
     console.error('Error toggling reply like:', error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to toggle like' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to toggle like' }, { status: 500 });
   }
 }

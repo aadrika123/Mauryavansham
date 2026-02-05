@@ -6,18 +6,12 @@ import { NextResponse } from 'next/server';
 // ==============================
 // GET Coaching Center by ID
 // ==============================
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const centerId = Number(id);
 
-    const center = await db
-      .select()
-      .from(coachingCenters)
-      .where(eq(coachingCenters.id, centerId));
+    const center = await db.select().from(coachingCenters).where(eq(coachingCenters.id, centerId));
 
     if (center.length === 0) {
       return NextResponse.json({ success: false, error: 'Not found' });
@@ -26,20 +20,14 @@ export async function GET(
     return NextResponse.json({ success: true, data: center[0] });
   } catch (err) {
     console.error('GET error:', err);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Failed to fetch data' }, { status: 500 });
   }
 }
 
 // ==============================
 // PUT Update Coaching Center by ID
 // ==============================
-export async function PUT(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const centerId = Number(id);
@@ -70,9 +58,6 @@ export async function PUT(
     });
   } catch (err) {
     console.error('PUT error:', err);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Failed to update' }, { status: 500 });
   }
 }

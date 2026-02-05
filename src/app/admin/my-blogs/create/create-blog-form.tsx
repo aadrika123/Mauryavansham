@@ -1,49 +1,49 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { Textarea } from "@/src/components/ui/textarea";
-import { ArrowLeft, Upload, Send, Image as ImageIcon } from "lucide-react";
-import Link from "next/link";
-import toast from "react-hot-toast";
-import Image from "next/image";
+import type React from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { Textarea } from '@/src/components/ui/textarea';
+import { ArrowLeft, Upload, Send, Image as ImageIcon } from 'lucide-react';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 export default function CreateBlogForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [formData, setFormData] = useState({
-    title: "",
-    summary: "",
-    content: "",
-    imageUrl: "",
+    title: '',
+    summary: '',
+    content: '',
+    imageUrl: ''
   });
-console.log(formData);
+  console.log(formData);
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // Check file type
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file")
-      return
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
     }
 
     // Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB")
-      return
+      toast.error('Image size should be less than 5MB');
+      return;
     }
 
     // Create image to check dimensions
-    const img = new window.Image()
-    const objectUrl = URL.createObjectURL(file)
+    const img = new window.Image();
+    const objectUrl = URL.createObjectURL(file);
 
     img.onload = async () => {
       // Check dimensions (350x500px)
@@ -54,65 +54,65 @@ console.log(formData);
       // }
 
       // Upload to Cloudinary
-      setUploading(true)
+      setUploading(true);
       try {
-        const uploadFormData = new FormData()
-        uploadFormData.append("file", file)
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
 
-        const response = await fetch("/api/upload-blog", {
-          method: "POST",
-          body: uploadFormData,
-        })
+        const response = await fetch('/api/upload-blog', {
+          method: 'POST',
+          body: uploadFormData
+        });
 
         if (response.ok) {
-          const result = await response.json()
-          setImagePreview(result.url)
-          setFormData({ ...formData, imageUrl: result.url })
-          toast.success("Image uploaded successfully")
+          const result = await response.json();
+          setImagePreview(result.url);
+          setFormData({ ...formData, imageUrl: result.url });
+          toast.success('Image uploaded successfully');
         } else {
-          const error = await response.json()
-          toast.error(error.error || "Upload failed")
+          const error = await response.json();
+          toast.error(error.error || 'Upload failed');
         }
       } catch (error) {
-        toast.error("Error uploading image")
+        toast.error('Error uploading image');
       } finally {
-        setUploading(false)
-        URL.revokeObjectURL(objectUrl)
+        setUploading(false);
+        URL.revokeObjectURL(objectUrl);
       }
-    }
+    };
 
     img.onerror = () => {
-      toast.error("Invalid image file")
-      URL.revokeObjectURL(objectUrl)
-    }
+      toast.error('Invalid image file');
+      URL.revokeObjectURL(objectUrl);
+    };
 
-    img.src = objectUrl
-  }
+    img.src = objectUrl;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title || !formData.summary || !formData.content || !formData.imageUrl) {
-      return toast.error("Please fill in all fields");
+      return toast.error('Please fill in all fields');
     }
 
     setLoading(true);
     try {
-      const res = await fetch("/api/blogs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, action: "submit" }),
+      const res = await fetch('/api/blogs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, action: 'submit' })
       });
 
       if (res.ok) {
-        toast.success("Blog submitted successfully");
-        router.push("/admin/my-blogs");
+        toast.success('Blog submitted successfully');
+        router.push('/admin/my-blogs');
       } else {
         const error = await res.json();
-        toast.error(error.error || "Failed to submit blog");
+        toast.error(error.error || 'Failed to submit blog');
       }
     } catch {
-      toast.error("Error submitting blog");
+      toast.error('Error submitting blog');
     } finally {
       setLoading(false);
     }
@@ -142,7 +142,7 @@ console.log(formData);
                 id="title"
                 placeholder="Enter blog title..."
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={e => setFormData({ ...formData, title: e.target.value })}
                 required
               />
             </div>
@@ -155,7 +155,7 @@ console.log(formData);
                 placeholder="Write a brief summary..."
                 rows={3}
                 value={formData.summary}
-                onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                onChange={e => setFormData({ ...formData, summary: e.target.value })}
                 required
               />
             </div>
@@ -168,7 +168,7 @@ console.log(formData);
                 placeholder="Write your blog content..."
                 rows={12}
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                onChange={e => setFormData({ ...formData, content: e.target.value })}
                 required
               />
             </div>
@@ -186,8 +186,8 @@ console.log(formData);
                       type="button"
                       variant="outline"
                       onClick={() => {
-                        setImagePreview("");
-                        setFormData({ ...formData, imageUrl: "" });
+                        setImagePreview('');
+                        setFormData({ ...formData, imageUrl: '' });
                       }}
                     >
                       Change Image
@@ -213,7 +213,7 @@ console.log(formData);
                     <Button type="button" className="mt-4" disabled={uploading} asChild>
                       <label htmlFor="image-upload" className="cursor-pointer flex items-center gap-2">
                         <Upload className="h-4 w-4" />
-                        {uploading ? "Uploading..." : "Choose File"}
+                        {uploading ? 'Uploading...' : 'Choose File'}
                       </label>
                     </Button>
                   </div>

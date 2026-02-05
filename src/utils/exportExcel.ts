@@ -31,8 +31,8 @@ export async function exportToExcel<T extends Record<string, unknown>>(
   };
 
   // Add data rows
-  data.forEach((item) => {
-    const row = headers.map((header) => {
+  data.forEach(item => {
+    const row = headers.map(header => {
       const value = item[header];
       // Handle arrays by joining them
       if (Array.isArray(value)) {
@@ -48,9 +48,9 @@ export async function exportToExcel<T extends Record<string, unknown>>(
   });
 
   // Auto-fit columns
-  worksheet.columns.forEach((column) => {
+  worksheet.columns.forEach(column => {
     let maxLength = 0;
-    column.eachCell?.({ includeEmpty: true }, (cell) => {
+    column.eachCell?.({ includeEmpty: true }, cell => {
       const columnLength = cell.value ? String(cell.value).length : 10;
       if (columnLength > maxLength) {
         maxLength = columnLength;
@@ -83,9 +83,7 @@ export async function exportToExcel<T extends Record<string, unknown>>(
  * @param filePath - Path to the Excel file
  * @returns Array of objects from the first sheet
  */
-export async function readExcelFile<T = Record<string, unknown>>(
-  filePath: string
-): Promise<T[]> {
+export async function readExcelFile<T = Record<string, unknown>>(filePath: string): Promise<T[]> {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile(filePath);
 
@@ -100,7 +98,7 @@ export async function readExcelFile<T = Record<string, unknown>>(
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber === 1) {
       // First row is headers
-      row.eachCell((cell) => {
+      row.eachCell(cell => {
         headers.push(String(cell.value || ''));
       });
     } else {

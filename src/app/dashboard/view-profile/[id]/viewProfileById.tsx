@@ -37,18 +37,14 @@ import { escapeHtml } from '@/src/lib/utils';
 
 const ProfileImageCarousel = ({ profile }: { profile: any }) => {
   // Get all available images, prioritizing profileImage1 as primary
-  const images = [
-    profile.profileImage1,
-    profile.profileImage2,
-    profile.profileImage3
-  ].filter(Boolean); // Remove empty/null images
+  const images = [profile.profileImage1, profile.profileImage2, profile.profileImage3].filter(Boolean); // Remove empty/null images
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const getInitials = (name: string): string => {
     return name
       .split(' ')
-      .map((n) => n[0])
+      .map(n => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
@@ -56,12 +52,12 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
 
   const goToPrevious = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
   const goToNext = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
   const goToImage = (index: number, e: React.MouseEvent) => {
@@ -78,7 +74,7 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
             src={images[currentImageIndex]}
             alt={`${profile.name}'s profile`}
             className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-            onError={(e) => {
+            onError={e => {
               // Fallback to initials if image fails to load
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
@@ -117,7 +113,7 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
                 {images.map((_, index) => (
                   <button
                     key={index}
-                    onClick={(e) => goToImage(index, e)}
+                    onClick={e => goToImage(index, e)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       currentImageIndex === index
                         ? 'bg-white scale-110 shadow-lg'
@@ -145,9 +141,7 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
       ) : (
         // Fallback when no images available
         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
-          <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
-            {getInitials(profile.name)}
-          </div>
+          <div className="text-orange-600 text-3xl lg:text-4xl font-bold">{getInitials(profile.name)}</div>
         </div>
       )}
 
@@ -182,10 +176,7 @@ const ViewProfileById = (props: any) => {
     const birthDate = new Date(dob);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
     return age;
@@ -255,14 +246,10 @@ const ViewProfileById = (props: any) => {
             <div className="capitalize text-lg">
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-white mb-2 white">
-                    {profileData.name}
-                  </h1>
+                  <h1 className="text-3xl font-bold text-white mb-2 white">{profileData.name}</h1>
                   <div className=" text-white">
                     <p className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />{' '}
-                      {calculateAge(profileData.dob)},{' '}
-                      <User className="w-4 h-4" />
+                      <Calendar className="w-4 h-4" /> {calculateAge(profileData.dob)}, <User className="w-4 h-4" />
                       {profileData.height}
                     </p>
                     <p className="flex items-center gap-1">
@@ -298,42 +285,22 @@ const ViewProfileById = (props: any) => {
               {/* Social Links */}
               <div className="flex gap-3 mt-6">
                 {profileData.facebook && (
-                  <a
-                    href={profileData.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.facebook} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Facebook className="w-6 h-6" />
                   </a>
                 )}
                 {profileData.instagram && (
-                  <a
-                    href={profileData.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.instagram} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Instagram className="w-6 h-6" />
                   </a>
                 )}
                 {profileData.linkedin && (
-                  <a
-                    href={profileData.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.linkedin} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Linkedin className="w-6 h-6" />
                   </a>
                 )}
                 {profileData.website && (
-                  <a
-                    href={profileData.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.website} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Globe className="w-6 h-6" />
                   </a>
                 )}
@@ -352,7 +319,7 @@ const ViewProfileById = (props: any) => {
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200">
           <nav className="flex overflow-x-auto">
-            {tabs.map((tab) => (
+            {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -373,34 +340,20 @@ const ViewProfileById = (props: any) => {
           {activeTab === 'about' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-3 text-gray-900">
-                  About Me
-                </h3>
-                <p className="text-gray-700 leading-relaxed">
-                  {profileData.aboutMe}
-                </p>
+                <h3 className="text-lg font-bold mb-3 text-gray-900">About Me</h3>
+                <p className="text-gray-700 leading-relaxed">{profileData.aboutMe}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-96">
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">
-                    Personal Details
-                  </h4>
+                  <h4 className="font-bold text-gray-900 mb-2">Personal Details</h4>
                   <div className="space-y-2 text-sm text-gray-600 font-bold">
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Nick Name:
-                      </span>
-                      <span className="font-medium">
-                        {profileData?.nickName}
-                      </span>
+                      <span className="text-gray-600 font-bold">Nick Name:</span>
+                      <span className="font-medium">{profileData?.nickName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Date of Birth:
-                      </span>
-                      <span className="font-medium">
-                        {new Date(profileData.dob).toLocaleDateString()}
-                      </span>
+                      <span className="text-gray-600 font-bold">Date of Birth:</span>
+                      <span className="font-medium">{new Date(profileData.dob).toLocaleDateString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600 font-bold">Height:</span>
@@ -408,32 +361,20 @@ const ViewProfileById = (props: any) => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600 font-bold">Weight:</span>
-                      <span className="font-medium">
-                        {profileData.weight} kg
-                      </span>
+                      <span className="font-medium">{profileData.weight} kg</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Complexion:
-                      </span>
-                      <span className="font-medium capitalize">
-                        {profileData.complexion}
-                      </span>
+                      <span className="text-gray-600 font-bold">Complexion:</span>
+                      <span className="font-medium capitalize">{profileData.complexion}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 font-bold">
-                        Body Type:
-                      </span>
-                      <span className="font-medium capitalize">
-                        {profileData.bodyType}
-                      </span>
+                      <span className="text-gray-600 font-bold">Body Type:</span>
+                      <span className="font-medium capitalize">{profileData.bodyType}</span>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">
-                    Contact Information
-                  </h4>
+                  <h4 className="font-bold text-gray-900 mb-2">Contact Information</h4>
                   <div className="space-y-2 text-sm text-gray-600 font-bold">
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-gray-500" />
@@ -444,9 +385,7 @@ const ViewProfileById = (props: any) => {
                       <span>{profileData.email}</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-gray-900 mb-2 mt-4">
-                    Interests
-                  </h4>
+                  <h4 className="font-bold text-gray-900 mb-2 mt-4">Interests</h4>
                   <p className="text-sm text-gray-700">{profileData.hobbies}</p>
                 </div>
               </div>
@@ -455,26 +394,16 @@ const ViewProfileById = (props: any) => {
           {activeTab === 'education' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-3 text-gray-900">
-                  Education
-                </h3>
+                <h3 className="text-lg font-bold mb-3 text-gray-900">Education</h3>
                 <div className="bg-gray-50/90 backdrop-blur-sm p-4 rounded-lg">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 font-bold">
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Highest Education:
-                      </span>
-                      <p className="font-medium capitalize">
-                        {profileData.highestEducation}
-                      </p>
+                      <span className="text-gray-600 font-bold text-sm">Highest Education:</span>
+                      <p className="font-medium capitalize">{profileData.highestEducation}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        College/University:
-                      </span>
-                      <p className="font-medium">
-                        {profileData.collegeUniversity}
-                      </p>
+                      <span className="text-gray-600 font-bold text-sm">College/University:</span>
+                      <p className="font-medium">{profileData.collegeUniversity}</p>
                     </div>
                   </div>
                 </div>
@@ -484,58 +413,35 @@ const ViewProfileById = (props: any) => {
                 <div className="bg-gray-50/90 backdrop-blur-sm p-4 rounded-lg">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-gray-600 font-bold">
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Occupation:
-                      </span>
-                      <p className="font-medium capitalize">
-                        {profileData.occupation}
-                      </p>
+                      <span className="text-gray-600 font-bold text-sm">Occupation:</span>
+                      <p className="font-medium capitalize">{profileData.occupation}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Company:
-                      </span>
-                      <p className="font-medium">
-                        {profileData.companyOrganization}
-                      </p>
+                      <span className="text-gray-600 font-bold text-sm">Company:</span>
+                      <p className="font-medium">{profileData.companyOrganization}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Designation:
-                      </span>
+                      <span className="text-gray-600 font-bold text-sm">Designation:</span>
                       <p className="font-medium">{profileData.designation}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Work Location:
-                      </span>
+                      <span className="text-gray-600 font-bold text-sm">Work Location:</span>
                       <p className="font-medium">{profileData.workLocation}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Annual Income:
-                      </span>
+                      <span className="text-gray-600 font-bold text-sm">Annual Income:</span>
                       <p className="font-medium">{profileData.annualIncome}</p>
                     </div>
                     <div>
-                      <span className="text-gray-600 font-bold text-sm">
-                        Website:
-                      </span>
-                      <a
-                        href={profileData.website}
-                        className="text-blue-600 hover:underline font-medium"
-                      >
+                      <span className="text-gray-600 font-bold text-sm">Website:</span>
+                      <a href={profileData.website} className="text-blue-600 hover:underline font-medium">
                         {profileData.website}
                       </a>
                     </div>
                   </div>
                   <div>
-                    <span className="text-gray-600 font-bold text-sm">
-                      Work Experience:
-                    </span>
-                    <p className="text-gray-700 mt-1">
-                      {profileData.workExperience}
-                    </p>
+                    <span className="text-gray-600 font-bold text-sm">Work Experience:</span>
+                    <p className="text-gray-700 mt-1">{profileData.workExperience}</p>
                   </div>
                 </div>
               </div>
@@ -544,24 +450,18 @@ const ViewProfileById = (props: any) => {
           {activeTab === 'family' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900">
-                  Family Information
-                </h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">Family Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
                   <div className="space-y-4">
                     <div className="bg-blue-50 p-4 rounded-lg">
                       <h4 className="font-bold text-gray-900 mb-2">Father</h4>
                       <p className="font-medium">{profileData.fatherName}</p>
-                      <p className="text-gray-600 font-bold text-sm">
-                        {profileData.fatherOccupation}
-                      </p>
+                      <p className="text-gray-600 font-bold text-sm">{profileData.fatherOccupation}</p>
                     </div>
                     <div className="bg-pink-50 p-4 rounded-lg">
                       <h4 className="font-bold text-gray-900 mb-2">Mother</h4>
                       <p className="font-medium">{profileData.motherName}</p>
-                      <p className="text-gray-600 font-bold text-sm">
-                        {profileData.motherOccupation}
-                      </p>
+                      <p className="text-gray-600 font-bold text-sm">{profileData.motherOccupation}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
@@ -569,30 +469,18 @@ const ViewProfileById = (props: any) => {
                       <h4 className="font-bold text-gray-900 mb-3">Siblings</h4>
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-gray-600 font-bold">
-                            Brothers:
-                          </span>
-                          <span className="font-medium">
-                            {profileData.brothers}
-                          </span>
+                          <span className="text-gray-600 font-bold">Brothers:</span>
+                          <span className="font-medium">{profileData.brothers}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600 font-bold">
-                            Sisters:
-                          </span>
-                          <span className="font-medium">
-                            {profileData.sisters}
-                          </span>
+                          <span className="text-gray-600 font-bold">Sisters:</span>
+                          <span className="font-medium">{profileData.sisters}</span>
                         </div>
                       </div>
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">
-                        Family Income
-                      </h4>
-                      <p className="font-medium">
-                        {profileData.familyIncome} (Annual)
-                      </p>
+                      <h4 className="font-bold text-gray-900 mb-2">Family Income</h4>
+                      <p className="font-medium">{profileData.familyIncome} (Annual)</p>
                     </div>
                   </div>
                 </div>
@@ -602,49 +490,29 @@ const ViewProfileById = (props: any) => {
           {activeTab === 'heritage' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900">
-                  Genealogy & Heritage
-                </h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">Genealogy & Heritage</h3>
                 <div className="space-y-4">
                   <div className="bg-orange-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-2">
-                      Gotra Details
-                    </h4>
+                    <h4 className="font-bold text-gray-900 mb-2">Gotra Details</h4>
                     <p className="text-gray-700">{profileData.gotraDetails}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">
-                        Ancestral Village
-                      </h4>
-                      <p className="text-gray-700">
-                        {profileData.ancestralVillage}
-                      </p>
+                      <h4 className="font-bold text-gray-900 mb-2">Ancestral Village</h4>
+                      <p className="text-gray-700">{profileData.ancestralVillage}</p>
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
-                      <h4 className="font-bold text-gray-900 mb-2">
-                        Family History
-                      </h4>
-                      <p className="text-gray-700">
-                        {profileData.familyHistory}
-                      </p>
+                      <h4 className="font-bold text-gray-900 mb-2">Family History</h4>
+                      <p className="text-gray-700">{profileData.familyHistory}</p>
                     </div>
                   </div>
                   <div className="bg-purple-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-2">
-                      Community Contributions
-                    </h4>
-                    <p className="text-gray-700">
-                      {profileData.communityContributions}
-                    </p>
+                    <h4 className="font-bold text-gray-900 mb-2">Community Contributions</h4>
+                    <p className="text-gray-700">{profileData.communityContributions}</p>
                   </div>
                   <div className="bg-indigo-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-2">
-                      Family Traditions
-                    </h4>
-                    <p className="text-gray-700">
-                      {profileData.familyTraditions}
-                    </p>
+                    <h4 className="font-bold text-gray-900 mb-2">Family Traditions</h4>
+                    <p className="text-gray-700">{profileData.familyTraditions}</p>
                   </div>
                 </div>
               </div>
@@ -653,50 +521,30 @@ const ViewProfileById = (props: any) => {
           {activeTab === 'lifestyle' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900">
-                  Lifestyle & Preferences
-                </h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900">Lifestyle & Preferences</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
                   <div>
                     <h4 className="font-bold text-gray-900 mb-3">Habits</h4>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center p-3 bg-white/70 backdrop-blur-sm rounded-lg">
                         <span className="text-gray-600 font-bold">Diet:</span>
-                        <span className="font-medium capitalize">
-                          {profileData.diet}
-                        </span>
+                        <span className="font-medium capitalize">{profileData.diet}</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Smoking:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.smoking}
-                        </span>
+                        <span className="text-gray-600 font-bold">Smoking:</span>
+                        <span className="font-medium capitalize">{profileData.smoking}</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Drinking:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.drinking}
-                        </span>
+                        <span className="text-gray-600 font-bold">Drinking:</span>
+                        <span className="font-medium capitalize">{profileData.drinking}</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Exercise:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.exercise}
-                        </span>
+                        <span className="text-gray-600 font-bold">Exercise:</span>
+                        <span className="font-medium capitalize">{profileData.exercise}</span>
                       </div>
                       <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                        <span className="text-gray-600 font-bold">
-                          Religious Beliefs:
-                        </span>
-                        <span className="font-medium capitalize">
-                          {profileData.religiousBeliefs}
-                        </span>
+                        <span className="text-gray-600 font-bold">Religious Beliefs:</span>
+                        <span className="font-medium capitalize">{profileData.religiousBeliefs}</span>
                       </div>
                       {/* <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                         <span className="text-gray-600 font-bold">
@@ -712,36 +560,22 @@ const ViewProfileById = (props: any) => {
                     <h4 className="font-bold text-gray-900 mb-3">Interests</h4>
                     <div className="space-y-3">
                       <div className="p-3 bg-blue-50 rounded-lg">
-                        <span className="text-gray-600 font-bold text-sm">
-                          Music:
-                        </span>
-                        <p className="font-medium">
-                          {profileData.musicPreferences}
-                        </p>
+                        <span className="text-gray-600 font-bold text-sm">Music:</span>
+                        <p className="font-medium">{profileData.musicPreferences}</p>
                       </div>
                       <div className="p-3 bg-green-50 rounded-lg">
-                        <span className="text-gray-600 font-bold text-sm">
-                          Movies:
-                        </span>
-                        <p className="font-medium">
-                          {profileData.moviePreferences}
-                        </p>
+                        <span className="text-gray-600 font-bold text-sm">Movies:</span>
+                        <p className="font-medium">{profileData.moviePreferences}</p>
                       </div>
                       <div className="p-3 bg-purple-50 rounded-lg">
-                        <span className="text-gray-600 font-bold text-sm">
-                          Reading:
-                        </span>
-                        <p className="font-medium">
-                          {profileData.readingInterests}
-                        </p>
+                        <span className="text-gray-600 font-bold text-sm">Reading:</span>
+                        <p className="font-medium">{profileData.readingInterests}</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="bg-yellow-50 p-4 rounded-lg mt-6">
-                  <h4 className="font-bold text-gray-900 mb-2">
-                    Travel Interests
-                  </h4>
+                  <h4 className="font-bold text-gray-900 mb-2">Travel Interests</h4>
                   <p className="text-gray-700">{profileData.travelInterests}</p>
                 </div>
               </div>
@@ -751,54 +585,36 @@ const ViewProfileById = (props: any) => {
           {activeTab === 'family' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-4 text-gray-900 mt-4">
-                  Sibling Details
-                </h3>
+                <h3 className="text-lg font-bold mb-4 text-gray-900 mt-4">Sibling Details</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-600 font-bold">
                   {/* Brothers */}
                   <div className="space-y-3 bg-sky-50 p-4 rounded-lg">
                     <h4 className="font-bold text-gray-900 mb-3">Brothers</h4>
                     {profileData?.brothersDetails?.length > 0 ? (
-                      profileData.brothersDetails.map(
-                        (brother: any, index: number) => (
-                          <div key={index} className="mb-4 border-b pb-2">
-                            <p className="text-gray-700">
-                              Name:{' '}
-                              <span className="font-medium capitalize">
-                                {brother.name}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Occupation:{' '}
-                              <span className="font-medium capitalize">
-                                {brother.occupation}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Marital Status:{' '}
-                              <span className="font-medium capitalize">
-                                {brother.maritalStatus}
-                              </span>
-                            </p>
-                            {brother.maritalStatus === 'married' && (
-                              <>
-                                <p className="text-gray-700">
-                                  Spouse Name:{' '}
-                                  <span className="font-medium capitalize">
-                                    {brother.spouseName}
-                                  </span>
-                                </p>
-                                <p className="text-gray-700">
-                                  Spouse Occupation:{' '}
-                                  <span className="font-medium capitalize">
-                                    {brother.spouseOccupation}
-                                  </span>
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        )
-                      )
+                      profileData.brothersDetails.map((brother: any, index: number) => (
+                        <div key={index} className="mb-4 border-b pb-2">
+                          <p className="text-gray-700">
+                            Name: <span className="font-medium capitalize">{brother.name}</span>
+                          </p>
+                          <p className="text-gray-700">
+                            Occupation: <span className="font-medium capitalize">{brother.occupation}</span>
+                          </p>
+                          <p className="text-gray-700">
+                            Marital Status: <span className="font-medium capitalize">{brother.maritalStatus}</span>
+                          </p>
+                          {brother.maritalStatus === 'married' && (
+                            <>
+                              <p className="text-gray-700">
+                                Spouse Name: <span className="font-medium capitalize">{brother.spouseName}</span>
+                              </p>
+                              <p className="text-gray-700">
+                                Spouse Occupation:{' '}
+                                <span className="font-medium capitalize">{brother.spouseOccupation}</span>
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      ))
                     ) : (
                       <p className="text-gray-500">No brothers added</p>
                     )}
@@ -808,46 +624,30 @@ const ViewProfileById = (props: any) => {
                   <div className="space-y-3 bg-pink-50 p-4 rounded-lg">
                     <h4 className="font-bold text-gray-900 mb-3">Sisters</h4>
                     {profileData?.sistersDetails?.length > 0 ? (
-                      profileData.sistersDetails.map(
-                        (sister: any, index: number) => (
-                          <div key={index} className="mb-4 border-b pb-2">
-                            <p className="text-gray-700">
-                              Name:{' '}
-                              <span className="font-medium capitalize">
-                                {sister.name}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Occupation:{' '}
-                              <span className="font-medium capitalize">
-                                {sister.occupation}
-                              </span>
-                            </p>
-                            <p className="text-gray-700">
-                              Marital Status:{' '}
-                              <span className="font-medium capitalize">
-                                {sister.maritalStatus}
-                              </span>
-                            </p>
-                            {sister.maritalStatus === 'married' && (
-                              <>
-                                <p className="text-gray-700">
-                                  Spouse Name:{' '}
-                                  <span className="font-medium capitalize">
-                                    {sister.spouseName}
-                                  </span>
-                                </p>
-                                <p className="text-gray-700">
-                                  Spouse Occupation:{' '}
-                                  <span className="font-medium capitalize">
-                                    {sister.spouseOccupation}
-                                  </span>
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        )
-                      )
+                      profileData.sistersDetails.map((sister: any, index: number) => (
+                        <div key={index} className="mb-4 border-b pb-2">
+                          <p className="text-gray-700">
+                            Name: <span className="font-medium capitalize">{sister.name}</span>
+                          </p>
+                          <p className="text-gray-700">
+                            Occupation: <span className="font-medium capitalize">{sister.occupation}</span>
+                          </p>
+                          <p className="text-gray-700">
+                            Marital Status: <span className="font-medium capitalize">{sister.maritalStatus}</span>
+                          </p>
+                          {sister.maritalStatus === 'married' && (
+                            <>
+                              <p className="text-gray-700">
+                                Spouse Name: <span className="font-medium capitalize">{sister.spouseName}</span>
+                              </p>
+                              <p className="text-gray-700">
+                                Spouse Occupation:{' '}
+                                <span className="font-medium capitalize">{sister.spouseOccupation}</span>
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      ))
                     ) : (
                       <p className="text-gray-500">No sisters added</p>
                     )}

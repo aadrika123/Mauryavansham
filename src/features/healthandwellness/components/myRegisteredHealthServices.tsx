@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface Branch {
   name: string;
@@ -43,7 +43,7 @@ const MyRegisteredHealthServices = () => {
       const data = await res.json();
       if (data.success) setServices(data.data);
     } catch (err) {
-      console.error("Error fetching health services:", err);
+      console.error('Error fetching health services:', err);
     } finally {
       setLoading(false);
     }
@@ -53,56 +53,43 @@ const MyRegisteredHealthServices = () => {
     fetchHealthServices();
   }, [session]);
 
-  if (loading)
-    return <p className="p-6 text-gray-500">Loading your registered centers...</p>;
+  if (loading) return <p className="p-6 text-gray-500">Loading your registered centers...</p>;
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">
-        My Registered Health & Wellness Centers
-      </h1>
+      <h1 className="text-2xl font-semibold mb-6">My Registered Health & Wellness Centers</h1>
 
       {services.length === 0 ? (
         <p className="text-gray-500">No centers registered yet.</p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((center) => (
+          {services.map(center => (
             <div
               key={center.id}
               className="bg-white shadow-md rounded-xl p-4 border hover:shadow-lg transition relative"
             >
               {/* Logo */}
               {center.logoUrl && (
-                <img
-                  src={center.logoUrl}
-                  alt="logo"
-                  className="w-20 h-20 object-cover rounded-md mb-3"
-                />
+                <img src={center.logoUrl} alt="logo" className="w-20 h-20 object-cover rounded-md mb-3" />
               )}
 
               {/* Basic Info */}
               <h2 className="text-lg font-bold mb-1">{center.centerName}</h2>
-              <p className="text-sm text-gray-600">
-                Category: {center.category || "N/A"}
-              </p>
-              <p className="text-sm text-gray-600">
-                City: {center.city || "N/A"}
-              </p>
-              <p className="text-sm text-gray-600">
-                Owner: {center.ownerName}
-              </p>
+              <p className="text-sm text-gray-600">Category: {center.category || 'N/A'}</p>
+              <p className="text-sm text-gray-600">City: {center.city || 'N/A'}</p>
+              <p className="text-sm text-gray-600">Owner: {center.ownerName}</p>
 
               {/* Status Badge */}
               <span
                 className={`inline-block mt-2 px-2 py-0.5 text-xs rounded-full ${
-                  center.status === "approved"
-                    ? "bg-green-100 text-green-700"
-                    : center.status === "rejected"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-yellow-100 text-yellow-700"
+                  center.status === 'approved'
+                    ? 'bg-green-100 text-green-700'
+                    : center.status === 'rejected'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-yellow-100 text-yellow-700'
                 }`}
               >
-                {center.status ? center.status.toUpperCase() : "PENDING"}
+                {center.status ? center.status.toUpperCase() : 'PENDING'}
               </span>
 
               {/* View Button */}
@@ -137,9 +124,7 @@ const MyRegisteredHealthServices = () => {
               />
             )}
 
-            <h2 className="text-2xl font-bold mb-3 text-center">
-              {selectedService.centerName}
-            </h2>
+            <h2 className="text-2xl font-bold mb-3 text-center">{selectedService.centerName}</h2>
 
             {/* Basic Info */}
             <div className="space-y-2 text-gray-700">
@@ -150,22 +135,20 @@ const MyRegisteredHealthServices = () => {
                 <strong>Owner:</strong> {selectedService.ownerName}
               </p>
               <p>
-                <strong>Email:</strong> {selectedService.email || "N/A"}
+                <strong>Email:</strong> {selectedService.email || 'N/A'}
               </p>
               <p>
                 <strong>Phone:</strong> {selectedService.phone}
               </p>
               <p>
-                <strong>Address:</strong> {selectedService.address},{" "}
-                {selectedService.city}, {selectedService.state} -{" "}
+                <strong>Address:</strong> {selectedService.address}, {selectedService.city}, {selectedService.state} -{' '}
                 {selectedService.pincode}
               </p>
               <p>
-                <strong>Registered On:</strong>{" "}
-                {new Date(selectedService.createdAt || "").toLocaleDateString()}
+                <strong>Registered On:</strong> {new Date(selectedService.createdAt || '').toLocaleDateString()}
               </p>
               <p>
-                <strong>About:</strong> {selectedService.about || "N/A"}
+                <strong>About:</strong> {selectedService.about || 'N/A'}
               </p>
             </div>
 
@@ -212,21 +195,13 @@ const MyRegisteredHealthServices = () => {
                       rel="noopener noreferrer"
                       className="block border rounded-lg overflow-hidden hover:shadow-md"
                     >
-                      {url.endsWith(".pdf") ? (
+                      {url.endsWith('.pdf') ? (
                         <div className="flex flex-col items-center justify-center p-6">
-                          <img
-                            src="/pdf-icon.png"
-                            alt="PDF"
-                            className="w-12 h-12 mb-2"
-                          />
+                          <img src="/pdf-icon.png" alt="PDF" className="w-12 h-12 mb-2" />
                           <p className="text-sm text-gray-600">View PDF</p>
                         </div>
                       ) : (
-                        <img
-                          src={url}
-                          alt={`Document ${i + 1}`}
-                          className="w-full h-40 object-cover"
-                        />
+                        <img src={url} alt={`Document ${i + 1}`} className="w-full h-40 object-cover" />
                       )}
                     </a>
                   ))}

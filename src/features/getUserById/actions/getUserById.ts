@@ -1,8 +1,8 @@
 // getProfileById.ts
-import { db } from "@/src/drizzle/db";
-import { userChildren, users, userSiblings } from "@/src/drizzle/schema";
+import { db } from '@/src/drizzle/db';
+import { userChildren, users, userSiblings } from '@/src/drizzle/schema';
 // import { userSiblings, userChildren } from "@/src/drizzle/db/schemas/relations.schema";
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
 
 export async function getUserById(id: string) {
   const userResult = await db
@@ -11,7 +11,7 @@ export async function getUserById(id: string) {
     .where(eq(users.id, Number(id)));
 
   if (!userResult.length) {
-    return { success: false, message: "Profile not found." };
+    return { success: false, message: 'Profile not found.' };
   }
 
   const siblings = await db
@@ -29,7 +29,7 @@ export async function getUserById(id: string) {
     data: {
       ...userResult[0],
       siblings,
-      children,
-    },
+      children
+    }
   };
 }

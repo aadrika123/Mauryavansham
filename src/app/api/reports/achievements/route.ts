@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { achievements } from "@/src/drizzle/schema";
-import { and, ilike, eq, sql } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { achievements } from '@/src/drizzle/schema';
+import { and, ilike, eq, sql } from 'drizzle-orm';
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "1000");
-    const status = searchParams.get("status") || "";
-    const category = searchParams.get("category") || "";
-    const search = searchParams.get("search") || "";
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '1000');
+    const status = searchParams.get('status') || '';
+    const category = searchParams.get('category') || '';
+    const search = searchParams.get('search') || '';
 
     const offset = (page - 1) * limit;
 
@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     if (search.trim()) {
       const searchLower = search.toLowerCase();
       allData = allData.filter(
-        (a) =>
+        a =>
           a.name.toLowerCase().includes(searchLower) ||
           a.title.toLowerCase().includes(searchLower) ||
           a.location.toLowerCase().includes(searchLower)
@@ -49,13 +49,10 @@ export async function GET(req: Request) {
       achievements: paginatedData,
       totalCount,
       page,
-      limit,
+      limit
     });
   } catch (error) {
-    console.error("Error fetching achievements report:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch achievements report" },
-      { status: 500 }
-    );
+    console.error('Error fetching achievements report:', error);
+    return NextResponse.json({ error: 'Failed to fetch achievements report' }, { status: 500 });
   }
 }

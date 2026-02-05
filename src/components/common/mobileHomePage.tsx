@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Heart,
   Calendar,
@@ -20,11 +20,11 @@ import {
   Award,
   Lock,
   User,
-  X,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Button } from "../ui/button";
+  X
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { Button } from '../ui/button';
 // import { useToast } from "../ui/toastProvider";
 
 interface CommunityStats {
@@ -35,11 +35,7 @@ interface CommunityStats {
   registeredBusinessHouses: number;
   matrimonialProfiles: number;
 }
-export default function MauryavanshamApp({
-  children,
-}: {
-  children?: React.ReactNode;
-}) {
+export default function MauryavanshamApp({ children }: { children?: React.ReactNode }) {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -53,13 +49,13 @@ export default function MauryavanshamApp({
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       try {
-        const res = await fetch("/api/upcoming-events");
+        const res = await fetch('/api/upcoming-events');
         const data = await res.json();
         if (data.success) {
           setUpcomingEvents(data.data);
         }
       } catch (error) {
-        console.error("Error fetching upcoming events:", error);
+        console.error('Error fetching upcoming events:', error);
       }
     };
 
@@ -69,45 +65,45 @@ export default function MauryavanshamApp({
   const slides = [
     {
       id: 1,
-      title: "Find Your Perfect Match",
-      subtitle: "Connect with verified Mauryavansham profiles",
-      src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754133157/Gemini_Generated_Image_pe53ibpe53ibpe53_ot4dkc.png",
-      alt: "Ancient Maurya Empire Art",
+      title: 'Find Your Perfect Match',
+      subtitle: 'Connect with verified Mauryavansham profiles',
+      src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754133157/Gemini_Generated_Image_pe53ibpe53ibpe53_ot4dkc.png',
+      alt: 'Ancient Maurya Empire Art'
     },
     {
       id: 2,
-      title: "Preserve Our Heritage",
-      subtitle: "Explore rich cultural traditions",
-      src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/chandragup_maur_vmo5vb.png",
-      alt: "Lord Ram Temple Ayodhya",
+      title: 'Preserve Our Heritage',
+      subtitle: 'Explore rich cultural traditions',
+      src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/chandragup_maur_vmo5vb.png',
+      alt: 'Lord Ram Temple Ayodhya'
     },
     {
       id: 3,
-      title: "Community Events",
-      subtitle: "Join celebrations and gatherings",
-      src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/samrat_ashoka_hekb0f.png",
-      alt: "Ashoka Pillar in Ancient India",
+      title: 'Community Events',
+      subtitle: 'Join celebrations and gatherings',
+      src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/samrat_ashoka_hekb0f.png',
+      alt: 'Ashoka Pillar in Ancient India'
     },
     {
       id: 4,
-      title: "Educational Resources",
-      subtitle: "Learn about our history and culture",
-      src: "https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/mauras_kuswahas_rjabks.png",
-      alt: "Indian Family Celebration",
-    },
+      title: 'Educational Resources',
+      subtitle: 'Learn about our history and culture',
+      src: 'https://res.cloudinary.com/dgwhhrsfh/image/upload/v1754130857/mauras_kuswahas_rjabks.png',
+      alt: 'Indian Family Celebration'
+    }
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide(prev => (prev + 1) % slides.length);
     }, 4000);
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const [stats, setStats] = useState<CommunityStats | null>(null);
@@ -116,13 +112,13 @@ export default function MauryavanshamApp({
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("/api/masters");
+        const res = await fetch('/api/masters');
         const data = await res.json();
         if (data.success) {
           setStats(data.data);
         }
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        console.error('Error fetching stats:', error);
       } finally {
         setLoading(false);
       }
@@ -133,104 +129,104 @@ export default function MauryavanshamApp({
 
   const mainCategories = [
     {
-      id: "heritage",
-      name: "Heritage",
-      url: "/heritage",
+      id: 'heritage',
+      name: 'Heritage',
+      url: '/heritage',
       icon: Landmark,
-      desc: "Explore our culture",
-      count: "500+ Articles",
-      gradient: "from-amber-600 to-yellow-500",
+      desc: 'Explore our culture',
+      count: '500+ Articles',
+      gradient: 'from-amber-600 to-yellow-500'
     },
     {
-      id: "community",
-      name: "Community Forum",
-      url: "/community",
+      id: 'community',
+      name: 'Community Forum',
+      url: '/community',
       icon: Globe,
-      desc: "Connect with members",
-      count: "10,000+ Posts",
-      gradient: "from-amber-600 to-yellow-500",
+      desc: 'Connect with members',
+      count: '10,000+ Posts',
+      gradient: 'from-amber-600 to-yellow-500'
     },
     {
-      id: "matrimonial",
-      name: "Matrimonial",
-      url: "/matrimonial",
+      id: 'matrimonial',
+      name: 'Matrimonial',
+      url: '/matrimonial',
       icon: Heart,
-      desc: "Find your life partner",
-      count: "15,000+ Profiles",
-      gradient: "from-red-600 to-orange-500",
+      desc: 'Find your life partner',
+      count: '15,000+ Profiles',
+      gradient: 'from-red-600 to-orange-500'
     },
     {
-      id: "events",
-      name: "Events & Calendar",
-      url: "/events",
+      id: 'events',
+      name: 'Events & Calendar',
+      url: '/events',
       icon: Calendar,
-      desc: "Community gatherings",
-      count: "200+ Events",
-      gradient: "from-orange-600 to-red-500",
+      desc: 'Community gatherings',
+      count: '200+ Events',
+      gradient: 'from-orange-600 to-red-500'
     },
     {
-      id: "business",
-      name: "Business Forum",
-      url: "/business",
+      id: 'business',
+      name: 'Business Forum',
+      url: '/business',
       icon: Globe,
-      desc: "Network & grow",
-      count: "500+ Profiles",
-      gradient: "from-orange-500 to-amber-500",
+      desc: 'Network & grow',
+      count: '500+ Profiles',
+      gradient: 'from-orange-500 to-amber-500'
     },
     {
-      id: "wellness",
-      name: "Health & Wellness",
-      url: "/health-wellness",
+      id: 'wellness',
+      name: 'Health & Wellness',
+      url: '/health-wellness',
       icon: Activity,
-      desc: "Stay healthy",
-      count: "50+ Programs",
-      gradient: "from-orange-500 to-amber-500",
+      desc: 'Stay healthy',
+      count: '50+ Programs',
+      gradient: 'from-orange-500 to-amber-500'
     },
     {
-      id: "education",
-      name: "Education",
-      url: "/education",
+      id: 'education',
+      name: 'Education',
+      url: '/education',
       icon: BookOpen,
-      desc: "Learn and grow",
-      count: "100+ Courses",
-      gradient: "from-red-600 to-pink-500",
+      desc: 'Learn and grow',
+      count: '100+ Courses',
+      gradient: 'from-red-600 to-pink-500'
     },
     {
-      id: "achievements",
-      name: "Achievements",
-      url: "/achievements",
+      id: 'achievements',
+      name: 'Achievements',
+      url: '/achievements',
 
       icon: Award,
-      desc: "Our achievements",
-      count: "50+ Awards",
-      gradient: "from-red-600 to-pink-500",
+      desc: 'Our achievements',
+      count: '50+ Awards',
+      gradient: 'from-red-600 to-pink-500'
     },
     {
-      id: "blogs",
-      name: "Blogs",
-      url: "/blogs",
+      id: 'blogs',
+      name: 'Blogs',
+      url: '/blogs',
 
       icon: Download,
-      desc: "Read our blogs",
-      count: "50+ Blogs",
-      gradient: "from-amber-600 to-yellow-500",
+      desc: 'Read our blogs',
+      count: '50+ Blogs',
+      gradient: 'from-amber-600 to-yellow-500'
     },
     {
-      id: "knowYourCommunity",
-      name: "Know your community members",
-      url: "/community-directory",
+      id: 'knowYourCommunity',
+      name: 'Know your community members',
+      url: '/community-directory',
       icon: Users,
-      desc: "Know your community members",
-      count: "50+ Blogs",
-      gradient: "from-amber-600 to-yellow-500",
-    },
+      desc: 'Know your community members',
+      count: '50+ Blogs',
+      gradient: 'from-amber-600 to-yellow-500'
+    }
   ];
 
   const featuredProfiles = [
-    { name: "Priya S.", age: 26, city: "Mumbai", verified: true },
-    { name: "Rahul M.", age: 29, city: "Delhi", verified: true },
-    { name: "Anjali K.", age: 25, city: "Bangalore", verified: true },
-    { name: "Vikram P.", age: 31, city: "Pune", verified: true },
+    { name: 'Priya S.', age: 26, city: 'Mumbai', verified: true },
+    { name: 'Rahul M.', age: 29, city: 'Delhi', verified: true },
+    { name: 'Anjali K.', age: 25, city: 'Bangalore', verified: true },
+    { name: 'Vikram P.', age: 31, city: 'Pune', verified: true }
   ];
 
   const handleRegister = async (event: any) => {
@@ -239,26 +235,18 @@ export default function MauryavanshamApp({
       return;
     }
 
-    if (
-      event.attendees >= event.maxAttendees ||
-      loadingEvents.includes(event.id)
-    )
-      return;
+    if (event.attendees >= event.maxAttendees || loadingEvents.includes(event.id)) return;
 
-    setLoadingEvents((prev) => [...prev, event.id]);
+    setLoadingEvents(prev => [...prev, event.id]);
 
     try {
       const res = await fetch(`/api/events/${event.id}/attend`, {
-        method: "POST",
+        method: 'POST'
       });
       const data = await res.json();
 
       if (res.ok) {
-        setUpcomingEvents((prev) =>
-          prev.map((ev) =>
-            ev.id === event.id ? { ...ev, attendees: ev.attendees + 1 } : ev
-          )
-        );
+        setUpcomingEvents(prev => prev.map(ev => (ev.id === event.id ? { ...ev, attendees: ev.attendees + 1 } : ev)));
 
         // addToast({
         //   title: "✅ Success",
@@ -282,7 +270,7 @@ export default function MauryavanshamApp({
       //   description: "Something went wrong. Please try again later.",
       // });
     } finally {
-      setLoadingEvents((prev) => prev.filter((id) => id !== event.id));
+      setLoadingEvents(prev => prev.filter(id => id !== event.id));
     }
   };
 
@@ -292,9 +280,7 @@ export default function MauryavanshamApp({
       {/* Header */}
       <div
         className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrollY > 20
-            ? "bg-white shadow-md"
-            : "bg-gradient-to-r from-red-700 to-orange-600"
+          scrollY > 20 ? 'bg-white shadow-md' : 'bg-gradient-to-r from-red-700 to-orange-600'
         }`}
       ></div>
       {/* Hero Slider */}
@@ -305,15 +291,11 @@ export default function MauryavanshamApp({
               <div
                 key={slide.id}
                 className={`absolute  inset-0 transition-opacity duration-700 ease-in-out ${
-                  idx === currentSlide ? "opacity-100" : "opacity-0"
+                  idx === currentSlide ? 'opacity-100' : 'opacity-0'
                 }`}
               >
                 {/* Background Image */}
-                <img
-                  src={slide.src}
-                  alt={slide.alt}
-                  className="w-full h-full object-fill"
-                />
+                <img src={slide.src} alt={slide.alt} className="w-full h-full object-fill" />
 
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
@@ -328,43 +310,27 @@ export default function MauryavanshamApp({
         <div className="grid grid-cols-4 gap-2 mb-6">
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
             <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
-              {loading
-                ? "..."
-                : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
+              {loading ? '...' : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Registered Members
-            </p>
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">Registered Members</p>
           </div>
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
             <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
-              {loading
-                ? "..."
-                : `${stats?.matrimonialProfiles?.toLocaleString() || 0}+`}
+              {loading ? '...' : `${stats?.matrimonialProfiles?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Matrimonial Profiles
-            </p>
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">Matrimonial Profiles</p>
           </div>
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
             <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
-              {loading
-                ? "..."
-                : `${stats?.registeredBusinessHouses?.toLocaleString() || 0}+`}
+              {loading ? '...' : `${stats?.registeredBusinessHouses?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Registered Business Houses
-            </p>
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">Registered Business Houses</p>
           </div>
           <div className="bg-white rounded-2xl p-3 shadow-lg text-center border border-orange-100">
             <p className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
-              {loading
-                ? "..."
-                : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
+              {loading ? '...' : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
             </p>
-            <p className="text-[10px] text-gray-600 mt-1 leading-tight">
-              Help Discussions
-            </p>
+            <p className="text-[10px] text-gray-600 mt-1 leading-tight">Help Discussions</p>
           </div>
         </div>
 
@@ -373,29 +339,24 @@ export default function MauryavanshamApp({
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-gray-800">Services</h2>
             <button
-              onClick={() => setShowAllServices((prev) => !prev)}
+              onClick={() => setShowAllServices(prev => !prev)}
               className="text-sm text-red-600 font-semibold flex items-center gap-1"
             >
-              {showAllServices ? "View Less" : "View All"}{" "}
+              {showAllServices ? 'View Less' : 'View All'}{' '}
               <ChevronRight
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  showAllServices ? "rotate-90" : ""
-                }`}
+                className={`w-4 h-4 transition-transform duration-200 ${showAllServices ? 'rotate-90' : ''}`}
               />
             </button>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {(showAllServices
-              ? mainCategories
-              : mainCategories.slice(0, 4)
-            ).map((cat) => {
+            {(showAllServices ? mainCategories : mainCategories.slice(0, 4)).map(cat => {
               const Icon = cat.icon;
               return (
                 <button
                   key={cat.id}
                   onClick={() => {
-                    if (cat.id === "knowYourCommunity" && !user) {
+                    if (cat.id === 'knowYourCommunity' && !user) {
                       setShowLoginModal(true);
                     } else {
                       router.push(cat.url);
@@ -411,12 +372,8 @@ export default function MauryavanshamApp({
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-800 text-xs sm:text-xs leading-tight">
-                        {cat.name}
-                      </h3>
-                      <p className="text-xs sm:text-xs text-gray-500 mt-1 leading-tight line-clamp-2">
-                        {cat.desc}
-                      </p>
+                      <h3 className="font-bold text-gray-800 text-xs sm:text-xs leading-tight">{cat.name}</h3>
+                      <p className="text-xs sm:text-xs text-gray-500 mt-1 leading-tight line-clamp-2">{cat.desc}</p>
                     </div>
                   </div>
                 </button>
@@ -479,25 +436,15 @@ export default function MauryavanshamApp({
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-xl font-bold text-gray-800">
-                Upcoming Events
-              </h2>
-              {upcomingEvents.length > 0 && (
-              <p className="text-sm text-gray-500">Join & Celebrate</p>
-              )}
+              <h2 className="text-xl font-bold text-gray-800">Upcoming Events</h2>
+              {upcomingEvents.length > 0 && <p className="text-sm text-gray-500">Join & Celebrate</p>}
               {upcomingEvents.length == 0 && (
-                <p className="text-sm text-gray-500">
-                  No upcoming events available at the moment.
-                </p>
+                <p className="text-sm text-gray-500">No upcoming events available at the moment.</p>
               )}
             </div>
 
             {/* �� Button sirf tab dikhega jab events > 4 ho */}
-            {upcomingEvents.length > 4 && (
-              <button className="text-sm text-red-600 font-semibold">
-                View All
-              </button>
-            )}
+            {upcomingEvents.length > 4 && <button className="text-sm text-red-600 font-semibold">View All</button>}
           </div>
 
           <div className="space-y-3">
@@ -509,38 +456,31 @@ export default function MauryavanshamApp({
                 <div className="flex items-start gap-3">
                   <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-600 to-orange-500 flex flex-col items-center justify-center text-white flex-shrink-0 shadow-md">
                     <span className="text-xs font-semibold">
-                      {new Date(event.date.split(" ")[0]).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "short",
-                        }
-                      )}
+                      {new Date(event.date.split(' ')[0]).toLocaleDateString('en-US', {
+                        month: 'short'
+                      })}
                     </span>
                     <span className="text-lg font-bold leading-none">
-                      {new Date(event.date.split(" ")[0]).getDate()}
+                      {new Date(event.date.split(' ')[0]).getDate()}
                     </span>
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-800 leading-tight">
-                      {event.title}
-                    </h3>
+                    <h3 className="font-bold text-gray-800 leading-tight">{event.title}</h3>
                     <div className="flex items-center gap-1 mt-1.5 text-sm text-gray-500">
                       <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                       <span className="truncate">{event.location}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                       <div className="flex -space-x-2">
-                        {[1, 2, 3].map((i) => (
+                        {[1, 2, 3].map(i => (
                           <div
                             key={i}
                             className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-red-400 border-2 border-white"
                           ></div>
                         ))}
                       </div>
-                      <span className="text-xs text-gray-600 font-medium">
-                        {event.attendees}+ going
-                      </span>
+                      <span className="text-xs text-gray-600 font-medium">{event.attendees}+ going</span>
                     </div>
                   </div>
 
@@ -549,11 +489,11 @@ export default function MauryavanshamApp({
                     onClick={() => handleRegister(event)}
                     className={`mt-4 px-5 py-2 rounded-xl text-white shadow-md transition-transform ${
                       loadingEvents.includes(event.id)
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-br from-red-600 to-orange-500 hover:scale-105"
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-br from-red-600 to-orange-500 hover:scale-105'
                     }`}
                   >
-                    {loadingEvents.includes(event.id) ? "Joining..." : "Join"}
+                    {loadingEvents.includes(event.id) ? 'Joining...' : 'Join'}
                   </button>
                 </div>
               </div>
@@ -565,12 +505,9 @@ export default function MauryavanshamApp({
         <div className="bg-gradient-to-br from-red-700 via-orange-600 to-yellow-500 rounded-3xl p-6 shadow-lg relative overflow-hidden mb-6">
           <div className="relative text-center">
             <Crown className="w-12 h-12 text-white mx-auto mb-3" />
-            <h3 className="text-white font-bold text-xl mb-2 leading-tight">
-              Join Mauryavansham Today!
-            </h3>
+            <h3 className="text-white font-bold text-xl mb-2 leading-tight">Join Mauryavansham Today!</h3>
             <p className="text-white/90 text-sm mb-5 leading-relaxed">
-              Connect with your community, find your match, and celebrate our
-              heritage together
+              Connect with your community, find your match, and celebrate our heritage together
             </p>
             <a
               href="tel:8862941658"
@@ -590,29 +527,20 @@ export default function MauryavanshamApp({
                 <Lock className="h-5 w-5" />
                 Login Required
               </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <p className="text-gray-600 mb-6">
-              Please login to access this feature.
-            </p>
+            <p className="text-gray-600 mb-6">Please login to access this feature.</p>
             <div className="space-y-3">
               <Button
-                onClick={() => router.push("/sign-in")}
+                onClick={() => router.push('/sign-in')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
               >
                 <User className="h-4 w-4 mr-2" />
                 Login
               </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={() => setShowLoginModal(false)} variant="outline" className="w-full">
                 Cancel
               </Button>
             </div>

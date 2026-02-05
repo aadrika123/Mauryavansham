@@ -1,68 +1,68 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { ArrowLeft, Calendar, User, Edit, AlertCircle, CheckCircle } from "lucide-react"
-import { format } from "date-fns"
+import Link from 'next/link';
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { ArrowLeft, Calendar, User, Edit, AlertCircle, CheckCircle } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface Blog {
-  id: string
-  title: string
-  content: string
-  summary: string
-  status: "draft" | "pending" | "approved" | "rejected"
-  createdAt: string
-  updatedAt: string
-  approvedAt?: string
-  rejectionReason?: string
-  imageUrl?: string
+  id: string;
+  title: string;
+  content: string;
+  summary: string;
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+  updatedAt: string;
+  approvedAt?: string;
+  rejectionReason?: string;
+  imageUrl?: string;
   author: {
-    id: string
-    name: string
-    email: string
-  }
+    id: string;
+    name: string;
+    email: string;
+  };
 }
 
 interface BlogDetailProps {
-  blog: Blog
-  currentUserId: string
-  userRole?: string
+  blog: Blog;
+  currentUserId: string;
+  userRole?: string;
 }
 
 export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetailProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "draft":
-        return "bg-gray-100 text-gray-800"
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "approved":
-        return "bg-green-100 text-green-800"
-      case "rejected":
-        return "bg-red-100 text-red-800"
+      case 'draft':
+        return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800"
+        return 'bg-gray-100 text-gray-800';
     }
-  }
+  };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "draft":
-        return "Draft"
-      case "pending":
-        return "Pending Approval"
-      case "approved":
-        return "Approved"
-      case "rejected":
-        return "Rejected"
+      case 'draft':
+        return 'Draft';
+      case 'pending':
+        return 'Pending Approval';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
       default:
-        return status
+        return status;
     }
-  }
+  };
 
-  const canEdit = blog.author.id == currentUserId && (blog.status == "draft" || blog.status == "rejected")
+  const canEdit = blog.author.id == currentUserId && (blog.status == 'draft' || blog.status == 'rejected');
   console.log(blog);
 
   return (
@@ -104,14 +104,8 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div> 
-            {blog.imageUrl && (
-              <img
-                src={blog.imageUrl}
-                alt={blog.title}
-                className="w-full object-fill rounded-t-lg"
-              />
-            )}
+          <div>
+            {blog.imageUrl && <img src={blog.imageUrl} alt={blog.title} className="w-full object-fill rounded-t-lg" />}
           </div>
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Summary</h3>
@@ -135,7 +129,7 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
             </div>
           )}
 
-          {blog.status === "approved" && blog.approvedAt && (
+          {blog.status === 'approved' && blog.approvedAt && (
             <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
               <div>
@@ -155,5 +149,5 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

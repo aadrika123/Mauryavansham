@@ -1,20 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/src/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/src/components/ui/table";
-import Loader from "@/src/components/ui/loader";
-import { useToast } from "@/src/components/ui/toastProvider";
-import EventModal from "./eventModal";
-import { CheckCircle, Eye, XCircle } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/src/components/ui/table';
+import Loader from '@/src/components/ui/loader';
+import { useToast } from '@/src/components/ui/toastProvider';
+import EventModal from './eventModal';
+import { CheckCircle, Eye, XCircle } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 // ⚡ Event type
 interface Event {
@@ -23,7 +16,7 @@ interface Event {
   date: string;
   fromTime: string;
   toTime: string;
-  status: "pending" | "approved" | "rejected";
+  status: 'pending' | 'approved' | 'rejected';
   description: string;
   location: string;
   organizer: string;
@@ -41,15 +34,13 @@ export default function EventModerationPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [approveModal, setApproveModal] = useState<null | Event>(null);
   const [rejectModal, setRejectModal] = useState<null | Event>(null);
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [rejectionReason, setRejectionReason] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
-  const [activeTab, setActiveTab] = useState<
-    "pending" | "approved" | "rejected"
-  >("pending");
+  const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
   const { addToast } = useToast();
 
   // Moderator name (session se)
-  const moderatorName = session?.user?.name || "Admin User";
+  const moderatorName = session?.user?.name || 'Admin User';
 
   useEffect(() => {
     fetchEvents();
@@ -57,11 +48,11 @@ export default function EventModerationPage() {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch("/api/events/applied");
+      const res = await fetch('/api/events/applied');
       const data = await res.json();
       setEvents(data);
     } catch (err) {
-      addToast({ title: "Failed to fetch events", variant: "destructive" });
+      addToast({ title: 'Failed to fetch events', variant: 'destructive' });
       console.error(err);
     } finally {
       setLoading(false);
@@ -72,18 +63,18 @@ export default function EventModerationPage() {
   const handleApprove = async (id: number) => {
     try {
       const res = await fetch(`/api/events/moderate/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "approved", isFeatured }),
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'approved', isFeatured })
       });
       if (res.ok) {
-        addToast({ title: "Event approved", variant: "success" });
+        addToast({ title: 'Event approved', variant: 'success' });
         setApproveModal(null);
         setIsFeatured(false); // reset
         fetchEvents();
       }
     } catch (err) {
-      addToast({ title: "Error approving event", variant: "destructive" });
+      addToast({ title: 'Error approving event', variant: 'destructive' });
     }
   };
 
@@ -91,28 +82,28 @@ export default function EventModerationPage() {
   const handleReject = async (id: number) => {
     try {
       const res = await fetch(`/api/events/moderate/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          status: "rejected",
+          status: 'rejected',
           reason: rejectionReason,
-          rejectedBy: moderatorName,
-        }),
+          rejectedBy: moderatorName
+        })
       });
       if (res.ok) {
-        addToast({ title: "Event rejected", variant: "success" });
+        addToast({ title: 'Event rejected', variant: 'success' });
         setRejectModal(null);
-        setRejectionReason(""); // reset
+        setRejectionReason(''); // reset
         fetchEvents();
       }
     } catch (err) {
-      addToast({ title: "Error rejecting event", variant: "destructive" });
+      addToast({ title: 'Error rejecting event', variant: 'destructive' });
     }
   };
 
   if (loading) return <Loader />;
 
-  const filteredEvents = events.filter((e) => e.status === activeTab);
+  const filteredEvents = events.filter(e => e.status === activeTab);
 
   return (
     <div className="container mx-auto p-4 bg-white rounded-lg shadow-lg mt-4">
@@ -120,14 +111,10 @@ export default function EventModerationPage() {
 
       {/* Tabs with counts */}
       <div className="flex gap-3 mb-4">
-        {(["pending", "approved", "rejected"] as const).map((tab) => {
-          const count = events.filter((e) => e.status === tab).length;
+        {(['pending', 'approved', 'rejected'] as const).map(tab => {
+          const count = events.filter(e => e.status === tab).length;
           return (
-            <Button
-              key={tab}
-              variant={activeTab === tab ? "default" : "outline"}
-              onClick={() => setActiveTab(tab)}
-            >
+            <Button key={tab} variant={activeTab === tab ? 'default' : 'outline'} onClick={() => setActiveTab(tab)}>
               {tab.toUpperCase()} ({count})
             </Button>
           );
@@ -142,8 +129,8 @@ export default function EventModerationPage() {
             <TableHead>Date</TableHead>
             <TableHead>Organizer</TableHead>
             <TableHead>Status</TableHead>
-            {activeTab === "rejected" && <TableHead>Reason</TableHead>}
-            {activeTab === "rejected" && <TableHead>Rejected By</TableHead>}
+            {activeTab === 'rejected' && <TableHead>Reason</TableHead>}
+            {activeTab === 'rejected' && <TableHead>Rejected By</TableHead>}
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -156,21 +143,21 @@ export default function EventModerationPage() {
               <TableCell>{event.organizer}</TableCell>
               <TableCell
                 className={
-                  event.status === "pending"
-                    ? "text-yellow-600"
-                    : event.status === "approved"
-                    ? "text-green-600"
-                    : "text-red-600"
+                  event.status === 'pending'
+                    ? 'text-yellow-600'
+                    : event.status === 'approved'
+                      ? 'text-green-600'
+                      : 'text-red-600'
                 }
               >
                 {event.status}
               </TableCell>
 
               {/* Show reason and rejectedBy in rejected tab */}
-              {activeTab === "rejected" && (
+              {activeTab === 'rejected' && (
                 <>
-                  <TableCell>{event.reason || "-"}</TableCell>
-                  <TableCell>{event.rejectedBy || "-"}</TableCell>
+                  <TableCell>{event.reason || '-'}</TableCell>
+                  <TableCell>{event.rejectedBy || '-'}</TableCell>
                 </>
               )}
 
@@ -187,7 +174,7 @@ export default function EventModerationPage() {
                 </button>
 
                 {/* Pending: Approve + Reject */}
-                {event.status === "pending" && (
+                {event.status === 'pending' && (
                   <>
                     <button
                       onClick={() => setApproveModal(event)}
@@ -205,7 +192,7 @@ export default function EventModerationPage() {
                 )}
 
                 {/* Approved: Allow Reject */}
-                {event.status === "approved" && (
+                {event.status === 'approved' && (
                   <button
                     onClick={() => setRejectModal(event)}
                     className="p-1 rounded hover:bg-red-100 flex items-center justify-center"
@@ -215,7 +202,7 @@ export default function EventModerationPage() {
                 )}
 
                 {/* Rejected: Allow Approve */}
-                {event.status === "rejected" && (
+                {event.status === 'rejected' && (
                   <button
                     onClick={() => setApproveModal(event)}
                     className="p-1 rounded hover:bg-green-100 flex items-center justify-center"
@@ -230,9 +217,7 @@ export default function EventModerationPage() {
       </Table>
 
       {/* View Modal */}
-      {modalOpen && selectedEvent && (
-        <EventModal event={selectedEvent} onClose={() => setModalOpen(false)} />
-      )}
+      {modalOpen && selectedEvent && <EventModal event={selectedEvent} onClose={() => setModalOpen(false)} />}
 
       {/* Approve Modal */}
       {approveModal && (
@@ -240,21 +225,14 @@ export default function EventModerationPage() {
           <div className="bg-white p-6 rounded-lg shadow-md w-96">
             <h2 className="text-lg font-semibold mb-4">Approve Event</h2>
             <label className="flex items-center gap-2 mb-4">
-              <input
-                type="checkbox"
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
-              />
+              <input type="checkbox" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} />
               Mark as Featured
             </label>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setApproveModal(null)}>
                 Cancel
               </Button>
-              <Button
-                className="bg-green-600 hover:bg-green-700"
-                onClick={() => handleApprove(approveModal.id)}
-              >
+              <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleApprove(approveModal.id)}>
                 Save
               </Button>
             </div>
@@ -272,7 +250,7 @@ export default function EventModerationPage() {
               rows={3}
               placeholder="Enter rejection reason"
               value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
+              onChange={e => setRejectionReason(e.target.value)}
             />
             <p className="text-xs text-gray-500 mb-4">
               Rejected by: <span className="font-medium">{moderatorName}</span>

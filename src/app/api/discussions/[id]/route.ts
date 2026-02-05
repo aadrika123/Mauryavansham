@@ -6,10 +6,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/src/lib/auth';
 
 // ✅ Get single discussion
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const data = await db.query.discussions.findFirst({
@@ -17,36 +14,24 @@ export async function GET(
     });
 
     if (!data) {
-      return NextResponse.json(
-        { success: false, message: 'Discussion not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, message: 'Discussion not found' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, discussion: data });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to fetch discussion' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to fetch discussion' }, { status: 500 });
   }
 }
 
 // ✅ Update (Approve/Reject/Edit)
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
@@ -96,18 +81,12 @@ export async function PATCH(
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to update discussion' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to update discussion' }, { status: 500 });
   }
 }
 
 // ✅ Delete discussion
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     await db.delete(discussions).where(eq(discussions.id, parseInt(id)));
@@ -118,9 +97,6 @@ export async function DELETE(
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { success: false, message: 'Failed to delete discussion' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Failed to delete discussion' }, { status: 500 });
   }
 }

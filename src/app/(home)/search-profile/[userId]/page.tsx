@@ -1,22 +1,22 @@
 // import { getProfileById } from "@/src/features/searchProfile/actions/getProfileById"
-import { notFound } from "next/navigation"
+import { notFound } from 'next/navigation';
 // import ProfileDetailView from "./profile-detail-view"
-import { getProfileById } from "@/src/features/searchProfile/actions/getProfileById"
-import ProfileDetailView from "./profileViewDetails"
+import { getProfileById } from '@/src/features/searchProfile/actions/getProfileById';
+import ProfileDetailView from './profileViewDetails';
 
 interface ProfilePageProps {
   params: {
-    userId: string
-  }
+    userId: string;
+  };
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
-  const result = await getProfileById(params.userId)
-  console.log("ProfilePage result:", result)
+  const result = await getProfileById(params.userId);
+  console.log('ProfilePage result:', result);
 
   if (!result.success || !result.data) {
-    notFound()
+    notFound();
   }
 
-  return <ProfileDetailView profile={result.data} />
+  return <ProfileDetailView profile={result.data} />;
 }

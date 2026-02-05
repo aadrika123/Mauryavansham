@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/src/components/ui/button";
+import { Button } from '@/src/components/ui/button';
 
 interface PaginationProps {
   currentPage: number;
@@ -17,7 +17,7 @@ export default function Pagination({
   totalItems,
   pageSize,
   onPageChange,
-  onPageSizeChange,
+  onPageSizeChange
 }: PaginationProps) {
   return (
     <div className="flex items-center justify-between mt-4 px-6 py-6">
@@ -26,10 +26,10 @@ export default function Pagination({
         <span className="text-gray-600 font-semibold">Total: {totalItems}</span>
         <select
           value={pageSize}
-          onChange={(e) => onPageSizeChange(Number(e.target.value))}
+          onChange={e => onPageSizeChange(Number(e.target.value))}
           className="border rounded px-2 py-1 text-sm"
         >
-          {[10, 20, 50, 100].map((size) => (
+          {[10, 20, 50, 100].map(size => (
             <option key={size} value={size}>
               Show {size}
             </option>
@@ -40,21 +40,13 @@ export default function Pagination({
       {/* Right Side: Pagination controls */}
       <div className="flex items-center gap-2">
         {/* Prev Button */}
-        <Button
-          variant="outline"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-        >
+        <Button variant="outline" disabled={currentPage === 1} onClick={() => onPageChange(currentPage - 1)}>
           Prev
         </Button>
 
         {/* Page Numbers */}
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <Button
-            key={page}
-            variant={page === currentPage ? "default" : "outline"}
-            onClick={() => onPageChange(page)}
-          >
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+          <Button key={page} variant={page === currentPage ? 'default' : 'outline'} onClick={() => onPageChange(page)}>
             {page}
           </Button>
         ))}

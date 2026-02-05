@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Loader from "@/src/components/ui/loader";
-import { useSession } from "next-auth/react";
-import { Button } from "@/src/components/ui/button";
-import { Lock, User, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/src/components/ui/toastProvider";
+import { useEffect, useState } from 'react';
+import Loader from '@/src/components/ui/loader';
+import { useSession } from 'next-auth/react';
+import { Button } from '@/src/components/ui/button';
+import { Lock, User, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/src/components/ui/toastProvider';
 
 interface Author {
   id: string;
@@ -53,7 +53,7 @@ export default function ViewAllBlogs() {
   const [blogComments, setBlogComments] = useState<{
     [key: string]: Comment[];
   }>({});
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState('');
   const [replyBoxes, setReplyBoxes] = useState<{ [key: string]: string }>({}); // commentId → reply text
   const [blogModal, setBlogModal] = useState<Blog | null>(null);
 
@@ -66,7 +66,7 @@ export default function ViewAllBlogs() {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/blogs/get-all-blogs");
+      const res = await fetch('/api/blogs/get-all-blogs');
       const data = await res.json();
       setBlogs(data.blogs || []);
 
@@ -76,25 +76,23 @@ export default function ViewAllBlogs() {
       data.blogs.forEach((b: any) => {
         const mapComment = (c: any): Comment => ({
           id: c.id.toString(),
-          text: c.comment || "",
+          text: c.comment || '',
           likes: c.isLiked ? 1 : 0,
           dislikes: c.isDisliked ? 1 : 0,
           parentId: c.parentId,
           replies: (c.replies || []).map(mapComment),
           author: {
-            id: c.author?.id || "0",
-            name: c.author?.name || "Unknown", // ✅ Use author from backend
-            email: c.author?.email || "",
-          },
+            id: c.author?.id || '0',
+            name: c.author?.name || 'Unknown', // ✅ Use author from backend
+            email: c.author?.email || ''
+          }
         });
 
-        commentsMap[b.id] = (b.comments || [])
-          .filter((c: any) => c.parentId === null)
-          .map(mapComment);
+        commentsMap[b.id] = (b.comments || []).filter((c: any) => c.parentId === null).map(mapComment);
       });
       setBlogComments(commentsMap);
     } catch (error) {
-      console.error("Error fetching blogs:", error);
+      console.error('Error fetching blogs:', error);
     } finally {
       setLoading(false);
     }
@@ -104,7 +102,7 @@ export default function ViewAllBlogs() {
     fetchBlogs();
   }, []);
 
-  const handleLoadMore = () => setVisibleCount((prev) => prev + 2);
+  const handleLoadMore = () => setVisibleCount(prev => prev + 2);
 
   // 👍 Like Blog
   const handleBlogLike = async (blogId: string) => {
@@ -112,24 +110,22 @@ export default function ViewAllBlogs() {
 
     try {
       const res = await fetch(`/api/blogs/${blogId}/reaction`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: session.user.id,
           isLiked: true,
-          isDisliked: false,
-        }),
+          isDisliked: false
+        })
       });
 
       const data = await res.json();
 
       // Show toast based on API response
       addToast({
-        title: data.success ? "Success" : "Oops!",
-        description:
-          data.message ||
-          (data.success ? "You liked the blog!" : "Something went wrong"),
-        variant: data.success ? "success" : "destructive",
+        title: data.success ? 'Success' : 'Oops!',
+        description: data.message || (data.success ? 'You liked the blog!' : 'Something went wrong'),
+        variant: data.success ? 'success' : 'destructive'
       });
 
       // Refresh blogs only if success
@@ -137,9 +133,9 @@ export default function ViewAllBlogs() {
     } catch (err) {
       console.error(err);
       addToast({
-        title: "Error",
-        description: "Failed to like the blog",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to like the blog',
+        variant: 'destructive'
       });
     }
   };
@@ -150,13 +146,13 @@ export default function ViewAllBlogs() {
 
     try {
       await fetch(`/api/blogs/${blogId}/reaction`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: session.user.id,
           isLiked: false,
-          isDisliked: true,
-        }),
+          isDisliked: true
+        })
       });
       fetchBlogs();
     } catch (err) {
@@ -165,10 +161,7 @@ export default function ViewAllBlogs() {
   };
 
   // 💬 Add Comment / Reply
-  const handleAddComment = async (
-    blogId: string,
-    parentId: string | null = null
-  ) => {
+  const handleAddComment = async (blogId: string, parentId: string | null = null) => {
     if (!session?.user) return setShowLoginModal(true);
 
     const text = parentId ? replyBoxes[parentId]?.trim() : newComment.trim();
@@ -176,39 +169,30 @@ export default function ViewAllBlogs() {
 
     try {
       const res = await fetch(`/api/blogs/${blogId}/comment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: session.user.id,
           comment: text,
-          parentId,
-        }),
+          parentId
+        })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Failed to post comment");
+      if (!res.ok) throw new Error(data?.message || 'Failed to post comment');
 
-      if (parentId) setReplyBoxes((prev) => ({ ...prev, [parentId]: "" }));
-      else setNewComment("");
+      if (parentId) setReplyBoxes(prev => ({ ...prev, [parentId]: '' }));
+      else setNewComment('');
 
       fetchBlogs();
     } catch (err) {
-      console.error("Error posting comment:", err);
+      console.error('Error posting comment:', err);
     }
   };
 
   // 🔁 Recursive render of comments
-  const renderComments = (
-    comments: Comment[],
-    blogId: string,
-    level = 0
-  ): JSX.Element[] => {
-    return comments.map((comment) => (
-      <div
-        key={comment.id}
-        className={`border rounded-lg p-3 mb-3 bg-gray-50 ${
-          level > 0 ? "ml-6" : ""
-        }`}
-      >
+  const renderComments = (comments: Comment[], blogId: string, level = 0): JSX.Element[] => {
+    return comments.map(comment => (
+      <div key={comment.id} className={`border rounded-lg p-3 mb-3 bg-gray-50 ${level > 0 ? 'ml-6' : ''}`}>
         <p className="text-gray-800 font-semibold">{comment.author.name}</p>
         <p className="text-gray-800">{comment.text}</p>
 
@@ -216,9 +200,9 @@ export default function ViewAllBlogs() {
           {level === 0 && (
             <button
               onClick={() =>
-                setReplyBoxes((prev) => ({
+                setReplyBoxes(prev => ({
                   ...prev,
-                  [comment.id]: prev[comment.id] ? "" : "",
+                  [comment.id]: prev[comment.id] ? '' : ''
                 }))
               }
               className="text-gray-600 hover:underline"
@@ -231,11 +215,11 @@ export default function ViewAllBlogs() {
         {replyBoxes[comment.id] !== undefined && (
           <div className="mt-3">
             <textarea
-              value={replyBoxes[comment.id] || ""}
-              onChange={(e) =>
-                setReplyBoxes((prev) => ({
+              value={replyBoxes[comment.id] || ''}
+              onChange={e =>
+                setReplyBoxes(prev => ({
                   ...prev,
-                  [comment.id]: e.target.value,
+                  [comment.id]: e.target.value
                 }))
               }
               className="w-full border rounded-lg p-2 text-sm focus:outline-none focus:ring focus:ring-blue-300"
@@ -252,9 +236,7 @@ export default function ViewAllBlogs() {
         )}
 
         {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-3">
-            {renderComments(comment.replies, blogId, level + 1)}
-          </div>
+          <div className="mt-3">{renderComments(comment.replies, blogId, level + 1)}</div>
         )}
       </div>
     ));
@@ -269,17 +251,12 @@ export default function ViewAllBlogs() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-8 text-center text-red-800">
-        All Blogs
-      </h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-red-800">All Blogs</h1>
 
       {/* Blog list */}
       <div className="grid gap-6 md:grid-cols-2">
-        {blogs.slice(0, visibleCount).map((blog) => (
-          <div
-            key={blog.id}
-            className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col"
-          >
+        {blogs.slice(0, visibleCount).map(blog => (
+          <div key={blog.id} className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col">
             {blog.imageUrl && (
               <img
                 src={blog.imageUrl}
@@ -289,22 +266,17 @@ export default function ViewAllBlogs() {
               />
             )}
 
-            <h2 className="text-xl font-semibold mb-2 capitalize">
-              {blog.title}
-            </h2>
-            <p className="text-gray-600 line-clamp-3 mb-2">
-              {blog.summary || blog.content}
-            </p>
+            <h2 className="text-xl font-semibold mb-2 capitalize">{blog.title}</h2>
+            <p className="text-gray-600 line-clamp-3 mb-2">{blog.summary || blog.content}</p>
             <div className="text-sm text-gray-500 mb-3">
-              By {blog.author.name} •{" "}
-              {new Date(blog.createdAt).toLocaleDateString()}
+              By {blog.author.name} • {new Date(blog.createdAt).toLocaleDateString()}
             </div>
 
             <div className="flex justify-between items-center mt-auto border-t pt-3 text-sm">
               <button
                 onClick={() => handleBlogLike(blog.id)}
                 className={`font-medium hover:underline ${
-                  blog.userReaction?.isLiked ? "text-blue-600" : "text-gray-600"
+                  blog.userReaction?.isLiked ? 'text-blue-600' : 'text-gray-600'
                 }`}
               >
                 👍 Like ({blog.likesCount})
@@ -312,9 +284,7 @@ export default function ViewAllBlogs() {
               <button
                 onClick={() => handleBlogDislike(blog.id)}
                 className={`font-medium hover:underline ${
-                  blog.userReaction?.isDisliked
-                    ? "text-red-600"
-                    : "text-gray-600"
+                  blog.userReaction?.isDisliked ? 'text-red-600' : 'text-gray-600'
                 }`}
               >
                 👎 Dislike ({blog.dislikesCount})
@@ -337,7 +307,7 @@ export default function ViewAllBlogs() {
       {visibleCount < blogs.length && (
         <div className="flex justify-center mt-8">
           <button
-            onClick={() => setVisibleCount((prev) => prev + 2)}
+            onClick={() => setVisibleCount(prev => prev + 2)}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Load More
@@ -355,21 +325,16 @@ export default function ViewAllBlogs() {
             >
               ✕
             </button>
-            <h3 className="text-xl font-bold mb-4">
-              Comments on: {commentModal.title}
-            </h3>
+            <h3 className="text-xl font-bold mb-4">Comments on: {commentModal.title}</h3>
             <div className="space-y-3 max-h-80 overflow-y-auto mb-4">
               {(blogComments[commentModal.id] || []).length === 0 && (
                 <p className="text-gray-500 text-sm">No comments yet.</p>
               )}
-              {renderComments(
-                blogComments[commentModal.id] || [],
-                commentModal.id
-              )}
+              {renderComments(blogComments[commentModal.id] || [], commentModal.id)}
             </div>
             <textarea
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+              onChange={e => setNewComment(e.target.value)}
               className="w-full border rounded-lg p-3 focus:outline-none focus:ring focus:ring-blue-300"
               rows={3}
               placeholder="Write your comment (max 400 words)..."
@@ -393,29 +358,21 @@ export default function ViewAllBlogs() {
                 <Lock className="h-5 w-5" />
                 Login Required
               </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
                 ✕
               </button>
             </div>
             <p className="text-gray-600 mb-6">
-              Please login to participate in community discussions and create
-              new topics.
+              Please login to participate in community discussions and create new topics.
             </p>
             <div className="space-y-3">
               <Button
-                onClick={() => Router.push("/sign-in")}
+                onClick={() => Router.push('/sign-in')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
               >
                 <User className="h-4 w-4 mr-2" /> Login
               </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={() => setShowLoginModal(false)} variant="outline" className="w-full">
                 Cancel
               </Button>
             </div>
@@ -444,8 +401,7 @@ export default function ViewAllBlogs() {
             <p className="text-gray-600 mb-2">Content : {blogModal.content}</p>
             <p className="text-gray-600 mb-4">Summary : {blogModal.summary}</p>
             <div className="text-sm text-gray-500">
-              By {blogModal.author.name} •{" "}
-              {new Date(blogModal.createdAt).toLocaleDateString()}
+              By {blogModal.author.name} • {new Date(blogModal.createdAt).toLocaleDateString()}
             </div>
           </div>
         </div>

@@ -1,26 +1,26 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
-import { Textarea } from "@/src/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { Checkbox } from "@/src/components/ui/checkbox"
-import { Upload, FileText, ImageIcon, Mic } from "lucide-react"
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { Textarea } from '@/src/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
+import { Checkbox } from '@/src/components/ui/checkbox';
+import { Upload, FileText, ImageIcon, Mic } from 'lucide-react';
 
 export default function ContributeHeritagePage() {
-  const [contributionType, setContributionType] = useState("")
+  const [contributionType, setContributionType] = useState('');
 
   const contributionTypes = [
-    { value: "family_story", label: "Family Story", icon: FileText },
-    { value: "historical_document", label: "Historical Document", icon: FileText },
-    { value: "photograph", label: "Historical Photograph", icon: ImageIcon },
-    { value: "oral_history", label: "Oral History", icon: Mic },
-    { value: "cultural_practice", label: "Cultural Practice", icon: FileText },
-    { value: "genealogy", label: "Family Tree/Genealogy", icon: FileText },
-  ]
+    { value: 'family_story', label: 'Family Story', icon: FileText },
+    { value: 'historical_document', label: 'Historical Document', icon: FileText },
+    { value: 'photograph', label: 'Historical Photograph', icon: ImageIcon },
+    { value: 'oral_history', label: 'Oral History', icon: Mic },
+    { value: 'cultural_practice', label: 'Cultural Practice', icon: FileText },
+    { value: 'genealogy', label: 'Family Tree/Genealogy', icon: FileText }
+  ];
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -47,7 +47,7 @@ export default function ContributeHeritagePage() {
                 <SelectValue placeholder="Select the type of contribution" />
               </SelectTrigger>
               <SelectContent>
-                {contributionTypes.map((type) => (
+                {contributionTypes.map(type => (
                   <SelectItem key={type.value} value={type.value}>
                     <div className="flex items-center gap-2">
                       <type.icon className="h-4 w-4" />
@@ -174,5 +174,5 @@ export default function ContributeHeritagePage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

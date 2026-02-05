@@ -1,25 +1,25 @@
 // dashboard/page.tsx
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/src/lib/auth";
-import { getAllProfiles } from "@/src/features/searchProfile/actions/getAllProfiles";
-import DashboardProfileList from "./dashboardProfileList";
-import DashboardLayout from "@/src/components/layout/dashboardLayout";
-import { updateProfileById } from "@/src/features/updateProfileById/actions/updateProfileById";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/src/lib/auth';
+import { getAllProfiles } from '@/src/features/searchProfile/actions/getAllProfiles';
+import DashboardProfileList from './dashboardProfileList';
+import DashboardLayout from '@/src/components/layout/dashboardLayout';
+import { updateProfileById } from '@/src/features/updateProfileById/actions/updateProfileById';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
 // import { updateProfileById } from "@/src/features/updateProfile/actions/updateProfileById"; // ✅ import
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
 
   const profileList = await getAllProfiles(Number(session.user.id));
-  console.log("profileList", profileList);
+  console.log('profileList', profileList);
 
   return (
     <AdmindashboardLayout user={session.user}>

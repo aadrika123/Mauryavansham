@@ -1,29 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { Badge } from "@/src/components/ui/badge";
-import {
-  Plus,
-  Calendar,
-  Clock,
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  Hash,
-} from "lucide-react";
-import { format } from "date-fns";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { Plus, Calendar, Clock, AlertCircle, CheckCircle, Eye, Hash } from 'lucide-react';
+import { format } from 'date-fns';
 // import toast from "react-hot-toast";
-import { useToast } from "@/src/components/ui/use-toast";
+import { useToast } from '@/src/components/ui/use-toast';
 
 interface Ad {
   id: string;
@@ -31,7 +17,7 @@ interface Ad {
   bannerImageUrl: string;
   fromDate: string;
   toDate: string;
-  status: "pending" | "approved" | "rejected" | "expired";
+  status: 'pending' | 'approved' | 'rejected' | 'expired';
   createdAt: string;
   updatedAt: string;
   approvedAt?: string;
@@ -73,76 +59,67 @@ export default function AdsList({ userId }: AdsListProps) {
         setAds(data.ads);
         // toast.success("Ads fetched successfully");
         toast({
-          title: "Success",
-          description: "Ads fetched successfully",
+          title: 'Success',
+          description: 'Ads fetched successfully'
           // variant: "default",
         });
       } else {
         // toast.error("Failed to fetch ads");
         toast({
-          title: "Error",
-          description: "Failed to fetch ads",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to fetch ads',
+          variant: 'destructive'
         });
       }
     } catch (error) {
       // toast.error("Error loading ads");
       toast({
-        title: "Error",
-        description: "Error loading ads",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Error loading ads',
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusColor = (
-    status: string,
-    isActive: boolean,
-    isExpired: boolean
-  ) => {
-    if (isExpired) return "bg-gray-100 text-gray-800";
-    if (isActive) return "bg-blue-100 text-blue-800";
+  const getStatusColor = (status: string, isActive: boolean, isExpired: boolean) => {
+    if (isExpired) return 'bg-gray-100 text-gray-800';
+    if (isActive) return 'bg-blue-100 text-blue-800';
 
     switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "approved":
-        return "bg-green-100 text-green-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getStatusText = (
-    status: string,
-    isActive: boolean,
-    isExpired: boolean
-  ) => {
-    if (isExpired) return "Expired";
-    if (isActive) return "Active";
+  const getStatusText = (status: string, isActive: boolean, isExpired: boolean) => {
+    if (isExpired) return 'Expired';
+    if (isActive) return 'Active';
 
     switch (status) {
-      case "pending":
-        return "Pending Approval";
-      case "approved":
-        return "Approved";
-      case "rejected":
-        return "Rejected";
+      case 'pending':
+        return 'Pending Approval';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
       default:
         return status;
     }
   };
 
   const getDaysLeftText = (ad: Ad) => {
-    if (ad.isExpired) return "Expired";
+    if (ad.isExpired) return 'Expired';
     if (ad.isActive) return `${ad.daysLeft} days left`;
-    if (ad.status === "approved" && ad.daysLeft > 0)
-      return `Starts in ${ad.daysLeft} days`;
-    return "";
+    if (ad.status === 'approved' && ad.daysLeft > 0) return `Starts in ${ad.daysLeft} days`;
+    return '';
   };
 
   if (loading) {
@@ -165,7 +142,7 @@ export default function AdsList({ userId }: AdsListProps) {
       </div>
     );
   }
-  console.log(ads, "ads");
+  console.log(ads, 'ads');
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
@@ -185,12 +162,8 @@ export default function AdsList({ userId }: AdsListProps) {
                 <Eye className="h-6 w-6 text-gray-400" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  No ads yet
-                </h3>
-                <p className="text-gray-600 mt-1">
-                  Get started by applying for your first banner advertisement
-                </p>
+                <h3 className="text-lg font-semibold text-gray-900">No ads yet</h3>
+                <p className="text-gray-600 mt-1">Get started by applying for your first banner advertisement</p>
               </div>
               <Link href="/admin/book-ads/create">
                 <Button>Apply for Your First Ad</Button>
@@ -200,12 +173,12 @@ export default function AdsList({ userId }: AdsListProps) {
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {ads.map((ad) => (
+          {ads.map(ad => (
             <Card key={ad.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="relative h-32 w-full mb-3 bg-gray-100 rounded-lg overflow-hidden">
                   <Image
-                    src={ad.bannerImageUrl || "/placeholder.svg"}
+                    src={ad.bannerImageUrl || '/placeholder.svg'}
                     alt={ad.title}
                     fill
                     className="object-cover"
@@ -214,21 +187,12 @@ export default function AdsList({ userId }: AdsListProps) {
                 </div>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg line-clamp-1">
-                      {ad.title}
-                    </CardTitle>
+                    <CardTitle className="text-lg line-clamp-1">{ad.title}</CardTitle>
                     <CardDescription className="mt-1">
-                      {format(new Date(ad.fromDate), "MMM d")} -{" "}
-                      {format(new Date(ad.toDate), "MMM d, yyyy")}
+                      {format(new Date(ad.fromDate), 'MMM d')} - {format(new Date(ad.toDate), 'MMM d, yyyy')}
                     </CardDescription>
                   </div>
-                  <Badge
-                    className={getStatusColor(
-                      ad.status,
-                      ad.isActive,
-                      ad.isExpired
-                    )}
-                  >
+                  <Badge className={getStatusColor(ad.status, ad.isActive, ad.isExpired)}>
                     {getStatusText(ad.status, ad.isActive, ad.isExpired)}
                   </Badge>
                   <Badge className="bg-gray-100 text-gray-800 flex items-center gap-1">
@@ -240,9 +204,7 @@ export default function AdsList({ userId }: AdsListProps) {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="h-4 w-4" />
-                    <span>
-                      Applied {format(new Date(ad.createdAt), "MMM d, yyyy")}
-                    </span>
+                    <span>Applied {format(new Date(ad.createdAt), 'MMM d, yyyy')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Hash className="h-4 w-4" />
@@ -254,13 +216,7 @@ export default function AdsList({ userId }: AdsListProps) {
                   {getDaysLeftText(ad) && (
                     <div className="flex items-center gap-2 text-sm">
                       <Clock className="h-4 w-4" />
-                      <span
-                        className={
-                          ad.isActive
-                            ? "text-blue-600 font-medium"
-                            : "text-gray-600"
-                        }
-                      >
+                      <span className={ad.isActive ? 'text-blue-600 font-medium' : 'text-gray-600'}>
                         {getDaysLeftText(ad)}
                       </span>
                     </div>
@@ -270,32 +226,24 @@ export default function AdsList({ userId }: AdsListProps) {
                     <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
                       <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-red-800">
-                          Rejection Reason:
-                        </p>
-                        <p className="text-sm text-red-700">
-                          {ad.rejectionReason}
-                        </p>
+                        <p className="text-sm font-medium text-red-800">Rejection Reason:</p>
+                        <p className="text-sm text-red-700">{ad.rejectionReason}</p>
                       </div>
                     </div>
                   )}
-                  {ad.status === "approved" && ad.approvedBy && (
+                  {ad.status === 'approved' && ad.approvedBy && (
                     <div className="flex items-start gap-2 p-3 bg-green-50 rounded-lg">
                       <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-green-800">
-                          Approved By: {ad.approvedBy}
-                        </p>
+                        <p className="text-sm font-medium text-green-800">Approved By: {ad.approvedBy}</p>
                       </div>
                     </div>
                   )}
-                  {ad.status === "rejected" && ad.rejectedBy && (
+                  {ad.status === 'rejected' && ad.rejectedBy && (
                     <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
                       <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-red-800">
-                          Rejected By: {ad.rejectedBy}
-                        </p>
+                        <p className="text-sm font-medium text-red-800">Rejected By: {ad.rejectedBy}</p>
                       </div>
                     </div>
                   )}
@@ -303,23 +251,15 @@ export default function AdsList({ userId }: AdsListProps) {
                     <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
                       <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-blue-800">
-                          Ad is Live!
-                        </p>
-                        <p className="text-sm text-blue-700">
-                          Your banner is currently being displayed
-                        </p>
+                        <p className="text-sm font-medium text-blue-800">Ad is Live!</p>
+                        <p className="text-sm text-blue-700">Your banner is currently being displayed</p>
                       </div>
                     </div>
                   )}
 
                   <div className="flex gap-2">
                     <Link href={`/admin/ads/${ad.id}`} className="flex-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full bg-transparent"
-                      >
+                      <Button variant="outline" size="sm" className="w-full bg-transparent">
                         View Details
                       </Button>
                     </Link>

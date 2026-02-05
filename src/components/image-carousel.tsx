@@ -1,27 +1,27 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { cn } from "@/src/lib/utils"
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { cn } from '@/src/lib/utils';
 
 interface ImageCarouselProps {
-  images: { src: string; alt: string }[]
-  interval?: number // in milliseconds, default to 5000
+  images: { src: string; alt: string }[];
+  interval?: number; // in milliseconds, default to 5000
 }
 
 export function ImageCarousel({ images, interval = 5000 }: ImageCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-    }, interval)
+      setCurrentIndex(prevIndex => (prevIndex + 1) % images.length);
+    }, interval);
 
-    return () => clearInterval(timer)
-  }, [images.length, interval])
+    return () => clearInterval(timer);
+  }, [images.length, interval]);
 
   if (!images || images.length === 0) {
-    return null
+    return null;
   }
 
   return (
@@ -29,13 +29,13 @@ export function ImageCarousel({ images, interval = 5000 }: ImageCarouselProps) {
       {images.map((image, index) => (
         <Image
           key={index}
-          src={image.src || "/placeholder.svg"}
+          src={image.src || '/placeholder.svg'}
           alt={image.alt}
           fill
           priority={index === 0} // Prioritize loading the first image
           className={cn(
-            "absolute inset-0  transition-opacity duration-1000 ease-in-out",
-            index === currentIndex ? "opacity-100" : "opacity-0",
+            'absolute inset-0  transition-opacity duration-1000 ease-in-out',
+            index === currentIndex ? 'opacity-100' : 'opacity-0'
           )}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
         />
@@ -45,8 +45,8 @@ export function ImageCarousel({ images, interval = 5000 }: ImageCarouselProps) {
           <button
             key={index}
             className={cn(
-              "h-2 w-2 rounded-full bg-white transition-all duration-300",
-              index === currentIndex ? "w-6" : "opacity-50",
+              'h-2 w-2 rounded-full bg-white transition-all duration-300',
+              index === currentIndex ? 'w-6' : 'opacity-50'
             )}
             onClick={() => setCurrentIndex(index)}
             aria-label={`Go to slide ${index + 1}`}
@@ -54,5 +54,5 @@ export function ImageCarousel({ images, interval = 5000 }: ImageCarouselProps) {
         ))}
       </div>
     </div>
-  )
+  );
 }

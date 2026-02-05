@@ -1,22 +1,22 @@
 // lib/email.ts
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
-console.log("📦 Loading email module...");
+console.log('📦 Loading email module...');
 
 // Create reusable transporter object using SMTP transport
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.gmail.com",
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
   port: Number(process.env.EMAIL_PORT ?? 587),
   secure: false, // true for 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    pass: process.env.EMAIL_PASS
   },
   tls: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false
   },
   debug: true, // Nodemailer internal debug
-  logger: true, // Logs to console
+  logger: true // Logs to console
 });
 
 export interface WelcomeEmailData {
@@ -296,25 +296,22 @@ Honoring our heritage, strengthening our bonds.
 `;
 
 export const sendWelcomeEmail = async (data: WelcomeEmailData) => {
-  console.log("\n🚀 === EMAIL SEND START ===");
-  console.log("📧 Data received:", data);
+  console.log('\n🚀 === EMAIL SEND START ===');
+  console.log('📧 Data received:', data);
 
   // Check environment variables
-  console.log("🔧 ENV Check:");
-  console.log("EMAIL_USER:", process.env.EMAIL_USER ? "✅ Set" : "❌ Missing");
-  console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "✅ Set" : "❌ Missing");
-  console.log(
-    "NEXTAUTH_URL:",
-    process.env.NEXTAUTH_URL ? "✅ Set" : "❌ Missing"
-  );
+  console.log('🔧 ENV Check:');
+  console.log('EMAIL_USER:', process.env.EMAIL_USER ? '✅ Set' : '❌ Missing');
+  console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing');
+  console.log('NEXTAUTH_URL:', process.env.NEXTAUTH_URL ? '✅ Set' : '❌ Missing');
 
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.error("❌ Missing email credentials in environment variables");
-    return { success: false, error: "Missing email credentials" };
+    console.error('❌ Missing email credentials in environment variables');
+    return { success: false, error: 'Missing email credentials' };
   }
 
   try {
-    console.log("📝 Creating beautiful email content...");
+    console.log('📝 Creating beautiful email content...');
     const { name, email, password } = data;
 
     // Use the beautiful templates
@@ -324,60 +321,58 @@ export const sendWelcomeEmail = async (data: WelcomeEmailData) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "👑 Mauryavansham Community - Your Account is Successfully Created ",
+      subject: '👑 Mauryavansham Community - Your Account is Successfully Created ',
       text: textContent,
-      html: htmlContent,
+      html: htmlContent
     };
 
-    console.log("🔄 Attempting to send beautiful email to:", email);
+    console.log('🔄 Attempting to send beautiful email to:', email);
     const info = await transporter.sendMail(mailOptions);
 
-    console.log("✅ Beautiful email sent!");
-    console.log("📨 Message ID:", info.messageId);
-    console.log("📤 Response:", info.response);
-    console.log("=== EMAIL SEND END ===\n");
+    console.log('✅ Beautiful email sent!');
+    console.log('📨 Message ID:', info.messageId);
+    console.log('📤 Response:', info.response);
+    console.log('=== EMAIL SEND END ===\n');
 
     return { success: true, messageId: info.messageId };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("💥 Error sending welcome email:");
-      console.error("Error type:", error.constructor.name);
-      console.error("Error message:", error.message);
-      console.error("Full error object:", error);
+      console.error('💥 Error sending welcome email:');
+      console.error('Error type:', error.constructor.name);
+      console.error('Error message:', error.message);
+      console.error('Full error object:', error);
     } else {
-      console.error("💥 Unknown error:", error);
+      console.error('💥 Unknown error:', error);
     }
     return { success: false, error };
   }
 };
 
 export const testEmailConfig = async () => {
-  console.log("\n🧪 === TEST EMAIL CONFIG START ===");
-  console.log("📧 SMTP Config Check:", {
-    host: "smtp.gmail.com",
+  console.log('\n🧪 === TEST EMAIL CONFIG START ===');
+  console.log('📧 SMTP Config Check:', {
+    host: 'smtp.gmail.com',
     port: 587,
     secure: false,
-    user: process.env.EMAIL_USER ? "✅ Set" : "❌ Missing",
-    pass: process.env.EMAIL_PASS ? "✅ Set" : "❌ Missing",
+    user: process.env.EMAIL_USER ? '✅ Set' : '❌ Missing',
+    pass: process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing'
   });
 
   try {
-    console.log("🔍 Verifying SMTP connection...");
+    console.log('🔍 Verifying SMTP connection...');
     const result = await transporter.verify();
-    console.log("✅ SMTP connection successful:", result);
-    console.log("=== TEST EMAIL CONFIG END ===\n");
+    console.log('✅ SMTP connection successful:', result);
+    console.log('=== TEST EMAIL CONFIG END ===\n');
     return true;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("❌ SMTP connection failed:", error.message);
+      console.error('❌ SMTP connection failed:', error.message);
     } else {
-      console.error("❌ Unknown SMTP connection error:", error);
+      console.error('❌ Unknown SMTP connection error:', error);
     }
     throw error;
   }
 };
-
-
 
 //forgot password
 export interface ForgotPasswordEmailData {
@@ -399,9 +394,7 @@ export const sendForgotPasswordEmail = async (data: ForgotPasswordEmailData) => 
         <p>We received a request to reset your password.</p>
         <p>Your OTP is: <strong>${otp}</strong></p>
         ${
-          resetLink
-            ? `<p>Or click this link to reset your password: <a href="${resetLink}">Reset Password</a></p>`
-            : ""
+          resetLink ? `<p>Or click this link to reset your password: <a href="${resetLink}">Reset Password</a></p>` : ''
         }
         <p>If you didn't request this, please ignore this email.</p>
       </body>
@@ -417,7 +410,7 @@ export const sendForgotPasswordEmail = async (data: ForgotPasswordEmailData) => 
 
       Your OTP is: ${otp}
 
-      ${resetLink ? `Reset your password here: ${resetLink}` : ""}
+      ${resetLink ? `Reset your password here: ${resetLink}` : ''}
 
       If you didn't request this, please ignore this email.
     `;
@@ -425,17 +418,17 @@ export const sendForgotPasswordEmail = async (data: ForgotPasswordEmailData) => 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Password Reset OTP",
+      subject: 'Password Reset OTP',
       text: textContent,
-      html: htmlContent,
+      html: htmlContent
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Forgot password email sent", info.messageId);
+    console.log('Forgot password email sent', info.messageId);
 
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error("Error sending forgot password email:", error);
+    console.error('Error sending forgot password email:', error);
     return { success: false, error };
   }
 };

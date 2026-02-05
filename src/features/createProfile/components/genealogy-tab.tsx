@@ -1,30 +1,30 @@
-"use client"
+'use client';
 
-import { TreePine, AlertTriangle } from "lucide-react"
-import { Label } from "@/src/components/ui/label"
-import { Input } from "@/src/components/ui/input"
-import { Textarea } from "@/src/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { Button } from "@/src/components/ui/button"
-import { Card } from "@/src/components/ui/card"
+import { TreePine, AlertTriangle } from 'lucide-react';
+import { Label } from '@/src/components/ui/label';
+import { Input } from '@/src/components/ui/input';
+import { Textarea } from '@/src/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
+import { Button } from '@/src/components/ui/button';
+import { Card } from '@/src/components/ui/card';
 
 interface GenealogyTabProps {
   data: {
-    gotraDetails: string
-    ancestralVillage: string
-    familyHistory: string
-    communityContributions: string
-    familyTraditions: string
+    gotraDetails: string;
+    ancestralVillage: string;
+    familyHistory: string;
+    communityContributions: string;
+    familyTraditions: string;
     // knownCommunityRelatives: string
     // familyName: string
     // familyTreeVisibility: string
     // familyTreeVisibility: string
-  }
-  onUpdate: (data: Partial<GenealogyTabProps["data"]>) => void
+  };
+  onUpdate: (data: Partial<GenealogyTabProps['data']>) => void;
 }
 
 export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
-  const isEmpty = (val: string | undefined) => !val || val.trim() === "";
+  const isEmpty = (val: string | undefined) => !val || val.trim() === '';
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -47,53 +47,59 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
             id="gotraDetails"
             placeholder="Provide detailed information about your gotra and lineage"
             value={data.gotraDetails}
-            onChange={(e) => onUpdate({ gotraDetails: e.target.value })}
+            onChange={e => onUpdate({ gotraDetails: e.target.value })}
             rows={4}
           />
-          {isEmpty(data.gotraDetails) && (
-            <p className="text-sm text-red-600">Please provide gotra details</p>
-          )}
+          {isEmpty(data.gotraDetails) && <p className="text-sm text-red-600">Please provide gotra details</p>}
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="ancestralVillage">Ancestral Village/Place</Label>
+          <Label className="text-red-800" htmlFor="ancestralVillage">
+            Ancestral Village/Place
+          </Label>
           <Input
             id="ancestralVillage"
             placeholder="Original village or place of your ancestors"
             value={data.ancestralVillage}
-            onChange={(e) => onUpdate({ ancestralVillage: e.target.value })}
+            onChange={e => onUpdate({ ancestralVillage: e.target.value })}
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="familyHistory">Family History</Label>
+          <Label className="text-red-800" htmlFor="familyHistory">
+            Family History
+          </Label>
           <Textarea
             id="familyHistory"
             placeholder="Brief history of your family, notable ancestors, traditions"
             value={data.familyHistory}
-            onChange={(e) => onUpdate({ familyHistory: e.target.value })}
+            onChange={e => onUpdate({ familyHistory: e.target.value })}
             rows={4}
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="communityContributions">Community Contributions</Label>
+          <Label className="text-red-800" htmlFor="communityContributions">
+            Community Contributions
+          </Label>
           <Textarea
             id="communityContributions"
             placeholder="Your or your family's contributions to the Mouryavansh community"
             value={data.communityContributions}
-            onChange={(e) => onUpdate({ communityContributions: e.target.value })}
+            onChange={e => onUpdate({ communityContributions: e.target.value })}
             rows={4}
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-red-800" htmlFor="familyTraditions">Family Traditions</Label>
+          <Label className="text-red-800" htmlFor="familyTraditions">
+            Family Traditions
+          </Label>
           <Textarea
             id="familyTraditions"
             placeholder="Special traditions, customs, or practices followed by your family"
             value={data.familyTraditions}
-            onChange={(e) => onUpdate({ familyTraditions: e.target.value })}
+            onChange={e => onUpdate({ familyTraditions: e.target.value })}
             rows={4}
           />
         </div>
@@ -141,9 +147,7 @@ export function GenealogyTab({ data, onUpdate }: GenealogyTabProps) {
             </SelectContent>
           </Select>
         </div> */}
-
-       
       </div>
     </div>
-  )
+  );
 }

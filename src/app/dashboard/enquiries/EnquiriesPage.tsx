@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Button } from "@/src/components/ui/button";
-import { useSession } from "next-auth/react";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { Button } from '@/src/components/ui/button';
+import { useSession } from 'next-auth/react';
 
 interface User {
   // id: number;
@@ -42,7 +42,7 @@ interface SidebarUser {
   phone?: string;
 }
 
-const QUERY_TYPES = ["education", "business", "health"];
+const QUERY_TYPES = ['education', 'business', 'health'];
 
 export default function EnquiriesPage() {
   const { data: session } = useSession();
@@ -51,7 +51,7 @@ export default function EnquiriesPage() {
   const [sidebarUsers, setSidebarUsers] = useState<SidebarUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [conversation, setConversation] = useState<EnquiryMessage[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const [queryType, setQueryType] = useState(QUERY_TYPES[0]);
 
   // 🔹 Fetch user details by ID
@@ -68,18 +68,17 @@ export default function EnquiriesPage() {
 
     const fetchConversations = async () => {
       try {
-        const res = await fetch("/api/enquiries");
+        const res = await fetch('/api/enquiries');
         const messages: SidebarUser[] = await res.json(); // messages grouped by userId
 
         // Get unique userIds
-        const userIds = messages.map((m) => m.userId);
+        const userIds = messages.map(m => m.userId);
 
         // Fetch details for each user
         const enrichedUsers = await Promise.all(
-          userIds.map(async (id) => {
+          userIds.map(async id => {
             const userDetails = await fetchUserDetails(id);
-            const userMessages =
-              messages.find((m) => m.userId === id)?.messages || [];
+            const userMessages = messages.find(m => m.userId === id)?.messages || [];
             return {
               userId: id,
               name: userDetails.name,
@@ -88,13 +87,9 @@ export default function EnquiriesPage() {
               email: userDetails.email,
               address: userDetails.address,
               phone: userDetails.phone,
-              latestMessage:
-                userMessages[userMessages.length - 1]?.comment || "",
-              latestCreatedAt:
-                userMessages[userMessages.length - 1]?.createdAt || "",
-              enquiryTypes: Array.from(
-                new Set(userMessages.map((m) => m.enquireType))
-              ),
+              latestMessage: userMessages[userMessages.length - 1]?.comment || '',
+              latestCreatedAt: userMessages[userMessages.length - 1]?.createdAt || '',
+              enquiryTypes: Array.from(new Set(userMessages.map(m => m.enquireType)))
             } as SidebarUser;
           })
         );
@@ -106,7 +101,7 @@ export default function EnquiriesPage() {
           handleUserClick(enrichedUsers[0], queryType);
         }
       } catch (err) {
-        console.error("Failed to fetch enquiries:", err);
+        console.error('Failed to fetch enquiries:', err);
       }
     };
 
@@ -116,9 +111,7 @@ export default function EnquiriesPage() {
   // 🔹 Fetch conversation from queryMessages API
   const fetchConversation = async (userId: number, type: string) => {
     try {
-      const res = await fetch(
-        `/api/queryMessages?userId=${userId}&queryType=${type}`
-      );
+      const res = await fetch(`/api/queryMessages?userId=${userId}&queryType=${type}`);
       const data = await res.json();
 
       const mapped: EnquiryMessage[] = data.map((msg: any) => ({
@@ -127,17 +120,12 @@ export default function EnquiriesPage() {
         receiverUserId: msg.receiverId,
         comment: msg.text,
         enquireType: msg.queryType,
-        createdAt: msg.createdAt,
+        createdAt: msg.createdAt
       }));
 
-      setConversation(
-        mapped.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        )
-      );
+      setConversation(mapped.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
     } catch (err) {
-      console.error("Failed to fetch conversation:", err);
+      console.error('Failed to fetch conversation:', err);
     }
   };
 
@@ -170,33 +158,33 @@ export default function EnquiriesPage() {
       receiverUserId: selectedUser.userId,
       comment: messageText,
       enquireType: queryType,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     };
 
-    setConversation((prev) => [...prev, tempMsg]);
-    setNewMessage("");
+    setConversation(prev => [...prev, tempMsg]);
+    setNewMessage('');
 
     try {
-      const res = await fetch("/api/queryMessages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/queryMessages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           receiverId: selectedUser.userId,
           text: messageText,
-          queryType,
-        }),
+          queryType
+        })
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Failed to send message");
+        alert(data.error || 'Failed to send message');
         return;
       }
 
       // Replace temporary message
-      setConversation((prev) =>
-        prev.map((m) =>
+      setConversation(prev =>
+        prev.map(m =>
           m.id === tempMsg.id
             ? {
                 id: data.id,
@@ -204,26 +192,25 @@ export default function EnquiriesPage() {
                 receiverUserId: data.receiverId,
                 comment: data.text,
                 enquireType: data.queryType,
-                createdAt: data.createdAt,
+                createdAt: data.createdAt
               }
             : m
         )
       );
     } catch (err) {
       console.error(err);
-      alert("Failed to send message.");
+      alert('Failed to send message.');
     }
   };
 
   const formatDateTime = (isoDate: string) => {
     const d = new Date(isoDate);
-    return `${String(d.getUTCDate()).padStart(2, "0")}-${String(
-      d.getUTCMonth() + 1
-    ).padStart(2, "0")}-${d.getUTCFullYear()} ${String(
-      d.getUTCHours()
-    ).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
+    return `${String(d.getUTCDate()).padStart(2, '0')}-${String(d.getUTCMonth() + 1).padStart(
+      2,
+      '0'
+    )}-${d.getUTCFullYear()} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
   };
-  console.log(selectedUser, "adassd");
+  console.log(selectedUser, 'adassd');
   return (
     <div className="flex h-screen bg-gray-100">
       {/* SIDEBAR */}
@@ -232,10 +219,10 @@ export default function EnquiriesPage() {
           <h2 className="font-bold mb-2">Enquiries</h2>
           <select
             value={queryType}
-            onChange={(e) => setQueryType(e.target.value)}
+            onChange={e => setQueryType(e.target.value)}
             className="w-full border rounded p-1 text-sm"
           >
-            {QUERY_TYPES.map((type) => (
+            {QUERY_TYPES.map(type => (
               <option key={type} value={type}>
                 {type}
               </option>
@@ -243,25 +230,21 @@ export default function EnquiriesPage() {
           </select>
         </div>
 
-        {sidebarUsers.map((user) => {
+        {sidebarUsers.map(user => {
           const filteredMsg = user.messages
-            .filter((m) => m.enquireType === queryType)
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            );
+            .filter(m => m.enquireType === queryType)
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
           return (
             <div
               key={user.userId}
               onClick={() => handleUserClick(user, queryType)}
               className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-200 ${
-                selectedUser?.userId == user.userId ? "bg-gray-300" : ""
+                selectedUser?.userId == user.userId ? 'bg-gray-300' : ''
               }`}
             >
               <Image
-                src={user.photo || "/default-avatar.png"}
+                src={user.photo || '/default-avatar.png'}
                 width={40}
                 height={40}
                 alt={user.name}
@@ -269,13 +252,9 @@ export default function EnquiriesPage() {
               />
               <div>
                 <span className="font-semibold">{user.name}</span>
-                <p className="text-xs text-gray-500 truncate w-40">
-                  {filteredMsg[0]?.comment || "No messages yet"}
-                </p>
+                <p className="text-xs text-gray-500 truncate w-40">{filteredMsg[0]?.comment || 'No messages yet'}</p>
                 <p className="text-xs text-gray-500 truncate w-40 capitalize">
-                  {filteredMsg.map((m) => m.enquireType).join(", ") ||
-                    "No messages yet"}{" "}
-                  query
+                  {filteredMsg.map(m => m.enquireType).join(', ') || 'No messages yet'} query
                 </p>
               </div>
             </div>
@@ -289,7 +268,7 @@ export default function EnquiriesPage() {
           <>
             <div className="p-4 border-b bg-gray-50 flex items-center gap-4">
               <Image
-                src={selectedUser.photo || "/default-avatar.png"}
+                src={selectedUser.photo || '/default-avatar.png'}
                 width={60}
                 height={60}
                 alt={selectedUser.name}
@@ -297,17 +276,9 @@ export default function EnquiriesPage() {
               />
               <div className="flex flex-col">
                 <h2 className="font-bold text-lg">{selectedUser.name}</h2>
-                {selectedUser.email && (
-                  <p className="text-sm text-gray-700">{selectedUser.email}</p>
-                )}
-                {selectedUser.address && (
-                  <p className="text-sm text-gray-700">
-                    {selectedUser.address}
-                  </p>
-                )}
-                {selectedUser.phone && (
-                  <p className="text-sm text-gray-700">{selectedUser.phone}</p>
-                )}
+                {selectedUser.email && <p className="text-sm text-gray-700">{selectedUser.email}</p>}
+                {selectedUser.address && <p className="text-sm text-gray-700">{selectedUser.address}</p>}
+                {selectedUser.phone && <p className="text-sm text-gray-700">{selectedUser.phone}</p>}
               </div>
             </div>
 
@@ -316,42 +287,26 @@ export default function EnquiriesPage() {
               <div className="flex justify-center">
                 <div className="bg-yellow-100 text-gray-800 text-sm px-4 py-2 rounded-lg max-w-md text-center">
                   {sidebarUsers
-                    .find((u) => u.userId == selectedUser.userId)
-                    ?.messages.filter((m) => m.enquireType === queryType)
-                    .sort(
-                      (a, b) =>
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime()
-                    )[0]?.comment || "No messages yet"}
+                    .find(u => u.userId == selectedUser.userId)
+                    ?.messages.filter(m => m.enquireType === queryType)
+                    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]?.comment ||
+                    'No messages yet'}
                 </div>
               </div>
 
               {conversation
-                .filter((m) => m.enquireType == queryType)
-                .map((msg) => {
+                .filter(m => m.enquireType == queryType)
+                .map(msg => {
                   const isSender = msg.senderUserId == currentUserId;
                   return (
-                    <div
-                      key={msg.id}
-                      className={`flex ${
-                        isSender ? "justify-end" : "justify-start"
-                      }`}
-                    >
+                    <div key={msg.id} className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
                       <div
                         className={`px-4 py-2 rounded-lg max-w-xs break-words ${
-                          isSender
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-200 text-black"
+                          isSender ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
                         }`}
                       >
-                        <p className="text-sm capitalize">
-                          {msg.comment || "No message"}
-                        </p>
-                        <span
-                          className={`text-[10px] ${
-                            isSender ? "text-white" : "text-gray-500"
-                          }`}
-                        >
+                        <p className="text-sm capitalize">{msg.comment || 'No message'}</p>
+                        <span className={`text-[10px] ${isSender ? 'text-white' : 'text-gray-500'}`}>
                           {formatDateTime(msg.createdAt)}
                         </span>
                       </div>
@@ -364,7 +319,7 @@ export default function EnquiriesPage() {
               <input
                 type="text"
                 value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
+                onChange={e => setNewMessage(e.target.value)}
                 placeholder="Type your enquiry..."
                 className="flex-1 border rounded-lg px-3 py-2"
               />
@@ -372,9 +327,7 @@ export default function EnquiriesPage() {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
-            Select a user to see conversation
-          </div>
+          <div className="flex-1 flex items-center justify-center text-gray-500">Select a user to see conversation</div>
         )}
       </main>
     </div>

@@ -5,10 +5,7 @@ import { blogs } from '@/src/drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { authOptions } from '@/src/lib/auth';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     // const session = await getServerSession(authOptions);
@@ -39,17 +36,11 @@ export async function GET(
     return NextResponse.json({ blog });
   } catch (error) {
     console.error('Error fetching blog:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -58,35 +49,21 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const {
-      title,
-      content,
-      summary,
-      action,
-      status,
-      rejectionReason,
-      imageUrl
-    } = body;
+    const { title, content, summary, action, status, rejectionReason, imageUrl } = body;
 
     const blogId = Number(id);
     if (isNaN(blogId)) {
       return NextResponse.json({ error: 'Invalid blog id' }, { status: 400 });
     }
 
-    const [existingBlog] = await db
-      .select()
-      .from(blogs)
-      .where(eq(blogs.id, blogId));
+    const [existingBlog] = await db.select().from(blogs).where(eq(blogs.id, blogId));
 
     if (!existingBlog) {
       return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
     }
 
     // ✅ Admin actions (approve/reject)
-    if (
-      session.user.role === 'admin' &&
-      (status === 'approved' || status === 'rejected')
-    ) {
+    if (session.user.role === 'admin' && (status === 'approved' || status === 'rejected')) {
       const [updatedBlog] = await db
         .update(blogs)
         .set({
@@ -106,15 +83,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    if (
-      existingBlog.status !== 'draft' &&
-      existingBlog.status !== 'rejected' &&
-      existingBlog.status !== 'pending'
-    ) {
-      return NextResponse.json(
-        { error: 'Cannot edit blog in current status' },
-        { status: 400 }
-      );
+    if (existingBlog.status !== 'draft' && existingBlog.status !== 'rejected' && existingBlog.status !== 'pending') {
+      return NextResponse.json({ error: 'Cannot edit blog in current status' }, { status: 400 });
     }
 
     const newStatus = action === 'submit' ? 'pending' : 'draft';
@@ -136,17 +106,11 @@ export async function PUT(
     return NextResponse.json({ blog: updatedBlog });
   } catch (error) {
     console.error('Error updating blog:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -163,16 +127,10 @@ export async function DELETE(
     const removeReason = body.reason;
 
     if (!removeReason) {
-      return NextResponse.json(
-        { error: 'Remove reason is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Remove reason is required' }, { status: 400 });
     }
 
-    const [existingBlog] = await db
-      .select()
-      .from(blogs)
-      .where(eq(blogs.id, blogId));
+    const [existingBlog] = await db.select().from(blogs).where(eq(blogs.id, blogId));
 
     if (!existingBlog) {
       return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
@@ -200,9 +158,6 @@ export async function DELETE(
     return NextResponse.json({ blog: updatedBlog });
   } catch (error) {
     console.error('Error removing blog:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

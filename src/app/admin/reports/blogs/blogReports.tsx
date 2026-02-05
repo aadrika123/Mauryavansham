@@ -51,9 +51,7 @@ export default function BlogsReportPage() {
         const blogData = data.blogs || [];
         setAllFilteredBlogs(blogData);
         setTotalCount(blogData.length);
-        setBlogs(
-          blogData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-        );
+        setBlogs(blogData.slice((currentPage - 1) * pageSize, currentPage * pageSize));
       } catch (err) {
         console.error(err);
       } finally {
@@ -81,7 +79,7 @@ export default function BlogsReportPage() {
       a.title.localeCompare(b.title, 'en', { sensitivity: 'base' })
     );
 
-    const dataToExport = sortedBlogs.map((b) => ({
+    const dataToExport = sortedBlogs.map(b => ({
       'Blog Title': b.title,
       'Author Name': b.author?.name || '-',
       'Author Email': b.author?.email || '-',
@@ -104,11 +102,7 @@ export default function BlogsReportPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="border p-2 rounded">
           <option value="">All Status</option>
           <option value="approved">Approved</option>
           <option value="pending">Pending</option>
@@ -116,10 +110,7 @@ export default function BlogsReportPage() {
           <option value="removed">Removed</option>
         </select>
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-500 text-white px-4 py-2 rounded">
           Export Excel
         </button>
       </div>
@@ -160,34 +151,18 @@ export default function BlogsReportPage() {
                 ) : (
                   blogs.map((b, index) => (
                     <tr key={b.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border">
-                        {(currentPage - 1) * pageSize + index + 1}
-                      </td>
+                      <td className="px-4 py-2 border">{(currentPage - 1) * pageSize + index + 1}</td>
                       <td className="px-4 py-2 border">{b.title}</td>
-                      <td className="px-4 py-2 border">
-                        {b.author?.name || '-'}
-                      </td>
+                      <td className="px-4 py-2 border">{b.author?.name || '-'}</td>
                       <td className="px-4 py-2 border">{b.title}</td>
                       {/* <td className="px-4 py-2 border truncate">{b.content}</td> */}
                       <td className="px-4 py-2 border">{b.summary}</td>
-                      <td className="px-4 py-2 border capitalize">
-                        {b.status}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {formatDate(b.createdAt)}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {formatDate(b.approvedAt || '')}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {b.rejectionReason || '-'}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {b.removedByName || '-'}
-                      </td>
-                      <td className="px-4 py-2 border">
-                        {b.removeReason || '-'}
-                      </td>
+                      <td className="px-4 py-2 border capitalize">{b.status}</td>
+                      <td className="px-4 py-2 border">{formatDate(b.createdAt)}</td>
+                      <td className="px-4 py-2 border">{formatDate(b.approvedAt || '')}</td>
+                      <td className="px-4 py-2 border">{b.rejectionReason || '-'}</td>
+                      <td className="px-4 py-2 border">{b.removedByName || '-'}</td>
+                      <td className="px-4 py-2 border">{b.removeReason || '-'}</td>
                     </tr>
                   ))
                 )}
@@ -201,8 +176,8 @@ export default function BlogsReportPage() {
             totalPages={totalPages}
             totalItems={totalCount}
             pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-            onPageSizeChange={(size) => {
+            onPageChange={page => setCurrentPage(page)}
+            onPageSizeChange={size => {
               setPageSize(size);
               setCurrentPage(1);
             }}

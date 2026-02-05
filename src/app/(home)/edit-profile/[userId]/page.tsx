@@ -1,7 +1,4 @@
-import {
-  FlatProfileData,
-  ProfileData
-} from '@/src/app/dashboard/edit-profile/[id]/editProfileForm';
+import { FlatProfileData, ProfileData } from '@/src/app/dashboard/edit-profile/[id]/editProfileForm';
 import { getProfileById } from '@/src/features/getProfile/actions/getProfileById';
 import { Crown } from 'lucide-react';
 import CreateProfileForm from '@/src/app/dashboard/create-profile/createProfileForm';
@@ -82,11 +79,7 @@ const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
   };
 };
 
-export default async function EditProfilePage({
-  params
-}: {
-  params: Promise<{ userId: string }>;
-}) {
+export default async function EditProfilePage({ params }: { params: Promise<{ userId: string }> }) {
   // Await the params to resolve before using it
   const { userId } = await params;
 
@@ -99,9 +92,7 @@ export default async function EditProfilePage({
   }
 
   // Transform the flat data from getProfileById into the nested ProfileData structure
-  const nestedProfileData: ProfileData = transformFlatToNested(
-    result?.data as any
-  );
+  const nestedProfileData: ProfileData = transformFlatToNested(result?.data as any);
 
   return (
     <div className="max-w-full mx-auto  bg-orange-50 px-4 py-8">

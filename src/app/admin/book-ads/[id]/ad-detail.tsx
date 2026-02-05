@@ -1,103 +1,100 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { ArrowLeft, Calendar, User, AlertCircle, CheckCircle, Clock } from "lucide-react"
-import { format } from "date-fns"
+import Link from 'next/link';
+import Image from 'next/image';
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { ArrowLeft, Calendar, User, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { format } from 'date-fns';
 
 export interface Ad {
-  id: number;  // 👈 yaha string → number
+  id: number; // 👈 yaha string → number
   title: string;
   bannerImageUrl: string;
   fromDate: string;
   toDate: string;
-  status: "pending" | "approved" | "rejected" | "expired";
+  status: 'pending' | 'approved' | 'rejected' | 'expired';
   createdAt: Date;
   updatedAt: Date;
   approvedAt: Date | null;
   rejectionReason: string | null;
   user: {
-    id: number;   // 👈 ye bhi db me number hi hai
+    id: number; // 👈 ye bhi db me number hi hai
     name: string;
     email: string;
   } | null;
 }
 
-
 interface AdDetailProps {
   // ad: Ad
-  ad: Ad
-  currentUserId: string
-  userRole?: string
-
-
+  ad: Ad;
+  currentUserId: string;
+  userRole?: string;
 }
 
 export default function AdDetail({ ad, currentUserId, userRole }: AdDetailProps) {
-  const today = new Date()
-  const fromDate = new Date(ad.fromDate)
-  const toDate = new Date(ad.toDate)
+  const today = new Date();
+  const fromDate = new Date(ad.fromDate);
+  const toDate = new Date(ad.toDate);
 
-  let daysLeft = 0
-  let isActive = false
-  let isExpired = false
+  let daysLeft = 0;
+  let isActive = false;
+  let isExpired = false;
 
-  if (ad.status === "approved") {
+  if (ad.status === 'approved') {
     if (today < fromDate) {
       // Ad hasn't started yet
-      daysLeft = Math.ceil((fromDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+      daysLeft = Math.ceil((fromDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     } else if (today >= fromDate && today <= toDate) {
       // Ad is currently active
-      isActive = true
-      daysLeft = Math.ceil((toDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+      isActive = true;
+      daysLeft = Math.ceil((toDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     } else {
       // Ad has expired
-      isExpired = true
-      daysLeft = 0
+      isExpired = true;
+      daysLeft = 0;
     }
   }
 
   const getStatusColor = (status: string) => {
-    if (isExpired) return "bg-gray-100 text-gray-800"
-    if (isActive) return "bg-blue-100 text-blue-800"
+    if (isExpired) return 'bg-gray-100 text-gray-800';
+    if (isActive) return 'bg-blue-100 text-blue-800';
 
     switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "approved":
-        return "bg-green-100 text-green-800"
-      case "rejected":
-        return "bg-red-100 text-red-800"
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800"
+        return 'bg-gray-100 text-gray-800';
     }
-  }
+  };
 
   const getStatusText = (status: string) => {
-    if (isExpired) return "Expired"
-    if (isActive) return "Active"
+    if (isExpired) return 'Expired';
+    if (isActive) return 'Active';
 
     switch (status) {
-      case "pending":
-        return "Pending Approval"
-      case "approved":
-        return "Approved"
-      case "rejected":
-        return "Rejected"
+      case 'pending':
+        return 'Pending Approval';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
       default:
-        return status
+        return status;
     }
-  }
+  };
 
   const getDaysLeftText = () => {
-    if (isExpired) return "Ad has expired"
-    if (isActive) return `${daysLeft} days remaining`
-    if (ad.status === "approved" && daysLeft > 0) return `Starts in ${daysLeft} days`
-    return ""
-  }
+    if (isExpired) return 'Ad has expired';
+    if (isActive) return `${daysLeft} days remaining`;
+    if (ad.status === 'approved' && daysLeft > 0) return `Starts in ${daysLeft} days`;
+    return '';
+  };
 
   return (
     <div className="space-y-6">
@@ -135,7 +132,7 @@ export default function AdDetail({ ad, currentUserId, userRole }: AdDetailProps)
             <div className="flex justify-center">
               <div className="relative w-[350px] h-[500px] border rounded-lg overflow-hidden bg-gray-50">
                 <Image
-                  src={ad.bannerImageUrl || "/placeholder.svg"}
+                  src={ad.bannerImageUrl || '/placeholder.svg'}
                   alt={ad.title}
                   fill
                   className="object-cover"
@@ -151,16 +148,16 @@ export default function AdDetail({ ad, currentUserId, userRole }: AdDetailProps)
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>Start: {format(new Date(ad.fromDate), "MMM d, yyyy")}</span>
+                  <span>Start: {format(new Date(ad.fromDate), 'MMM d, yyyy')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>End: {format(new Date(ad.toDate), "MMM d, yyyy")}</span>
+                  <span>End: {format(new Date(ad.toDate), 'MMM d, yyyy')}</span>
                 </div>
                 {getDaysLeftText() && (
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-gray-500" />
-                    <span className={isActive ? "text-blue-600 font-medium" : "text-gray-600"}>
+                    <span className={isActive ? 'text-blue-600 font-medium' : 'text-gray-600'}>
                       {getDaysLeftText()}
                     </span>
                   </div>
@@ -188,7 +185,7 @@ export default function AdDetail({ ad, currentUserId, userRole }: AdDetailProps)
             </div>
           )}
 
-          {ad.status === "approved" && ad.approvedAt && (
+          {ad.status === 'approved' && ad.approvedAt && (
             <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
               <div>
@@ -218,5 +215,5 @@ export default function AdDetail({ ad, currentUserId, userRole }: AdDetailProps)
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

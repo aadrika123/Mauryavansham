@@ -25,36 +25,23 @@ export async function GET(
     }
 
     // ✅ Fetch all interests where this profile is the receiver
-    const interests = await db
-      .select()
-      .from(profileInterests)
-      .where(eq(profileInterests.receiverProfileId, profileId));
+    const interests = await db.select().from(profileInterests).where(eq(profileInterests.receiverProfileId, profileId));
 
     return NextResponse.json({ success: true, interests });
   } catch (error) {
     console.error('Error fetching interests:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error', success: false },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal Server Error', success: false }, { status: 500 });
   }
 }
 
 // POST -> add new interest
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ profileId: string }> }
-) {
+export async function POST(req: Request, { params }: { params: Promise<{ profileId: string }> }) {
   try {
     const { profileId } = await params;
-    const { senderUserId, senderProfileId, receiverUserId, senderProfile } =
-      await req.json();
+    const { senderUserId, senderProfileId, receiverUserId, senderProfile } = await req.json();
 
     if (!profileId || !senderUserId || !senderProfileId || !receiverUserId) {
-      return NextResponse.json(
-        { error: 'Missing required data' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing required data' }, { status: 400 });
     }
 
     // ✅ Save interest
@@ -68,15 +55,9 @@ export async function POST(
     });
 
     // ✅ Fetch receiver user & profile
-    const [receiverUser] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, receiverUserId));
+    const [receiverUser] = await db.select().from(users).where(eq(users.id, receiverUserId));
 
-    const [receiverProfile] = await db
-      .select()
-      .from(profiles)
-      .where(eq(profiles.id, profileId));
+    const [receiverProfile] = await db.select().from(profiles).where(eq(profiles.id, profileId));
 
     // ✅ Check if mutual interest exists
     const [mutualInterest] = await db
@@ -93,26 +74,14 @@ export async function POST(
       // 🔄 Mutual interest → send emails to both users
 
       // Fetch sender user & profile
-      const [senderUser] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, senderUserId));
+      const [senderUser] = await db.select().from(users).where(eq(users.id, senderUserId));
 
-      const [senderProfileData] = await db
-        .select()
-        .from(profiles)
-        .where(eq(profiles.id, senderProfileId));
+      const [senderProfileData] = await db.select().from(profiles).where(eq(profiles.id, senderProfileId));
 
       // Fetch receiver full profile & user
-      const [receiverUserFull] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, receiverUserId));
+      const [receiverUserFull] = await db.select().from(users).where(eq(users.id, receiverUserId));
 
-      const [receiverProfileFull] = await db
-        .select()
-        .from(profiles)
-        .where(eq(profiles.id, profileId));
+      const [receiverProfileFull] = await db.select().from(profiles).where(eq(profiles.id, profileId));
 
       // ✅ Email to original sender
       if (senderUser?.email) {
@@ -203,9 +172,6 @@ export async function POST(
     return NextResponse.json({ success: true, inserted });
   } catch (error) {
     console.error('Error saving interest:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error', success: false },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal Server Error', success: false }, { status: 500 });
   }
 }

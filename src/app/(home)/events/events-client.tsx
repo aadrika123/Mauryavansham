@@ -1,17 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Badge } from "@/src/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
+import { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Badge } from '@/src/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
 import {
   ArrowLeft,
   Plus,
@@ -28,14 +22,14 @@ import {
   X,
   Mic2Icon,
   ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import Link from "next/link";
-import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
-import { VerticalAdBanner } from "@/src/components/common/VerticalAdBanner";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/src/hooks/use-toast";
+  ChevronRight
+} from 'lucide-react';
+import Link from 'next/link';
+import { LeftSideAddBanner } from '@/src/components/common/LeftSideAddBanner';
+import { VerticalAdBanner } from '@/src/components/common/VerticalAdBanner';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/src/hooks/use-toast';
 
 interface Event {
   id: number;
@@ -48,7 +42,7 @@ interface Event {
   attendees: number;
   maxAttendees: number;
   organizer: string;
-  type: "In-Person" | "Virtual" | "Hybrid";
+  type: 'In-Person' | 'Virtual' | 'Hybrid';
   category: string;
   views: number;
   placementId: number;
@@ -76,7 +70,7 @@ interface User {
   name: string;
   email: string;
   phone?: string;
-  role: "user" | "admin";
+  role: 'user' | 'admin';
   isActive: boolean;
   status: string;
   deactivationReason?: string;
@@ -90,7 +84,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
     if (ads.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % ads.length);
+      setCurrentIndex(prev => (prev + 1) % ads.length);
     }, 5000);
 
     return () => clearInterval(timer);
@@ -98,7 +92,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
 
   useEffect(() => {
     if (ads[currentIndex]) {
-      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: "POST" });
+      fetch(`/api/ad-placements/${ads[currentIndex].id}`, { method: 'POST' });
     }
   }, [currentIndex, ads]);
 
@@ -107,12 +101,8 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
       <div className="mx-auto relative w-full max-w-[900px] h-[200px] sm:h-[250px] md:h-[300px]">
         <div className="bg-gradient-to-r from-amber-100 via-yellow-50 to-amber-100 border-4 border-amber-300 rounded-2xl shadow-2xl w-full h-full flex items-center justify-center text-center p-4">
           <div>
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800">
-              Book Your Ad (8)
-            </h3>
-            <span className="text-sm font-normal text-amber-700">
-              Please select image size of (900x300 px)
-            </span>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-amber-800">Book Your Ad (8)</h3>
+            <span className="text-sm font-normal text-amber-700">Please select image size of (900x300 px)</span>
           </div>
         </div>
       </div>
@@ -127,17 +117,10 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
             <div
               key={ad.id}
               className={`absolute inset-0  transition-opacity duration-1000 ${
-                index === currentIndex
-                  ? "opacity-100 z-10"
-                  : "opacity-0 pointer-events-none z-0"
+                index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
               }`}
             >
-              <a
-                href={ad.adUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block w-full h-full"
-              >
+              <a href={ad.adUrl} target="_blank" rel="noopener noreferrer" className="inline-block w-full h-full">
                 <img
                   src={ad.bannerImageUrl}
                   alt={`Ad ${index + 1}`}
@@ -158,9 +141,7 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
                     key={index}
                     onClick={() => setCurrentIndex(index)}
                     className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                      index === currentIndex
-                        ? "bg-amber-600 scale-125"
-                        : "bg-amber-400/50 hover:bg-amber-400/75"
+                      index === currentIndex ? 'bg-amber-600 scale-125' : 'bg-amber-400/50 hover:bg-amber-400/75'
                     }`}
                     aria-label={`Go to ad ${index + 1}`}
                     type="button"
@@ -174,22 +155,17 @@ const HorizontalAdSlider: React.FC<{ ads: AdPlacement[] }> = ({ ads }) => {
     </div>
   );
 };
-export default function EventsClient({
-  initialEvents,
-  user,
-}: EventsClientProps & { user: User | null }) {
-  const [activeTab, setActiveTab] = useState("upcoming");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState("all");
+export default function EventsClient({ initialEvents, user }: EventsClientProps & { user: User | null }) {
+  const [activeTab, setActiveTab] = useState('upcoming');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
   const [events, setEvents] = useState(initialEvents || []);
   const { toast } = useToast();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const Router = useRouter();
   const [loadingEvents, setLoadingEvents] = useState<number[]>([]);
   const [showAttendeesModal, setShowAttendeesModal] = useState(false);
-  const [selectedEventAttendees, setSelectedEventAttendees] = useState<
-    number[]
-  >([]);
+  const [selectedEventAttendees, setSelectedEventAttendees] = useState<number[]>([]);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
 
   const today = new Date();
@@ -197,7 +173,7 @@ export default function EventsClient({
 
   // Get all upcoming featured events
   const upcomingFeaturedEvents = events
-    .filter((ev) => {
+    .filter(ev => {
       if (!ev.isFeatured) return false;
       const eventDate = new Date(ev.date);
       eventDate.setHours(0, 0, 0, 0);
@@ -210,28 +186,26 @@ export default function EventsClient({
     });
 
   // Get IDs of featured events to exclude from "All Events"
-  const featuredEventIds = upcomingFeaturedEvents.map((ev) => ev.id);
-  const allEvents = events.filter((ev) => !featuredEventIds.includes(ev.id));
+  const featuredEventIds = upcomingFeaturedEvents.map(ev => ev.id);
+  const allEvents = events.filter(ev => !featuredEventIds.includes(ev.id));
 
   // Filter only upcoming (not past) events for "All Events"
   const filteredEvents = allEvents
-    .filter((event) => {
+    .filter(event => {
       const eventDate = new Date(event.date);
       eventDate.setHours(0, 0, 0, 0);
       return eventDate >= today; // ✅ Only upcoming or current events
     })
-    .filter((event) => {
+    .filter(event => {
       const matchesSearch =
         event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         event.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesFilter =
-        filterType === "all" ||
-        event.type.toLowerCase() === filterType.toLowerCase();
+      const matchesFilter = filterType === 'all' || event.type.toLowerCase() === filterType.toLowerCase();
       return matchesSearch && matchesFilter;
     });
 
   const pastEvents = events
-    .filter((event) => {
+    .filter(event => {
       const eventDate = new Date(event.date);
       eventDate.setHours(0, 0, 0, 0);
       return eventDate < today;
@@ -242,26 +216,24 @@ export default function EventsClient({
       return dateB.getTime() - dateA.getTime();
     });
 
-  const filteredPastEvents = pastEvents.filter((event) => {
+  const filteredPastEvents = pastEvents.filter(event => {
     const matchesSearch =
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter =
-      filterType === "all" ||
-      event.type.toLowerCase() === filterType.toLowerCase();
+    const matchesFilter = filterType === 'all' || event.type.toLowerCase() === filterType.toLowerCase();
     return matchesSearch && matchesFilter;
   });
 
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([]);
-  const bottomAds = adPlacements.filter((ad) => ad.placementId === 8);
+  const bottomAds = adPlacements.filter(ad => ad.placementId === 8);
 
   useEffect(() => {
-    fetch("/api/ad-placements/approved")
-      .then((res) => res.json())
+    fetch('/api/ad-placements/approved')
+      .then(res => res.json())
       .then((data: AdPlacement[]) => {
         setAdPlacements(data);
       })
-      .catch(() => console.error("Failed to load ad placements"));
+      .catch(() => console.error('Failed to load ad placements'));
   }, []);
 
   // useEffect(() => {
@@ -271,46 +243,46 @@ export default function EventsClient({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
+    return date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     });
   };
 
   const formatTimeTo12Hr = (time24: string) => {
-    if (!time24) return "";
-    const [hourStr, minStr] = time24.split(":");
+    if (!time24) return '';
+    const [hourStr, minStr] = time24.split(':');
     let hour = parseInt(hourStr, 10);
     const minute = minStr;
-    const ampm = hour >= 12 ? "PM" : "AM";
+    const ampm = hour >= 12 ? 'PM' : 'AM';
     hour = hour % 12 || 12;
     return `${hour}:${minute} ${ampm}`;
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "In-Person":
-        return "bg-green-100 text-green-800";
-      case "Virtual":
-        return "bg-blue-100 text-blue-800";
-      case "Hybrid":
-        return "bg-purple-100 text-purple-800";
+      case 'In-Person':
+        return 'bg-green-100 text-green-800';
+      case 'Virtual':
+        return 'bg-blue-100 text-blue-800';
+      case 'Hybrid':
+        return 'bg-purple-100 text-purple-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "In-Person":
-        return "🟢";
-      case "Virtual":
-        return "🔵";
-      case "Hybrid":
-        return "🟣";
+      case 'In-Person':
+        return '🟢';
+      case 'Virtual':
+        return '🔵';
+      case 'Hybrid':
+        return '🟣';
       default:
-        return "⚪";
+        return '⚪';
     }
   };
 
@@ -320,61 +292,49 @@ export default function EventsClient({
       return;
     }
 
-    if (
-      event.attendees >= event.maxAttendees ||
-      loadingEvents.includes(event.id)
-    )
-      return;
+    if (event.attendees >= event.maxAttendees || loadingEvents.includes(event.id)) return;
 
-    setLoadingEvents((prev) => [...prev, event.id]);
+    setLoadingEvents(prev => [...prev, event.id]);
 
     try {
       const res = await fetch(`/api/events/${event.id}/attend`, {
-        method: "POST",
+        method: 'POST'
       });
       const data = await res.json();
 
       if (res.ok) {
-        setEvents((prev) =>
-          prev.map((ev) =>
-            ev.id === event.id ? { ...ev, attendees: ev.attendees + 1 } : ev
-          )
-        );
+        setEvents(prev => prev.map(ev => (ev.id === event.id ? { ...ev, attendees: ev.attendees + 1 } : ev)));
         toast({
-          title: "✅ Success",
-          variant: "default",
-          description: data.message || "Registered successfully!",
+          title: '✅ Success',
+          variant: 'default',
+          description: data.message || 'Registered successfully!'
         });
         window.location.reload();
       } else {
         toast({
-          title: "❌ Error",
-          variant: "destructive",
-          description: data.error || "Failed to register",
+          title: '❌ Error',
+          variant: 'destructive',
+          description: data.error || 'Failed to register'
         });
       }
     } catch (err) {
       console.error(err);
       toast({
-        title: "⚠️ Error",
-        variant: "destructive",
-        description: "Something went wrong. Please try again later.",
+        title: '⚠️ Error',
+        variant: 'destructive',
+        description: 'Something went wrong. Please try again later.'
       });
     } finally {
-      setLoadingEvents((prev) => prev.filter((id) => id !== event.id));
+      setLoadingEvents(prev => prev.filter(id => id !== event.id));
     }
   };
 
   const nextFeatured = () => {
-    setCurrentFeaturedIndex((prev) =>
-      prev === upcomingFeaturedEvents.length - 1 ? 0 : prev + 1
-    );
+    setCurrentFeaturedIndex(prev => (prev === upcomingFeaturedEvents.length - 1 ? 0 : prev + 1));
   };
 
   const prevFeatured = () => {
-    setCurrentFeaturedIndex((prev) =>
-      prev === 0 ? upcomingFeaturedEvents.length - 1 : prev - 1
-    );
+    setCurrentFeaturedIndex(prev => (prev === 0 ? upcomingFeaturedEvents.length - 1 : prev - 1));
   };
 
   return (
@@ -387,30 +347,22 @@ export default function EventsClient({
                 <Lock className="h-5 w-5" />
                 Login Required
               </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <p className="text-gray-600 mb-6">
-              Please login to participate in community discussions and create
-              new topics.
+              Please login to participate in community discussions and create new topics.
             </p>
             <div className="space-y-3">
               <Button
-                onClick={() => Router.push("/sign-in")}
+                onClick={() => Router.push('/sign-in')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
               >
                 <User className="h-4 w-4 mr-2" />
                 Login
               </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={() => setShowLoginModal(false)} variant="outline" className="w-full">
                 Cancel
               </Button>
             </div>
@@ -438,7 +390,7 @@ export default function EventsClient({
             <Input
               placeholder="Search events..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -463,21 +415,21 @@ export default function EventsClient({
         <div className="max-w-7xl mx-auto">
           <div className="flex">
             <button
-              onClick={() => setActiveTab("upcoming")}
+              onClick={() => setActiveTab('upcoming')}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "upcoming"
-                  ? "border-orange-600 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                activeTab === 'upcoming'
+                  ? 'border-orange-600 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               Upcoming Events
             </button>
             <button
-              onClick={() => setActiveTab("calendar")}
+              onClick={() => setActiveTab('calendar')}
               className={`px-6 py-4 text-sm font-medium border-b-2 ${
-                activeTab === "calendar"
-                  ? "border-orange-600 text-orange-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+                activeTab === 'calendar'
+                  ? 'border-orange-600 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
               Past Events
@@ -488,15 +440,12 @@ export default function EventsClient({
 
       <div className="max-w-7xl mx-auto p-6">
         {/* Featured Events Carousel */}
-        {upcomingFeaturedEvents.length > 0 && activeTab === "upcoming" && (
+        {upcomingFeaturedEvents.length > 0 && activeTab === 'upcoming' && (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-red-700">
-                Featured Events{" "}
-                {upcomingFeaturedEvents.length > 1 &&
-                  `(${currentFeaturedIndex + 1}/${
-                    upcomingFeaturedEvents.length
-                  })`}
+                Featured Events{' '}
+                {upcomingFeaturedEvents.length > 1 && `(${currentFeaturedIndex + 1}/${upcomingFeaturedEvents.length})`}
               </h2>
               {upcomingFeaturedEvents.length > 1 && (
                 <div className="flex gap-2">
@@ -525,11 +474,8 @@ export default function EventsClient({
                 <div className="flex flex-col lg:flex-row">
                   <div className="lg:w-1/3">
                     <Image
-                      src={
-                        upcomingFeaturedEvents[currentFeaturedIndex].image ||
-                        "/placeholder.svg"
-                      }
-                      alt={"Event Banner"}
+                      src={upcomingFeaturedEvents[currentFeaturedIndex].image || '/placeholder.svg'}
+                      alt={'Event Banner'}
                       width={600}
                       height={500}
                       className="object-fill h-96"
@@ -537,16 +483,8 @@ export default function EventsClient({
                   </div>
                   <div className="lg:w-2/3 p-6">
                     <div className="flex items-center gap-2 mb-4">
-                      <span className="text-sm">
-                        {getTypeIcon(
-                          upcomingFeaturedEvents[currentFeaturedIndex].type
-                        )}
-                      </span>
-                      <Badge
-                        className={getTypeColor(
-                          upcomingFeaturedEvents[currentFeaturedIndex].type
-                        )}
-                      >
+                      <span className="text-sm">{getTypeIcon(upcomingFeaturedEvents[currentFeaturedIndex].type)}</span>
+                      <Badge className={getTypeColor(upcomingFeaturedEvents[currentFeaturedIndex].type)}>
                         {upcomingFeaturedEvents[currentFeaturedIndex].type}
                       </Badge>
                       <Badge className="bg-yellow-400 text-yellow-900">
@@ -567,64 +505,32 @@ export default function EventsClient({
                       <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="w-4 h-4" />
                         <span>
-                          {formatDate(
-                            upcomingFeaturedEvents[currentFeaturedIndex].date
-                          )}{" "}
-                          at{" "}
-                          {formatTimeTo12Hr(
-                            upcomingFeaturedEvents[currentFeaturedIndex]
-                              .fromTime
-                          )}{" "}
-                          to{" "}
-                          {formatTimeTo12Hr(
-                            upcomingFeaturedEvents[currentFeaturedIndex].toTime
-                          )}
+                          {formatDate(upcomingFeaturedEvents[currentFeaturedIndex].date)} at{' '}
+                          {formatTimeTo12Hr(upcomingFeaturedEvents[currentFeaturedIndex].fromTime)} to{' '}
+                          {formatTimeTo12Hr(upcomingFeaturedEvents[currentFeaturedIndex].toTime)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <MapPin className="w-4 h-4" />
-                        <span>
-                          {
-                            upcomingFeaturedEvents[currentFeaturedIndex]
-                              .location
-                          }
-                        </span>
+                        <span>{upcomingFeaturedEvents[currentFeaturedIndex].location}</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <Users className="w-4 h-4" />
                         <span>
-                          {
-                            upcomingFeaturedEvents[currentFeaturedIndex]
-                              ?.attendeesCount
-                          }
-                          /
-                          {
-                            upcomingFeaturedEvents[currentFeaturedIndex]
-                              .maxAttendees
-                          }{" "}
-                          attending
+                          {upcomingFeaturedEvents[currentFeaturedIndex]?.attendeesCount}/
+                          {upcomingFeaturedEvents[currentFeaturedIndex].maxAttendees} attending
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <User className="w-4 h-4" />
-                        <span>
-                          By{" "}
-                          {
-                            upcomingFeaturedEvents[currentFeaturedIndex]
-                              .organizer
-                          }
-                        </span>
+                        <span>By {upcomingFeaturedEvents[currentFeaturedIndex].organizer}</span>
                       </div>
                     </div>
 
                     <div className="flex gap-3 mx-auto">
                       <Button
                         className="bg-orange-600 hover:bg-orange-700 text-white"
-                        onClick={() =>
-                          handleRegister(
-                            upcomingFeaturedEvents[currentFeaturedIndex]
-                          )
-                        }
+                        onClick={() => handleRegister(upcomingFeaturedEvents[currentFeaturedIndex])}
                       >
                         Register
                       </Button>
@@ -635,9 +541,7 @@ export default function EventsClient({
                         className="border-gray-300 text-yellow-700 bg-transparent"
                         onClick={() => {
                           setSelectedEventAttendees(
-                            upcomingFeaturedEvents[
-                              currentFeaturedIndex
-                            ].attendees?.map((a) => a.name)
+                            upcomingFeaturedEvents[currentFeaturedIndex].attendees?.map(a => a.name)
                           );
                           setShowAttendeesModal(true);
                         }}
@@ -658,9 +562,7 @@ export default function EventsClient({
                     key={index}
                     onClick={() => setCurrentFeaturedIndex(index)}
                     className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentFeaturedIndex
-                        ? "bg-orange-600 w-6"
-                        : "bg-orange-300 hover:bg-orange-400"
+                      index === currentFeaturedIndex ? 'bg-orange-600 w-6' : 'bg-orange-300 hover:bg-orange-400'
                     }`}
                   />
                 ))}
@@ -669,12 +571,12 @@ export default function EventsClient({
           </div>
         )}
 
-        {activeTab === "calendar" && (
+        {activeTab === 'calendar' && (
           <div>
             <h2 className="text-xl font-bold text-red-700 mb-4">Past Events</h2>
             {filteredPastEvents.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredPastEvents.map((event) => (
+                {filteredPastEvents.map(event => (
                   <Card
                     key={event.id}
                     className="bg-gray-50 hover:shadow-md transition-shadow overflow-hidden max-h-[420px] opacity-75"
@@ -682,41 +584,32 @@ export default function EventsClient({
                     <CardContent className="p-0 flex flex-col h-full">
                       <div className="relative w-full h-36 bg-gray-100 overflow-hidden">
                         <Image
-                          src={event.image || "/placeholder.svg"}
+                          src={event.image || '/placeholder.svg'}
                           alt="Event Banner"
                           fill
                           className="object-contain w-full h-full grayscale"
                         />
                         <div className="absolute top-2 left-2">
                           <Badge className={getTypeColor(event.type)}>
-                            <span className="mr-1">
-                              {getTypeIcon(event.type)}
-                            </span>
+                            <span className="mr-1">{getTypeIcon(event.type)}</span>
                             {event.type}
                           </Badge>
                         </div>
                         <div className="absolute top-2 right-2">
-                          <Badge className="bg-gray-600 text-white">
-                            Past Event
-                          </Badge>
+                          <Badge className="bg-gray-600 text-white">Past Event</Badge>
                         </div>
                       </div>
 
                       <div className="p-3 flex-1 flex flex-col justify-between">
                         <div>
-                          <h3 className="text-md font-semibold text-gray-700 mb-1 line-clamp-2">
-                            {event.title}
-                          </h3>
-                          <p className="text-gray-500 text-sm mb-2 line-clamp-2">
-                            {event.description}
-                          </p>
+                          <h3 className="text-md font-semibold text-gray-700 mb-1 line-clamp-2">{event.title}</h3>
+                          <p className="text-gray-500 text-sm mb-2 line-clamp-2">{event.description}</p>
 
                           <div className="space-y-1 text-gray-400 text-xs">
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
                               <span>
-                                {formatDate(event.date)} at{" "}
-                                {formatTimeTo12Hr(event.fromTime)} to{" "}
+                                {formatDate(event.date)} at {formatTimeTo12Hr(event.fromTime)} to{' '}
                                 {formatTimeTo12Hr(event.toTime)}
                               </span>
                             </div>
@@ -727,8 +620,7 @@ export default function EventsClient({
                             <div className="flex items-center gap-1">
                               <Users className="w-3 h-3" />
                               <span>
-                                {event.attendeesCount}/{event.maxAttendees}{" "}
-                                attended
+                                {event.attendeesCount}/{event.maxAttendees} attended
                               </span>
                             </div>
                           </div>
@@ -748,9 +640,7 @@ export default function EventsClient({
                             variant="outline"
                             className="flex-1 border-gray-300 text-gray-600 bg-transparent"
                             onClick={() => {
-                              setSelectedEventAttendees(
-                                event.attendees?.map((a) => a.name) || []
-                              );
+                              setSelectedEventAttendees(event.attendees?.map(a => a.name) || []);
                               setShowAttendeesModal(true);
                             }}
                           >
@@ -767,12 +657,8 @@ export default function EventsClient({
                 <div className="space-y-2">
                   <Calendar className="w-12 h-12 mx-auto text-gray-400" />
                   <div>
-                    <p className="text-gray-500 font-medium">
-                      No past events found
-                    </p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Past events will appear here once they have concluded.
-                    </p>
+                    <p className="text-gray-500 font-medium">No past events found</p>
+                    <p className="text-sm text-gray-400 mt-1">Past events will appear here once they have concluded.</p>
                   </div>
                 </div>
               </Card>
@@ -787,12 +673,12 @@ export default function EventsClient({
         </div>
 
         {/* All Events */}
-        {activeTab !== "calendar" && (
+        {activeTab !== 'calendar' && (
           <div>
             <h2 className="text-xl font-bold text-red-700 mb-4">All Events</h2>
             {filteredEvents.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredEvents.map((event) => {
+                {filteredEvents.map(event => {
                   const isFull = event.attendees >= event.maxAttendees;
                   // const [loading, setLoading] = useState(false);
 
@@ -804,42 +690,34 @@ export default function EventsClient({
                     // if (isFull || loading) return;
                     // setLoading(true);
                     try {
-                      const res = await fetch(
-                        `/api/events/${event.id}/attend`,
-                        {
-                          method: "POST",
-                        }
-                      );
+                      const res = await fetch(`/api/events/${event.id}/attend`, {
+                        method: 'POST'
+                      });
                       const data = await res.json();
 
                       if (res.ok) {
-                        setEvents((prev) =>
-                          prev.map((ev) =>
-                            ev.id === event.id
-                              ? { ...ev, attendees: ev.attendees + 1 }
-                              : ev
-                          )
+                        setEvents(prev =>
+                          prev.map(ev => (ev.id === event.id ? { ...ev, attendees: ev.attendees + 1 } : ev))
                         );
                         toast({
-                          title: "✅ Success",
-                          variant: "default",
-                          description:
-                            data.message || "Registered successfully!",
+                          title: '✅ Success',
+                          variant: 'default',
+                          description: data.message || 'Registered successfully!'
                         });
                         window.location.reload();
                       } else {
                         toast({
-                          title: "❌ Error",
-                          variant: "destructive",
-                          description: data.error || "Failed to register",
+                          title: '❌ Error',
+                          variant: 'destructive',
+                          description: data.error || 'Failed to register'
                         });
                       }
                     } catch (err) {
                       console.error(err);
                       toast({
-                        title: "❌ Error",
-                        variant: "destructive",
-                        description: "Something went wrong",
+                        title: '❌ Error',
+                        variant: 'destructive',
+                        description: 'Something went wrong'
                       });
                     } finally {
                       // setLoading(false);
@@ -854,16 +732,14 @@ export default function EventsClient({
                       <CardContent className="p-0 flex flex-col h-full">
                         <div className="relative w-full h-36 bg-gray-100 overflow-hidden">
                           <Image
-                            src={event.image || "/placeholder.svg"}
+                            src={event.image || '/placeholder.svg'}
                             alt="Event Banner"
                             fill
                             className="object-contain w-full h-full"
                           />
                           <div className="absolute top-2 left-2">
                             <Badge className={getTypeColor(event.type)}>
-                              <span className="mr-1">
-                                {getTypeIcon(event.type)}
-                              </span>
+                              <span className="mr-1">{getTypeIcon(event.type)}</span>
                               {event.type}
                             </Badge>
                           </div>
@@ -871,33 +747,25 @@ export default function EventsClient({
 
                         <div className="p-3 flex-1 flex flex-col justify-between">
                           <div>
-                            <h3 className="text-md font-semibold text-red-700 mb-1 line-clamp-2">
-                              {event.title}
-                            </h3>
-                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-                              {event.description}
-                            </p>
+                            <h3 className="text-md font-semibold text-red-700 mb-1 line-clamp-2">{event.title}</h3>
+                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">{event.description}</p>
 
                             <div className="space-y-1 text-gray-500 text-xs">
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
                                 <span>
-                                  {formatDate(event.date)} at{" "}
-                                  {formatTimeTo12Hr(event.fromTime)} to{" "}
+                                  {formatDate(event.date)} at {formatTimeTo12Hr(event.fromTime)} to{' '}
                                   {formatTimeTo12Hr(event.toTime)}
                                 </span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
-                                <span className="truncate">
-                                  {event.location}
-                                </span>
+                                <span className="truncate">{event.location}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Users className="w-3 h-3" />
                                 <span>
-                                  {event.attendeesCount}/{event.maxAttendees}{" "}
-                                  attending
+                                  {event.attendeesCount}/{event.maxAttendees} attending
                                 </span>
                               </div>
                               <div className="flex items-center gap-1">
@@ -912,8 +780,8 @@ export default function EventsClient({
                               size="sm"
                               className={`flex-1 ${
                                 isFull
-                                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                  : "bg-orange-600 hover:bg-orange-700 text-white"
+                                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                  : 'bg-orange-600 hover:bg-orange-700 text-white'
                               }`}
                               onClick={handleRegister}
                               // disabled={isFull || loading}
@@ -923,16 +791,14 @@ export default function EventsClient({
                               : loading
                               ? "Registering..."
                               : "Register"} */}
-                              {isFull ? "Full" : "Register"}
+                              {isFull ? 'Full' : 'Register'}
                             </Button>
                             <Button
                               size="sm"
                               variant="outline"
                               className="flex-1 border-gray-300 text-yellow-700 bg-transparent"
                               onClick={() => {
-                                setSelectedEventAttendees(
-                                  event.attendees.map((a) => a.name)
-                                );
+                                setSelectedEventAttendees(event.attendees.map(a => a.name));
                                 setShowAttendeesModal(true);
                               }}
                             >
@@ -951,24 +817,18 @@ export default function EventsClient({
                   <Calendar className="w-12 h-12 mx-auto text-gray-400" />
                   <div>
                     <p className="text-gray-500 font-medium">No events found</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Try adjusting your search or check back later.
-                    </p>
+                    <p className="text-sm text-gray-400 mt-1">Try adjusting your search or check back later.</p>
                   </div>
                 </div>
               </Card>
             )}
           </div>
         )}
-        {activeTab === "my-events" && (
+        {activeTab === 'my-events' && (
           <Card className="p-8 text-center">
             <User className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-red-700 mb-2">
-              My Events
-            </h3>
-            <p className="text-gray-600">
-              Your registered and created events will appear here
-            </p>
+            <h3 className="text-lg font-semibold text-red-700 mb-2">My Events</h3>
+            <p className="text-gray-600">Your registered and created events will appear here</p>
           </Card>
         )}
       </div>
@@ -978,10 +838,7 @@ export default function EventsClient({
           <div className="bg-white rounded-lg max-w-md w-full p-6 mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-red-700">Attendees</h3>
-              <button
-                onClick={() => setShowAttendeesModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowAttendeesModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>

@@ -1,23 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { Input } from "@/src/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/src/components/ui/dialog";
-import { Label } from "@/src/components/ui/label";
+import { useEffect, useState } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Input } from '@/src/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/src/components/ui/dialog';
+import { Label } from '@/src/components/ui/label';
 // import { toast } from "@/src/components/ui/use-toast";
-import { useToast } from "@/src/hooks/use-toast";
+import { useToast } from '@/src/hooks/use-toast';
 
 interface Placement {
   id: number;
@@ -35,10 +25,10 @@ export default function AdsLocationMasterPage() {
   const [open, setOpen] = useState(false);
   const [editData, setEditData] = useState<Placement | null>(null);
   const [form, setForm] = useState({
-    id: "",
-    pageName: "",
-    sectionName: "",
-    description: "",
+    id: '',
+    pageName: '',
+    sectionName: '',
+    description: ''
   });
 
   useEffect(() => {
@@ -48,11 +38,11 @@ export default function AdsLocationMasterPage() {
   async function fetchPlacements() {
     setLoading(true);
     try {
-      const res = await fetch("/api/ad-location-master");
+      const res = await fetch('/api/ad-location-master');
       const data = await res.json();
       setPlacements(data);
     } catch (err) {
-      toast({ title: "Error", description: "Failed to load placements" });
+      toast({ title: 'Error', description: 'Failed to load placements' });
     }
     setLoading(false);
   }
@@ -64,11 +54,11 @@ export default function AdsLocationMasterPage() {
         id: data.id.toString(),
         pageName: data.pageName,
         sectionName: data.sectionName,
-        description: data.description ?? "",
+        description: data.description ?? ''
       });
     } else {
       setEditData(null);
-      setForm({ id: "", pageName: "", sectionName: "", description: "" });
+      setForm({ id: '', pageName: '', sectionName: '', description: '' });
     }
     setOpen(true);
   }
@@ -79,43 +69,43 @@ export default function AdsLocationMasterPage() {
         id: Number(form.id),
         pageName: form.pageName,
         sectionName: form.sectionName,
-        description: form.description,
+        description: form.description
       };
 
-      const res = await fetch("/api/ad-location-master", {
-        method: editData ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const res = await fetch('/api/ad-location-master', {
+        method: editData ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
       if (!res.ok) {
         const error = await res.json();
         toast({
-          title: "Error",
-          description: error.error || "Failed to save placement",
+          title: 'Error',
+          description: error.error || 'Failed to save placement'
         });
         return;
       }
 
-      toast({ title: "Success", description: "Placement saved" });
+      toast({ title: 'Success', description: 'Placement saved' });
       setOpen(false);
       fetchPlacements();
     } catch (err) {
-      toast({ title: "Error", description: "Failed to save placement" });
+      toast({ title: 'Error', description: 'Failed to save placement' });
     }
   }
 
   async function handleDeactivate(id: number) {
-    if (!confirm("Are you sure you want to deactivate this placement?")) return;
+    if (!confirm('Are you sure you want to deactivate this placement?')) return;
     try {
       const res = await fetch(`/api/ad-location-master?id=${id}`, {
-        method: "DELETE",
+        method: 'DELETE'
       });
-      if (!res.ok) throw new Error("Failed to delete");
-      toast({ title: "Deactivated", description: "Placement deactivated" });
+      if (!res.ok) throw new Error('Failed to delete');
+      toast({ title: 'Deactivated', description: 'Placement deactivated' });
       fetchPlacements();
     } catch (err) {
-      toast({ title: "Error", description: "Failed to deactivate" });
+      toast({ title: 'Error', description: 'Failed to deactivate' });
     }
   }
 
@@ -141,18 +131,14 @@ export default function AdsLocationMasterPage() {
                 </tr>
               </thead>
               <tbody>
-                {placements.map((p) => (
+                {placements.map(p => (
                   <tr key={p.id}>
                     <td className="border p-2 text-center">{p.id}</td>
                     <td className="border p-2">{p.pageName}</td>
                     <td className="border p-2">{p.sectionName}</td>
                     <td className="border p-2">{p.description}</td>
                     <td className="border p-2 flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openForm(p)}
-                      >
+                      <Button variant="outline" size="sm" onClick={() => openForm(p)}>
                         Edit
                       </Button>
                       {/* <Button
@@ -175,45 +161,26 @@ export default function AdsLocationMasterPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {editData ? "Edit Placement" : "Add Placement"}
-            </DialogTitle>
+            <DialogTitle>{editData ? 'Edit Placement' : 'Add Placement'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <Label>Ads Serial No.</Label>
-              <Input
-                type="number"
-                value={form.id}
-                onChange={(e) => setForm({ ...form, id: e.target.value })}
-              />
+              <Input type="number" value={form.id} onChange={e => setForm({ ...form, id: e.target.value })} />
             </div>
             <div>
               <Label>Page Name</Label>
-              <Input
-                value={form.pageName}
-                onChange={(e) => setForm({ ...form, pageName: e.target.value })}
-              />
+              <Input value={form.pageName} onChange={e => setForm({ ...form, pageName: e.target.value })} />
             </div>
             <div>
               <Label>Section Name</Label>
-              <Input
-                value={form.sectionName}
-                onChange={(e) =>
-                  setForm({ ...form, sectionName: e.target.value })
-                }
-              />
+              <Input value={form.sectionName} onChange={e => setForm({ ...form, sectionName: e.target.value })} />
             </div>
             <div>
               <Label>Description</Label>
-              <Input
-                value={form.description}
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-              />
+              <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
             </div>
-            <Button onClick={handleSave}>{editData ? "Update" : "Save"}</Button>
+            <Button onClick={handleSave}>{editData ? 'Update' : 'Save'}</Button>
           </div>
         </DialogContent>
       </Dialog>

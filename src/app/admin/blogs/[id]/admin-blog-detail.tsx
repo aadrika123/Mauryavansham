@@ -1,35 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Button } from "@/src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { Badge } from "@/src/components/ui/badge";
-import { Textarea } from "@/src/components/ui/textarea";
-import { Label } from "@/src/components/ui/label";
-import {
-  ArrowLeft,
-  CheckCircle,
-  XCircle,
-  Calendar,
-  User,
-  ExternalLink,
-} from "lucide-react";
-import { format } from "date-fns";
-import toast from "react-hot-toast";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { Textarea } from '@/src/components/ui/textarea';
+import { Label } from '@/src/components/ui/label';
+import { ArrowLeft, CheckCircle, XCircle, Calendar, User, ExternalLink } from 'lucide-react';
+import { format } from 'date-fns';
+import toast from 'react-hot-toast';
 
 interface Blog {
   id: string;
   title: string;
   content: string;
   summary: string;
-  status: "draft" | "pending" | "approved" | "rejected";
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
   createdAt: string;
   updatedAt: string;
   approvedAt?: string;
@@ -50,12 +37,12 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [userDetails, setUserDetails] = useState<{
     name: string;
     email: string;
-  }>({ name: "", email: "" });
+  }>({ name: '', email: '' });
   console.log(blogId);
 
   useEffect(() => {
@@ -64,8 +51,8 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
   const fetchBlog = async () => {
     try {
       const response = await fetch(`/api/blogs/${blogId}`, {
-        method: "GET",
-        credentials: "include", // 👈 session cookies send karne ke liye
+        method: 'GET',
+        credentials: 'include' // 👈 session cookies send karne ke liye
       });
 
       if (response.ok) {
@@ -77,17 +64,17 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
           fetchUser(data.blog.authorId);
         }
       } else {
-        toast.error("Failed to fetch blog details");
+        toast.error('Failed to fetch blog details');
       }
     } catch (error) {
-      toast.error("Error loading blog");
+      toast.error('Error loading blog');
     } finally {
       setLoading(false);
     }
   };
 
   const fetchUser = async (userId: string) => {
-    console.log("Fetching user details for profileId:", userId);
+    console.log('Fetching user details for profileId:', userId);
     try {
       const res = await fetch(`/api/profile/${userId}`);
       if (res.ok) {
@@ -95,10 +82,10 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
         console.log(userData?.data);
         setUserDetails(userData?.data);
       } else {
-        toast.error("Failed to fetch user details");
+        toast.error('Failed to fetch user details');
       }
     } catch (err) {
-      toast.error("Error fetching user details");
+      toast.error('Error fetching user details');
     }
   };
   console.log(blog);
@@ -108,23 +95,23 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
     setActionLoading(true);
     try {
       const response = await fetch(`/api/blogs/${blogId}`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          status: "approved",
-        }),
+          status: 'approved'
+        })
       });
 
       if (response.ok) {
-        toast.success("Blog approved successfully");
+        toast.success('Blog approved successfully');
         fetchBlog();
       } else {
-        toast.error("Failed to approve blog");
+        toast.error('Failed to approve blog');
       }
     } catch (error) {
-      toast.error("Error approving blog");
+      toast.error('Error approving blog');
     } finally {
       setActionLoading(false);
     }
@@ -132,33 +119,33 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
 
   const handleReject = async () => {
     if (!rejectionReason.trim()) {
-      toast.error("Please provide a rejection reason");
+      toast.error('Please provide a rejection reason');
       return;
     }
 
     setActionLoading(true);
     try {
       const response = await fetch(`/api/blogs/${blogId}`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          status: "rejected",
-          rejectionReason,
-        }),
+          status: 'rejected',
+          rejectionReason
+        })
       });
 
       if (response.ok) {
-        toast.success("Blog rejected");
-        setRejectionReason("");
+        toast.success('Blog rejected');
+        setRejectionReason('');
         setShowRejectForm(false);
         fetchBlog();
       } else {
-        toast.error("Failed to reject blog");
+        toast.error('Failed to reject blog');
       }
     } catch (error) {
-      toast.error("Error rejecting blog");
+      toast.error('Error rejecting blog');
     } finally {
       setActionLoading(false);
     }
@@ -166,16 +153,16 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "draft":
-        return "bg-gray-100 text-gray-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "approved":
-        return "bg-green-100 text-green-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
+      case 'draft':
+        return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -236,26 +223,16 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
             </CardHeader>
             <CardContent>
               <div className="prose max-w-none">
-                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                  {blog.content}
-                </div>
+                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">{blog.content}</div>
               </div>
             </CardContent>
           </Card>
-          {blog.imageUrl && (
-            <img
-              src={blog.imageUrl}
-              alt={blog.title}
-              className="w-full object-fill rounded-t-lg"
-            />
-          )}
+          {blog.imageUrl && <img src={blog.imageUrl} alt={blog.title} className="w-full object-fill rounded-t-lg" />}
 
           {blog.rejectionReason && (
             <Card className="border-red-200">
               <CardHeader>
-                <CardTitle className="text-red-800">
-                  Previous Rejection
-                </CardTitle>
+                <CardTitle className="text-red-800">Previous Rejection</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-red-700">{blog.rejectionReason}</p>
@@ -282,12 +259,7 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
                 <Calendar className="h-4 w-4 text-gray-500" />
                 <div>
                   <p className="text-sm font-medium">Created</p>
-                  <p className="text-sm text-gray-500">
-                    {format(
-                      new Date(blog.createdAt),
-                      "MMM d, yyyy 'at' h:mm a"
-                    )}
-                  </p>
+                  <p className="text-sm text-gray-500">{format(new Date(blog.createdAt), "MMM d, yyyy 'at' h:mm a")}</p>
                 </div>
               </div>
 
@@ -297,10 +269,7 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
                   <div>
                     <p className="text-sm font-medium">Last Updated</p>
                     <p className="text-sm text-gray-500">
-                      {format(
-                        new Date(blog.updatedAt),
-                        "MMM d, yyyy 'at' h:mm a"
-                      )}
+                      {format(new Date(blog.updatedAt), "MMM d, yyyy 'at' h:mm a")}
                     </p>
                   </div>
                 </div>
@@ -310,12 +279,8 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   <div>
-                    <p className="text-sm font-medium text-green-600">
-                      Approved
-                    </p>
-                    <p className="text-sm text-green-500">
-                      {format(new Date(blog.approvedAt), "MMM d, yyyy")}
-                    </p>
+                    <p className="text-sm font-medium text-green-600">Approved</p>
+                    <p className="text-sm text-green-500">{format(new Date(blog.approvedAt), 'MMM d, yyyy')}</p>
                   </div>
                 </div>
               )}
@@ -334,7 +299,7 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
                 </Button>
               </Link> */}
 
-              {blog.status === "pending" && (
+              {blog.status === 'pending' && (
                 <div className="space-y-3">
                   <Button
                     onClick={handleApprove}
@@ -364,23 +329,18 @@ export default function AdminBlogDetail({ blogId }: AdminBlogDetailProps) {
                     id="rejection-reason"
                     placeholder="Please provide a detailed reason for rejection..."
                     value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
+                    onChange={e => setRejectionReason(e.target.value)}
                     rows={4}
                   />
                   <div className="flex gap-2">
-                    <Button
-                      variant="destructive"
-                      onClick={handleReject}
-                      disabled={actionLoading}
-                      className="flex-1"
-                    >
+                    <Button variant="destructive" onClick={handleReject} disabled={actionLoading} className="flex-1">
                       Confirm Reject
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => {
                         setShowRejectForm(false);
-                        setRejectionReason("");
+                        setRejectionReason('');
                       }}
                       className="flex-1"
                     >

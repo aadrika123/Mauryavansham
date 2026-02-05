@@ -1,13 +1,13 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 // import Dashboard from "./dashboard-view";
-import { authOptions } from "@/src/lib/auth";
-import { getProfileById } from "@/src/features/getProfile/actions/getProfileById";
-import { getAllProfiles } from "@/src/features/searchProfile/actions/getAllProfiles";
-import DashboardLayout from "@/src/components/layout/dashboardLayout";
-import CreateProfileForm from "./createProfileForm";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { authOptions } from '@/src/lib/auth';
+import { getProfileById } from '@/src/features/getProfile/actions/getProfileById';
+import { getAllProfiles } from '@/src/features/searchProfile/actions/getAllProfiles';
+import DashboardLayout from '@/src/components/layout/dashboardLayout';
+import CreateProfileForm from './createProfileForm';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function DashboardPage() {
   // 1. Session fetch karo
@@ -15,14 +15,14 @@ export default async function DashboardPage() {
 
   // 2. Agar session nahi mila to sign-in page par bhejo
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
 
   // 3. Logged-in user ka ID lo
   const userId = session.user.id;
 
   const profileList = await getAllProfiles(Number(userId));
-  console.log("SearchProfilePage result:", profileList?.data);
+  console.log('SearchProfilePage result:', profileList?.data);
 
   // 4. Profile data fetch karo
   const result = await getProfileById(userId);

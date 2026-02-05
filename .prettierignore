@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Cache
+.cache/
+
+# Lock files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Generated files
+*.min.js
+*.min.css
+
+# Public assets
+public/
+
+# Environment files
+.env
+.env.*
+
+# Drizzle migrations
+src/drizzle/migrations/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.md
+*.log

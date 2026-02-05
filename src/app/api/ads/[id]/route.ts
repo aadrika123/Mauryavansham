@@ -5,10 +5,7 @@ import { db } from '@/src/drizzle/db';
 import { ads } from '@/src/drizzle/schema';
 import { eq } from 'drizzle-orm';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -29,28 +26,18 @@ export async function GET(
     }
 
     // ✅ session.user.id is string, so convert before comparing
-    if (
-      ad.userId !== Number(session.user.id) &&
-      session.user.role !== 'admin' &&
-      session.user.role !== 'superAdmin'
-    ) {
+    if (ad.userId !== Number(session.user.id) && session.user.role !== 'admin' && session.user.role !== 'superAdmin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     return NextResponse.json({ ad });
   } catch (error) {
     console.error('Error fetching ad:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const session = await getServerSession(authOptions);
@@ -95,9 +82,6 @@ export async function PUT(
     return NextResponse.json({ ad: updatedAd });
   } catch (error) {
     console.error('Error updating ad:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

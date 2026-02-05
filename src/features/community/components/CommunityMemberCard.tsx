@@ -20,9 +20,7 @@ export function CommunityMemberCard({ member }: CommunityMemberCardProps) {
         <div className="relative mb-4">
           <div className="w-24 h-24 mx-auto rounded-full border-4 border-yellow-400 overflow-hidden">
             <Image
-              src={
-                member.photo || '/placeholder.svg?height=96&width=96&text=User'
-              }
+              src={member.photo || '/placeholder.svg?height=96&width=96&text=User'}
               alt={member.name}
               width={96}
               height={96}
@@ -40,10 +38,7 @@ export function CommunityMemberCard({ member }: CommunityMemberCardProps) {
           )}
           {/* Add more details if available, e.g., occupation */}
         </div>
-        <Button
-          variant="outline"
-          className="w-full border-red-500 text-red-600 hover:bg-red-50 bg-transparent"
-        >
+        <Button variant="outline" className="w-full border-red-500 text-red-600 hover:bg-red-50 bg-transparent">
           View Profile
         </Button>
       </CardContent>

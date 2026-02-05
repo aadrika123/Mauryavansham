@@ -1,13 +1,13 @@
-"use client";
-import { Button } from "@/src/components/ui/button";
+'use client';
+import { Button } from '@/src/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
-} from "@/src/components/ui/dialog";
+  DialogFooter
+} from '@/src/components/ui/dialog';
 
 interface EventModalProps {
   event: any;

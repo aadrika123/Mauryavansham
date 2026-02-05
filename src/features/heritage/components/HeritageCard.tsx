@@ -1,14 +1,14 @@
-import { Card, CardContent } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import Image from "next/image"
+import { Card, CardContent } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import Image from 'next/image';
 
 interface HeritageCardProps {
   item: {
-    title: string
-    description: string
-    timePeriod: string
-    image?: string
-  }
+    title: string;
+    description: string;
+    timePeriod: string;
+    image?: string;
+  };
 }
 
 export function HeritageCard({ item }: HeritageCardProps) {
@@ -16,7 +16,7 @@ export function HeritageCard({ item }: HeritageCardProps) {
     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
       <div className="h-64 relative overflow-hidden">
         <Image
-          src={item.image || "/placeholder.svg?height=256&width=400&text=Heritage"}
+          src={item.image || '/placeholder.svg?height=256&width=400&text=Heritage'}
           alt={item.title}
           fill
           className="object-cover"
@@ -30,5 +30,5 @@ export function HeritageCard({ item }: HeritageCardProps) {
         <p className="text-gray-700">{item.description}</p>
       </CardContent>
     </Card>
-  )
+  );
 }

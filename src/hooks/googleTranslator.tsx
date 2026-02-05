@@ -37,7 +37,7 @@ export default function Translator() {
       '.goog-logo-link'
     ];
 
-    elementsToHide.forEach((selector) => {
+    elementsToHide.forEach(selector => {
       const element = document.querySelector(selector);
       if (element) {
         (element as HTMLElement).style.display = 'none';
@@ -53,8 +53,7 @@ export default function Translator() {
 
     const addScript = document.createElement('script');
     addScript.id = 'google-translate-script';
-    addScript.src =
-      '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    addScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
     addScript.async = true;
     document.body.appendChild(addScript);
 
@@ -73,9 +72,7 @@ export default function Translator() {
   // Language change handler
   const changeLanguage = (selectedLang: string) => {
     const applyLang = () => {
-      const select = document.querySelector(
-        '.goog-te-combo'
-      ) as HTMLSelectElement;
+      const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
 
       if (select) {
         select.value = selectedLang;
@@ -123,10 +120,7 @@ export default function Translator() {
 
       <div className="flex items-center lg:border lg:border-white md:border md:border-white rounded-sm shadow-sm">
         {/* Google Translate hidden div */}
-        <div
-          id="google_translate_element"
-          style={{ position: 'absolute', left: '-9999px' }}
-        ></div>
+        <div id="google_translate_element" style={{ position: 'absolute', left: '-9999px' }}></div>
 
         <div className="relative">
           <button
@@ -135,21 +129,9 @@ export default function Translator() {
           >
             {/* Mobile View: Custom A/अ icon */}
             <span className="block md:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 48 48"
-                width="26"
-                height="26"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="26" height="26">
                 <rect width="48" height="48" rx="10" fill="#f3f4f6" />
-                <text
-                  x="14"
-                  y="30"
-                  fontSize="18"
-                  fontWeight="bold"
-                  fill="#1f2937"
-                  fontFamily="Arial, sans-serif"
-                >
+                <text x="14" y="30" fontSize="18" fontWeight="bold" fill="#1f2937" fontFamily="Arial, sans-serif">
                   A
                 </text>
                 <text

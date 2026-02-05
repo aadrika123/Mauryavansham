@@ -16,7 +16,7 @@ export function escapeHtml(text: string): string {
     '"': '&quot;',
     "'": '&#39;'
   };
-  return text.replace(/[&<>"']/g, (char) => htmlEntities[char] || char);
+  return text.replace(/[&<>"']/g, char => htmlEntities[char] || char);
 }
 
 /**
@@ -25,7 +25,7 @@ export function escapeHtml(text: string): string {
 export function getSafeInitials(name: string): string {
   const initials = name
     .split(' ')
-    .map((n) => n[0])
+    .map(n => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);

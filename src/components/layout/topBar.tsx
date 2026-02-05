@@ -20,10 +20,7 @@ export function TopHeader() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     };
@@ -74,8 +71,7 @@ export function TopHeader() {
 
                     {/* iOS Option (Disabled) */}
                     <div className="flex items-center gap-2 px-4 py-2 text-gray-400 text-sm cursor-not-allowed bg-gray-50">
-                      <FaApple className="text-gray-400" /> iOS App (Coming
-                      Soon)
+                      <FaApple className="text-gray-400" /> iOS App (Coming Soon)
                     </div>
                   </div>
                 )}

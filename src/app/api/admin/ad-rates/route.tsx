@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { adRates } from "@/src/drizzle/db/schemas/adRates";
-import { eq } from "drizzle-orm"; // <-- import eq
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { adRates } from '@/src/drizzle/db/schemas/adRates';
+import { eq } from 'drizzle-orm'; // <-- import eq
 
 // Fetch all rates
 export async function GET(req: NextRequest) {
@@ -15,10 +15,7 @@ export async function POST(req: NextRequest) {
     const data: { date: string; rate: number }[] = await req.json();
 
     for (const d of data) {
-      const existing = await db
-        .select()
-        .from(adRates)
-        .where(eq(adRates.date, d.date)); // eq imported
+      const existing = await db.select().from(adRates).where(eq(adRates.date, d.date)); // eq imported
 
       if (existing.length > 0) {
         await db
@@ -28,7 +25,7 @@ export async function POST(req: NextRequest) {
       } else {
         await db.insert(adRates).values({
           date: d.date, // ✅ already a string in 'YYYY-MM-DD'
-          rate: d.rate.toString(), // ✅ convert numeric to string
+          rate: d.rate.toString() // ✅ convert numeric to string
         });
       }
     }
@@ -36,9 +33,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "Failed to save rates" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to save rates' }, { status: 500 });
   }
 }

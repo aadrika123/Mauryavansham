@@ -1,22 +1,19 @@
-import { db } from "@/src/drizzle/db";
-import { heritage } from "@/src/drizzle/schema";
-import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth"; // adjust path if needed
+import { db } from '@/src/drizzle/db';
+import { heritage } from '@/src/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import { getServerSession } from 'next-auth'; // adjust path if needed
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession();
     const userId = session?.user?.id || null;
-    const userName = session?.user?.name || "Unknown";
+    const userName = session?.user?.name || 'Unknown';
 
     const body = await req.json();
     const { id, title, description, badge, imageUrl, order, isActive } = body;
 
     if (!title || !description || !imageUrl) {
-      return Response.json(
-        { success: false, message: "Missing required fields" },
-        { status: 400 }
-      );
+      return Response.json({ success: false, message: 'Missing required fields' }, { status: 400 });
     }
 
     if (id) {
@@ -32,13 +29,13 @@ export async function POST(req: Request) {
           isActive,
           updatedAt: new Date(),
           updatedById: userId,
-          updatedByName: userName,
+          updatedByName: userName
         })
         .where(eq(heritage.id, id));
 
       return Response.json({
         success: true,
-        message: "Heritage updated successfully",
+        message: 'Heritage updated successfully'
       });
     } else {
       // 🆕 Create new record
@@ -50,19 +47,16 @@ export async function POST(req: Request) {
         order,
         isActive,
         createdById: userId,
-        createdByName: userName,
+        createdByName: userName
       });
 
       return Response.json({
         success: true,
-        message: "Heritage created successfully",
+        message: 'Heritage created successfully'
       });
     }
   } catch (error) {
-    console.error("Error:", error);
-    return Response.json(
-      { success: false, message: "Server error" },
-      { status: 500 }
-    );
+    console.error('Error:', error);
+    return Response.json({ success: false, message: 'Server error' }, { status: 500 });
   }
 }

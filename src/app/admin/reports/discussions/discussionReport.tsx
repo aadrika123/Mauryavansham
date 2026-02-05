@@ -1,12 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/src/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Input } from '@/src/components/ui/input';
 import { Button } from '@/src/components/ui/button';
 import Loader from '@/src/components/ui/loader';
@@ -94,7 +89,7 @@ export default function DiscussionReports() {
   const handleExportToExcel = async () => {
     if (discussions.length === 0) return;
 
-    const dataToExport = discussions.map((d) => ({
+    const dataToExport = discussions.map(d => ({
       Title: d.title,
       Content: d.content,
       Category: d.category,
@@ -122,9 +117,7 @@ export default function DiscussionReports() {
     <div className="p-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">
-            Discussion Reports
-          </CardTitle>
+          <CardTitle className="text-lg font-semibold">Discussion Reports</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Filters */}
@@ -135,18 +128,8 @@ export default function DiscussionReports() {
               value={filters.search}
               onChange={handleFilterChange}
             />
-            <Input
-              name="category"
-              placeholder="Category"
-              value={filters.category}
-              onChange={handleFilterChange}
-            />
-            <Input
-              name="status"
-              placeholder="Status"
-              value={filters.status}
-              onChange={handleFilterChange}
-            />
+            <Input name="category" placeholder="Category" value={filters.category} onChange={handleFilterChange} />
+            <Input name="status" placeholder="Status" value={filters.status} onChange={handleFilterChange} />
             <Input
               type="date"
               name="dateFrom"
@@ -164,10 +147,7 @@ export default function DiscussionReports() {
           </div>
 
           <div className="flex gap-4 mb-4">
-            <Button
-              onClick={handleSearch}
-              className="bg-[#8B0000] text-white hover:bg-[#a30a0a]"
-            >
+            <Button onClick={handleSearch} className="bg-[#8B0000] text-white hover:bg-[#a30a0a]">
               Apply Filters
             </Button>
             <Button onClick={handleExportToExcel} variant="outline">
@@ -213,34 +193,18 @@ export default function DiscussionReports() {
                       <td className="border px-4 py-2">{d.likesCount}</td>
                       <td className="border px-4 py-2">{d.repliesCount}</td>
                       <td className="border px-4 py-2">{d.status}</td>
+                      <td className="border px-4 py-2">{d.approvedBy || '—'}</td>
                       <td className="border px-4 py-2">
-                        {d.approvedBy || '—'}
+                        {d.approvedAt ? new Date(d.approvedAt).toLocaleString() : '—'}
                       </td>
+                      <td className="border px-4 py-2">{d.rejectedBy || '—'}</td>
                       <td className="border px-4 py-2">
-                        {d.approvedAt
-                          ? new Date(d.approvedAt).toLocaleString()
-                          : '—'}
+                        {d.rejectedAt ? new Date(d.rejectedAt).toLocaleString() : '—'}
                       </td>
-                      <td className="border px-4 py-2">
-                        {d.rejectedBy || '—'}
-                      </td>
-                      <td className="border px-4 py-2">
-                        {d.rejectedAt
-                          ? new Date(d.rejectedAt).toLocaleString()
-                          : '—'}
-                      </td>
-                      <td className="border px-4 py-2">
-                        {d.rejectionReason || '—'}
-                      </td>
-                      <td className="border px-4 py-2">
-                        {d.isCompleted ? 'Yes' : 'No'}
-                      </td>
-                      <td className="border px-4 py-2">
-                        {new Date(d.createdAt).toLocaleString()}
-                      </td>
-                      <td className="border px-4 py-2">
-                        {new Date(d.updatedAt).toLocaleString()}
-                      </td>
+                      <td className="border px-4 py-2">{d.rejectionReason || '—'}</td>
+                      <td className="border px-4 py-2">{d.isCompleted ? 'Yes' : 'No'}</td>
+                      <td className="border px-4 py-2">{new Date(d.createdAt).toLocaleString()}</td>
+                      <td className="border px-4 py-2">{new Date(d.updatedAt).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -256,8 +220,8 @@ export default function DiscussionReports() {
         totalPages={totalPages}
         totalItems={totalCount}
         pageSize={pageSize}
-        onPageChange={(page) => setCurrentPage(page)}
-        onPageSizeChange={(size) => {
+        onPageChange={page => setCurrentPage(page)}
+        onPageSizeChange={size => {
           setPageSize(size);
           setCurrentPage(1);
         }}

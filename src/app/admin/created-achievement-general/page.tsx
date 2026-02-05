@@ -1,30 +1,27 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/src/lib/auth";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
-import AdminAchievementsPage from "./createdAchievementPage";
-import { achievements } from "@/src/drizzle/schema";
-import { db } from "@/src/drizzle/db";
-import { desc } from "drizzle-orm";
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/src/lib/auth';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
+import AdminAchievementsPage from './createdAchievementPage';
+import { achievements } from '@/src/drizzle/schema';
+import { db } from '@/src/drizzle/db';
+import { desc } from 'drizzle-orm';
 
 export default async function AdsPage() {
   const session = await getServerSession(authOptions);
 
   // 🔐 Redirect if not logged in
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
 
   // 🟢 Fetch all achievements (no filter, admin sees all)
-  const allAchievements = await db
-    .select()
-    .from(achievements)
-    .orderBy(desc(achievements.year));
+  const allAchievements = await db.select().from(achievements).orderBy(desc(achievements.year));
 
   // 🧩 Format for UI
-  const formatted = allAchievements.map((item) => ({
+  const formatted = allAchievements.map(item => ({
     id: item.id,
     name: item.name,
     fatherName: item.fatherName,
@@ -33,7 +30,7 @@ export default async function AdsPage() {
     description: item.description,
     images: item.images ?? [], // ✅ multiple images (array)
     category: item.category,
-    otherCategory: item.otherCategory || "", // ✅ if user entered custom category
+    otherCategory: item.otherCategory || '', // ✅ if user entered custom category
     isVerified: item.isVerified,
     isFeatured: item.isFeatured,
     isHallOfFame: item.isHallOfFame,
@@ -48,10 +45,10 @@ export default async function AdsPage() {
     removedBy: item.removedBy,
     removedAt: item.removedAt ? item.removedAt.toISOString() : undefined,
     removedById: item.removedById,
-    reason: item.reason,
+    reason: item.reason
   }));
 
-  console.log(formatted, "🧾 Formatted Admin Achievements");
+  console.log(formatted, '🧾 Formatted Admin Achievements');
 
   // 🧭 Render
   return (

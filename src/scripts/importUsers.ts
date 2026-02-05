@@ -25,7 +25,7 @@ const importUsers = async () => {
 
     sheet.eachRow((row, rowNumber) => {
       if (rowNumber === 1) {
-        row.eachCell((cell) => {
+        row.eachCell(cell => {
           headers.push(String(cell.value || ''));
         });
       } else {

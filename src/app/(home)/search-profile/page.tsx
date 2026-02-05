@@ -1,10 +1,10 @@
 // import { getAllProfiles } from "@/src/features/searchProfile/actions"
-import { getAllProfiles } from "@/src/features/searchProfile/actions/getAllProfiles"
-import SearchProfilesClient from "@/src/app/(home)/search-profile/searchProfileClient"
+import { getAllProfiles } from '@/src/features/searchProfile/actions/getAllProfiles';
+import SearchProfilesClient from '@/src/app/(home)/search-profile/searchProfileClient';
 
 export default async function SearchProfilePage() {
-  const result = await getAllProfiles()
-  console.log("SearchProfilePage result:", result)
+  const result = await getAllProfiles();
+  console.log('SearchProfilePage result:', result);
 
   if (!result.success) {
     return (
@@ -14,8 +14,8 @@ export default async function SearchProfilePage() {
           <p className="text-gray-600">{result.message}</p>
         </div>
       </div>
-    )
+    );
   }
 
-  return <SearchProfilesClient initialProfiles={result.data || []} />
+  return <SearchProfilesClient initialProfiles={result.data || []} />;
 }

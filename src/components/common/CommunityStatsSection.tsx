@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 interface CommunityStats {
   successfulMarriages: number;
@@ -18,13 +18,13 @@ export function CommunityStatsSection() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("/api/masters");
+        const res = await fetch('/api/masters');
         const data = await res.json();
         if (data.success) {
           setStats(data.data);
         }
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        console.error('Error fetching stats:', error);
       } finally {
         setLoading(false);
       }
@@ -39,12 +39,8 @@ export function CommunityStatsSection() {
         <div className="bg-[linear-gradient(125deg,#ffae00,#8B0000,#FF5C00)] text-white py-10 rounded-2xl shadow-xl">
           {/* Heading */}
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-3">
-              Our Growing Community
-            </h2>
-            <p className="text-sm sm:text-base text-white/80">
-              Connecting families and creating lifelong bonds
-            </p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-3">Our Growing Community</h2>
+            <p className="text-sm sm:text-base text-white/80">Connecting families and creating lifelong bonds</p>
           </div>
 
           {/* Stats Grid */}
@@ -52,49 +48,33 @@ export function CommunityStatsSection() {
             {/* Registered Families */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
               <div className="text-3xl sm:text-4xl font-bold mb-2">
-                {loading
-                  ? "..."
-                  : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
+                {loading ? '...' : `${stats?.registeredFamilies?.toLocaleString() || 0}+`}
               </div>
-              <div className="text-sm sm:text-base text-white/80">
-                Registered Members
-              </div>
+              <div className="text-sm sm:text-base text-white/80">Registered Members</div>
             </div>
 
             {/* Successful Marriages */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
               <div className="text-3xl sm:text-4xl font-bold mb-2">
-                {loading
-                  ? "..."
-                  : `${stats?.matrimonialProfiles?.toLocaleString() || 0}+`}
+                {loading ? '...' : `${stats?.matrimonialProfiles?.toLocaleString() || 0}+`}
               </div>
-              <div className="text-sm sm:text-base text-white/80">
-               Matrimonial Profiles
-              </div>
+              <div className="text-sm sm:text-base text-white/80">Matrimonial Profiles</div>
             </div>
 
             {/* Countries Connected */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
               <div className="text-3xl sm:text-4xl font-bold mb-2">
-                {loading
-                  ? "..."
-                  : `${stats?.registeredBusinessHouses?.toLocaleString() || 0}+`}
+                {loading ? '...' : `${stats?.registeredBusinessHouses?.toLocaleString() || 0}+`}
               </div>
-              <div className="text-sm sm:text-base text-white/80">
-                Registered Business Houses
-              </div>
+              <div className="text-sm sm:text-base text-white/80">Registered Business Houses</div>
             </div>
 
             {/* Forum Discussions */}
             <div className="text-center hover:scale-105 transition-transform duration-300">
               <div className="text-3xl sm:text-4xl font-bold mb-2">
-                {loading
-                  ? "..."
-                  : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
+                {loading ? '...' : `${stats?.forumDiscussions?.toLocaleString() || 0}+`}
               </div>
-              <div className="text-sm sm:text-base text-white/80">
-                Help Discussions
-              </div>
+              <div className="text-sm sm:text-base text-white/80">Help Discussions</div>
             </div>
           </div>
         </div>

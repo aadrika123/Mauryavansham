@@ -40,25 +40,16 @@ import {
 import type { User as NextAuthUser } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
-export default function AdmindashboardLayout({
-  children,
-  user
-}: {
-  children: React.ReactNode;
-  user: NextAuthUser;
-}) {
+export default function AdmindashboardLayout({ children, user }: { children: React.ReactNode; user: NextAuthUser }) {
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false); // ✅ Sidebar toggle state
   const [scrollY, setScrollY] = useState(0); // ✅ Scroll position state
   const pathname = usePathname();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
-  const unreadCount =
-    notifications?.filter((n) => !n.isRead || n.isRead === 0).length || 0;
+  const unreadCount = notifications?.filter(n => !n.isRead || n.isRead === 0).length || 0;
 
-  const unreadNotifications = notifications.filter(
-    (n) => !n.isRead || n.isRead === 0
-  );
+  const unreadNotifications = notifications.filter(n => !n.isRead || n.isRead === 0);
 
   // ✅ Track scroll position
   useEffect(() => {
@@ -70,13 +61,13 @@ export default function AdmindashboardLayout({
   useEffect(() => {
     if (user?.role === 'admin' || user?.role === 'superAdmin') {
       fetch('/api/admin/notifications')
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           // ✅ handle both raw array or { data: [] }
           const notifs = Array.isArray(data) ? data : data.data || [];
           setNotifications(notifs);
         })
-        .catch((err) => console.error('Failed to fetch notifications:', err));
+        .catch(err => console.error('Failed to fetch notifications:', err));
     }
   }, [user]);
 
@@ -431,14 +422,14 @@ export default function AdmindashboardLayout({
   const handleOpenNotifications = async (isOpen: boolean) => {
     if (!isOpen) return;
 
-    const unread = notifications.filter((n) => !n.isRead || n.isRead === 0);
+    const unread = notifications.filter(n => !n.isRead || n.isRead === 0);
     if (unread.length === 0) return;
 
     try {
       const res = await fetch('/api/admin/notifications/mark-read', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) })
+        body: JSON.stringify({ notificationIds: unread.map(n => n.id) })
       });
 
       if (res.ok) {
@@ -458,8 +449,7 @@ export default function AdmindashboardLayout({
     }
   };
 
-  const sidebarItems =
-    user?.role === 'superAdmin' ? superAdminSidebarItems : adminSidebarItems;
+  const sidebarItems = user?.role === 'superAdmin' ? superAdminSidebarItems : adminSidebarItems;
 
   const handleSignOut = async () => {
     setIsOpen(false);
@@ -469,7 +459,7 @@ export default function AdmindashboardLayout({
     }
   };
   const toggleMenu = (title: string) => {
-    setOpenMenus((prev) => ({ ...prev, [title]: !prev[title] }));
+    setOpenMenus(prev => ({ ...prev, [title]: !prev[title] }));
   };
 
   return (
@@ -478,15 +468,8 @@ export default function AdmindashboardLayout({
       <div className="bg-gradient-to-r from-red-700 to-orange-600 text-white p-6 lg:p-6 fixed top-0 left-0 right-0 z-20 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* ✅ Hamburger menu for mobile */}
-          <button
-            className="lg:hidden p-2 rounded hover:bg-red-700"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+          <button className="lg:hidden p-2 rounded hover:bg-red-700" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
           <Crown className="w-8 h-8 hidden lg:block text-orange-400" />
           <div className="hidden lg:block">
@@ -498,26 +481,16 @@ export default function AdmindashboardLayout({
           <div className=" flex items-center gap-2 md:hidden">
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
-                scrollY > 20
-                  ? 'bg-gradient-to-br from-red-600 to-orange-500'
-                  : 'bg-white/20 backdrop-blur-sm'
+                scrollY > 20 ? 'bg-gradient-to-br from-red-600 to-orange-500' : 'bg-white/20 backdrop-blur-sm'
               }`}
             >
               <Crown className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1
-                className={`text-base font-bold leading-tight ${
-                  scrollY > 20 ? 'text-red-700' : 'text-white'
-                }`}
-              >
+              <h1 className={`text-base font-bold leading-tight ${scrollY > 20 ? 'text-red-700' : 'text-white'}`}>
                 Mauryavansham
               </h1>
-              <p
-                className={`text-xs leading-tight ${
-                  scrollY > 20 ? 'text-orange-600' : 'text-orange-100'
-                }`}
-              >
+              <p className={`text-xs leading-tight ${scrollY > 20 ? 'text-orange-600' : 'text-orange-100'}`}>
                 मौर्यवंश - गौरवशाली परंपरा
               </p>
             </div>
@@ -528,11 +501,7 @@ export default function AdmindashboardLayout({
           {(user?.role === 'admin' || user?.role === 'superAdmin') && (
             <DropdownMenu onOpenChange={handleOpenNotifications}>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-red-700 relative"
-                >
+                <Button variant="ghost" size="sm" className="text-white hover:bg-red-700 relative">
                   <Bell className="w-4 h-4 mr-2" />
                   <span className="hidden lg:inline">Notifications</span>
                   {unreadCount > 0 && (
@@ -543,38 +512,25 @@ export default function AdmindashboardLayout({
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                align="end"
-                className="w-80 max-h-96 overflow-y-auto"
-              >
+              <DropdownMenuContent align="end" className="w-80 max-h-96 overflow-y-auto">
                 {/* ✅ Header section with "Mark All as Read" button */}
                 <div className="flex items-center justify-between px-3 py-2 border-b border-yellow-200 bg-yellow-50 sticky top-0 z-10">
-                  <h3 className="text-sm font-semibold text-red-700">
-                    Notifications
-                  </h3>
+                  <h3 className="text-sm font-semibold text-red-700">Notifications</h3>
                   {notifications.length > 0 && (
                     <button
                       onClick={async () => {
                         try {
-                          const res = await fetch(
-                            '/api/notifications/mark-all-read',
-                            {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' }
-                              // body: JSON.stringify({ userId: user?.id }),
-                            }
-                          );
+                          const res = await fetch('/api/notifications/mark-all-read', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                            // body: JSON.stringify({ userId: user?.id }),
+                          });
 
                           if (res.ok) {
                             // ✅ Clear all notifications from UI
-                            setNotifications((prev) =>
-                              prev.map((n) => ({ ...n, isRead: 1 }))
-                            );
+                            setNotifications(prev => prev.map(n => ({ ...n, isRead: 1 })));
 
-                            console.log(
-                              '✅ All notifications marked as read for user:',
-                              user?.id
-                            );
+                            console.log('✅ All notifications marked as read for user:', user?.id);
                           } else {
                             console.error('❌ Failed to mark all as read');
                           }
@@ -591,20 +547,16 @@ export default function AdmindashboardLayout({
 
                 {/* ✅ Notification list */}
                 {unreadNotifications.length > 0 ? (
-                  unreadNotifications.map((n) => (
+                  unreadNotifications.map(n => (
                     <div
                       key={n.id}
                       className="bg-yellow-50 rounded-md border border-yellow-200 p-2 m-2 hover:bg-yellow-100 shadow-sm"
                     >
-                      <DropdownMenuItem className="whitespace-normal text-sm">
-                        {n.message}
-                      </DropdownMenuItem>
+                      <DropdownMenuItem className="whitespace-normal text-sm">{n.message}</DropdownMenuItem>
                     </div>
                   ))
                 ) : (
-                  <div className="p-3 text-center text-gray-500 text-sm">
-                    No new notifications
-                  </div>
+                  <div className="p-3 text-center text-gray-500 text-sm">No new notifications</div>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -613,12 +565,7 @@ export default function AdmindashboardLayout({
           {/* Account Menu */}
           {/* ✅ Mobile view: sirf logout icon */}
           <div className="lg:hidden">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-red-700"
-              onClick={() => setIsOpen(true)}
-            >
+            <Button variant="ghost" size="sm" className="text-white hover:bg-red-700" onClick={() => setIsOpen(true)}>
               <LogOut className="w-5 h-5" />
             </Button>
           </div>
@@ -627,20 +574,13 @@ export default function AdmindashboardLayout({
           <div className="hidden lg:block">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:bg-red-700"
-                >
+                <Button variant="ghost" size="sm" className="text-white hover:bg-red-700">
                   <Settings className="w-4 h-4 mr-2" /> Account
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => setIsOpen(true)}
-                  className="text-red-600 focus:text-red-600"
-                >
+                <DropdownMenuItem onClick={() => setIsOpen(true)} className="text-red-600 focus:text-red-600">
                   <LogOut className="w-4 h-4 mr-2" /> Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -664,15 +604,9 @@ export default function AdmindashboardLayout({
             <div className="flex items-center gap-3 mb-6">
               <div
                 className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
-                onClick={() =>
-                  (window.location.href = '/admin/user-profile/' + user?.id)
-                }
+                onClick={() => (window.location.href = '/admin/user-profile/' + user?.id)}
               >
-                <img
-                  src={user?.photo || '/placeholder.svg'}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
+                <img src={user?.photo || '/placeholder.svg'} alt="Profile" className="w-full h-full object-cover" />
               </div>
               <div>
                 <h3 className="font-semibold text-red-700">{user?.name}</h3>
@@ -682,7 +616,7 @@ export default function AdmindashboardLayout({
 
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto space-y-2">
-              {sidebarItems.map((item) => {
+              {sidebarItems.map(item => {
                 const hasSubItems = (item.subItems?.length ?? 0) > 0;
                 const isOpen = openMenus[item.title] || false;
 
@@ -703,15 +637,11 @@ export default function AdmindashboardLayout({
                             <item.icon className="h-5 w-5" />
                             <span>{item.title}</span>
                           </div>
-                          {isOpen ? (
-                            <ChevronUp className="w-4 h-4" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4" />
-                          )}
+                          {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
                         {isOpen && (
                           <div className="ml-6 space-y-1">
-                            {item.subItems!.map((sub) => (
+                            {item.subItems!.map(sub => (
                               <Link
                                 key={sub.href}
                                 href={sub.href}
@@ -724,9 +654,7 @@ export default function AdmindashboardLayout({
                                 onClick={() => setSidebarOpen(false)}
                               >
                                 <sub.icon className="h-4 w-4" />
-                                <span className="whitespace-pre-wrap w-32">
-                                  {sub.title}
-                                </span>
+                                <span className="whitespace-pre-wrap w-32">{sub.title}</span>
                               </Link>
                             ))}
                           </div>
@@ -755,29 +683,19 @@ export default function AdmindashboardLayout({
         </div>
 
         {/* Main content */}
-        <div className="flex-1 ml-0 lg:ml-64 pt-24 overflow-y-auto h-screen">
-          {children}
-        </div>
+        <div className="flex-1 ml-0 lg:ml-64 pt-24 overflow-y-auto h-screen">{children}</div>
       </div>
 
       {/* Confirmation Modal */}
       {isOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-bold mb-4">
-              Are you sure you want to sign out?
-            </h2>
+            <h2 className="text-lg font-bold mb-4">Are you sure you want to sign out?</h2>
             <div className="flex justify-between space-x-4">
-              <Button
-                onClick={() => setIsOpen(false)}
-                className="w-full bg-gray-300 text-gray-700"
-              >
+              <Button onClick={() => setIsOpen(false)} className="w-full bg-gray-300 text-gray-700">
                 Cancel
               </Button>
-              <Button
-                onClick={handleSignOut}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white"
-              >
+              <Button onClick={handleSignOut} className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white">
                 Yes, Sign Out
               </Button>
             </div>

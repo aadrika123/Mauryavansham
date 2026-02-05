@@ -3,13 +3,7 @@
 import { Card } from '@/src/components/ui/card';
 import { Button } from '@/src/components/ui/button';
 import { Badge } from '@/src/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/src/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
 import {
   Heart,
   MessageCircle,
@@ -40,28 +34,16 @@ interface ProfilesListProps {
   onSortChange: (sortBy: string) => void;
 }
 
-const ProfilesList: React.FC<ProfilesListProps> = ({
-  profiles,
-  totalCount,
-  sortBy,
-  onSortChange
-}) => {
+const ProfilesList: React.FC<ProfilesListProps> = ({ profiles, totalCount, sortBy, onSortChange }) => {
   const { data: session } = useSession(); // ✅ logged in user
   const router = useRouter();
   const [expressed, setExpressed] = useState<Record<string, boolean>>({});
   const [showProfileSelectModal, setShowProfileSelectModal] = useState(false);
   const [userProfiles, setUserProfiles] = useState<Profile[]>([]);
-  const [pendingReceiverProfile, setPendingReceiverProfile] = useState<
-    string | null
-  >(null);
-  const [pendingReceiverUser, setPendingReceiverUser] = useState<string | null>(
-    null
-  );
+  const [pendingReceiverProfile, setPendingReceiverProfile] = useState<string | null>(null);
+  const [pendingReceiverUser, setPendingReceiverUser] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const handleExpressInterest = async (
-    receiverProfileId: string,
-    receiverUserId: string
-  ) => {
+  const handleExpressInterest = async (receiverProfileId: string, receiverUserId: string) => {
     setPendingReceiverProfile(receiverProfileId);
     setPendingReceiverUser(receiverUserId);
 
@@ -91,32 +73,29 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
     setLoading(true); // show loader for POST request
     try {
-      const res = await fetch(
-        `/api/profile-interest/${pendingReceiverProfile}/interests`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            senderUserId: session?.user?.id, // correct field name
-            senderProfileId: profileId, // profile id of sender
-            receiverUserId: pendingReceiverUser, // correct field name
-            senderProfile: {
-              name: session?.user?.name,
-              email: session?.user?.email,
-              phone: (session?.user as any)?.phone,
-              city: (session?.user as any)?.city,
-              dob: (session?.user as any)?.dob,
-              address: (session?.user as any)?.address,
-              fatherName: (session?.user as any)?.fatherName,
-              state: (session?.user as any)?.state
-            }
-          })
-        }
-      );
+      const res = await fetch(`/api/profile-interest/${pendingReceiverProfile}/interests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderUserId: session?.user?.id, // correct field name
+          senderProfileId: profileId, // profile id of sender
+          receiverUserId: pendingReceiverUser, // correct field name
+          senderProfile: {
+            name: session?.user?.name,
+            email: session?.user?.email,
+            phone: (session?.user as any)?.phone,
+            city: (session?.user as any)?.city,
+            dob: (session?.user as any)?.dob,
+            address: (session?.user as any)?.address,
+            fatherName: (session?.user as any)?.fatherName,
+            state: (session?.user as any)?.state
+          }
+        })
+      });
 
       const data = await res.json();
       if (data.success) {
-        setExpressed((prev) => ({
+        setExpressed(prev => ({
           ...prev,
           [pendingReceiverProfile]: true
         }));
@@ -153,7 +132,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
   };
 
   // ✅ Agar logged in user ke profiles hai to unko Online now mark karo
-  const enrichedProfiles = profiles.map((profile) => {
+  const enrichedProfiles = profiles.map(profile => {
     if (session?.user?.id && profile.userId === session.user.id) {
       const lastActive = profile.lastActive; // ye DB ka value hona chahiye
       // if (lastActive instanceof Date) {
@@ -163,9 +142,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
       return {
         ...profile,
         lastActive:
-          lastActive && !isNaN(new Date(lastActive).getTime())
-            ? new Date(lastActive).toLocaleString()
-            : 'Never active'
+          lastActive && !isNaN(new Date(lastActive).getTime()) ? new Date(lastActive).toLocaleString() : 'Never active'
       };
     }
     return profile;
@@ -173,34 +150,26 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
   // Image Carousel Component
   const ProfileImageCarousel = ({ profile }: { profile: any }) => {
-    const images = [
-      profile.profileImage1,
-      profile.profileImage2,
-      profile.profileImage3
-    ].filter(Boolean);
+    const images = [profile.profileImage1, profile.profileImage2, profile.profileImage3].filter(Boolean);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const getInitials = (name: string): string =>
       name
         .split(' ')
-        .map((n) => n[0])
+        .map(n => n[0])
         .join('')
         .toUpperCase()
         .slice(0, 2);
 
     const goToPrevious = (e: React.MouseEvent) => {
       e.stopPropagation();
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? images.length - 1 : prev - 1
-      );
+      setCurrentImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
     };
 
     const goToNext = (e: React.MouseEvent) => {
       e.stopPropagation();
-      setCurrentImageIndex((prev) =>
-        prev === images.length - 1 ? 0 : prev + 1
-      );
+      setCurrentImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
     };
 
     const goToImage = (index: number, e: React.MouseEvent) => {
@@ -216,7 +185,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               src={images[currentImageIndex]}
               alt={`${profile.name}'s profile`}
               className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-              onError={(e) => {
+              onError={e => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
                 const parent = target.parentElement;
@@ -248,7 +217,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                   {images.map((_, index) => (
                     <button
                       key={index}
-                      onClick={(e) => goToImage(index, e)}
+                      onClick={e => goToImage(index, e)}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
                         currentImageIndex === index
                           ? 'bg-white scale-110 shadow-lg'
@@ -266,9 +235,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
-            <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
-              {getInitials(profile.name)}
-            </div>
+            <div className="text-orange-600 text-3xl lg:text-4xl font-bold">{getInitials(profile.name)}</div>
           </div>
         )}
 
@@ -326,11 +293,8 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
       {/* Profiles */}
       <div className="space-y-4">
-        {enrichedProfiles?.map((profile) => (
-          <Card
-            key={profile.id}
-            className="p-6 hover:shadow-md transition-shadow"
-          >
+        {enrichedProfiles?.map(profile => (
+          <Card key={profile.id} className="p-6 hover:shadow-md transition-shadow">
             <div className="flex flex-col lg:flex-row gap-6">
               <div className="flex-shrink-0">
                 <ProfileImageCarousel profile={profile} />
@@ -340,9 +304,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                 <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
                   <div className="space-y-3">
                     <div>
-                      <h3 className="text-xl font-semibold text-red-900">
-                        {profile.name}
-                      </h3>
+                      <h3 className="text-xl font-semibold text-red-900">{profile.name}</h3>
                       <div className="flex items-center gap-4 text-sm text-red-600 mt-1">
                         <span>{profile.age} years</span>
                         <span>•</span>
@@ -363,13 +325,11 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                         </div>
                       )}
 
-                      {(profile.occupation !== 'Not specified' ||
-                        profile.company !== 'Not specified') && (
+                      {(profile.occupation !== 'Not specified' || profile.company !== 'Not specified') && (
                         <div className="flex items-center gap-2 text-sm text-red-700">
                           <Briefcase className="w-4 h-4" />
                           <span>
-                            {profile.occupation !== 'Not specified' &&
-                            profile.company !== 'Not specified'
+                            {profile.occupation !== 'Not specified' && profile.company !== 'Not specified'
                               ? `${profile.occupation} at ${profile.company}`
                               : profile.occupation !== 'Not specified'
                                 ? profile.occupation
@@ -388,22 +348,13 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
 
                     {profile.interests.length > 0 && (
                       <div className="flex flex-wrap gap-2">
-                        {profile.interests
-                          .slice(0, 5)
-                          .map((interest, index) => (
-                            <Badge
-                              key={`${interest}-${index}`}
-                              variant="secondary"
-                              className="text-xs text-red-800"
-                            >
-                              {interest}
-                            </Badge>
-                          ))}
+                        {profile.interests.slice(0, 5).map((interest, index) => (
+                          <Badge key={`${interest}-${index}`} variant="secondary" className="text-xs text-red-800">
+                            {interest}
+                          </Badge>
+                        ))}
                         {profile.interests.length > 5 && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs text-red-800"
-                          >
+                          <Badge variant="outline" className="text-xs text-red-800">
                             +{profile.interests.length - 5} more
                           </Badge>
                         )}
@@ -421,15 +372,11 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                     variant="outline"
                     size="sm"
                     disabled={expressed[profile.id]}
-                    onClick={() =>
-                      handleExpressInterest(profile.id, profile.userId)
-                    }
+                    onClick={() => handleExpressInterest(profile.id, profile.userId)}
                     className="flex items-center gap-2"
                   >
                     <Heart className="w-4 h-4" />
-                    {expressed[profile.id]
-                      ? 'Interest Sent'
-                      : 'Express Interest'}
+                    {expressed[profile.id] ? 'Interest Sent' : 'Express Interest'}
                   </Button>
 
                   <Button
@@ -468,12 +415,9 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
             <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
               <Users className="w-8 h-8 text-gray-400" />
             </div>
-            <p className="text-gray-500 font-medium">
-              No profiles found matching your criteria
-            </p>
+            <p className="text-gray-500 font-medium">No profiles found matching your criteria</p>
             <p className="text-sm text-gray-400 mt-2">
-              Try adjusting your filters to see more results, or check back
-              later for new profiles.
+              Try adjusting your filters to see more results, or check back later for new profiles.
             </p>
           </div>
         </Card>
@@ -490,16 +434,12 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
       {showProfileSelectModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white p-6 rounded-lg w-80 max-h-[80vh] overflow-y-auto space-y-4">
-            <h2 className="text-lg font-semibold text-red-900">
-              Select Your Profile
-            </h2>
+            <h2 className="text-lg font-semibold text-red-900">Select Your Profile</h2>
             <div className="space-y-2">
               {userProfiles.length === 0 ? (
-                <p className="text-gray-500 text-sm">
-                  Create at least one profile to express interest
-                </p>
+                <p className="text-gray-500 text-sm">Create at least one profile to express interest</p>
               ) : (
-                userProfiles.map((profile) => (
+                userProfiles.map(profile => (
                   <div
                     key={profile.id}
                     className="p-2 border rounded hover:bg-red-50 cursor-pointer"

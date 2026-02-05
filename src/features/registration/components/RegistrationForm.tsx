@@ -1,45 +1,40 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { Textarea } from "@/src/components/ui/textarea";
-import { Checkbox } from "@/src/components/ui/checkbox";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { ArrowLeft, Crown, Users } from "lucide-react";
-import Link from "next/link";
-import { createRegistration } from "../actions/registration";
-import { toast } from "@/src/components/ui/use-toast";
+import { useState } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { Textarea } from '@/src/components/ui/textarea';
+import { Checkbox } from '@/src/components/ui/checkbox';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { ArrowLeft, Crown, Users } from 'lucide-react';
+import Link from 'next/link';
+import { createRegistration } from '../actions/registration';
+import { toast } from '@/src/components/ui/use-toast';
 
 export default function CommunityRegistrationPage() {
   const [formData, setFormData] = useState({
-    familyHeadName: "",
-    email: "",
-    phone: "",
-    gotra: "",
-    address: "",
-    city: "",
-    state: "",
-    country: "",
-    occupation: "",
-    businessName: "",
-    familyMembers: "",
+    familyHeadName: '',
+    email: '',
+    phone: '',
+    gotra: '',
+    address: '',
+    city: '',
+    state: '',
+    country: '',
+    occupation: '',
+    businessName: '',
+    familyMembers: '',
     agreeToTerms: true,
-    roles: "member", // Default role
+    roles: 'member' // Default role
   });
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [field]: value,
+      [field]: value
     }));
   };
 
@@ -55,36 +50,36 @@ export default function CommunityRegistrationPage() {
 
     if (result?.success) {
       toast({
-        title: "Success",
-        description: result.message || "Registration successful!",
-        variant: "default",
+        title: 'Success',
+        description: result.message || 'Registration successful!',
+        variant: 'default'
       });
 
       // Reset form
       setFormData({
-        familyHeadName: "",
-        email: "",
-        phone: "",
-        gotra: "",
-        address: "",
-        city: "",
-        state: "",
-        country: "",
-        occupation: "",
-        businessName: "",
-        familyMembers: "",
+        familyHeadName: '',
+        email: '',
+        phone: '',
+        gotra: '',
+        address: '',
+        city: '',
+        state: '',
+        country: '',
+        occupation: '',
+        businessName: '',
+        familyMembers: '',
         agreeToTerms: true,
-        roles: "member", // Reset to default role
+        roles: 'member' // Reset to default role
       });
     } else {
       toast({
-        title: "Error",
-        description: result?.message || "Something went wrong",
-        variant: "destructive",
+        title: 'Error',
+        description: result?.message || 'Something went wrong',
+        variant: 'destructive'
       });
     }
 
-    console.log("Server response:", result);
+    console.log('Server response:', result);
   };
 
   return (
@@ -106,13 +101,11 @@ export default function CommunityRegistrationPage() {
         <Crown className="h-20 w-20 text-yellow-500 mx-auto mb-6" />
         <div className="relative mb-6">
           <div className="absolute inset-0 bg-yellow-200 opacity-30 rounded-lg transform "></div>
-          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">
-            Join Our Maurya Community
-          </h1>
+          <h1 className="relative text-3xl md:text-4xl font-bold text-red-700">Join Our Maurya Community</h1>
         </div>
         <p className="text-lg text-red-600 max-w-3xl mx-auto leading-relaxed mb-12">
-          Register your family with our global Maurya community portal and
-          connect with fellow descendants of our glorious heritage
+          Register your family with our global Maurya community portal and connect with fellow descendants of our
+          glorious heritage
         </p>
 
         {/* Registration Form */}
@@ -124,8 +117,7 @@ export default function CommunityRegistrationPage() {
                 Member Registration Form
               </CardTitle>
               <p className="text-red-600 text-sm">
-                Please provide accurate information to help us maintain our
-                community records
+                Please provide accurate information to help us maintain our community records
               </p>
             </CardHeader>
             <CardContent>
@@ -133,19 +125,14 @@ export default function CommunityRegistrationPage() {
                 {/* Row 1: Family Head Name and Email */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label
-                      htmlFor="familyHeadName"
-                      className="text-red-700 font-medium"
-                    >
+                    <Label htmlFor="familyHeadName" className="text-red-700 font-medium">
                       Family Head Name *
                     </Label>
                     <Input
                       id="familyHeadName"
                       placeholder="Enter family head's full name"
                       value={formData.familyHeadName}
-                      onChange={(e) =>
-                        handleInputChange("familyHeadName", e.target.value)
-                      }
+                      onChange={e => handleInputChange('familyHeadName', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                       required
                     />
@@ -159,9 +146,7 @@ export default function CommunityRegistrationPage() {
                       type="email"
                       placeholder="your.email@example.com"
                       value={formData.email}
-                      onChange={(e) =>
-                        handleInputChange("email", e.target.value)
-                      }
+                      onChange={e => handleInputChange('email', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                       required
                     />
@@ -178,9 +163,7 @@ export default function CommunityRegistrationPage() {
                       id="phone"
                       placeholder="+91 98765 43210"
                       value={formData.phone}
-                      onChange={(e) =>
-                        handleInputChange("phone", e.target.value)
-                      }
+                      onChange={e => handleInputChange('phone', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                       required
                     />
@@ -193,9 +176,7 @@ export default function CommunityRegistrationPage() {
                       id="gotra"
                       placeholder="Enter gotra"
                       value={formData.gotra}
-                      onChange={(e) =>
-                        handleInputChange("gotra", e.target.value)
-                      }
+                      onChange={e => handleInputChange('gotra', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                     />
                   </div>
@@ -210,9 +191,7 @@ export default function CommunityRegistrationPage() {
                     id="address"
                     placeholder="House number, street, locality"
                     value={formData.address}
-                    onChange={(e) =>
-                      handleInputChange("address", e.target.value)
-                    }
+                    onChange={e => handleInputChange('address', e.target.value)}
                     className="bg-white border-yellow-300 focus:border-red-500"
                     rows={3}
                     required
@@ -229,9 +208,7 @@ export default function CommunityRegistrationPage() {
                       id="city"
                       placeholder="Enter city"
                       value={formData.city}
-                      onChange={(e) =>
-                        handleInputChange("city", e.target.value)
-                      }
+                      onChange={e => handleInputChange('city', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                       required
                     />
@@ -244,27 +221,20 @@ export default function CommunityRegistrationPage() {
                       id="state"
                       placeholder="Enter state"
                       value={formData.state}
-                      onChange={(e) =>
-                        handleInputChange("state", e.target.value)
-                      }
+                      onChange={e => handleInputChange('state', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label
-                      htmlFor="country"
-                      className="text-red-700 font-medium"
-                    >
+                    <Label htmlFor="country" className="text-red-700 font-medium">
                       Country *
                     </Label>
                     <Input
                       id="country"
                       placeholder="Enter country"
                       value={formData.country}
-                      onChange={(e) =>
-                        handleInputChange("country", e.target.value)
-                      }
+                      onChange={e => handleInputChange('country', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                       required
                     />
@@ -274,36 +244,26 @@ export default function CommunityRegistrationPage() {
                 {/* Row 4: Occupation and Business Name */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label
-                      htmlFor="occupation"
-                      className="text-red-700 font-medium"
-                    >
+                    <Label htmlFor="occupation" className="text-red-700 font-medium">
                       Occupation/Profession
                     </Label>
                     <Input
                       id="occupation"
                       placeholder="e.g. Engineer, Doctor, Teacher"
                       value={formData.occupation}
-                      onChange={(e) =>
-                        handleInputChange("occupation", e.target.value)
-                      }
+                      onChange={e => handleInputChange('occupation', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label
-                      htmlFor="businessName"
-                      className="text-red-700 font-medium"
-                    >
+                    <Label htmlFor="businessName" className="text-red-700 font-medium">
                       Business/Company Name
                     </Label>
                     <Input
                       id="businessName"
                       placeholder="Enter business or company name"
                       value={formData.businessName}
-                      onChange={(e) =>
-                        handleInputChange("businessName", e.target.value)
-                      }
+                      onChange={e => handleInputChange('businessName', e.target.value)}
                       className="bg-white border-yellow-300 focus:border-red-500"
                     />
                   </div>
@@ -311,10 +271,7 @@ export default function CommunityRegistrationPage() {
 
                 {/* Number of Family Members */}
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="familyMembers"
-                    className="text-red-700 font-medium"
-                  >
+                  <Label htmlFor="familyMembers" className="text-red-700 font-medium">
                     Number of Family Members
                   </Label>
                   <Input
@@ -322,9 +279,7 @@ export default function CommunityRegistrationPage() {
                     type="number"
                     placeholder="Enter total family members"
                     value={formData.familyMembers}
-                    onChange={(e) =>
-                      handleInputChange("familyMembers", e.target.value)
-                    }
+                    onChange={e => handleInputChange('familyMembers', e.target.value)}
                     className="bg-white border-yellow-300 focus:border-red-500"
                   />
                 </div>
@@ -334,29 +289,18 @@ export default function CommunityRegistrationPage() {
                   <Checkbox
                     id="terms"
                     checked={formData.agreeToTerms}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("agreeToTerms", checked as boolean)
-                    }
+                    onCheckedChange={checked => handleInputChange('agreeToTerms', checked as boolean)}
                     className="border-red-300 data-[state=checked]:bg-red-600"
                   />
-                  <Label
-                    htmlFor="terms"
-                    className="text-sm text-red-700 leading-relaxed"
-                  >
-                    I agree to the{" "}
-                    <Link
-                      href="/terms"
-                      className="text-red-600 hover:underline font-medium"
-                    >
+                  <Label htmlFor="terms" className="text-sm text-red-700 leading-relaxed">
+                    I agree to the{' '}
+                    <Link href="/terms" className="text-red-600 hover:underline font-medium">
                       terms and conditions
-                    </Link>{" "}
-                    and{" "}
-                    <Link
-                      href="/community-guidelines"
-                      className="text-red-600 hover:underline font-medium"
-                    >
+                    </Link>{' '}
+                    and{' '}
+                    <Link href="/community-guidelines" className="text-red-600 hover:underline font-medium">
                       community guidelines
-                    </Link>{" "}
+                    </Link>{' '}
                     of Mauryavansh.com
                   </Label>
                 </div>

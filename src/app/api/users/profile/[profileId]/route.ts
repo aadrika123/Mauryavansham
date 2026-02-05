@@ -4,19 +4,13 @@ import { eq } from 'drizzle-orm';
 import { users } from '@/src/drizzle/schema'; // make sure this path is correct
 
 // Route handler for GET /api/users/[profileId]
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ profileId: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ profileId: string }> }) {
   try {
     const { profileId } = await params;
     console.log(profileId, 'profileId');
 
     if (!profileId) {
-      return NextResponse.json(
-        { error: 'Profile ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Profile ID is required' }, { status: 400 });
     }
 
     // Compare as string, do not convert to Number
@@ -31,9 +25,6 @@ export async function GET(
     return NextResponse.json(user);
   } catch (error) {
     console.error('Failed to fetch user by profileId:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
   }
 }

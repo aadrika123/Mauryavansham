@@ -24,7 +24,7 @@
 //       const fetchBlogs = async () => {
 //         try {
 //           // setLoading(true); // API start
-//           const res = await fetch(`/api/coaching-centers/${id}`); 
+//           const res = await fetch(`/api/coaching-centers/${id}`);
 //           const data = await res.json();
 //           // setBlogs(data.blogs || []);
 //         } catch (error) {
@@ -59,14 +59,10 @@
 //     </AdmindashboardLayout>
 //   );
 // }
-import React from 'react'
+import React from 'react';
 
 function page() {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <div></div>;
 }
 
-export default page
+export default page;

@@ -2,10 +2,7 @@
 import { getProfileById } from '@/src/features/getProfile/actions/getProfileById';
 // import CreateProfilePage, { FlatProfileData, ProfileData } from "../../create-profile/page";
 import { Crown } from 'lucide-react';
-import EditProfileForm, {
-  FlatProfileData,
-  ProfileData
-} from './editProfileForm';
+import EditProfileForm, { FlatProfileData, ProfileData } from './editProfileForm';
 import DashboardLayout from '@/src/components/layout/dashboardLayout';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/src/lib/auth';
@@ -89,11 +86,7 @@ const transformFlatToNested = (flatData: FlatProfileData): ProfileData => {
   };
 };
 
-export default async function EditProfilePage({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EditProfilePage({ params }: { params: Promise<{ id: string }> }) {
   // Await the params to resolve before using it
   const { id } = await params;
 

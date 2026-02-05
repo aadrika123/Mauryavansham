@@ -1,18 +1,18 @@
-import { NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { users } from "@/src/drizzle/schema"; 
-import { eq, sql } from "drizzle-orm";
+import { NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { users } from '@/src/drizzle/schema';
+import { eq, sql } from 'drizzle-orm';
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
-    const search = searchParams.get("search") || "";
-    const role = searchParams.get("role") || "all";
-    const city = searchParams.get("city") || "";
-    const startDate = searchParams.get("startDate");
-    const endDate = searchParams.get("endDate");
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const search = searchParams.get('search') || '';
+    const role = searchParams.get('role') || 'all';
+    const city = searchParams.get('city') || '';
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
     const offset = (page - 1) * limit;
 
@@ -21,13 +21,13 @@ export async function GET(req: Request) {
 
     if (search) {
       where.push(
-        sql`${users.name} ILIKE ${"%" + search + "%"} OR 
-            ${users.email} ILIKE ${"%" + search + "%"} OR 
-            ${users.phone} ILIKE ${"%" + search + "%"}`
+        sql`${users.name} ILIKE ${'%' + search + '%'} OR 
+            ${users.email} ILIKE ${'%' + search + '%'} OR 
+            ${users.phone} ILIKE ${'%' + search + '%'}`
       );
     }
 
-    if (role !== "all") where.push(eq(users.role, role));
+    if (role !== 'all') where.push(eq(users.role, role));
     if (city) where.push(eq(users.city, city));
 
     if (startDate) where.push(sql`${users.createdAt} >= ${startDate}`);
@@ -46,7 +46,7 @@ export async function GET(req: Request) {
       where: where.length > 0 ? sql`${sql.join(where, sql` AND `)}` : undefined,
       limit,
       offset,
-      orderBy: (u, { asc }) => [asc(u.name)],
+      orderBy: (u, { asc }) => [asc(u.name)]
     });
 
     return NextResponse.json({
@@ -54,10 +54,10 @@ export async function GET(req: Request) {
       total,
       page,
       limit,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limit)
     });
   } catch (error) {
-    console.error("Failed to fetch users:", error);
-    return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
+    console.error('Failed to fetch users:', error);
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }

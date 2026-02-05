@@ -41,11 +41,7 @@ import { FaAndroid, FaApple } from 'react-icons/fa';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function MobileLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function MobileLayout({ children }: { children: React.ReactNode }) {
   const [scrollY, setScrollY] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileData, setProfileData] = useState<any>(null);
@@ -59,18 +55,14 @@ export default function MobileLayout({
   const [notifications, setNotifications] = useState<any[]>([]);
   const role = session?.user?.role;
 
-  const unreadNotifications = notifications.filter(
-    (n) => !n.isRead || n.isRead === 0
-  );
+  const unreadNotifications = notifications.filter(n => !n.isRead || n.isRead === 0);
   const unreadCount = unreadNotifications.length;
   const [open, setOpen] = useState(false);
   const [isWebView, setIsWebView] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const isRNWebView =
-      typeof window !== 'undefined' &&
-      (window as any).ReactNativeWebView !== undefined;
+    const isRNWebView = typeof window !== 'undefined' && (window as any).ReactNativeWebView !== undefined;
 
     setIsWebView(isRNWebView);
   }, []);
@@ -78,10 +70,7 @@ export default function MobileLayout({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     };
@@ -125,12 +114,12 @@ export default function MobileLayout({
   useEffect(() => {
     if (role === 'admin' || role === 'superAdmin' || role === 'user') {
       fetch('/api/admin/notifications')
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           const notifs = Array.isArray(data) ? data : data.data || [];
           setNotifications(notifs);
         })
-        .catch((err) => console.error('Failed to fetch notifications:', err));
+        .catch(err => console.error('Failed to fetch notifications:', err));
     }
   }, [role]);
 
@@ -181,9 +170,7 @@ export default function MobileLayout({
       {/* ===== Mobile Header ===== */}
       <div
         className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrollY > 20
-            ? 'bg-gradient-to-r from-red-700 to-orange-600'
-            : 'bg-gradient-to-r from-red-700 to-orange-600'
+          scrollY > 20 ? 'bg-gradient-to-r from-red-700 to-orange-600' : 'bg-gradient-to-r from-red-700 to-orange-600'
         }`}
       >
         <div className="px-4 py-3.5">
@@ -193,11 +180,7 @@ export default function MobileLayout({
                 className="p-2 hover:bg-white/10 rounded-lg active:scale-95 transition-all"
                 onClick={() => setSidebarOpen(true)}
               >
-                <Menu
-                  className={`w-6 h-6 ${
-                    scrollY > 20 ? 'text-white' : 'text-white'
-                  }`}
-                />
+                <Menu className={`w-6 h-6 ${scrollY > 20 ? 'text-white' : 'text-white'}`} />
               </button>
 
               <div className="flex items-center gap-2">
@@ -211,18 +194,10 @@ export default function MobileLayout({
                   <Crown className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1
-                    className={`text-base font-bold leading-tight ${
-                      scrollY > 20 ? 'text-white' : 'text-white'
-                    }`}
-                  >
+                  <h1 className={`text-base font-bold leading-tight ${scrollY > 20 ? 'text-white' : 'text-white'}`}>
                     Mauryavansham
                   </h1>
-                  <p
-                    className={`text-xs leading-tight ${
-                      scrollY > 20 ? 'text-orange-100' : 'text-orange-100'
-                    }`}
-                  >
+                  <p className={`text-xs leading-tight ${scrollY > 20 ? 'text-orange-100' : 'text-orange-100'}`}>
                     मौर्यवंश - गौरवशाली परंपरा
                   </p>
                 </div>
@@ -231,9 +206,9 @@ export default function MobileLayout({
             {/* Notification */}
             {/* ===== Notification Dropdown ===== */}
             <DropdownMenu
-              onOpenChange={async (isOpen) => {
+              onOpenChange={async isOpen => {
                 if (!isOpen) return;
-                const unread = notifications.filter((n) => !n.isRead);
+                const unread = notifications.filter(n => !n.isRead);
                 if (unread.length === 0) return;
 
                 try {
@@ -241,17 +216,13 @@ export default function MobileLayout({
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                      notificationIds: unread.map((n) => n.id)
+                      notificationIds: unread.map(n => n.id)
                     })
                   });
 
                   if (res.ok) {
-                    setNotifications((prev) =>
-                      prev.map((n) =>
-                        unread.find((u) => u.id === n.id)
-                          ? { ...n, isRead: true }
-                          : n
-                      )
+                    setNotifications(prev =>
+                      prev.map(n => (unread.find(u => u.id === n.id) ? { ...n, isRead: true } : n))
                     );
                   } else {
                     console.error('❌ Failed to mark notifications as read');
@@ -277,9 +248,7 @@ export default function MobileLayout({
                 className="w-72 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
               >
                 <div className="flex justify-between items-center px-3 py-2 border-b">
-                  <h4 className="text-sm font-semibold text-gray-800">
-                    Notifications
-                  </h4>
+                  <h4 className="text-sm font-semibold text-gray-800">Notifications</h4>
                   {unreadCount == 0 && (
                     <button
                       onClick={async () => {
@@ -289,9 +258,7 @@ export default function MobileLayout({
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ userId: loginUser?.id })
                           });
-                          setNotifications((prev) =>
-                            prev.map((n) => ({ ...n, isRead: true }))
-                          );
+                          setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
                         } catch (err) {
                           console.error('Error marking all as read:', err);
                         }
@@ -308,18 +275,14 @@ export default function MobileLayout({
                     unreadNotifications.map((n, idx) => (
                       <DropdownMenuItem
                         key={idx}
-                        className={`px-3 py-2 text-sm border-b cursor-default ${
-                          !n.isRead ? 'bg-red-50' : ''
-                        }`}
+                        className={`px-3 py-2 text-sm border-b cursor-default ${!n.isRead ? 'bg-red-50' : ''}`}
                       >
                         <p className="font-medium text-gray-800">{n.title}</p>
                         <p className="text-xs text-gray-500">{n.message}</p>
                       </DropdownMenuItem>
                     ))
                   ) : (
-                    <div className="p-3 text-sm text-gray-500 text-center">
-                      No notifications
-                    </div>
+                    <div className="p-3 text-sm text-gray-500 text-center">No notifications</div>
                   )}
                 </div>
               </DropdownMenuContent>
@@ -345,7 +308,7 @@ export default function MobileLayout({
       {/* ===== Bottom Navigation ===== */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 shadow-2xl z-40">
         <div className="flex justify-around items-center max-w-md mx-auto">
-          {navItems.map((item) => {
+          {navItems.map(item => {
             const Icon = item.icon;
             const isActive = pathname === item.path;
 
@@ -358,10 +321,7 @@ export default function MobileLayout({
 
                 if (userDetails?.role === 'user') {
                   router.push(`/dashboard/user-profile/${userDetails?.id}`);
-                } else if (
-                  userDetails?.role === 'admin' ||
-                  userDetails?.role === 'superAdmin'
-                ) {
+                } else if (userDetails?.role === 'admin' || userDetails?.role === 'superAdmin') {
                   router.push(`/admin/user-profile/${userDetails?.id}`);
                 } else {
                   router.push('/profile');
@@ -379,22 +339,12 @@ export default function MobileLayout({
               >
                 <div
                   className={`p-2 rounded-xl transition-all ${
-                    isActive
-                      ? 'bg-gradient-to-r from-red-600 to-orange-500'
-                      : ''
+                    isActive ? 'bg-gradient-to-r from-red-600 to-orange-500' : ''
                   }`}
                 >
-                  <Icon
-                    className={`w-5 h-5 ${
-                      isActive ? 'text-white' : 'text-gray-600'
-                    }`}
-                  />
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-600'}`} />
                 </div>
-                <span
-                  className={`text-xs ${
-                    isActive ? 'text-red-600 font-semibold' : 'text-gray-600'
-                  }`}
-                >
+                <span className={`text-xs ${isActive ? 'text-red-600 font-semibold' : 'text-gray-600'}`}>
                   {item.label}
                 </span>
               </button>
@@ -438,12 +388,7 @@ export default function MobileLayout({
                       className="text-green-500"
                       strokeWidth="4"
                       strokeDasharray={2 * Math.PI * 36}
-                      strokeDashoffset={
-                        2 *
-                        Math.PI *
-                        36 *
-                        (1 - (profileData?.profileCompletion || 0) / 100)
-                      }
+                      strokeDashoffset={2 * Math.PI * 36 * (1 - (profileData?.profileCompletion || 0) / 100)}
                       strokeLinecap="round"
                       stroke="url(#gradientMobile)"
                       fill="transparent"
@@ -452,13 +397,7 @@ export default function MobileLayout({
                       cy="40"
                     />
                     <defs>
-                      <linearGradient
-                        id="gradientMobile"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="0%"
-                      >
+                      <linearGradient id="gradientMobile" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="orange" />
                         <stop offset="100%" stopColor="green" />
                       </linearGradient>
@@ -488,7 +427,7 @@ export default function MobileLayout({
             )}
 
             {/* Navigation Items */}
-            {navigationItems.map((item) => {
+            {navigationItems.map(item => {
               const Icon = item.icon;
               return (
                 <button
@@ -540,8 +479,7 @@ export default function MobileLayout({
                     >
                       Main Panel
                     </Button>
-                  ) : userDetails?.role === 'admin' ||
-                    userDetails?.role === 'superAdmin' ? (
+                  ) : userDetails?.role === 'admin' || userDetails?.role === 'superAdmin' ? (
                     <Button
                       className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full"
                       onClick={() => {
@@ -587,8 +525,7 @@ export default function MobileLayout({
 
                       {/* iOS */}
                       <div className="flex items-center gap-2 px-4 py-2 text-gray-400 text-sm cursor-not-allowed bg-gray-50">
-                        <FaApple className="text-gray-400" /> iOS App (Coming
-                        Soon)
+                        <FaApple className="text-gray-400" /> iOS App (Coming Soon)
                       </div>
                     </div>
                   )}
@@ -598,10 +535,7 @@ export default function MobileLayout({
           </div>
 
           {/* Overlay */}
-          <div
-            className="flex-1 bg-black bg-opacity-50 pointer-events-auto"
-            onClick={() => setSidebarOpen(false)}
-          />
+          <div className="flex-1 bg-black bg-opacity-50 pointer-events-auto" onClick={() => setSidebarOpen(false)} />
         </div>
       )}
 
@@ -613,16 +547,11 @@ export default function MobileLayout({
                 <Lock className="h-5 w-5" />
                 Login Required
               </h3>
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
+              <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <p className="text-gray-600 mb-6">
-              Please login to access your profile.
-            </p>
+            <p className="text-gray-600 mb-6">Please login to access your profile.</p>
             <div className="space-y-3">
               <Button
                 onClick={() => router.push('/sign-in')}
@@ -631,11 +560,7 @@ export default function MobileLayout({
                 <User className="h-4 w-4 mr-2" />
                 Login
               </Button>
-              <Button
-                onClick={() => setShowLoginModal(false)}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={() => setShowLoginModal(false)} variant="outline" className="w-full">
                 Cancel
               </Button>
             </div>

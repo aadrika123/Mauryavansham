@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { notifications } from "@/src/drizzle/db/schemas/notifications";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
-import { sql } from "drizzle-orm";
-import { notification_reads } from "@/src/drizzle/db/schemas/notification_reads";
-import { users } from "@/src/drizzle/schema";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { notifications } from '@/src/drizzle/db/schemas/notifications';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
+import { sql } from 'drizzle-orm';
+import { notification_reads } from '@/src/drizzle/db/schemas/notification_reads';
+import { users } from '@/src/drizzle/schema';
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -38,9 +38,9 @@ export async function GET(req: NextRequest) {
         id: users.id,
         name: users.name,
         photo: users.photo,
-        email: users.email,
+        email: users.email
       },
-      receiverId: notifications.userId,
+      receiverId: notifications.userId
     })
     .from(notifications)
     .leftJoin(
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     )
     .leftJoin(users, sql`${notifications.senderId} = ${users.id}`)
     .where(
-      role === "user"
+      role === 'user'
         ? sql`${notifications.type} != 'signup' 
           AND ${notifications.userId} = ${userId}`
         : undefined
@@ -59,11 +59,11 @@ export async function GET(req: NextRequest) {
     .orderBy(sql`${notifications.createdAt} DESC`);
 
   // Customize message if sender exists
-  const customized = userNotifications.map((n) => {
-    if (n.type === "profile_connect" && n.sender?.id === userId) {
+  const customized = userNotifications.map(n => {
+    if (n.type === 'profile_connect' && n.sender?.id === userId) {
       return {
         ...n,
-        message: `You sent a connection request to user ${n.receiverId}`,
+        message: `You sent a connection request to user ${n.receiverId}`
       };
     }
     return n;
@@ -79,14 +79,10 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  const userId =
-    body.userId || body.businessOwnerId || body.profileId || body.customerId;
+  const userId = body.userId || body.businessOwnerId || body.profileId || body.customerId;
 
   if (!userId || !body.type || !body.message) {
-    return NextResponse.json(
-      { error: "Missing required fields" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   // ✅ Check if a similar connection request already exists
@@ -102,8 +98,7 @@ export async function POST(req: NextRequest) {
   if (existing.length > 0) {
     return NextResponse.json(
       {
-        message:
-          "You are already connected with this user. You can go to your inbox to chat with them.",
+        message: 'You are already connected with this user. You can go to your inbox to chat with them.'
       },
       { status: 409 } // Conflict
     );
@@ -116,7 +111,7 @@ export async function POST(req: NextRequest) {
       type: body.type,
       message: body.message,
       userId: userId, // receiver
-      senderId: senderId, // sender (nullable)
+      senderId: senderId // sender (nullable)
     })
     .returning();
 

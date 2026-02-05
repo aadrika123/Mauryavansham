@@ -1,24 +1,21 @@
-"use client";
+'use client';
 
-import React from "react";
-import { FaWhatsapp } from "react-icons/fa6";
+import React from 'react';
+import { FaWhatsapp } from 'react-icons/fa6';
 
 const WhatsappFab = () => {
-  const number = "919135135033"; 
-  const message = "Hello support team of Mauryavansham! Is anyone available to chat?";
+  const number = '919135135033';
+  const message = 'Hello support team of Mauryavansham! Is anyone available to chat?';
   const encodedMsg = encodeURIComponent(message);
 
   // Detect if it's mobile
-  const isMobile = () =>
-    /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
+  const isMobile = () => /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   const handleClick = () => {
     const url = isMobile()
       ? `https://api.whatsapp.com/send?phone=${number}&text=${encodedMsg}`
       : `https://web.whatsapp.com/send?phone=${number}&text=${encodedMsg}`;
-    window.open(url, "_blank");
+    window.open(url, '_blank');
   };
 
   return (

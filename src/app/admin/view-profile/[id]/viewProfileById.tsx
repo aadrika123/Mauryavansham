@@ -37,18 +37,14 @@ import { escapeHtml } from '@/src/lib/utils';
 
 const ProfileImageCarousel = ({ profile }: { profile: any }) => {
   // Get all available images, prioritizing profileImage1 as primary
-  const images = [
-    profile.profileImage1,
-    profile.profileImage2,
-    profile.profileImage3
-  ].filter(Boolean); // Remove empty/null images
+  const images = [profile.profileImage1, profile.profileImage2, profile.profileImage3].filter(Boolean); // Remove empty/null images
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const getInitials = (name: string): string => {
     return name
       .split(' ')
-      .map((n) => n[0])
+      .map(n => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
@@ -56,12 +52,12 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
 
   const goToPrevious = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentImageIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
   const goToNext = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
-    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentImageIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
   const goToImage = (index: number, e: React.MouseEvent) => {
@@ -78,7 +74,7 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
             src={images[currentImageIndex]}
             alt={`${profile.name}'s profile`}
             className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
-            onError={(e) => {
+            onError={e => {
               // Fallback to initials if image fails to load
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
@@ -117,7 +113,7 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
                 {images.map((_, index) => (
                   <button
                     key={index}
-                    onClick={(e) => goToImage(index, e)}
+                    onClick={e => goToImage(index, e)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       currentImageIndex === index
                         ? 'bg-white scale-110 shadow-lg'
@@ -145,9 +141,7 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
       ) : (
         // Fallback when no images available
         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100">
-          <div className="text-orange-600 text-3xl lg:text-4xl font-bold">
-            {getInitials(profile.name)}
-          </div>
+          <div className="text-orange-600 text-3xl lg:text-4xl font-bold">{getInitials(profile.name)}</div>
         </div>
       )}
 
@@ -182,10 +176,7 @@ const ViewProfileById = (props: any) => {
     const birthDate = new Date(dob);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
     return age;
@@ -252,14 +243,11 @@ const ViewProfileById = (props: any) => {
             <div className="capitalize text-base sm:text-lg md:col-span-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                    {profileData.name}
-                  </h1>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{profileData.name}</h1>
                   <div className="text-white space-y-1">
                     <p className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      {calculateAge(profileData.dob)},{' '}
-                      <User className="w-4 h-4" />
+                      {calculateAge(profileData.dob)}, <User className="w-4 h-4" />
                       {profileData.height}
                     </p>
                     <p className="flex items-center gap-1">
@@ -294,42 +282,22 @@ const ViewProfileById = (props: any) => {
               {/* Social Links */}
               <div className="flex gap-3 mt-4 sm:mt-6 flex-wrap">
                 {profileData.facebook && (
-                  <a
-                    href={profileData.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.facebook} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Facebook className="w-6 h-6" />
                   </a>
                 )}
                 {profileData.instagram && (
-                  <a
-                    href={profileData.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.instagram} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Instagram className="w-6 h-6" />
                   </a>
                 )}
                 {profileData.linkedin && (
-                  <a
-                    href={profileData.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.linkedin} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Linkedin className="w-6 h-6" />
                   </a>
                 )}
                 {profileData.website && (
-                  <a
-                    href={profileData.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white"
-                  >
+                  <a href={profileData.website} target="_blank" rel="noopener noreferrer" className="text-white">
                     <Globe className="w-6 h-6" />
                   </a>
                 )}
@@ -350,7 +318,7 @@ const ViewProfileById = (props: any) => {
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200">
           <nav className="flex overflow-x-auto">
-            {tabs.map((tab) => (
+            {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -374,33 +342,23 @@ const ViewProfileById = (props: any) => {
           {activeTab === 'about' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold mb-3 text-gray-900">
-                  About Me
-                </h3>
-                <p className="text-gray-700 leading-relaxed">
-                  {profileData.aboutMe}
-                </p>
+                <h3 className="text-lg font-bold mb-3 text-gray-900">About Me</h3>
+                <p className="text-gray-700 leading-relaxed">{profileData.aboutMe}</p>
               </div>
 
               {/* Personal + Contact Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Personal Details */}
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">
-                    Personal Details
-                  </h4>
+                  <h4 className="font-bold text-gray-900 mb-2">Personal Details</h4>
                   <div className="space-y-2 text-sm text-gray-600 font-bold">
                     <div className="flex justify-between">
                       <span>Nick Name:</span>
-                      <span className="font-medium">
-                        {profileData?.nickName}
-                      </span>
+                      <span className="font-medium">{profileData?.nickName}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Date of Birth:</span>
-                      <span className="font-medium">
-                        {new Date(profileData.dob).toLocaleDateString()}
-                      </span>
+                      <span className="font-medium">{new Date(profileData.dob).toLocaleDateString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Height:</span>
@@ -408,30 +366,22 @@ const ViewProfileById = (props: any) => {
                     </div>
                     <div className="flex justify-between">
                       <span>Weight:</span>
-                      <span className="font-medium">
-                        {profileData.weight} kg
-                      </span>
+                      <span className="font-medium">{profileData.weight} kg</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Complexion:</span>
-                      <span className="font-medium capitalize">
-                        {profileData.complexion}
-                      </span>
+                      <span className="font-medium capitalize">{profileData.complexion}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Body Type:</span>
-                      <span className="font-medium capitalize">
-                        {profileData.bodyType}
-                      </span>
+                      <span className="font-medium capitalize">{profileData.bodyType}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Contact Info */}
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">
-                    Contact Information
-                  </h4>
+                  <h4 className="font-bold text-gray-900 mb-2">Contact Information</h4>
                   <div className="space-y-2 text-sm text-gray-600 font-bold">
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-gray-500" />
@@ -442,9 +392,7 @@ const ViewProfileById = (props: any) => {
                       <span>{profileData.email}</span>
                     </div>
                   </div>
-                  <h4 className="font-bold text-gray-900 mb-2 mt-4">
-                    Interests
-                  </h4>
+                  <h4 className="font-bold text-gray-900 mb-2 mt-4">Interests</h4>
                   <p className="text-sm text-gray-700">{profileData.hobbies}</p>
                 </div>
               </div>

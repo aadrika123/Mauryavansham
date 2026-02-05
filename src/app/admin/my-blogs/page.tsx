@@ -1,17 +1,17 @@
-import { getServerSession } from "next-auth"
+import { getServerSession } from 'next-auth';
 // import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation"
-import BlogsList from "./blogs-list"
-import { authOptions } from "@/src/lib/auth"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout"
+import { redirect } from 'next/navigation';
+import BlogsList from './blogs-list';
+import { authOptions } from '@/src/lib/auth';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
 
 export default async function BlogsPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in")
+    redirect('/sign-in');
   }
 
   return (
@@ -26,16 +26,16 @@ export default async function BlogsPage() {
           <span>My Blogs</span>
         </div>
       </div>
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Blogs</h1>
-          <p className="text-gray-600 mt-2">Manage your blog posts and track their approval status</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">My Blogs</h1>
+            <p className="text-gray-600 mt-2">Manage your blog posts and track their approval status</p>
+          </div>
         </div>
-      </div>
 
-      <BlogsList userId={session.user.id} />
-    </div>
+        <BlogsList userId={session.user.id} />
+      </div>
     </AdmindashboardLayout>
-  )
+  );
 }

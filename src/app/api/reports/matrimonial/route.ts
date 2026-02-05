@@ -1,24 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
-import { and, between, eq, ilike, or, sql } from "drizzle-orm";
-import { profiles, users } from "@/src/drizzle/schema";
-import { db } from "@/src/drizzle/db";
+import { NextRequest, NextResponse } from 'next/server';
+import { and, between, eq, ilike, or, sql } from 'drizzle-orm';
+import { profiles, users } from '@/src/drizzle/schema';
+import { db } from '@/src/drizzle/db';
 
 // ✅ GET /api/reports/matrimonial
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
-    const search = url.searchParams.get("search") || "";
-    const city = url.searchParams.get("city") || "";
-    const state = url.searchParams.get("state") || "";
-    const mobile = url.searchParams.get("mobile") || "";
-    const dateFrom = url.searchParams.get("dateFrom") || "";
-    const dateTo = url.searchParams.get("dateTo") || "";
-    const isPremium = url.searchParams.get("isPremium");
-    const isVerified = url.searchParams.get("isVerified");
-    const isActive = url.searchParams.get("isActive");
+    const search = url.searchParams.get('search') || '';
+    const city = url.searchParams.get('city') || '';
+    const state = url.searchParams.get('state') || '';
+    const mobile = url.searchParams.get('mobile') || '';
+    const dateFrom = url.searchParams.get('dateFrom') || '';
+    const dateTo = url.searchParams.get('dateTo') || '';
+    const isPremium = url.searchParams.get('isPremium');
+    const isVerified = url.searchParams.get('isVerified');
+    const isActive = url.searchParams.get('isActive');
 
-    const page = parseInt(url.searchParams.get("page") || "1");
-    const limit = parseInt(url.searchParams.get("limit") || "10");
+    const page = parseInt(url.searchParams.get('page') || '1');
+    const limit = parseInt(url.searchParams.get('limit') || '10');
     const offset = (page - 1) * limit;
 
     const conditions: any[] = [];
@@ -42,12 +42,9 @@ export async function GET(req: NextRequest) {
       conditions.push(between(sql`DATE(${profiles.createdAt})`, dateFrom, dateTo));
     }
 
-    if (isPremium !== "" && isPremium !== null)
-      conditions.push(eq(profiles.isPremium, isPremium === "true"));
-    if (isVerified !== "" && isVerified !== null)
-      conditions.push(eq(profiles.isVerified, isVerified === "true"));
-    if (isActive !== "" && isActive !== null)
-      conditions.push(eq(profiles.isActive, isActive === "true"));
+    if (isPremium !== '' && isPremium !== null) conditions.push(eq(profiles.isPremium, isPremium === 'true'));
+    if (isVerified !== '' && isVerified !== null) conditions.push(eq(profiles.isVerified, isVerified === 'true'));
+    if (isActive !== '' && isActive !== null) conditions.push(eq(profiles.isActive, isActive === 'true'));
 
     const whereClause = conditions.length > 0 ? and(...conditions) : sql`TRUE`;
 
@@ -76,16 +73,13 @@ export async function GET(req: NextRequest) {
           total: totalCount,
           page,
           limit,
-          totalPages: Math.ceil(totalCount / limit),
-        },
+          totalPages: Math.ceil(totalCount / limit)
+        }
       },
       { status: 200 }
     );
   } catch (error: any) {
-    console.error("Error generating matrimonial report:", error);
-    return NextResponse.json(
-      { success: false, message: error.message },
-      { status: 500 }
-    );
+    console.error('Error generating matrimonial report:', error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }

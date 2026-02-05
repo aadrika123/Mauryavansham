@@ -77,7 +77,7 @@ export default function UsersReportsPage() {
       a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
     );
 
-    const dataToExport = sortedUsers.map((u) => ({
+    const dataToExport = sortedUsers.map(u => ({
       Name: u.name,
       Email: u.email,
       Gender: u.gender,
@@ -118,15 +118,11 @@ export default function UsersReportsPage() {
           type="text"
           placeholder="Search name, email, phone"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="border p-2 rounded"
         />
 
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="border p-2 rounded">
           <option value="">All Roles</option>
           <option value="admin">Admin</option>
           <option value="user">User</option>
@@ -145,20 +141,12 @@ export default function UsersReportsPage() {
         <input
           type="date"
           value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
+          onChange={e => setStartDate(e.target.value)}
           className="border p-2 rounded"
         />
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="border p-2 rounded"
-        />
+        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="border p-2 rounded" />
 
-        <button
-          onClick={handleExportToExcel}
-          className="bg-green-500 text-white px-4 py-2 rounded"
-        >
+        <button onClick={handleExportToExcel} className="bg-green-500 text-white px-4 py-2 rounded">
           Export Excel
         </button>
       </div>
@@ -193,9 +181,7 @@ export default function UsersReportsPage() {
                   <td className="px-4 py-2 border">{u.email}</td>
                   <td className="px-4 py-2 border">{u.phone}</td>
                   <td className="px-4 py-2 border">{u.city}</td>
-                  <td className="px-4 py-2 border">
-                    {formatDate(u.createdAt)}
-                  </td>
+                  <td className="px-4 py-2 border">{formatDate(u.createdAt)}</td>
                   <td className="px-4 py-2 border">{u.status}</td>
                   <td className="px-4 py-2 border">{u.role}</td>
                 </tr>
@@ -211,8 +197,8 @@ export default function UsersReportsPage() {
         totalPages={totalPages}
         totalItems={totalCount}
         pageSize={pageSize}
-        onPageChange={(page) => setCurrentPage(page)}
-        onPageSizeChange={(size) => {
+        onPageChange={page => setCurrentPage(page)}
+        onPageSizeChange={size => {
           setPageSize(size);
           setCurrentPage(1);
         }}

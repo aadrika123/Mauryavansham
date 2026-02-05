@@ -1,99 +1,99 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { Sparkles, Users, Calendar, MessageSquare, TrendingUp, Loader2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { Button } from "@/src/components/ui/button"
-import { Avatar } from "@/src/components/ui/avatar"
+import { useState, useEffect } from 'react';
+import { Sparkles, Users, Calendar, MessageSquare, TrendingUp, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import { Button } from '@/src/components/ui/button';
+import { Avatar } from '@/src/components/ui/avatar';
 
 interface RecommendedPerson {
-  id: number
-  name: string
-  location: string
-  commonConnections: number
-  matchScore: number
-  reason: string
-  avatar: string | null
-  isPremium?: boolean
-  isVerified?: boolean
+  id: number;
+  name: string;
+  location: string;
+  commonConnections: number;
+  matchScore: number;
+  reason: string;
+  avatar: string | null;
+  isPremium?: boolean;
+  isVerified?: boolean;
 }
 
 interface RecommendedEvent {
-  id: number
-  title: string
-  date: string
-  location: string
-  attendees: number
-  matchScore: number
-  reason: string
-  category: string
+  id: number;
+  title: string;
+  date: string;
+  location: string;
+  attendees: number;
+  matchScore: number;
+  reason: string;
+  category: string;
 }
 
 interface RecommendedContent {
-  id: number
-  title: string
-  author: string
-  type: string
-  readTime: string
-  matchScore: number
-  reason: string
+  id: number;
+  title: string;
+  author: string;
+  type: string;
+  readTime: string;
+  matchScore: number;
+  reason: string;
 }
 
 interface AIInsights {
-  compatibilityScore: number
-  newMatchesToday: number
-  engagementPrediction: number
+  compatibilityScore: number;
+  newMatchesToday: number;
+  engagementPrediction: number;
 }
 
 export default function RecommendationsPage() {
-  const [activeTab, setActiveTab] = useState<"people" | "events" | "content">("people")
+  const [activeTab, setActiveTab] = useState<'people' | 'events' | 'content'>('people');
 
-  const [recommendedPeople, setRecommendedPeople] = useState<RecommendedPerson[]>([])
-  const [recommendedEvents, setRecommendedEvents] = useState<RecommendedEvent[]>([])
-  const [recommendedContent, setRecommendedContent] = useState<RecommendedContent[]>([])
-  const [insights, setInsights] = useState<AIInsights | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [recommendedPeople, setRecommendedPeople] = useState<RecommendedPerson[]>([]);
+  const [recommendedEvents, setRecommendedEvents] = useState<RecommendedEvent[]>([]);
+  const [recommendedContent, setRecommendedContent] = useState<RecommendedContent[]>([]);
+  const [insights, setInsights] = useState<AIInsights | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
-      setLoading(true)
+      setLoading(true);
       try {
         const [peopleRes, eventsRes, contentRes, insightsRes] = await Promise.all([
-          fetch("/api/recommendations/people"),
-          fetch("/api/recommendations/events"),
-          fetch("/api/recommendations/content"),
-          fetch("/api/recommendations/insights"),
-        ])
+          fetch('/api/recommendations/people'),
+          fetch('/api/recommendations/events'),
+          fetch('/api/recommendations/content'),
+          fetch('/api/recommendations/insights')
+        ]);
 
         if (peopleRes.ok) {
-          const peopleData = await peopleRes.json()
-          setRecommendedPeople(peopleData)
+          const peopleData = await peopleRes.json();
+          setRecommendedPeople(peopleData);
         }
 
         if (eventsRes.ok) {
-          const eventsData = await eventsRes.json()
-          setRecommendedEvents(eventsData)
+          const eventsData = await eventsRes.json();
+          setRecommendedEvents(eventsData);
         }
 
         if (contentRes.ok) {
-          const contentData = await contentRes.json()
-          setRecommendedContent(contentData)
+          const contentData = await contentRes.json();
+          setRecommendedContent(contentData);
         }
 
         if (insightsRes.ok) {
-          const insightsData = await insightsRes.json()
-          setInsights(insightsData)
+          const insightsData = await insightsRes.json();
+          setInsights(insightsData);
         }
       } catch (error) {
-        console.error("Error fetching recommendations:", error)
+        console.error('Error fetching recommendations:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchRecommendations()
-  }, [])
+    fetchRecommendations();
+  }, []);
 
   if (loading) {
     return (
@@ -103,7 +103,7 @@ export default function RecommendationsPage() {
           <p className="text-gray-600">Loading your personalized recommendations...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -121,25 +121,25 @@ export default function RecommendationsPage() {
         {/* Tabs */}
         <div className="flex justify-center gap-4 mb-8">
           <Button
-            variant={activeTab === "people" ? "default" : "outline"}
-            onClick={() => setActiveTab("people")}
-            className={activeTab === "people" ? "bg-red-600" : ""}
+            variant={activeTab === 'people' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('people')}
+            className={activeTab === 'people' ? 'bg-red-600' : ''}
           >
             <Users className="w-4 h-4 mr-2" />
             People ({recommendedPeople.length})
           </Button>
           <Button
-            variant={activeTab === "events" ? "default" : "outline"}
-            onClick={() => setActiveTab("events")}
-            className={activeTab === "events" ? "bg-red-600" : ""}
+            variant={activeTab === 'events' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('events')}
+            className={activeTab === 'events' ? 'bg-red-600' : ''}
           >
             <Calendar className="w-4 h-4 mr-2" />
             Events ({recommendedEvents.length})
           </Button>
           <Button
-            variant={activeTab === "content" ? "default" : "outline"}
-            onClick={() => setActiveTab("content")}
-            className={activeTab === "content" ? "bg-red-600" : ""}
+            variant={activeTab === 'content' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('content')}
+            className={activeTab === 'content' ? 'bg-red-600' : ''}
           >
             <MessageSquare className="w-4 h-4 mr-2" />
             Content ({recommendedContent.length})
@@ -147,17 +147,17 @@ export default function RecommendationsPage() {
         </div>
 
         {/* People Recommendations */}
-        {activeTab === "people" && (
+        {activeTab === 'people' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {recommendedPeople.length > 0 ? (
-              recommendedPeople.map((person) => (
+              recommendedPeople.map(person => (
                 <Card key={person.id} className="hover:shadow-lg transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4 mb-4">
                       <Avatar className="w-16 h-16 bg-gradient-to-br from-red-600 to-blue-600 flex items-center justify-center text-white text-xl font-bold">
                         {person.avatar ? (
                           <img
-                            src={person.avatar || "/placeholder.svg"}
+                            src={person.avatar || '/placeholder.svg'}
                             alt={person.name}
                             className="w-full h-full object-cover rounded-full"
                           />
@@ -202,10 +202,10 @@ export default function RecommendationsPage() {
         )}
 
         {/* Events Recommendations */}
-        {activeTab === "events" && (
+        {activeTab === 'events' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recommendedEvents.length > 0 ? (
-              recommendedEvents.map((event) => (
+              recommendedEvents.map(event => (
                 <Card key={event.id} className="hover:shadow-lg transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -243,10 +243,10 @@ export default function RecommendationsPage() {
         )}
 
         {/* Content Recommendations */}
-        {activeTab === "content" && (
+        {activeTab === 'content' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recommendedContent.length > 0 ? (
-              recommendedContent.map((content) => (
+              recommendedContent.map(content => (
                 <Card key={content.id} className="hover:shadow-lg transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
@@ -316,5 +316,5 @@ export default function RecommendationsPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
