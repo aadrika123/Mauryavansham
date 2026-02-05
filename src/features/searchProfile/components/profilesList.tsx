@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Card } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Badge } from "@/src/components/ui/badge";
+import { Card } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { Badge } from '@/src/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
+  SelectValue
+} from '@/src/components/ui/select';
 import {
   Heart,
   MessageCircle,
@@ -22,14 +22,15 @@ import {
   Verified,
   ChevronRight,
   ChevronLeft,
-  Phone,
-} from "lucide-react";
-import type React from "react";
-import type { Profile } from "../type";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
-import Loader from "@/src/components/ui/loader";
+  Phone
+} from 'lucide-react';
+import type React from 'react';
+import type { Profile } from '../type';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { escapeHtml } from '@/src/lib/utils';
+import { useSession } from 'next-auth/react';
+import Loader from '@/src/components/ui/loader';
 
 interface ProfilesListProps {
   profiles: Profile[];
@@ -42,7 +43,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
   profiles,
   totalCount,
   sortBy,
-  onSortChange,
+  onSortChange
 }) => {
   const { data: session } = useSession(); // ✅ logged in user
   const router = useRouter();
@@ -72,7 +73,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
         if (data.success) {
           setUserProfiles(data.data);
         } else {
-          console.error("Failed to fetch user profiles:", data.error);
+          console.error('Failed to fetch user profiles:', data.error);
         }
       } catch (err) {
         console.error(err);
@@ -92,8 +93,8 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
       const res = await fetch(
         `/api/profile-interest/${pendingReceiverProfile}/interests`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             senderUserId: session?.user?.id, // correct field name
             senderProfileId: profileId, // profile id of sender
@@ -106,9 +107,9 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               dob: (session?.user as any)?.dob,
               address: (session?.user as any)?.address,
               fatherName: (session?.user as any)?.fatherName,
-              state: (session?.user as any)?.state,
-            },
-          }),
+              state: (session?.user as any)?.state
+            }
+          })
         }
       );
 
@@ -116,10 +117,10 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
       if (data.success) {
         setExpressed((prev) => ({
           ...prev,
-          [pendingReceiverProfile]: true,
+          [pendingReceiverProfile]: true
         }));
       } else {
-        alert(data.message || "Failed to express interest");
+        alert(data.message || 'Failed to express interest');
       }
     } catch (err) {
       console.error(err);
@@ -132,21 +133,21 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
   };
 
   const handleSendMessage = (profileId: string) => {
-    console.log("Send message:", profileId);
+    console.log('Send message:', profileId);
     // TODO: Implement send message functionality
   };
 
   const handleViewProfile = (profileId: string) => {
-    console.log("View profile:", profileId);
+    console.log('View profile:', profileId);
     // TODO: Navigate to profile detail
   };
 
   const formatLastActive = (lastActive: string): string => {
-    if (!lastActive) return "Never active";
-    if (lastActive === "Online now") return "Online now";
+    if (!lastActive) return 'Never active';
+    if (lastActive === 'Online now') return 'Online now';
 
     const date = new Date(lastActive);
-    if (isNaN(date.getTime())) return "Never active";
+    if (isNaN(date.getTime())) return 'Never active';
     return `Last seen ${date.toLocaleString()}`;
   };
 
@@ -163,7 +164,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
         lastActive:
           lastActive && !isNaN(new Date(lastActive).getTime())
             ? new Date(lastActive).toLocaleString()
-            : "Never active",
+            : 'Never active'
       };
     }
     return profile;
@@ -174,16 +175,16 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
     const images = [
       profile.profileImage1,
       profile.profileImage2,
-      profile.profileImage3,
+      profile.profileImage3
     ].filter(Boolean);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const getInitials = (name: string): string =>
       name
-        .split(" ")
+        .split(' ')
         .map((n) => n[0])
-        .join("")
+        .join('')
         .toUpperCase()
         .slice(0, 2);
 
@@ -216,11 +217,11 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
               className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.style.display = "none";
+                target.style.display = 'none';
                 const parent = target.parentElement;
                 if (parent) {
-                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${getInitials(
-                    profile.name
+                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${escapeHtml(
+                    getInitials(profile.name)
                   )}</div></div>`;
                 }
               }}
@@ -249,8 +250,8 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                       onClick={(e) => goToImage(index, e)}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
                         currentImageIndex === index
-                          ? "bg-white scale-110 shadow-lg"
-                          : "bg-white/60 hover:bg-white/80 hover:scale-105"
+                          ? 'bg-white scale-110 shadow-lg'
+                          : 'bg-white/60 hover:bg-white/80 hover:scale-105'
                       }`}
                     />
                   ))}
@@ -283,7 +284,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
           )}
         </div>
 
-        {profile.lastActive === "Online now" && (
+        {profile.lastActive === 'Online now' && (
           <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
         )}
       </div>
@@ -306,7 +307,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-red-600">
-            {totalCount} profile{totalCount !== 1 ? "s" : ""} found
+            {totalCount} profile{totalCount !== 1 ? 's' : ''} found
           </span>
           <Select value={sortBy} onValueChange={onSortChange}>
             <SelectTrigger className="w-40">
@@ -354,29 +355,29 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      {profile.education !== "Not specified" && (
+                      {profile.education !== 'Not specified' && (
                         <div className="flex items-center gap-2 text-sm text-red-700">
                           <GraduationCap className="w-4 h-4" />
                           <span>{profile.education}</span>
                         </div>
                       )}
 
-                      {(profile.occupation !== "Not specified" ||
-                        profile.company !== "Not specified") && (
+                      {(profile.occupation !== 'Not specified' ||
+                        profile.company !== 'Not specified') && (
                         <div className="flex items-center gap-2 text-sm text-red-700">
                           <Briefcase className="w-4 h-4" />
                           <span>
-                            {profile.occupation !== "Not specified" &&
-                            profile.company !== "Not specified"
+                            {profile.occupation !== 'Not specified' &&
+                            profile.company !== 'Not specified'
                               ? `${profile.occupation} at ${profile.company}`
-                              : profile.occupation !== "Not specified"
-                              ? profile.occupation
-                              : profile.company}
+                              : profile.occupation !== 'Not specified'
+                                ? profile.occupation
+                                : profile.company}
                           </span>
                         </div>
                       )}
 
-                      {profile.gotra !== "Not specified" && (
+                      {profile.gotra !== 'Not specified' && (
                         <div className="flex items-center gap-2 text-sm text-red-700">
                           <Users className="w-4 h-4" />
                           <span>Gotra: {profile.gotra}</span>
@@ -426,8 +427,8 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                   >
                     <Heart className="w-4 h-4" />
                     {expressed[profile.id]
-                      ? "Interest Sent"
-                      : "Express Interest"}
+                      ? 'Interest Sent'
+                      : 'Express Interest'}
                   </Button>
 
                   <Button
@@ -442,7 +443,7 @@ const ProfilesList: React.FC<ProfilesListProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      if (session?.user?.role === "user") {
+                      if (session?.user?.role === 'user') {
                         router.push(`/dashboard/search-profile/${profile.id}`);
                       } else {
                         router.push(`/admin/search-profile/${profile.id}`);

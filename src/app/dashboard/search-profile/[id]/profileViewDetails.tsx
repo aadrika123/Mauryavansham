@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Card } from "@/src/components/ui/card";
-import { Button } from "@/src/components/ui/button";
-import { Badge } from "@/src/components/ui/badge";
-import { Separator } from "@/src/components/ui/separator";
+import { Card } from '@/src/components/ui/card';
+import { Button } from '@/src/components/ui/button';
+import { Badge } from '@/src/components/ui/badge';
+import { Separator } from '@/src/components/ui/separator';
 import {
   Heart,
   MessageCircle,
@@ -23,13 +23,17 @@ import {
   Plane,
   Verified,
   ChevronRight,
-  ChevronLeft,
-} from "lucide-react";
-import Link from "next/link";
-import type { DetailedProfile, Profile } from "@/src/features/searchProfile/type";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
-import Loader from "@/src/components/ui/loader";
+  ChevronLeft
+} from 'lucide-react';
+import Link from 'next/link';
+import type {
+  DetailedProfile,
+  Profile
+} from '@/src/features/searchProfile/type';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import Loader from '@/src/components/ui/loader';
+import { escapeHtml } from '@/src/lib/utils';
 
 interface ProfileDetailViewProps {
   profile: DetailedProfile;
@@ -43,9 +47,9 @@ interface ProfilesListProps {
 export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
   const getInitials = (name: string): string => {
     return name
-      .split(" ")
+      .split(' ')
       .map((n) => n[0])
-      .join("")
+      .join('')
       .toUpperCase()
       .slice(0, 2);
   };
@@ -65,16 +69,16 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
     const images = [
       profile.profileImage1,
       profile.profileImage2,
-      profile.profileImage3,
+      profile.profileImage3
     ].filter(Boolean); // Remove empty/null images
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const getInitials = (name: string): string => {
       return name
-        .split(" ")
+        .split(' ')
         .map((n) => n[0])
-        .join("")
+        .join('')
         .toUpperCase()
         .slice(0, 2);
     };
@@ -110,11 +114,11 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
               onError={(e) => {
                 // Fallback to initials if image fails to load
                 const target = e.target as HTMLImageElement;
-                target.style.display = "none";
+                target.style.display = 'none';
                 const parent = target.parentElement;
                 if (parent) {
-                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${getInitials(
-                    profile.name
+                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${escapeHtml(
+                    getInitials(profile.name)
                   )}</div></div>`;
                 }
               }}
@@ -149,8 +153,8 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                       onClick={(e) => goToImage(index, e)}
                       className={`w-3 h-3 rounded-full transition-all duration-300 ${
                         currentImageIndex === index
-                          ? "bg-white scale-110 shadow-lg"
-                          : "bg-white/60 hover:bg-white/80 hover:scale-105"
+                          ? 'bg-white scale-110 shadow-lg'
+                          : 'bg-white/60 hover:bg-white/80 hover:scale-105'
                       }`}
                       aria-label={`Go to image ${index + 1}`}
                     />
@@ -195,7 +199,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
         </div>
 
         {/* Online Status Indicator */}
-        {profile.lastActive === "Online now" && (
+        {profile.lastActive === 'Online now' && (
           <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-lg animate-pulse"></div>
         )}
       </div>
@@ -217,7 +221,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
         if (data.success) {
           setUserProfiles(data.data);
         } else {
-          console.error("Failed to fetch user profiles:", data.error);
+          console.error('Failed to fetch user profiles:', data.error);
         }
       } catch (err) {
         console.error(err);
@@ -237,8 +241,8 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
       const res = await fetch(
         `/api/profile-interest/${pendingReceiverProfile}/interests`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             senderUserId: session?.user?.id, // correct field name
             senderProfileId: profileId, // profile id of sender
@@ -251,9 +255,9 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
               dob: (session?.user as any)?.dob,
               address: (session?.user as any)?.address,
               fatherName: (session?.user as any)?.fatherName,
-              state: (session?.user as any)?.state,
-            },
-          }),
+              state: (session?.user as any)?.state
+            }
+          })
         }
       );
 
@@ -261,10 +265,10 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
       if (data.success) {
         setExpressed((prev) => ({
           ...prev,
-          [pendingReceiverProfile]: true,
+          [pendingReceiverProfile]: true
         }));
       } else {
-        alert(data.message || "Failed to express interest");
+        alert(data.message || 'Failed to express interest');
       }
     } catch (err) {
       console.error(err);
@@ -277,17 +281,17 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
   };
 
   const handleSendMessage = () => {
-    console.log("Send message:", profile.id);
+    console.log('Send message:', profile.id);
   };
-  console.log(profile, "profileviewdetails");
+  console.log(profile, 'profileviewdetails');
   return (
     <div className="min-h-screen bg-orange-50 relative overflow-hidden">
       {/* Decorative Crown Icons */}
-       {loading && (
-              <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30">
-                <Loader />
-              </div>
-            )}
+      {loading && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30">
+          <Loader />
+        </div>
+      )}
       <div className="absolute inset-0 pointer-events-none z-0">
         <Crown className="absolute top-10 left-10 w-16 h-16 text-red-400 opacity-10 rotate-12" />
         <Crown className="absolute top-40 right-20 w-20 h-20 text-red-400 opacity-10 -rotate-12" />
@@ -359,8 +363,8 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     >
                       <Heart className="w-4 h-4" />
                       {expressed[profile.id]
-                        ? "Interest Sent"
-                        : "Express Interest"}
+                        ? 'Interest Sent'
+                        : 'Express Interest'}
                     </Button>
                     <Button
                       onClick={handleSendMessage}
@@ -513,7 +517,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                       Marital Status
                     </label>
                     <p className="text-gray-900 capitalize">
-                      {profile.personalDetails.maritalStatus.replace("-", " ")}
+                      {profile.personalDetails.maritalStatus.replace('-', ' ')}
                     </p>
                   </div>
                   <div>
@@ -521,7 +525,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                       Languages Known
                     </label>
                     <p className="text-gray-900">
-                      {profile.personalDetails.languagesKnown.join(", ")}
+                      {profile.personalDetails.languagesKnown.join(', ')}
                     </p>
                   </div>
                   <div>
@@ -530,8 +534,8 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     </label>
                     <p className="text-gray-900 capitalize">
                       {profile.personalDetails.religiousBeliefs.replace(
-                        "-",
-                        " "
+                        '-',
+                        ' '
                       )}
                     </p>
                   </div>
@@ -545,7 +549,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     <div>
                       <p className="text-xs text-gray-600">Diet</p>
                       <p className="text-sm font-medium capitalize">
-                        {profile.personalDetails.diet.replace("-", " ")}
+                        {profile.personalDetails.diet.replace('-', ' ')}
                       </p>
                     </div>
                   </div>
@@ -612,7 +616,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                       Siblings
                     </label>
                     <p className="text-gray-900">
-                      {profile.familyDetails.brothers} Brothers,{" "}
+                      {profile.familyDetails.brothers} Brothers,{' '}
                       {profile.familyDetails.sisters} Sisters
                     </p>
                   </div>
@@ -634,7 +638,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                   </div>
                 </div>
 
-                {profile.familyDetails.familyHistory !== "Not specified" && (
+                {profile.familyDetails.familyHistory !== 'Not specified' && (
                   <>
                     <Separator className="my-4" />
                     <div>
@@ -648,7 +652,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                   </>
                 )}
 
-                {profile.familyDetails.familyTraditions !== "Not specified" && (
+                {profile.familyDetails.familyTraditions !== 'Not specified' && (
                   <div className="mt-4">
                     <label className="text-sm font-medium text-gray-600">
                       Family Traditions
@@ -660,7 +664,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                 )}
 
                 {profile.familyDetails.communityContributions !==
-                  "Not specified" && (
+                  'Not specified' && (
                   <div className="mt-4">
                     <label className="text-sm font-medium text-gray-600">
                       Community Contributions
@@ -685,33 +689,33 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                           (brother: any, index: number) => (
                             <div key={index} className="mb-4 border-b pb-2">
                               <p className="text-gray-700">
-                                Name:{" "}
+                                Name:{' '}
                                 <span className="font-medium capitalize">
                                   {brother.name}
                                 </span>
                               </p>
                               <p className="text-gray-700">
-                                Occupation:{" "}
+                                Occupation:{' '}
                                 <span className="font-medium capitalize">
                                   {brother.occupation}
                                 </span>
                               </p>
                               <p className="text-gray-700">
-                                Marital Status:{" "}
+                                Marital Status:{' '}
                                 <span className="font-medium capitalize">
                                   {brother.maritalStatus}
                                 </span>
                               </p>
-                              {brother.maritalStatus === "married" && (
+                              {brother.maritalStatus === 'married' && (
                                 <>
                                   <p className="text-gray-700">
-                                    Spouse Name:{" "}
+                                    Spouse Name:{' '}
                                     <span className="font-medium capitalize">
                                       {brother.spouseName}
                                     </span>
                                   </p>
                                   <p className="text-gray-700">
-                                    Spouse Occupation:{" "}
+                                    Spouse Occupation:{' '}
                                     <span className="font-medium capitalize">
                                       {brother.spouseOccupation}
                                     </span>
@@ -733,33 +737,33 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                         (sister: any, index: number) => (
                           <div key={index} className="mb-4 border-b pb-2">
                             <p className="text-gray-700">
-                              Name:{" "}
+                              Name:{' '}
                               <span className="font-medium capitalize">
                                 {sister.name}
                               </span>
                             </p>
                             <p className="text-gray-700">
-                              Occupation:{" "}
+                              Occupation:{' '}
                               <span className="font-medium capitalize">
                                 {sister.occupation}
                               </span>
                             </p>
                             <p className="text-gray-700">
-                              Marital Status:{" "}
+                              Marital Status:{' '}
                               <span className="font-medium capitalize">
                                 {sister.maritalStatus}
                               </span>
                             </p>
-                            {sister.maritalStatus === "married" && (
+                            {sister.maritalStatus === 'married' && (
                               <>
                                 <p className="text-gray-700">
-                                  Spouse Name:{" "}
+                                  Spouse Name:{' '}
                                   <span className="font-medium capitalize">
                                     {sister.spouseName}
                                   </span>
                                 </p>
                                 <p className="text-gray-700">
-                                  Spouse Occupation:{" "}
+                                  Spouse Occupation:{' '}
                                   <span className="font-medium capitalize">
                                     {sister.spouseOccupation}
                                   </span>
@@ -827,7 +831,7 @@ export default function ProfileDetailView({ profile }: ProfileDetailViewProps) {
                     Partner Preferences
                   </label>
                   <p className="text-gray-700 mt-1 capitalize">
-                    {profile.preferences.castPreferences.replace("-", " ")}
+                    {profile.preferences.castPreferences.replace('-', ' ')}
                   </p>
                 </div>
               </Card>

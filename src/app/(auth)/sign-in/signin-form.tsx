@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { Alert, AlertDescription } from "@/src/components/ui/alert";
-import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
+import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { Alert, AlertDescription } from '@/src/components/ui/alert';
+import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 // import { useToast } from "@/src/hooks/use-toast";
 import {
   Dialog,
@@ -17,72 +17,81 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogClose,
-} from "@/src/components/ui/dialog"; // agar tum UI kit me dialog hai
-import { useToast } from "@/src/components/ui/toastProvider";
+  DialogClose
+} from '@/src/components/ui/dialog'; // agar tum UI kit me dialog hai
+import { useToast } from '@/src/components/ui/toastProvider';
 
 export default function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   // const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
-  const callbackUrl = searchParams?.get("callbackUrl") ?? "/";
+  const rawCallbackUrl = searchParams?.get('callbackUrl') ?? '/';
+
+  // Security: Validate callbackUrl to prevent open redirect attacks
+  const callbackUrl = (() => {
+    // Only allow relative URLs starting with /
+    if (rawCallbackUrl.startsWith('/') && !rawCallbackUrl.startsWith('//')) {
+      return rawCallbackUrl;
+    }
+    return '/';
+  })();
 
   // const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [modalMessage, setModalMessage] = useState<string | null>(null);
   const { addToast } = useToast();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
-    if (error) setError("");
+    if (error) setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      setError("Please fill in all fields");
+      setError('Please fill in all fields');
       return;
     }
 
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        redirect: false,
+        redirect: false
       });
 
       if (result?.error) {
         setModalMessage(result.error); // 🎯 yaha modal ke liye
       } else {
         addToast({
-          title: "Success",
-          description: "Login successful!",
-          variant: "success",
-        })
+          title: 'Success',
+          description: 'Login successful!',
+          variant: 'success'
+        });
         router.push(callbackUrl);
       }
     } catch (error) {
       // console.error("Sign in error:", error);
       addToast({
-        title: "Error",
-        description: "Login failed. Please try again.",
-        variant: "destructive",
-      })
-      setModalMessage("Something went wrong. Please try again.");
+        title: 'Error',
+        description: 'Login failed. Please try again.',
+        variant: 'destructive'
+      });
+      setModalMessage('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -128,7 +137,7 @@ export default function SignInForm() {
             <Input
               id="password"
               name="password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Enter password"
               value={formData.password}
               onChange={handleInputChange}
@@ -163,7 +172,7 @@ export default function SignInForm() {
               Signing In...
             </>
           ) : (
-            "Sign In"
+            'Sign In'
           )}
         </Button>
         <p className="text-sm text-center mt-2">
@@ -181,7 +190,9 @@ export default function SignInForm() {
             <DialogHeader>
               <DialogTitle>Status</DialogTitle>
             </DialogHeader>
-            <DialogDescription className="text-center text-orange-400">{modalMessage}</DialogDescription>
+            <DialogDescription className="text-center text-orange-400">
+              {modalMessage}
+            </DialogDescription>
             <DialogClose className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
               Close
             </DialogClose>

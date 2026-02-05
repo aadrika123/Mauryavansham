@@ -1,5 +1,5 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+import React, { useState } from 'react';
 import {
   User,
   GraduationCap,
@@ -29,26 +29,27 @@ import {
   Languages,
   Users2Icon,
   FlameKindlingIcon,
-  BookCopyIcon,
-} from "lucide-react";
-import Link from "next/link";
-import { LeftSideAddBanner } from "@/src/components/common/LeftSideAddBanner";
+  BookCopyIcon
+} from 'lucide-react';
+import Link from 'next/link';
+import { LeftSideAddBanner } from '@/src/components/common/LeftSideAddBanner';
+import { escapeHtml } from '@/src/lib/utils';
 
 const ProfileImageCarousel = ({ profile }: { profile: any }) => {
   // Get all available images, prioritizing profileImage1 as primary
   const images = [
     profile.profileImage1,
     profile.profileImage2,
-    profile.profileImage3,
+    profile.profileImage3
   ].filter(Boolean); // Remove empty/null images
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const getInitials = (name: string): string => {
     return name
-      .split(" ")
+      .split(' ')
       .map((n) => n[0])
-      .join("")
+      .join('')
       .toUpperCase()
       .slice(0, 2);
   };
@@ -80,11 +81,11 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
             onError={(e) => {
               // Fallback to initials if image fails to load
               const target = e.target as HTMLImageElement;
-              target.style.display = "none";
+              target.style.display = 'none';
               const parent = target.parentElement;
               if (parent) {
-                parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${getInitials(
-                  profile.name
+                parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-red-100"><div class="text-orange-600 text-3xl lg:text-4xl font-bold">${escapeHtml(
+                  getInitials(profile.name)
                 )}</div></div>`;
               }
             }}
@@ -119,8 +120,8 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
                     onClick={(e) => goToImage(index, e)}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       currentImageIndex === index
-                        ? "bg-white scale-110 shadow-lg"
-                        : "bg-white/60 hover:bg-white/80 hover:scale-105"
+                        ? 'bg-white scale-110 shadow-lg'
+                        : 'bg-white/60 hover:bg-white/80 hover:scale-105'
                     }`}
                     aria-label={`Go to image ${index + 1}`}
                   />
@@ -173,7 +174,7 @@ const ProfileImageCarousel = ({ profile }: { profile: any }) => {
 };
 
 const ViewProfileById = (props: any) => {
-  console.log(props?.profileData, "get profile by id");
+  console.log(props?.profileData, 'get profile by id');
   const profileData = props?.profileData;
 
   const calculateAge = (dob: any) => {
@@ -190,16 +191,16 @@ const ViewProfileById = (props: any) => {
     return age;
   };
 
-  const [activeTab, setActiveTab] = useState("about");
+  const [activeTab, setActiveTab] = useState('about');
 
   const tabs = [
-    { id: "about", label: "About Him", icon: User },
-    { id: "education", label: "Education & Career", icon: GraduationCap },
-    { id: "family", label: "Family Details", icon: Users },
-    { id: "heritage", label: "Heritage", icon: TreePine },
-    { id: "lifestyle", label: "Lifestyle", icon: Home },
+    { id: 'about', label: 'About Him', icon: User },
+    { id: 'education', label: 'Education & Career', icon: GraduationCap },
+    { id: 'family', label: 'Family Details', icon: Users },
+    { id: 'heritage', label: 'Heritage', icon: TreePine },
+    { id: 'lifestyle', label: 'Lifestyle', icon: Home }
   ];
-  console.log(profileData, "profileData");
+  console.log(profileData, 'profileData');
 
   return (
     <div className="flex min-h-screen  relative">
@@ -236,13 +237,13 @@ const ViewProfileById = (props: any) => {
             <div className="absolute top-60 right-32 text-amber-400">
               <Crown className="w-20 h-20" />
             </div>
-          </div>{" "}
+          </div>{' '}
           {/* Header Section */}
           <div
             className="bg-[linear-gradient(125deg,#ffc733,#a30000,#ff7426)]
  text-white p-6 relative grid grid-cols-4 "
           >
-            {" "}
+            {' '}
             {/* Added relative for positioning pencil icon */}
             <div className="flex flex-col md:flex-row gap-6">
               {/* Profile Image */}
@@ -259,8 +260,8 @@ const ViewProfileById = (props: any) => {
                   </h1>
                   <div className=" text-white">
                     <p className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />{" "}
-                      {calculateAge(profileData.dob)},{" "}
+                      <Calendar className="w-4 h-4" />{' '}
+                      {calculateAge(profileData.dob)},{' '}
                       <User className="w-4 h-4" />
                       {profileData.height}
                     </p>
@@ -357,8 +358,8 @@ const ViewProfileById = (props: any) => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-6 py-4 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? "border-red-600 text-red-700 bg-red-50" // Updated active tab color
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    ? 'border-red-600 text-red-700 bg-red-50' // Updated active tab color
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -369,7 +370,7 @@ const ViewProfileById = (props: any) => {
         </div>
         {/* Tab Content */}
         <div className="p-6 relative  bg-white/80 backdrop-blur-sm mb-10 border border-gray-200 shadow-lg">
-          {activeTab === "about" && (
+          {activeTab === 'about' && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-bold mb-3 text-gray-900">
@@ -451,7 +452,7 @@ const ViewProfileById = (props: any) => {
               </div>
             </div>
           )}
-          {activeTab === "education" && (
+          {activeTab === 'education' && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-bold mb-3 text-gray-900">
@@ -540,7 +541,7 @@ const ViewProfileById = (props: any) => {
               </div>
             </div>
           )}
-          {activeTab === "family" && (
+          {activeTab === 'family' && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-bold mb-4 text-gray-900">
@@ -598,7 +599,7 @@ const ViewProfileById = (props: any) => {
               </div>
             </div>
           )}
-          {activeTab === "heritage" && (
+          {activeTab === 'heritage' && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-bold mb-4 text-gray-900">
@@ -649,7 +650,7 @@ const ViewProfileById = (props: any) => {
               </div>
             </div>
           )}
-          {activeTab === "lifestyle" && (
+          {activeTab === 'lifestyle' && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-bold mb-4 text-gray-900">
@@ -747,7 +748,7 @@ const ViewProfileById = (props: any) => {
             </div>
           )}
           {/* Sibling Details */}
-          {activeTab === "family" && (
+          {activeTab === 'family' && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-bold mb-4 text-gray-900 mt-4">
@@ -762,33 +763,33 @@ const ViewProfileById = (props: any) => {
                         (brother: any, index: number) => (
                           <div key={index} className="mb-4 border-b pb-2">
                             <p className="text-gray-700">
-                              Name:{" "}
+                              Name:{' '}
                               <span className="font-medium capitalize">
                                 {brother.name}
                               </span>
                             </p>
                             <p className="text-gray-700">
-                              Occupation:{" "}
+                              Occupation:{' '}
                               <span className="font-medium capitalize">
                                 {brother.occupation}
                               </span>
                             </p>
                             <p className="text-gray-700">
-                              Marital Status:{" "}
+                              Marital Status:{' '}
                               <span className="font-medium capitalize">
                                 {brother.maritalStatus}
                               </span>
                             </p>
-                            {brother.maritalStatus === "married" && (
+                            {brother.maritalStatus === 'married' && (
                               <>
                                 <p className="text-gray-700">
-                                  Spouse Name:{" "}
+                                  Spouse Name:{' '}
                                   <span className="font-medium capitalize">
                                     {brother.spouseName}
                                   </span>
                                 </p>
                                 <p className="text-gray-700">
-                                  Spouse Occupation:{" "}
+                                  Spouse Occupation:{' '}
                                   <span className="font-medium capitalize">
                                     {brother.spouseOccupation}
                                   </span>
@@ -811,33 +812,33 @@ const ViewProfileById = (props: any) => {
                         (sister: any, index: number) => (
                           <div key={index} className="mb-4 border-b pb-2">
                             <p className="text-gray-700">
-                              Name:{" "}
+                              Name:{' '}
                               <span className="font-medium capitalize">
                                 {sister.name}
                               </span>
                             </p>
                             <p className="text-gray-700">
-                              Occupation:{" "}
+                              Occupation:{' '}
                               <span className="font-medium capitalize">
                                 {sister.occupation}
                               </span>
                             </p>
                             <p className="text-gray-700">
-                              Marital Status:{" "}
+                              Marital Status:{' '}
                               <span className="font-medium capitalize">
                                 {sister.maritalStatus}
                               </span>
                             </p>
-                            {sister.maritalStatus === "married" && (
+                            {sister.maritalStatus === 'married' && (
                               <>
                                 <p className="text-gray-700">
-                                  Spouse Name:{" "}
+                                  Spouse Name:{' '}
                                   <span className="font-medium capitalize">
                                     {sister.spouseName}
                                   </span>
                                 </p>
                                 <p className="text-gray-700">
-                                  Spouse Occupation:{" "}
+                                  Spouse Occupation:{' '}
                                   <span className="font-medium capitalize">
                                     {sister.spouseOccupation}
                                   </span>
