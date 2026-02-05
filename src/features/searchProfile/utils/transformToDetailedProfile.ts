@@ -83,7 +83,7 @@ export function transformToDetailedProfile(dbProfile: DatabaseProfile): Detailed
     isPremium: dbProfile.isPremium || false,
     isVerified: dbProfile.isVerified || false,
     isActive: dbProfile.isActive || false,
-    // profileImage: dbProfile.profileImage || "Not specified",
+    profileImage: dbProfile.profileImage || '',
     profileImage1: dbProfile.profileImage1 || '',
     profileImage2: dbProfile.profileImage2 || '',
     profileImage3: dbProfile.profileImage3 || '',

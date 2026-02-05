@@ -53,7 +53,7 @@ export type DatabaseProfile = {
   isPremium: boolean | null;
   isVerified: boolean | null;
   isActive: boolean | null;
-  // profileImage: string | null
+  profileImage: string | null;
   profileImage1: string | null;
   profileImage2: string | null;
   profileImage3: string | null;
@@ -86,7 +86,7 @@ export type Profile = {
   isPremium: boolean;
   isVerified: boolean;
   lastActive: string;
-  // profileImage: string
+  profileImage: string;
   profileImage1: string;
   profileImage2: string;
   profileImage3: string;
@@ -127,7 +127,7 @@ export type DetailedProfile = {
   isPremium: boolean;
   isVerified: boolean;
   isActive: boolean;
-  // profileImage: string
+  profileImage: string;
   profileImage1: string;
   profileImage2: string;
   profileImage3: string;
