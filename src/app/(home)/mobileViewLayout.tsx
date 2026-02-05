@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { Inter } from "next/font/google";
+import React, { useState, useEffect, useRef } from 'react';
+import { Inter } from 'next/font/google';
 import {
   Crown,
   Menu,
@@ -19,30 +19,30 @@ import {
   Trophy,
   User,
   Lock,
-  Bell,
-} from "lucide-react";
-import { ThemeProvider } from "@/src/components/theme-provider";
-import { Toaster } from "@/src/components/ui/toaster";
-import { useRouter, usePathname } from "next/navigation";
-import "../../../styles/globals.css";
-import { Footer } from "@/src/components/layout/footer";
-import { Button } from "@/src/components/ui/button";
-import { useSession, signOut } from "next-auth/react";
-import { FaSpinner } from "react-icons/fa6";
-import Translator from "@/src/hooks/googleTranslator";
-import { ToastProvider } from "@/src/components/ui/toastProvider";
+  Bell
+} from 'lucide-react';
+import { ThemeProvider } from '@/src/components/theme-provider';
+import { Toaster } from '@/src/components/ui/toaster';
+import { useRouter, usePathname } from 'next/navigation';
+import '../../../styles/globals.css';
+import { Footer } from '@/src/components/layout/footer';
+import { Button } from '@/src/components/ui/button';
+import { useSession, signOut } from 'next-auth/react';
+import { FaSpinner } from 'react-icons/fa6';
+import Translator from '@/src/hooks/googleTranslator';
+import { ToastProvider } from '@/src/components/ui/toastProvider';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import { FaAndroid, FaApple } from "react-icons/fa";
+  DropdownMenuTrigger
+} from '@radix-ui/react-dropdown-menu';
+import { FaAndroid, FaApple } from 'react-icons/fa';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export default function MobileLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -54,7 +54,7 @@ export default function MobileLayout({
   const isAuthenticated = !!session?.user;
   const loginUser = session?.user;
   const userDetails = session?.user;
-  const userName = session?.user?.name || "User";
+  const userName = session?.user?.name || 'User';
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const role = session?.user?.role;
@@ -65,71 +65,92 @@ export default function MobileLayout({
   const unreadCount = unreadNotifications.length;
   const [open, setOpen] = useState(false);
   const [isWebView, setIsWebView] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const isRNWebView =
-      typeof window !== "undefined" &&
+      typeof window !== 'undefined' &&
       (window as any).ReactNativeWebView !== undefined;
 
     setIsWebView(isRNWebView);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
+
   const router = useRouter();
   const pathname = usePathname();
 
   const navItems = [
-    { icon: Crown, label: "Home", path: "/" },
-    { icon: Heart, label: "Matrimonial", path: "/matrimonial" },
-    { icon: Calendar, label: "Events", path: "/events" },
-    { icon: Landmark, label: "Heritage", path: "/heritage" },
-    { icon: Users, label: "Profile", path: "/profile" },
+    { icon: Crown, label: 'Home', path: '/' },
+    { icon: Heart, label: 'Matrimonial', path: '/matrimonial' },
+    { icon: Calendar, label: 'Events', path: '/events' },
+    { icon: Landmark, label: 'Heritage', path: '/heritage' },
+    { icon: Users, label: 'Profile', path: '/profile' }
   ];
 
   const navigationItems = [
-    { title: "Home", href: "/", icon: House },
-    { title: "Heritage", href: "/heritage", icon: Landmark },
-    { title: "Community Forum", href: "/community", icon: Users },
-    { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
-    { title: "Events & Calendar", href: "/events", icon: Calendar },
-    { title: "Business Forum", href: "/business", icon: ShoppingBag },
-    { title: "Health & Wellness", href: "/health-wellness", icon: HandHeart },
-    { title: "Education", href: "/education", icon: Crown },
-    { title: "Achievements", href: "/achievements", icon: Trophy },
-    { title: "Blogs", href: "/blogs", icon: ShoppingBag },
+    { title: 'Home', href: '/', icon: House },
+    { title: 'Heritage', href: '/heritage', icon: Landmark },
+    { title: 'Community Forum', href: '/community', icon: Users },
+    { title: 'Matrimonial', href: '/matrimonial', icon: HeartHandshake },
+    { title: 'Events & Calendar', href: '/events', icon: Calendar },
+    { title: 'Business Forum', href: '/business', icon: ShoppingBag },
+    { title: 'Health & Wellness', href: '/health-wellness', icon: HandHeart },
+    { title: 'Education', href: '/education', icon: Crown },
+    { title: 'Achievements', href: '/achievements', icon: Trophy },
+    { title: 'Blogs', href: '/blogs', icon: ShoppingBag }
   ];
 
-  console.log(unreadNotifications, "notifications");
+  console.log(unreadNotifications, 'notifications');
 
   // fetch notifications
   useEffect(() => {
-    if (role === "admin" || role === "superAdmin" || role === "user") {
-      fetch("/api/admin/notifications")
+    if (role === 'admin' || role === 'superAdmin' || role === 'user') {
+      fetch('/api/admin/notifications')
         .then((res) => res.json())
         .then((data) => {
           const notifs = Array.isArray(data) ? data : data.data || [];
           setNotifications(notifs);
         })
-        .catch((err) => console.error("Failed to fetch notifications:", err));
+        .catch((err) => console.error('Failed to fetch notifications:', err));
     }
   }, [role]);
 
   const markAllAsRead = async () => {
     try {
       const url =
-        role === "admin" || role === "superAdmin"
-          ? "/api/notifications/mark-all-read"
-          : "/api/notifications/mark-all-read";
-      await fetch(url, { method: "POST" });
+        role === 'admin' || role === 'superAdmin'
+          ? '/api/notifications/mark-all-read'
+          : '/api/notifications/mark-all-read';
+      await fetch(url, { method: 'POST' });
       // fetchNotifications();
     } catch (err) {
-      console.error("Error marking notifications:", err);
+      console.error('Error marking notifications:', err);
     }
   };
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // fetch profile info
@@ -142,7 +163,7 @@ export default function MobileLayout({
         const data = await res.json();
         if (res.ok) setProfileData(data);
       } catch (err) {
-        console.error("Error fetching profile:", err);
+        console.error('Error fetching profile:', err);
       } finally {
         setLoading(false);
       }
@@ -151,7 +172,7 @@ export default function MobileLayout({
   }, [loginUser?.id]);
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+    signOut({ callbackUrl: '/' });
   };
 
   return (
@@ -161,8 +182,8 @@ export default function MobileLayout({
       <div
         className={`sticky top-0 z-50 transition-all duration-300 ${
           scrollY > 20
-            ? "bg-gradient-to-r from-red-700 to-orange-600"
-            : "bg-gradient-to-r from-red-700 to-orange-600"
+            ? 'bg-gradient-to-r from-red-700 to-orange-600'
+            : 'bg-gradient-to-r from-red-700 to-orange-600'
         }`}
       >
         <div className="px-4 py-3.5">
@@ -174,7 +195,7 @@ export default function MobileLayout({
               >
                 <Menu
                   className={`w-6 h-6 ${
-                    scrollY > 20 ? "text-white" : "text-white"
+                    scrollY > 20 ? 'text-white' : 'text-white'
                   }`}
                 />
               </button>
@@ -183,8 +204,8 @@ export default function MobileLayout({
                 <div
                   className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
                     scrollY > 20
-                      ? "bg-gradient-to-br from-red-600 to-orange-500"
-                      : "bg-gradient-to-br from-red-600 to-orange-500"
+                      ? 'bg-gradient-to-br from-red-600 to-orange-500'
+                      : 'bg-gradient-to-br from-red-600 to-orange-500'
                   }`}
                 >
                   <Crown className="w-6 h-6 text-white" />
@@ -192,14 +213,14 @@ export default function MobileLayout({
                 <div>
                   <h1
                     className={`text-base font-bold leading-tight ${
-                      scrollY > 20 ? "text-white" : "text-white"
+                      scrollY > 20 ? 'text-white' : 'text-white'
                     }`}
                   >
                     Mauryavansham
                   </h1>
                   <p
                     className={`text-xs leading-tight ${
-                      scrollY > 20 ? "text-orange-100" : "text-orange-100"
+                      scrollY > 20 ? 'text-orange-100' : 'text-orange-100'
                     }`}
                   >
                     मौर्यवंश - गौरवशाली परंपरा
@@ -216,12 +237,12 @@ export default function MobileLayout({
                 if (unread.length === 0) return;
 
                 try {
-                  const res = await fetch("/api/notifications/mark-read", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                  const res = await fetch('/api/notifications/mark-read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                      notificationIds: unread.map((n) => n.id),
-                    }),
+                      notificationIds: unread.map((n) => n.id)
+                    })
                   });
 
                   if (res.ok) {
@@ -233,10 +254,10 @@ export default function MobileLayout({
                       )
                     );
                   } else {
-                    console.error("❌ Failed to mark notifications as read");
+                    console.error('❌ Failed to mark notifications as read');
                   }
                 } catch (err) {
-                  console.error("⚠️ Error marking notifications:", err);
+                  console.error('⚠️ Error marking notifications:', err);
                 }
               }}
             >
@@ -263,16 +284,16 @@ export default function MobileLayout({
                     <button
                       onClick={async () => {
                         try {
-                          await fetch("/api/notifications/mark-all-read", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ userId: loginUser?.id }),
+                          await fetch('/api/notifications/mark-all-read', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: loginUser?.id })
                           });
                           setNotifications((prev) =>
                             prev.map((n) => ({ ...n, isRead: true }))
                           );
                         } catch (err) {
-                          console.error("Error marking all as read:", err);
+                          console.error('Error marking all as read:', err);
                         }
                       }}
                       className="text-xs text-blue-600 hover:underline"
@@ -288,7 +309,7 @@ export default function MobileLayout({
                       <DropdownMenuItem
                         key={idx}
                         className={`px-3 py-2 text-sm border-b cursor-default ${
-                          !n.isRead ? "bg-red-50" : ""
+                          !n.isRead ? 'bg-red-50' : ''
                         }`}
                       >
                         <p className="font-medium text-gray-800">{n.title}</p>
@@ -329,21 +350,21 @@ export default function MobileLayout({
             const isActive = pathname === item.path;
 
             const handleNavigation = () => {
-              if (item.label === "Profile") {
+              if (item.label === 'Profile') {
                 if (!isAuthenticated) {
                   setShowLoginModal(true);
                   return;
                 }
 
-                if (userDetails?.role === "user") {
+                if (userDetails?.role === 'user') {
                   router.push(`/dashboard/user-profile/${userDetails?.id}`);
                 } else if (
-                  userDetails?.role === "admin" ||
-                  userDetails?.role === "superAdmin"
+                  userDetails?.role === 'admin' ||
+                  userDetails?.role === 'superAdmin'
                 ) {
                   router.push(`/admin/user-profile/${userDetails?.id}`);
                 } else {
-                  router.push("/profile");
+                  router.push('/profile');
                 }
               } else {
                 router.push(item.path);
@@ -359,19 +380,19 @@ export default function MobileLayout({
                 <div
                   className={`p-2 rounded-xl transition-all ${
                     isActive
-                      ? "bg-gradient-to-r from-red-600 to-orange-500"
-                      : ""
+                      ? 'bg-gradient-to-r from-red-600 to-orange-500'
+                      : ''
                   }`}
                 >
                   <Icon
                     className={`w-5 h-5 ${
-                      isActive ? "text-white" : "text-gray-600"
+                      isActive ? 'text-white' : 'text-gray-600'
                     }`}
                   />
                 </div>
                 <span
                   className={`text-xs ${
-                    isActive ? "text-red-600 font-semibold" : "text-gray-600"
+                    isActive ? 'text-red-600 font-semibold' : 'text-gray-600'
                   }`}
                 >
                   {item.label}
@@ -388,7 +409,7 @@ export default function MobileLayout({
           {/* Sidebar */}
           <div
             className={`bg-gradient-to-r from-orange-500 to-red-600 text-white w-72 h-full shadow-lg p-4 space-y-4 transform transition-transform duration-300 ease-in-out ${
-              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+              sidebarOpen ? 'translate-x-0' : '-translate-x-full'
             } pointer-events-auto overflow-y-auto`}
           >
             {/* Top Section */}
@@ -447,7 +468,7 @@ export default function MobileLayout({
                   {!loading ? (
                     <div className="w-18 h-18 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
                       <img
-                        src={profileData?.data?.photo || "/placeholder.svg"}
+                        src={profileData?.data?.photo || '/placeholder.svg'}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -491,7 +512,7 @@ export default function MobileLayout({
                   <Button
                     className="bg-white text-red-600 w-full"
                     onClick={() => {
-                      router.push("/sign-in");
+                      router.push('/sign-in');
                       setSidebarOpen(false);
                     }}
                   >
@@ -500,7 +521,7 @@ export default function MobileLayout({
                   <Button
                     className="bg-white text-red-600 w-full"
                     onClick={() => {
-                      router.push("/sign-up");
+                      router.push('/sign-up');
                       setSidebarOpen(false);
                     }}
                   >
@@ -509,22 +530,22 @@ export default function MobileLayout({
                 </>
               ) : (
                 <>
-                  {userDetails?.role === "user" ? (
+                  {userDetails?.role === 'user' ? (
                     <Button
                       className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full"
                       onClick={() => {
-                        router.push("/dashboard");
+                        router.push('/dashboard');
                         setSidebarOpen(false);
                       }}
                     >
                       Main Panel
                     </Button>
-                  ) : userDetails?.role === "admin" ||
-                    userDetails?.role === "superAdmin" ? (
+                  ) : userDetails?.role === 'admin' ||
+                    userDetails?.role === 'superAdmin' ? (
                     <Button
                       className="bg-gradient-to-r from-orange-500 to-red-600 text-white w-full"
                       onClick={() => {
-                        router.push("/admin/overview");
+                        router.push('/admin/overview');
                         setSidebarOpen(false);
                       }}
                     >
@@ -545,7 +566,7 @@ export default function MobileLayout({
                 </>
               )}
               {!isWebView && (
-                <div className="relative">
+                <div className="relative" ref={dropdownRef}>
                   <Button
                     onClick={() => setOpen(!open)}
                     className="text-white text-sm bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-md transition"
@@ -557,7 +578,7 @@ export default function MobileLayout({
                     <div className="absolute right-0 mt-2 w-48 bg-white text-gray-700 rounded-md shadow-lg overflow-hidden z-50">
                       {/* Android */}
                       <a
-                        href="https://mauryavansh.com/App/Mauryavansham.apk"
+                        href={`${process.env.NEXT_PUBLIC_APP_URL}/App/Mauryavansham.apk`}
                         className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm"
                         download
                       >
@@ -604,7 +625,7 @@ export default function MobileLayout({
             </p>
             <div className="space-y-3">
               <Button
-                onClick={() => router.push("/sign-in")}
+                onClick={() => router.push('/sign-in')}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white"
               >
                 <User className="h-4 w-4 mr-2" />

@@ -1,20 +1,41 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { FaAndroid, FaApple } from "react-icons/fa";
-import Translator from "@/src/hooks/googleTranslator";
-import { Crown } from "lucide-react";
+import { useEffect, useState, useRef } from 'react';
+import { FaAndroid, FaApple } from 'react-icons/fa';
+import Translator from '@/src/hooks/googleTranslator';
+import { Crown } from 'lucide-react';
 
 export function TopHeader() {
   const [open, setOpen] = useState(false);
   const [isWebView, setIsWebView] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Detect if running inside React Native WebView
-    if (typeof window !== "undefined" && (window as any).ReactNativeWebView) {
+    if (typeof window !== 'undefined' && (window as any).ReactNativeWebView) {
       setIsWebView(true);
     }
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
 
   return (
     <header className="w-full relative z-50">
@@ -32,7 +53,7 @@ export function TopHeader() {
           <div className="flex items-center gap-4 text-white text-sm relative">
             {/* Download Button — only visible on web */}
             {!isWebView && (
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setOpen(!open)}
                   className="text-white text-sm bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-md transition"
@@ -44,7 +65,7 @@ export function TopHeader() {
                   <div className="absolute right-0 mt-2 w-48 bg-white text-gray-700 rounded-md shadow-lg overflow-hidden z-50">
                     {/* Android Option */}
                     <a
-                      href="https://mauryavansh.com/App/Mauryavansham.apk"
+                      href={`${process.env.NEXT_PUBLIC_APP_URL}/App/Mauryavansham.apk`}
                       className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 text-sm"
                       download
                     >
@@ -53,7 +74,8 @@ export function TopHeader() {
 
                     {/* iOS Option (Disabled) */}
                     <div className="flex items-center gap-2 px-4 py-2 text-gray-400 text-sm cursor-not-allowed bg-gray-50">
-                      <FaApple className="text-gray-400" /> iOS App (Coming Soon)
+                      <FaApple className="text-gray-400" /> iOS App (Coming
+                      Soon)
                     </div>
                   </div>
                 )}
