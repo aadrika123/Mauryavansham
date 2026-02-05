@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import Loader from "@/src/components/ui/loader";
-import { Button } from "@/src/components/ui/button";
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import Loader from '@/src/components/ui/loader';
+import { Button } from '@/src/components/ui/button';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/src/components/ui/table";
-import Link from "next/link";
-import * as XLSX from "xlsx";
+  TableRow
+} from '@/src/components/ui/table';
+import Link from 'next/link';
+import { exportToExcel } from '@/src/utils/exportExcel';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-} from "@/src/components/ui/dialog";
+  DialogFooter
+} from '@/src/components/ui/dialog';
 
 interface Attendee {
   id: number;
@@ -36,7 +36,7 @@ interface Event {
   id: string;
   title: string;
   date: string;
-  status: "pending" | "approved" | "rejected";
+  status: 'pending' | 'approved' | 'rejected';
   description: string;
   attendees?: Attendee[];
 }
@@ -48,11 +48,11 @@ export default function MyEvents() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    "pending" | "approved" | "rejected"
-  >("pending");
+    'pending' | 'approved' | 'rejected'
+  >('pending');
   const [attendeesModalOpen, setAttendeesModalOpen] = useState(false);
   const [selectedAttendees, setSelectedAttendees] = useState<Attendee[]>([]);
-  const [selectedEventTitle, setSelectedEventTitle] = useState("");
+  const [selectedEventTitle, setSelectedEventTitle] = useState('');
 
   useEffect(() => {
     if (!userId) return;
@@ -63,7 +63,7 @@ export default function MyEvents() {
         const data = await res.json();
         setEvents(data);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error('Error fetching events:', error);
       } finally {
         setLoading(false);
       }
@@ -80,20 +80,17 @@ export default function MyEvents() {
     setAttendeesModalOpen(true);
   };
 
-  const handleExportToExcel = () => {
+  const handleExportToExcel = async () => {
     const data = selectedAttendees.map((attendee) => ({
       Name: attendee.name,
       Email: attendee.email,
-      Phone: attendee.phone || "-",
+      Phone: attendee.phone || '-',
       Father_Name: attendee.fatherName,
       City: attendee.city,
-      Profession: attendee.profession || attendee.designation || "-",
+      Profession: attendee.profession || attendee.designation || '-'
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Attendees");
-    XLSX.writeFile(workbook, `${selectedEventTitle}_attendees.xlsx`);
+    await exportToExcel(data, 'Attendees', `${selectedEventTitle}_attendees`);
   };
 
   if (loading)
@@ -109,12 +106,12 @@ export default function MyEvents() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-3 mb-4">
-        {["pending", "approved", "rejected"].map((tab) => {
+        {['pending', 'approved', 'rejected'].map((tab) => {
           const count = events.filter((e) => e.status === tab).length;
           return (
             <Button
               key={tab}
-              variant={activeTab === tab ? "default" : "outline"}
+              variant={activeTab === tab ? 'default' : 'outline'}
               onClick={() => setActiveTab(tab as any)}
             >
               {tab.toUpperCase()} ({count})
@@ -145,11 +142,11 @@ export default function MyEvents() {
                   <TableCell>{event.date}</TableCell>
                   <TableCell
                     className={`font-medium ${
-                      event.status === "pending"
-                        ? "text-yellow-600"
-                        : event.status === "approved"
-                        ? "text-green-600"
-                        : "text-red-600"
+                      event.status === 'pending'
+                        ? 'text-yellow-600'
+                        : event.status === 'approved'
+                          ? 'text-green-600'
+                          : 'text-red-600'
                     }`}
                   >
                     {event.status}
@@ -161,8 +158,8 @@ export default function MyEvents() {
                       </Button>
                     </Link>
 
-                    {(event.status === "pending" ||
-                      event.status === "approved") && (
+                    {(event.status === 'pending' ||
+                      event.status === 'approved') && (
                       <Link href={`/admin/my-events/${event.id}/edit`}>
                         <Button
                           size="sm"
@@ -173,7 +170,7 @@ export default function MyEvents() {
                       </Link>
                     )}
 
-                    {event.status === "approved" && (
+                    {event.status === 'approved' && (
                       <Button
                         size="sm"
                         onClick={() => handleViewAttendees(event)}
@@ -219,11 +216,11 @@ export default function MyEvents() {
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{attendee.name}</TableCell>
                       <TableCell>{attendee.email}</TableCell>
-                      <TableCell>{attendee.phone || "-"}</TableCell>
+                      <TableCell>{attendee.phone || '-'}</TableCell>
                       <TableCell>{attendee.fatherName}</TableCell>
                       <TableCell>{attendee.city}</TableCell>
                       <TableCell>
-                        {attendee.profession || attendee.designation || "-"}
+                        {attendee.profession || attendee.designation || '-'}
                       </TableCell>
                     </TableRow>
                   ))}

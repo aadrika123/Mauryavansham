@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
+import { useState, useEffect } from 'react';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
 
 interface CoachingCenter {
   id: number;
@@ -38,10 +38,10 @@ export default function EducationReportsPage() {
   const [allFilteredCenters, setAllFilteredCenters] = useState<
     CoachingCenter[]
   >([]);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [cityFilter, setCityFilter] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,12 +56,12 @@ export default function EducationReportsPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        params.append("page", currentPage.toString());
-        params.append("limit", pageSize.toString());
-        if (statusFilter) params.append("status", statusFilter);
-        if (cityFilter) params.append("city", cityFilter);
-        if (stateFilter) params.append("state", stateFilter);
-        if (searchQuery) params.append("search", searchQuery);
+        params.append('page', currentPage.toString());
+        params.append('limit', pageSize.toString());
+        if (statusFilter) params.append('status', statusFilter);
+        if (cityFilter) params.append('city', cityFilter);
+        if (stateFilter) params.append('state', stateFilter);
+        if (searchQuery) params.append('search', searchQuery);
 
         const res = await fetch(`/api/reports/educations?${params.toString()}`);
         const result = await res.json();
@@ -84,52 +84,49 @@ export default function EducationReportsPage() {
     stateFilter,
     searchQuery,
     currentPage,
-    pageSize,
+    pageSize
   ]);
 
   // ✅ Format date
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return '-';
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
   // ✅ Export to Excel
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (allFilteredCenters.length === 0) return;
 
     const sortedCenters = [...allFilteredCenters].sort((a, b) =>
-      a.centerName.localeCompare(b.centerName, "en", { sensitivity: "base" })
+      a.centerName.localeCompare(b.centerName, 'en', { sensitivity: 'base' })
     );
 
     const dataToExport = sortedCenters.map((c) => ({
-      "Center Name": c.centerName,
-      "Owner Name": c.ownerName,
+      'Center Name': c.centerName,
+      'Owner Name': c.ownerName,
       Email: c.email,
       Phone: c.phone,
       Address: c.address,
       City: c.city,
       State: c.state,
       Pincode: c.pincode,
-      "Courses Offered": c.courses?.join(", ") || "-",
+      'Courses Offered': c.courses?.join(', ') || '-',
       Branches:
         c.branches
-          ?.map((b) => `${b.name} (${b.phone || "-"}, ${b.address || "-"})`)
-          .join("; ") || "-",
-      Logo: c.logoUrl || "-",
-      Documents: c.docUrls?.join(", ") || "-",
+          ?.map((b) => `${b.name} (${b.phone || '-'}, ${b.address || '-'})`)
+          .join('; ') || '-',
+      Logo: c.logoUrl || '-',
+      Documents: c.docUrls?.join(', ') || '-',
       Status: c.status,
-      "Created On": formatDate(c.createdAt),
-      "Updated On": formatDate(c.updatedAt),
+      'Created On': formatDate(c.createdAt),
+      'Updated On': formatDate(c.updatedAt)
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Coaching Centers");
-    XLSX.writeFile(workbook, "education-report.xlsx");
+    await exportToExcel(dataToExport, 'Coaching Centers', 'education-report');
   };
 
   return (
@@ -173,34 +170,34 @@ export default function EducationReportsPage() {
         >
           <option value="">All States</option>
           {[
-            "Andhra Pradesh",
-            "Arunachal Pradesh",
-            "Assam",
-            "Bihar",
-            "Chhattisgarh",
-            "Goa",
-            "Gujarat",
-            "Haryana",
-            "Himachal Pradesh",
-            "Jharkhand",
-            "Karnataka",
-            "Kerala",
-            "Madhya Pradesh",
-            "Maharashtra",
-            "Manipur",
-            "Meghalaya",
-            "Mizoram",
-            "Nagaland",
-            "Odisha",
-            "Punjab",
-            "Rajasthan",
-            "Sikkim",
-            "Tamil Nadu",
-            "Telangana",
-            "Tripura",
-            "Uttar Pradesh",
-            "Uttarakhand",
-            "West Bengal",
+            'Andhra Pradesh',
+            'Arunachal Pradesh',
+            'Assam',
+            'Bihar',
+            'Chhattisgarh',
+            'Goa',
+            'Gujarat',
+            'Haryana',
+            'Himachal Pradesh',
+            'Jharkhand',
+            'Karnataka',
+            'Kerala',
+            'Madhya Pradesh',
+            'Maharashtra',
+            'Manipur',
+            'Meghalaya',
+            'Mizoram',
+            'Nagaland',
+            'Odisha',
+            'Punjab',
+            'Rajasthan',
+            'Sikkim',
+            'Tamil Nadu',
+            'Telangana',
+            'Tripura',
+            'Uttar Pradesh',
+            'Uttarakhand',
+            'West Bengal'
           ].map((state) => (
             <option key={state} value={state}>
               {state}
@@ -209,7 +206,7 @@ export default function EducationReportsPage() {
         </select>
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel
@@ -267,7 +264,7 @@ export default function EducationReportsPage() {
                             className="w-10 h-10 object-cover rounded"
                           />
                         ) : (
-                          "-"
+                          '-'
                         )}
                       </td>
 
@@ -280,7 +277,7 @@ export default function EducationReportsPage() {
 
                       {/* ✅ Courses */}
                       <td className="px-4 py-2 border">
-                        {c.courses?.length > 0 ? c.courses.join(", ") : "-"}
+                        {c.courses?.length > 0 ? c.courses.join(', ') : '-'}
                       </td>
 
                       {/* ✅ Branches */}
@@ -298,7 +295,7 @@ export default function EducationReportsPage() {
                             ))}
                           </ul>
                         ) : (
-                          "-"
+                          '-'
                         )}
                       </td>
 
@@ -319,7 +316,7 @@ export default function EducationReportsPage() {
                             ))}
                           </div>
                         ) : (
-                          "-"
+                          '-'
                         )}
                       </td>
 

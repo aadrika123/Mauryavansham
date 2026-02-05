@@ -1,24 +1,28 @@
-import { NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { achievements } from "@/src/drizzle/db/schemas/achievements";
-import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
+import { NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { achievements } from '@/src/drizzle/db/schemas/achievements';
+import { eq } from 'drizzle-orm';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
 
 // 🟡 UPDATE ACHIEVEMENT (PUT)
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id: paramId } = await params;
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized access" },
+        { success: false, message: 'Unauthorized access' },
         { status: 401 }
       );
     }
 
-    const id = Number(params.id);
+    const id = Number(paramId);
     const body = await req.json();
 
     await db
@@ -40,29 +44,33 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         isVerified: body.isVerified ?? false,
         isFeatured: body.isFeatured ?? false,
         isHallOfFame: body.isHallOfFame ?? false,
-        updatedBy: user.name || "Unknown",
+        updatedBy: user.name || 'Unknown',
         updatedById: user.id,
-        updatedAt: new Date(),
+        updatedAt: new Date()
       })
       .where(eq(achievements.id, id));
 
     return NextResponse.json(
-      { success: true, message: "Achievement updated successfully" },
+      { success: true, message: 'Achievement updated successfully' },
       { status: 200 }
     );
   } catch (err) {
-    console.error("❌ Error updating achievement:", err);
+    console.error('❌ Error updating achievement:', err);
     return NextResponse.json(
-      { success: false, message: "Failed to update achievement" },
+      { success: false, message: 'Failed to update achievement' },
       { status: 500 }
     );
   }
 }
 
 // 🔵 GET SINGLE ACHIEVEMENT
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const id = Number(params.id);
+    const { id: paramId } = await params;
+    const id = Number(paramId);
 
     const [achievement] = await db
       .select()
@@ -71,31 +79,35 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 
     if (!achievement) {
       return NextResponse.json(
-        { success: false, message: "Achievement not found" },
+        { success: false, message: 'Achievement not found' },
         { status: 404 }
       );
     }
 
     return NextResponse.json({ success: true, data: achievement });
   } catch (err) {
-    console.error("❌ Error fetching achievement:", err);
+    console.error('❌ Error fetching achievement:', err);
     return NextResponse.json(
-      { success: false, message: "Failed to fetch achievement" },
+      { success: false, message: 'Failed to fetch achievement' },
       { status: 500 }
     );
   }
 }
 
 // 🔴 DELETE (soft delete)
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id: paramId } = await params;
     const session = await getServerSession(authOptions);
     const user = session?.user;
-    const id = Number(params.id);
+    const id = Number(paramId);
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized access" },
+        { success: false, message: 'Unauthorized access' },
         { status: 401 }
       );
     }
@@ -103,21 +115,21 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     await db
       .update(achievements)
       .set({
-        status: "removed",
-        removedBy: user.name || "Unknown",
+        status: 'removed',
+        removedBy: user.name || 'Unknown',
         removedById: user.id,
-        removedAt: new Date(),
+        removedAt: new Date()
       })
       .where(eq(achievements.id, id));
 
     return NextResponse.json(
-      { success: true, message: "Achievement removed successfully" },
+      { success: true, message: 'Achievement removed successfully' },
       { status: 200 }
     );
   } catch (err) {
-    console.error("❌ Error deleting achievement:", err);
+    console.error('❌ Error deleting achievement:', err);
     return NextResponse.json(
-      { success: false, message: "Failed to remove achievement" },
+      { success: false, message: 'Failed to remove achievement' },
       { status: 500 }
     );
   }

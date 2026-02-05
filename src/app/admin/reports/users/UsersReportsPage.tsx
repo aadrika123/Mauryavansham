@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import SummaryCard from "../components/SummaryCard";
-import { Users } from "lucide-react";
-import Pagination from "@/src/components/common/Pagination";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
+import { useState, useEffect } from 'react';
+import SummaryCard from '../components/SummaryCard';
+import { Users } from 'lucide-react';
+import Pagination from '@/src/components/common/Pagination';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
 
 interface User {
   id: number;
@@ -14,7 +14,7 @@ interface User {
   phone: string;
   city: string;
   createdAt: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
   role: string;
   state: string;
   gender: string;
@@ -26,29 +26,29 @@ export default function UsersReportsPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [totalCount, setTotalCount] = useState(0);
 
-  const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
-  const [cityFilter, setCityFilter] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [allFilteredUsers, setAllFilteredUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
         const params = new URLSearchParams();
-        params.append("page", "1");
-        params.append("limit", "1000"); // large number to get all filtered data
-        if (search) params.append("search", search);
-        if (roleFilter) params.append("role", roleFilter);
-        if (cityFilter) params.append("city", cityFilter);
-        if (startDate) params.append("startDate", startDate);
-        if (endDate) params.append("endDate", endDate);
+        params.append('page', '1');
+        params.append('limit', '1000'); // large number to get all filtered data
+        if (search) params.append('search', search);
+        if (roleFilter) params.append('role', roleFilter);
+        if (cityFilter) params.append('city', cityFilter);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
 
         const res = await fetch(`/api/users?${params.toString()}`);
         const data = await res.json();
@@ -69,12 +69,12 @@ export default function UsersReportsPage() {
   const totalPages = Math.ceil(totalCount / pageSize);
 
   // Export currently visible table data to Excel
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (allFilteredUsers.length === 0) return;
 
     // 🔠 Sort alphabetically by name (case-insensitive)
     const sortedUsers = [...allFilteredUsers].sort((a, b) =>
-      a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+      a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
     );
 
     const dataToExport = sortedUsers.map((u) => ({
@@ -86,25 +86,22 @@ export default function UsersReportsPage() {
       Address: u.address,
       City: u.city,
       State: u.state,
-      "Registration Date": formatDate(u.createdAt),
+      'Registration Date': formatDate(u.createdAt),
       Status: u.status,
-      Role: u.role,
+      Role: u.role
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
-    XLSX.writeFile(workbook, "users-report.xlsx");
+    await exportToExcel(dataToExport, 'Users', 'users-report');
   };
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
-if (loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-[70vh]">
         <Loader />
@@ -159,7 +156,7 @@ if (loading) {
         />
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel

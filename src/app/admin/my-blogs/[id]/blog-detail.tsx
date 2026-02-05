@@ -1,67 +1,85 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { ArrowLeft, Calendar, User, Edit, AlertCircle, CheckCircle } from "lucide-react"
-import { format } from "date-fns"
+import Link from 'next/link';
+import { Button } from '@/src/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/src/components/ui/card';
+import { Badge } from '@/src/components/ui/badge';
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  Edit,
+  AlertCircle,
+  CheckCircle
+} from 'lucide-react';
+import { format } from 'date-fns';
 
 interface Blog {
-  id: string
-  title: string
-  content: string
-  summary: string
-  status: "draft" | "pending" | "approved" | "rejected"
-  createdAt: string
-  updatedAt: string
-  approvedAt?: string
-  rejectionReason?: string
+  id: number | string;
+  title: string;
+  content: string;
+  summary: string;
+  status: 'draft' | 'pending' | 'approved' | 'rejected' | 'removed';
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  approvedAt?: Date | string | null;
+  rejectionReason?: string | null;
   author: {
-    id: string
-    name: string
-    email: string
-  }
+    id: number | string;
+    name: string;
+    email: string;
+  } | null;
 }
 
 interface BlogDetailProps {
-  blog: Blog
-  currentUserId: string
-  userRole?: string
+  blog: Blog;
+  currentUserId: string | number;
+  userRole?: string;
 }
 
-export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetailProps) {
+export default function BlogDetail({
+  blog,
+  currentUserId,
+  userRole
+}: BlogDetailProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "draft":
-        return "bg-gray-100 text-gray-800"
-      case "pending":
-        return "bg-yellow-100 text-yellow-800"
-      case "approved":
-        return "bg-green-100 text-green-800"
-      case "rejected":
-        return "bg-red-100 text-red-800"
+      case 'draft':
+        return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800"
+        return 'bg-gray-100 text-gray-800';
     }
-  }
+  };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "draft":
-        return "Draft"
-      case "pending":
-        return "Pending Approval"
-      case "approved":
-        return "Approved"
-      case "rejected":
-        return "Rejected"
+      case 'draft':
+        return 'Draft';
+      case 'pending':
+        return 'Pending Approval';
+      case 'approved':
+        return 'Approved';
+      case 'rejected':
+        return 'Rejected';
       default:
-        return status
+        return status;
     }
-  }
+  };
 
-  const canEdit = blog.author.id == currentUserId && (blog.status === "draft" || blog.status === "pending" )
+  const canEdit =
+    blog.author.id == currentUserId &&
+    (blog.status === 'draft' || blog.status === 'pending');
 
   return (
     <div className="space-y-6">
@@ -94,11 +112,19 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  <span>Created {format(new Date(blog.createdAt), "MMM d, yyyy 'at' h:mm a")}</span>
+                  <span>
+                    Created{' '}
+                    {format(
+                      new Date(blog.createdAt),
+                      "MMM d, yyyy 'at' h:mm a"
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
-            <Badge className={getStatusColor(blog.status)}>{getStatusText(blog.status)}</Badge>
+            <Badge className={getStatusColor(blog.status)}>
+              {getStatusText(blog.status)}
+            </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -110,7 +136,9 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Content</h3>
             <div className="prose max-w-none">
-              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">{blog.content}</div>
+              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                {blog.content}
+              </div>
             </div>
           </div>
 
@@ -118,19 +146,22 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
             <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
               <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-medium text-red-800 mb-1">Rejection Reason</h4>
+                <h4 className="font-medium text-red-800 mb-1">
+                  Rejection Reason
+                </h4>
                 <p className="text-red-700">{blog.rejectionReason}</p>
               </div>
             </div>
           )}
 
-          {blog.status === "approved" && blog.approvedAt && (
+          {blog.status === 'approved' && blog.approvedAt && (
             <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="font-medium text-green-800 mb-1">Approved</h4>
                 <p className="text-green-700">
-                  This blog was approved on {format(new Date(blog.approvedAt), "MMM d, yyyy 'at' h:mm a")}
+                  This blog was approved on{' '}
+                  {format(new Date(blog.approvedAt), "MMM d, yyyy 'at' h:mm a")}
                 </p>
               </div>
             </div>
@@ -138,11 +169,14 @@ export default function BlogDetail({ blog, currentUserId, userRole }: BlogDetail
 
           <div className="pt-4 border-t border-gray-200">
             <div className="flex items-center gap-4 text-sm text-gray-500">
-              <span>Last updated: {format(new Date(blog.updatedAt), "MMM d, yyyy 'at' h:mm a")}</span>
+              <span>
+                Last updated:{' '}
+                {format(new Date(blog.updatedAt), "MMM d, yyyy 'at' h:mm a")}
+              </span>
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "@/src/components/ui/button";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu";
-import { cn } from "@/src/lib/utils";
+  DropdownMenuTrigger
+} from '@/src/components/ui/dropdown-menu';
+import { cn } from '@/src/lib/utils';
 import {
   Crown,
   Bell,
@@ -35,20 +35,21 @@ import {
   BookAIcon,
   AmbulanceIcon,
   Trophy,
-  Users2Icon,
-} from "lucide-react"; // ✅ Added Menu & X icons
-import type { User as NextAuthUser } from "next-auth";
-import { signOut } from "next-auth/react";
+  Users2Icon
+} from 'lucide-react'; // ✅ Added Menu & X icons
+import type { User as NextAuthUser } from 'next-auth';
+import { signOut } from 'next-auth/react';
 
 export default function AdmindashboardLayout({
   children,
-  user,
+  user
 }: {
   children: React.ReactNode;
   user: NextAuthUser;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false); // ✅ Sidebar toggle state
+  const [scrollY, setScrollY] = useState(0); // ✅ Scroll position state
   const pathname = usePathname();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
@@ -59,86 +60,93 @@ export default function AdmindashboardLayout({
     (n) => !n.isRead || n.isRead === 0
   );
 
+  // ✅ Track scroll position
   useEffect(() => {
-    if (user?.role === "admin" || user?.role === "superAdmin") {
-      fetch("/api/admin/notifications")
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (user?.role === 'admin' || user?.role === 'superAdmin') {
+      fetch('/api/admin/notifications')
         .then((res) => res.json())
         .then((data) => {
           // ✅ handle both raw array or { data: [] }
           const notifs = Array.isArray(data) ? data : data.data || [];
           setNotifications(notifs);
         })
-        .catch((err) => console.error("Failed to fetch notifications:", err));
+        .catch((err) => console.error('Failed to fetch notifications:', err));
     }
   }, [user]);
 
   // Sidebar items for regular admin
   const adminSidebarItems = [
-    { title: "Home", href: "/", icon: LayoutDashboard },
-    { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+    { title: 'Home', href: '/', icon: LayoutDashboard },
+    { title: 'Dashboard', href: '/admin/overview', icon: LayoutDashboard },
 
     {
-      title: "My Inbox",
-      href: "/admin/messenger-page",
-      icon: MessageSquare,
+      title: 'My Inbox',
+      href: '/admin/messenger-page',
+      icon: MessageSquare
     },
     {
-      title: "Enquiries",
-      href: "/admin/enquiries",
-      icon: MessageSquare,
+      title: 'Enquiries',
+      href: '/admin/enquiries',
+      icon: MessageSquare
     },
     {
-      title: "Achievements",
-      href: "",
+      title: 'Achievements',
+      href: '',
       icon: Trophy,
       subItems: [
         {
-          title: "Create Achievements",
-          href: "/admin/create-achievement-general",
-          icon: Calendar,
+          title: 'Create Achievements',
+          href: '/admin/create-achievement-general',
+          icon: Calendar
         },
         {
-          title: "My Achievements",
-          href: "/admin/created-achievement-general",
-          icon: Calendar,
-        },
-      ],
+          title: 'My Achievements',
+          href: '/admin/created-achievement-general',
+          icon: Calendar
+        }
+      ]
     },
-    { title: "Manage Users", href: "/admin/users", icon: Users },
+    { title: 'Manage Users', href: '/admin/users', icon: Users },
     {
-      title: "Events",
-      href: "",
+      title: 'Events',
+      href: '',
       icon: Camera,
       subItems: [
-        { title: "Create Events", href: "/admin/events", icon: Calendar },
-        { title: "My Events", href: "/admin/my-events", icon: Calendar },
-      ],
+        { title: 'Create Events', href: '/admin/events', icon: Calendar },
+        { title: 'My Events', href: '/admin/my-events', icon: Calendar }
+      ]
     },
     {
-      title: "Matrimonial",
-      href: "",
+      title: 'Matrimonial',
+      href: '',
       icon: Camera,
       subItems: [
         {
-          title: "Create Matrimonial Profile",
-          href: "/admin/create-profile",
-          icon: LayoutDashboard,
+          title: 'Create Matrimonial Profile',
+          href: '/admin/create-profile',
+          icon: LayoutDashboard
         },
         {
-          title: "My Matrimonial Profiles",
-          href: "/admin/profile-list",
-          icon: LayoutDashboard,
+          title: 'My Matrimonial Profiles',
+          href: '/admin/profile-list',
+          icon: LayoutDashboard
         },
         {
-          title: "Search Matrimonial Profiles",
-          href: "/admin/search-profile",
-          icon: Search,
-        },
-      ],
+          title: 'Search Matrimonial Profiles',
+          href: '/admin/search-profile',
+          icon: Search
+        }
+      ]
     },
     // { title: "Create Events", href: "/admin/events", icon: Calendar },
-    { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
-    { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
+    { title: "My Blog's", href: '/admin/my-blogs', icon: Camera },
+    { title: 'Book Ads', href: '/admin/book-ads', icon: Tv },
 
     // {
     //   title: "Discussions Moderation",
@@ -146,279 +154,279 @@ export default function AdmindashboardLayout({
     //   icon: MessageSquare,
     // },
     {
-      title: "Business",
-      href: "",
+      title: 'Business',
+      href: '',
       icon: Tv,
       subItems: [
         {
-          title: "Register-business",
-          href: "/admin/register-business",
-          icon: Wallet2Icon,
+          title: 'Register-business',
+          href: '/admin/register-business',
+          icon: Wallet2Icon
         },
         {
-          title: "My Registered-business",
-          href: "/admin/view-business",
-          icon: Wallet2Icon,
-        },
-      ],
+          title: 'My Registered-business',
+          href: '/admin/view-business',
+          icon: Wallet2Icon
+        }
+      ]
     },
 
     {
-      title: "Education & Coaching",
-      href: "",
+      title: 'Education & Coaching',
+      href: '',
       icon: BookAIcon,
       subItems: [
         {
-          title: "Register Coaching",
-          href: "/admin/register-coaching",
-          icon: BookAIcon,
+          title: 'Register Coaching',
+          href: '/admin/register-coaching',
+          icon: BookAIcon
         },
         {
-          title: "My Registered Coaching",
-          href: "/admin/register-coaching/view",
-          icon: BookAIcon,
-        },
-      ],
+          title: 'My Registered Coaching',
+          href: '/admin/register-coaching/view',
+          icon: BookAIcon
+        }
+      ]
     },
     {
-      title: "Health & Wellness",
-      href: "",
+      title: 'Health & Wellness',
+      href: '',
       icon: AmbulanceIcon,
       subItems: [
         {
-          title: "Register Health Service",
-          href: "/admin/health-wellness",
-          icon: BookAIcon,
+          title: 'Register Health Service',
+          href: '/admin/health-wellness',
+          icon: BookAIcon
         },
         {
-          title: "My Registered Health Services",
-          href: "/admin/health-wellness/view",
-          icon: BookAIcon,
-        },
-      ],
-    },
+          title: 'My Registered Health Services',
+          href: '/admin/health-wellness/view',
+          icon: BookAIcon
+        }
+      ]
+    }
   ];
 
   const superAdminSidebarItems = [
-    { title: "Home", href: "/", icon: LayoutDashboard },
-    { title: "Dashboard", href: "/admin/overview", icon: LayoutDashboard },
+    { title: 'Home', href: '/', icon: LayoutDashboard },
+    { title: 'Dashboard', href: '/admin/overview', icon: LayoutDashboard },
     {
-      title: "My Inbox",
-      href: "/admin/messenger-page",
-      icon: MessageSquare,
+      title: 'My Inbox',
+      href: '/admin/messenger-page',
+      icon: MessageSquare
     },
-    { title: "Manage Users", href: "/admin/users", icon: Users },
+    { title: 'Manage Users', href: '/admin/users', icon: Users },
     // { title: "Create Events", href: "/admin/events", icon: Calendar },
     // { title: "My Events", href: "/admin/my-events", icon: Calendar },
     {
-      title: "Events",
-      href: "",
+      title: 'Events',
+      href: '',
       icon: Camera,
       subItems: [
-        { title: "Create Events", href: "/admin/events", icon: Calendar },
-        { title: "My Events", href: "/admin/my-events", icon: Calendar },
-      ],
+        { title: 'Create Events', href: '/admin/events', icon: Calendar },
+        { title: 'My Events', href: '/admin/my-events', icon: Calendar }
+      ]
     },
-    { title: "All Users", href: "/admin/manage-users", icon: Users },
+    { title: 'All Users', href: '/admin/manage-users', icon: Users },
     {
-      title: "Achievements",
-      href: "",
+      title: 'Achievements',
+      href: '',
       icon: Trophy,
       subItems: [
         {
-          title: "Create Achievements",
-          href: "/admin/create-achievement",
-          icon: Trophy,
+          title: 'Create Achievements',
+          href: '/admin/create-achievement',
+          icon: Trophy
         },
         {
-          title: " Created Achievements",
-          href: "/admin/created-achievement",
-          icon: Trophy,
-        },
-      ],
+          title: ' Created Achievements',
+          href: '/admin/created-achievement',
+          icon: Trophy
+        }
+      ]
     },
 
     {
-      title: "Modarations",
-      href: "",
+      title: 'Modarations',
+      href: '',
       icon: Tv,
       subItems: [
-        { title: "Ad Moderation", href: "/admin/ads", icon: Tv },
-        { title: "Blog Moderation", href: "/admin/blogs", icon: Camera },
+        { title: 'Ad Moderation', href: '/admin/ads', icon: Tv },
+        { title: 'Blog Moderation', href: '/admin/blogs', icon: Camera },
         {
-          title: "Discussions Moderation",
-          href: "/admin/discussions",
-          icon: MessageSquare,
+          title: 'Discussions Moderation',
+          href: '/admin/discussions',
+          icon: MessageSquare
         },
         {
-          title: "Event Moderation",
-          href: "/admin/event-modaration",
-          icon: Calendar,
+          title: 'Event Moderation',
+          href: '/admin/event-modaration',
+          icon: Calendar
         },
         {
-          title: "Register business Moderation",
-          href: "/admin/register-business",
-          icon: Wallet2Icon,
-        },
+          title: 'Register business Moderation',
+          href: '/admin/register-business',
+          icon: Wallet2Icon
+        }
         // {
         //   title: "Discussions Moderation",
         //   href: "/admin/discussions",
         //   icon: MessageSquare,
         // },
-      ],
+      ]
     },
     {
-      title: "Business",
-      href: "",
+      title: 'Business',
+      href: '',
       icon: Wallet2Icon,
       subItems: [
         {
-          title: "Register-business",
-          href: "/admin/register-business",
-          icon: Wallet2Icon,
+          title: 'Register-business',
+          href: '/admin/register-business',
+          icon: Wallet2Icon
         },
         {
-          title: "My Registered-business",
-          href: "/admin/view-business",
-          icon: Wallet2Icon,
-        },
-      ],
+          title: 'My Registered-business',
+          href: '/admin/view-business',
+          icon: Wallet2Icon
+        }
+      ]
     },
     {
-      title: "Matrimonial",
-      href: "",
+      title: 'Matrimonial',
+      href: '',
       icon: HeartHandshakeIcon,
       subItems: [
         {
-          title: "Create Matrimonial Profile",
-          href: "/admin/create-profile",
-          icon: LayoutDashboard,
+          title: 'Create Matrimonial Profile',
+          href: '/admin/create-profile',
+          icon: LayoutDashboard
         },
         {
-          title: "My Matrimonial Profiles",
-          href: "/admin/profile-list",
-          icon: LayoutDashboard,
+          title: 'My Matrimonial Profiles',
+          href: '/admin/profile-list',
+          icon: LayoutDashboard
         },
         {
-          title: "Search Matrimonial Profiles",
-          href: "/admin/search-profile",
-          icon: Search,
-        },
-      ],
+          title: 'Search Matrimonial Profiles',
+          href: '/admin/search-profile',
+          icon: Search
+        }
+      ]
     },
 
     {
-      title: "All Masters",
-      href: "",
+      title: 'All Masters',
+      href: '',
       icon: Wallet2Icon,
       subItems: [
-        { title: "Ads Rates", href: "/admin/ad-rates", icon: Tv },
+        { title: 'Ads Rates', href: '/admin/ad-rates', icon: Tv },
         {
-          title: "Ads Location Master",
-          href: "/admin/ads-location-master",
-          icon: Tv2,
+          title: 'Ads Location Master',
+          href: '/admin/ads-location-master',
+          icon: Tv2
         },
         {
-          title: "Discussion Category Master",
-          href: "/admin/discussion-castegory-master",
-          icon: Globe,
-        },
-      ],
+          title: 'Discussion Category Master',
+          href: '/admin/discussion-castegory-master',
+          icon: Globe
+        }
+      ]
     },
     {
-      title: "Heritage Master",
-      href: "",
+      title: 'Heritage Master',
+      href: '',
       icon: Users2Icon,
       subItems: [
         {
-          title: "Create Heritage",
-          href: "/admin/createHeritage/formPage",
-          icon: BookAIcon,
+          title: 'Create Heritage',
+          href: '/admin/createHeritage/formPage',
+          icon: BookAIcon
         },
         {
-          title: "View Heritage List",
-          href: "/admin/createHeritage/list",
-          icon: BookAIcon,
-        },
-      ],
+          title: 'View Heritage List',
+          href: '/admin/createHeritage/list',
+          icon: BookAIcon
+        }
+      ]
     },
-    { title: "My Blog's", href: "/admin/my-blogs", icon: Camera },
-    { title: "Book Ads", href: "/admin/book-ads", icon: Tv },
+    { title: "My Blog's", href: '/admin/my-blogs', icon: Camera },
+    { title: 'Book Ads', href: '/admin/book-ads', icon: Tv },
     {
-      title: "Education & Coaching",
-      href: "",
+      title: 'Education & Coaching',
+      href: '',
       icon: BookAIcon,
       subItems: [
         {
-          title: "Register Coaching",
-          href: "/admin/register-coaching",
-          icon: BookAIcon,
+          title: 'Register Coaching',
+          href: '/admin/register-coaching',
+          icon: BookAIcon
         },
         {
-          title: "My Registered Coaching",
-          href: "/admin/register-coaching/view",
-          icon: BookAIcon,
-        },
-      ],
+          title: 'My Registered Coaching',
+          href: '/admin/register-coaching/view',
+          icon: BookAIcon
+        }
+      ]
     },
     {
-      title: "Health & Wellness",
-      href: "",
+      title: 'Health & Wellness',
+      href: '',
       icon: AmbulanceIcon,
       subItems: [
         {
-          title: "Register Health Service",
-          href: "/admin/health-wellness",
-          icon: BookAIcon,
+          title: 'Register Health Service',
+          href: '/admin/health-wellness',
+          icon: BookAIcon
         },
         {
-          title: "My Registered Health Services",
-          href: "/admin/health-wellness/view",
-          icon: BookAIcon,
-        },
-      ],
+          title: 'My Registered Health Services',
+          href: '/admin/health-wellness/view',
+          icon: BookAIcon
+        }
+      ]
     },
     {
-      title: "Reports",
-      href: "",
+      title: 'Reports',
+      href: '',
       icon: BookAIcon,
       subItems: [
-        { title: "User Reports", href: "/admin/reports/users", icon: Users },
+        { title: 'User Reports', href: '/admin/reports/users', icon: Users },
         {
-          title: "Matrimonial Reports",
-          href: "/admin/reports/matrimonial",
-          icon: HeartHandshakeIcon,
+          title: 'Matrimonial Reports',
+          href: '/admin/reports/matrimonial',
+          icon: HeartHandshakeIcon
         },
         {
-          title: "Business Reports",
-          href: "/admin/reports/business",
-          icon: Wallet2Icon,
+          title: 'Business Reports',
+          href: '/admin/reports/business',
+          icon: Wallet2Icon
         },
-        { title: "Blog Reports", href: "/admin/reports/blogs", icon: Camera },
-        { title: "Ads Reports", href: "/admin/reports/ads", icon: Tv },
+        { title: 'Blog Reports', href: '/admin/reports/blogs', icon: Camera },
+        { title: 'Ads Reports', href: '/admin/reports/ads', icon: Tv },
         {
-          title: "Event Reports",
-          href: "/admin/reports/events",
-          icon: Calendar,
-        },
-        {
-          title: "Discussion Reports",
-          href: "/admin/reports/discussions",
-          icon: MessageSquare,
+          title: 'Event Reports',
+          href: '/admin/reports/events',
+          icon: Calendar
         },
         {
-          title: "Coaching Reports",
-          href: "/admin/reports/educations",
-          icon: BookAIcon,
+          title: 'Discussion Reports',
+          href: '/admin/reports/discussions',
+          icon: MessageSquare
         },
         {
-          title: "Health Services Reports",
-          href: "/admin/reports/health",
-          icon: AmbulanceIcon,
+          title: 'Coaching Reports',
+          href: '/admin/reports/educations',
+          icon: BookAIcon
         },
+        {
+          title: 'Health Services Reports',
+          href: '/admin/reports/health',
+          icon: AmbulanceIcon
+        }
         // optional existing item
-      ],
-    },
+      ]
+    }
   ];
   const handleOpenNotifications = async (isOpen: boolean) => {
     if (!isOpen) return;
@@ -427,10 +435,10 @@ export default function AdmindashboardLayout({
     if (unread.length === 0) return;
 
     try {
-      const res = await fetch("/api/admin/notifications/mark-read", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
+      const res = await fetch('/api/admin/notifications/mark-read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) })
       });
 
       if (res.ok) {
@@ -441,23 +449,23 @@ export default function AdmindashboardLayout({
         //   )
         // );
 
-        console.log("✅ Notifications marked as read");
+        console.log('✅ Notifications marked as read');
       } else {
-        console.error("❌ Failed to mark notifications as read");
+        console.error('❌ Failed to mark notifications as read');
       }
     } catch (err) {
-      console.error("⚠️ Error marking notifications:", err);
+      console.error('⚠️ Error marking notifications:', err);
     }
   };
 
   const sidebarItems =
-    user?.role === "superAdmin" ? superAdminSidebarItems : adminSidebarItems;
+    user?.role === 'superAdmin' ? superAdminSidebarItems : adminSidebarItems;
 
   const handleSignOut = async () => {
     setIsOpen(false);
-    await signOut({ callbackUrl: "/", redirect: false });
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
+    await signOut({ callbackUrl: '/', redirect: false });
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
     }
   };
   const toggleMenu = (title: string) => {
@@ -483,7 +491,7 @@ export default function AdmindashboardLayout({
           <Crown className="w-8 h-8 hidden lg:block text-orange-400" />
           <div className="hidden lg:block">
             <h1 className="text-2xl font-bold capitalize">
-              Welcome back, {user?.name || ""} ({user?.role})
+              Welcome back, {user?.name || ''} ({user?.role})
             </h1>
             {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
           </div>
@@ -491,8 +499,8 @@ export default function AdmindashboardLayout({
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
                 scrollY > 20
-                  ? "bg-gradient-to-br from-red-600 to-orange-500"
-                  : "bg-white/20 backdrop-blur-sm"
+                  ? 'bg-gradient-to-br from-red-600 to-orange-500'
+                  : 'bg-white/20 backdrop-blur-sm'
               }`}
             >
               <Crown className="w-6 h-6 text-white" />
@@ -500,14 +508,14 @@ export default function AdmindashboardLayout({
             <div>
               <h1
                 className={`text-base font-bold leading-tight ${
-                  scrollY > 20 ? "text-red-700" : "text-white"
+                  scrollY > 20 ? 'text-red-700' : 'text-white'
                 }`}
               >
                 Mauryavansham
               </h1>
               <p
                 className={`text-xs leading-tight ${
-                  scrollY > 20 ? "text-orange-600" : "text-orange-100"
+                  scrollY > 20 ? 'text-orange-600' : 'text-orange-100'
                 }`}
               >
                 मौर्यवंश - गौरवशाली परंपरा
@@ -517,7 +525,7 @@ export default function AdmindashboardLayout({
         </div>
         <div className="flex items-center gap-4">
           {/* Notifications */}
-          {(user?.role === "admin" || user?.role === "superAdmin") && (
+          {(user?.role === 'admin' || user?.role === 'superAdmin') && (
             <DropdownMenu onOpenChange={handleOpenNotifications}>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -549,10 +557,10 @@ export default function AdmindashboardLayout({
                       onClick={async () => {
                         try {
                           const res = await fetch(
-                            "/api/notifications/mark-all-read",
+                            '/api/notifications/mark-all-read',
                             {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' }
                               // body: JSON.stringify({ userId: user?.id }),
                             }
                           );
@@ -564,14 +572,14 @@ export default function AdmindashboardLayout({
                             );
 
                             console.log(
-                              "✅ All notifications marked as read for user:",
+                              '✅ All notifications marked as read for user:',
                               user?.id
                             );
                           } else {
-                            console.error("❌ Failed to mark all as read");
+                            console.error('❌ Failed to mark all as read');
                           }
                         } catch (err) {
-                          console.error("⚠️ Error marking all as read:", err);
+                          console.error('⚠️ Error marking all as read:', err);
                         }
                       }}
                       className="text-xs text-blue-700 hover:underline font-medium"
@@ -646,9 +654,9 @@ export default function AdmindashboardLayout({
         {/* Sidebar */}
         <div
           className={cn(
-            "bg-yellow-50 border-yellow-200 w-64 p-4 flex flex-col",
-            "fixed top-24 left-0 h-[calc(100%-6rem)] z-30 transition-transform duration-300", // top-24 = header height
-            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+            'bg-yellow-50 border-yellow-200 w-64 p-4 flex flex-col',
+            'fixed top-24 left-0 h-[calc(100%-6rem)] z-30 transition-transform duration-300', // top-24 = header height
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           )}
         >
           {/* Profile + Navigation */}
@@ -657,11 +665,11 @@ export default function AdmindashboardLayout({
               <div
                 className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
                 onClick={() =>
-                  (window.location.href = "/admin/user-profile/" + user?.id)
+                  (window.location.href = '/admin/user-profile/' + user?.id)
                 }
               >
                 <img
-                  src={user?.photo || "/placeholder.svg"}
+                  src={user?.photo || '/placeholder.svg'}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
@@ -685,10 +693,10 @@ export default function AdmindashboardLayout({
                         <button
                           onClick={() => toggleMenu(item.title)}
                           className={cn(
-                            "flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium",
+                            'flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium',
                             pathname === item.href
-                              ? "bg-orange-100 text-orange-700"
-                              : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              ? 'bg-orange-100 text-orange-700'
+                              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                           )}
                         >
                           <div className="flex items-center space-x-3">
@@ -708,10 +716,10 @@ export default function AdmindashboardLayout({
                                 key={sub.href}
                                 href={sub.href}
                                 className={cn(
-                                  "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium",
+                                  'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium',
                                   pathname === sub.href
-                                    ? "bg-orange-50 text-orange-600"
-                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                    ? 'bg-orange-50 text-orange-600'
+                                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
                                 )}
                                 onClick={() => setSidebarOpen(false)}
                               >
@@ -728,10 +736,10 @@ export default function AdmindashboardLayout({
                       <Link
                         href={item.href}
                         className={cn(
-                          "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium",
+                          'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium',
                           pathname === item.href
-                            ? "bg-orange-100 text-orange-700"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                            ? 'bg-orange-100 text-orange-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                         )}
                         onClick={() => setSidebarOpen(false)}
                       >

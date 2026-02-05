@@ -1,22 +1,23 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from 'next-auth';
 // import { authOptions } from "@/lib/auth"
-import { redirect } from "next/navigation";
-import { db } from "@/src/drizzle/db";
-import { ads, users } from "@/src/drizzle/schema";
-import { eq } from "drizzle-orm";
-import AdDetail from "./ad-detail";
-import { authOptions } from "@/src/lib/auth";
-import DashboardLayout from "@/src/components/layout/dashboardLayout";
+import { redirect } from 'next/navigation';
+import { db } from '@/src/drizzle/db';
+import { ads, users } from '@/src/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import AdDetail from './ad-detail';
+import { authOptions } from '@/src/lib/auth';
+import DashboardLayout from '@/src/components/layout/dashboardLayout';
 
 interface AdPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function AdPage({ params }: AdPageProps) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
 
   const [ad] = await db
@@ -34,15 +35,15 @@ export default async function AdPage({ params }: AdPageProps) {
       user: {
         id: users.id,
         name: users.name,
-        email: users.email,
-      },
+        email: users.email
+      }
     })
     .from(ads)
     .leftJoin(users, eq(ads.userId, users.id))
-    .where(eq(ads.id, Number(params.id)));
+    .where(eq(ads.id, Number(id)));
 
   if (!ad) {
-    redirect("/dashboard/ads");
+    redirect('/dashboard/ads');
   }
 
   return (

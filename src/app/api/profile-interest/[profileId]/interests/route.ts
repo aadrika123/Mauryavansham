@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { eq, and } from "drizzle-orm";
-import { profileInterests } from "@/src/drizzle/db/schemas/profileInterests";
-import nodemailer from "nodemailer";
-import { profiles, users } from "@/src/drizzle/schema";
+import { NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { eq, and } from 'drizzle-orm';
+import { profileInterests } from '@/src/drizzle/db/schemas/profileInterests';
+import nodemailer from 'nodemailer';
+import { profiles, users } from '@/src/drizzle/schema';
 // GET -> list of users who expressed interest in this profile
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -11,17 +11,17 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+    pass: process.env.EMAIL_PASS
+  }
 });
 export async function GET(
   req: Request,
-  { params }: { params: { profileId: string } } // yeh receiverProfileId hai
+  { params }: { params: Promise<{ profileId: string }> } // yeh receiverProfileId hai
 ) {
   try {
-    const { profileId } = params;
+    const { profileId } = await params;
     if (!profileId) {
-      return NextResponse.json({ error: "Missing profileId" }, { status: 400 });
+      return NextResponse.json({ error: 'Missing profileId' }, { status: 400 });
     }
 
     // ✅ Fetch all interests where this profile is the receiver
@@ -32,9 +32,9 @@ export async function GET(
 
     return NextResponse.json({ success: true, interests });
   } catch (error) {
-    console.error("Error fetching interests:", error);
+    console.error('Error fetching interests:', error);
     return NextResponse.json(
-      { error: "Internal Server Error", success: false },
+      { error: 'Internal Server Error', success: false },
       { status: 500 }
     );
   }
@@ -43,16 +43,16 @@ export async function GET(
 // POST -> add new interest
 export async function POST(
   req: Request,
-  { params }: { params: { profileId: string } }
+  { params }: { params: Promise<{ profileId: string }> }
 ) {
   try {
-    const { profileId } = params;
+    const { profileId } = await params;
     const { senderUserId, senderProfileId, receiverUserId, senderProfile } =
       await req.json();
 
     if (!profileId || !senderUserId || !senderProfileId || !receiverUserId) {
       return NextResponse.json(
-        { error: "Missing required data" },
+        { error: 'Missing required data' },
         { status: 400 }
       );
     }
@@ -64,7 +64,7 @@ export async function POST(
       receiverUserId,
       receiverProfileId: profileId,
       senderProfile,
-      createdAt: new Date(),
+      createdAt: new Date()
     });
 
     // ✅ Fetch receiver user & profile
@@ -119,28 +119,28 @@ export async function POST(
         await transporter.sendMail({
           from: `"Mauryavansham" <${process.env.EMAIL_USER}>`,
           to: senderUser.email,
-          subject: "Your Interest Has Been Accepted!",
+          subject: 'Your Interest Has Been Accepted!',
           html: `
-            <h3>Hello ${senderUser.name || "User"},</h3>
+            <h3>Hello ${senderUser.name || 'User'},</h3>
             <p>
               Good news! The user of profile 
-              <b>${receiverProfileFull?.name || "Unknown"} (${receiverProfileFull?.profileRelation || "Relation N/A"})</b>
+              <b>${receiverProfileFull?.name || 'Unknown'} (${receiverProfileFull?.profileRelation || 'Relation N/A'})</b>
               has expressed back interest in your profile: 
-              <b>${senderProfileData?.name || "Your Profile"} (${senderProfileData?.profileRelation || "Relation N/A"})</b>.
+              <b>${senderProfileData?.name || 'Your Profile'} (${senderProfileData?.profileRelation || 'Relation N/A'})</b>.
             </p>
             <p>Contact Details of ${receiverProfileFull?.name}:</p>
             <ul>
               <li><b>Email:</b> ${receiverUserFull?.email}</li>
-              <li><b>Phone:</b> ${receiverUserFull?.phone || "N/A"}</li>
-              <li><b>City:</b> ${receiverProfileFull?.city || "N/A"}</li>
-              <li><b>State:</b> ${receiverProfileFull?.state || "N/A"}</li>
+              <li><b>Phone:</b> ${receiverUserFull?.phone || 'N/A'}</li>
+              <li><b>City:</b> ${receiverProfileFull?.city || 'N/A'}</li>
+              <li><b>State:</b> ${receiverProfileFull?.state || 'N/A'}</li>
             </ul>
             <a href="${process.env.NEXTAUTH_URL}" 
                style="display:inline-block;margin-top:10px;padding:10px 15px;background:#16a34a;color:#fff;text-decoration:none;border-radius:5px;">
                View Mutual Interest
             </a>
             <br/><p>Best regards,<br/>Mauryavansham Team</p>
-          `,
+          `
         });
       }
 
@@ -149,9 +149,9 @@ export async function POST(
         await transporter.sendMail({
           from: `"Mauryavansham" <${process.env.EMAIL_USER}>`,
           to: receiverUserFull.email,
-          subject: "You Have a Mutual Connection!",
+          subject: 'You Have a Mutual Connection!',
           html: `
-            <h3>Hello ${receiverUserFull.name || "User"},</h3>
+            <h3>Hello ${receiverUserFull.name || 'User'},</h3>
             <p>
               Good news! You have a mutual connection with profile 
               <b>${senderProfileData?.name} (${senderProfileData?.profileRelation})</b>.
@@ -159,15 +159,15 @@ export async function POST(
             <p>Contact Details of ${senderProfileData?.name}:</p>
             <ul>
               <li><b>Email:</b> ${senderUser?.email}</li>
-              <li><b>City:</b> ${senderProfileData?.city || "N/A"}</li>
-              <li><b>State:</b> ${senderProfileData?.state || "N/A"}</li>
+              <li><b>City:</b> ${senderProfileData?.city || 'N/A'}</li>
+              <li><b>State:</b> ${senderProfileData?.state || 'N/A'}</li>
             </ul>
             <a href="${process.env.NEXTAUTH_URL}" 
                style="display:inline-block;margin-top:10px;padding:10px 15px;background:#2563eb;color:#fff;text-decoration:none;border-radius:5px;">
                View Mutual Connection
             </a>
             <br/><p>Best regards,<br/>Mauryavansham Team</p>
-          `,
+          `
         });
       }
     } else {
@@ -176,35 +176,35 @@ export async function POST(
         await transporter.sendMail({
           from: `"Mauryavansham" <${process.env.EMAIL_USER}>`,
           to: receiverUser.email,
-          subject: "New Interest Received on Your Profile",
+          subject: 'New Interest Received on Your Profile',
           html: `
-            <h3>Hello ${receiverUser.name || "User"},</h3>
+            <h3>Hello ${receiverUser.name || 'User'},</h3>
             <p>
               A new interest has been expressed for your profile: 
-              <b>${receiverProfile?.name || "Unknown"} (${receiverProfile?.profileRelation || "Relation N/A"})</b>.
+              <b>${receiverProfile?.name || 'Unknown'} (${receiverProfile?.profileRelation || 'Relation N/A'})</b>.
             </p>
             <p><b>Sender's Profile Details:</b></p>
             <ul>
               <li><b>Name:</b> ${senderProfile.name}</li>
               <li><b>Email:</b> ${senderProfile.email}</li>
-              <li><b>City:</b> ${senderProfile.city || "N/A"}</li>
-              <li><b>State:</b> ${senderProfile.state || "N/A"}</li>
+              <li><b>City:</b> ${senderProfile.city || 'N/A'}</li>
+              <li><b>State:</b> ${senderProfile.state || 'N/A'}</li>
             </ul>
             <a href="${process.env.NEXTAUTH_URL}" 
                style="display:inline-block;margin-top:10px;padding:10px 15px;background:#2563eb;color:#fff;text-decoration:none;border-radius:5px;">
                View Profiles
             </a>
             <br/><p>Best regards,<br/>Mauryavansham Team</p>
-          `,
+          `
         });
       }
     }
 
     return NextResponse.json({ success: true, inserted });
   } catch (error) {
-    console.error("Error saving interest:", error);
+    console.error('Error saving interest:', error);
     return NextResponse.json(
-      { error: "Internal Server Error", success: false },
+      { error: 'Internal Server Error', success: false },
       { status: 500 }
     );
   }

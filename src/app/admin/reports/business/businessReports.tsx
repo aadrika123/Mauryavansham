@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
+import { useState, useEffect } from 'react';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
 
 interface Business {
   id: number;
@@ -41,13 +41,13 @@ export default function BusinessReportsPage() {
   const [allFilteredBusinesses, setAllFilteredBusinesses] = useState<
     Business[]
   >([]);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
 
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -56,25 +56,25 @@ export default function BusinessReportsPage() {
 
   // ✅ Basic columns (always visible)
   const basicColumns = [
-    { key: "organizationName", label: "Organization Name" },
-    { key: "organizationType", label: "Organization Type" },
-    { key: "businessCategory", label: "Business Category" },
-    { key: "isActive", label: "Status" },
-    { key: "createdBy", label: "Created By" },
-    { key: "createdAt", label: "Created On" },
+    { key: 'organizationName', label: 'Organization Name' },
+    { key: 'organizationType', label: 'Organization Type' },
+    { key: 'businessCategory', label: 'Business Category' },
+    { key: 'isActive', label: 'Status' },
+    { key: 'createdBy', label: 'Created By' },
+    { key: 'createdAt', label: 'Created On' }
   ];
 
   // ✅ Optional columns (alphabetically ordered)
   const optionalColumns = [
     // { key: "businessDescription", label: "Description" },
-    { key: "categories", label: "Categories" },
-    { key: "companyWebsite", label: "Website" },
-    { key: "dateOfestablishment", label: "Date of Establishment" },
-    { key: "officialEmail", label: "Official Email" },
-    { key: "officialContactNumber", label: "Official Contact" },
-    { key: "partners", label: "Partners" },
-    { key: "paymentStatus", label: "Payment Status" },
-    { key: "premiumCategory", label: "Premium Category" },
+    { key: 'categories', label: 'Categories' },
+    { key: 'companyWebsite', label: 'Website' },
+    { key: 'dateOfestablishment', label: 'Date of Establishment' },
+    { key: 'officialEmail', label: 'Official Email' },
+    { key: 'officialContactNumber', label: 'Official Contact' },
+    { key: 'partners', label: 'Partners' },
+    { key: 'paymentStatus', label: 'Payment Status' },
+    { key: 'premiumCategory', label: 'Premium Category' }
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   // ✅ Fetch businesses
@@ -83,9 +83,9 @@ export default function BusinessReportsPage() {
       setLoading(true);
       try {
         const queryParams = new URLSearchParams();
-        if (statusFilter) queryParams.append("status", statusFilter);
-        if (fromDate) queryParams.append("from", fromDate);
-        if (toDate) queryParams.append("to", toDate);
+        if (statusFilter) queryParams.append('status', statusFilter);
+        if (fromDate) queryParams.append('from', fromDate);
+        if (toDate) queryParams.append('to', toDate);
 
         const res = await fetch(
           `/api/register-business?${queryParams.toString()}`
@@ -95,7 +95,7 @@ export default function BusinessReportsPage() {
         if (data.success && Array.isArray(data.data)) {
           const mapped = data.data.map((item: any) => ({
             ...item.businesses,
-            user: item.users,
+            user: item.users
           }));
 
           setAllFilteredBusinesses(mapped);
@@ -120,46 +120,43 @@ export default function BusinessReportsPage() {
 
   // ✅ Format date
   const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return '-';
     const d = new Date(dateStr);
-    return `${String(d.getDate()).padStart(2, "0")}-${String(
+    return `${String(d.getDate()).padStart(2, '0')}-${String(
       d.getMonth() + 1
-    ).padStart(2, "0")}-${d.getFullYear()}`;
+    ).padStart(2, '0')}-${d.getFullYear()}`;
   };
 
-  // ✅ Excel export (no change)
-  const exportToExcel = () => {
+  // ✅ Excel export
+  const handleExportToExcel = async () => {
     if (allFilteredBusinesses.length === 0) return;
 
     const sorted = [...allFilteredBusinesses].sort((a, b) =>
-      a.organizationName.localeCompare(b.organizationName, "en", {
-        sensitivity: "base",
+      a.organizationName.localeCompare(b.organizationName, 'en', {
+        sensitivity: 'base'
       })
     );
 
     const dataToExport = sorted.map((b) => ({
-      "Organization Name": b.organizationName,
-      "Organization Type": b.organizationType,
-      "Business Category": b.businessCategory,
+      'Organization Name': b.organizationName,
+      'Organization Type': b.organizationType,
+      'Business Category': b.businessCategory,
       Description: b.businessDescription,
-      Partners: b.partners?.map((p) => p.name).join(", ") || "-",
+      Partners: b.partners?.map((p) => p.name).join(', ') || '-',
       Categories:
-        b.categories?.map((c) => `${c.main}, ${c.sub}`).join(", ") || "-",
-      "Date of Establishment": formatDate(b.dateOfestablishment || null),
-      Website: b.companyWebsite || "-",
-      "Official Email": b.officialEmail || "-",
-      "Official Contact": b.officialContactNumber || "-",
-      "Premium Category": b.premiumCategory || "-",
-      "Payment Status": b.paymentStatus ? "Paid" : "Pending",
-      Status: b.isActive ? "Active" : "Inactive",
-      "Created By": b.user.name,
-      "Created On": formatDate(b.createdAt),
+        b.categories?.map((c) => `${c.main}, ${c.sub}`).join(', ') || '-',
+      'Date of Establishment': formatDate(b.dateOfestablishment || null),
+      Website: b.companyWebsite || '-',
+      'Official Email': b.officialEmail || '-',
+      'Official Contact': b.officialContactNumber || '-',
+      'Premium Category': b.premiumCategory || '-',
+      'Payment Status': b.paymentStatus ? 'Paid' : 'Pending',
+      Status: b.isActive ? 'Active' : 'Inactive',
+      'Created By': b.user.name,
+      'Created On': formatDate(b.createdAt)
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Businesses");
-    XLSX.writeFile(workbook, "businesses-report.xlsx");
+    await exportToExcel(dataToExport, 'Businesses', 'businesses-report');
   };
 
   // ✅ Column selection handlers
@@ -183,7 +180,7 @@ export default function BusinessReportsPage() {
 
   const visibleColumns = [
     ...basicColumns,
-    ...optionalColumns.filter((c) => selectedColumns.includes(c.key)),
+    ...optionalColumns.filter((c) => selectedColumns.includes(c.key))
   ];
 
   return (
@@ -229,7 +226,7 @@ export default function BusinessReportsPage() {
         </div>
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel
@@ -237,9 +234,9 @@ export default function BusinessReportsPage() {
 
         <button
           onClick={() => {
-            setStatusFilter("");
-            setFromDate("");
-            setToDate("");
+            setStatusFilter('');
+            setFromDate('');
+            setToDate('');
             setCurrentPage(1);
           }}
           className="bg-gray-300 text-black px-4 py-2 rounded"
@@ -317,36 +314,36 @@ export default function BusinessReportsPage() {
                         {(currentPage - 1) * pageSize + index + 1}
                       </td>
                       {visibleColumns.map((col) => {
-                        let value = "-";
+                        let value = '-';
                         switch (col.key) {
-                          case "createdBy":
+                          case 'createdBy':
                             value = b.user.name;
                             break;
-                          case "createdAt":
+                          case 'createdAt':
                             value = formatDate(b.createdAt);
                             break;
-                          case "isActive":
-                            value = b.isActive ? "Active" : "Inactive";
+                          case 'isActive':
+                            value = b.isActive ? 'Active' : 'Inactive';
                             break;
-                          case "dateOfestablishment":
+                          case 'dateOfestablishment':
                             value = formatDate(b.dateOfestablishment || null);
                             break;
-                          case "partners":
+                          case 'partners':
                             value =
-                              b.partners?.map((p) => p.name).join(", ") || "-";
+                              b.partners?.map((p) => p.name).join(', ') || '-';
                             break;
-                          case "categories":
+                          case 'categories':
                             value =
                               b.categories
                                 ?.map((c) => `${c.main}, ${c.sub}`)
-                                .join(", ") || "-";
+                                .join(', ') || '-';
                             break;
-                          case "paymentStatus":
-                            value = b.paymentStatus ? "Paid" : "Pending";
+                          case 'paymentStatus':
+                            value = b.paymentStatus ? 'Paid' : 'Pending';
                             break;
                           default:
                             // @ts-ignore
-                            value = b[col.key] || "-";
+                            value = b[col.key] || '-';
                         }
 
                         return (

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
 import {
   Menu,
   Search,
@@ -21,11 +21,11 @@ import {
   User,
   ShoppingBag,
   BookOpen,
-  ChartBar,
-} from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
-import { FaSpinner } from "react-icons/fa6";
+  ChartBar
+} from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { FaSpinner } from 'react-icons/fa6';
 
 type HeaderProps = {
   profileData: any; // ideally type it properly
@@ -36,15 +36,15 @@ export function Header() {
   const [profileData, setProfileData] = useState<any>(null);
   const { data: session } = useSession();
   const isAuthenticated = !!session?.user;
-  const userName = session?.user?.name || "User";
+  const userName = session?.user?.name || 'User';
   const userDetails = session?.user;
-  const userImage = profileData?.data?.profileImage || "/placeholder-user.jpg";
+  const userImage = profileData?.data?.profileImage || '/placeholder-user.jpg';
   const loginUser = session?.user;
   const [loading, setLoading] = useState(false);
 
-  console.log(userImage, "authUser");
-  console.log(profileData, "profileData");
-  console.log(userDetails, "userDetails");
+  console.log(userImage, 'authUser');
+  console.log(profileData, 'profileData');
+  console.log(userDetails, 'userDetails');
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -62,7 +62,7 @@ export function Header() {
           // console.error("Failed to fetch profile:", data?.error);
         }
       } catch (err) {
-        console.error("Error fetching profile:", err);
+        console.error('Error fetching profile:', err);
         setLoading(false);
       }
     };
@@ -84,61 +84,60 @@ export function Header() {
 
   // ];
   const navigationItems = [
-    { title: "Home", href: "/", icon: House },
+    { title: 'Home', href: '/', icon: House },
     {
-      title: "Blogs & Heritage",
+      title: 'Blogs & Heritage',
       icon: ShoppingBag,
       children: [
-        { title: "Heritage", href: "/heritage", icon: Landmark },
-        { title: "Blogs", href: "/blogs", icon: ShoppingBag },
-      ],
+        { title: 'Heritage', href: '/heritage', icon: Landmark },
+        { title: 'Blogs', href: '/blogs', icon: ShoppingBag }
+      ]
     },
     {
-      title: "Forums",
+      title: 'Forums',
       icon: ShoppingBag,
       children: [
-        { title: "Community Forum", href: "/community", icon: Users },
-        { title: "Business Forum", href: "/business", icon: ShoppingBag },
-      ],
+        { title: 'Community Forum', href: '/community', icon: Users },
+        { title: 'Business Forum', href: '/business', icon: ShoppingBag }
+      ]
     },
     {
-      title: "Health & Education",
+      title: 'Health & Education',
       icon: ShoppingBag,
       children: [
         {
-          title: "Health & Wellness",
-          href: "/health-wellness",
-          icon: HandHeart,
+          title: 'Health & Wellness',
+          href: '/health-wellness',
+          icon: HandHeart
         },
-        { title: "Education", href: "/education", icon: BookOpen },
-      ],
+        { title: 'Education', href: '/education', icon: BookOpen }
+      ]
     },
-    { title: "Matrimonial", href: "/matrimonial", icon: HeartHandshake },
-    { title: "Events & Calendar", href: "/events", icon: Calendar },
-    { title: "Achievements", href: "/achievements", icon: Trophy },
-{
-      title: "Gamification",
-      href: "/gamification",
+    { title: 'Matrimonial', href: '/matrimonial', icon: HeartHandshake },
+    { title: 'Events & Calendar', href: '/events', icon: Calendar },
+    { title: 'Achievements', href: '/achievements', icon: Trophy },
+    {
+      title: 'Gamification',
+      href: '/gamification',
       icon: Crown,
-      requiresAuth: true,
+      requiresAuth: true
     },
     {
-      title: "Analytics",
-      href: "/analytics",
+      title: 'Analytics',
+      href: '/analytics',
       icon: ChartBar,
-      requiresAuth: true,
+      requiresAuth: true
     },
     {
-      title: "Recommendations",
-      href: "/recommendations",
+      title: 'Recommendations',
+      href: '/recommendations',
       icon: Heart,
-      requiresAuth: true,
-    },
-    
+      requiresAuth: true
+    }
   ];
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+    signOut({ callbackUrl: '/' });
   };
 
   return (
@@ -199,8 +198,8 @@ export function Header() {
                     <div className="flex flex-col items-center">
                       <Link
                         href={
-                          profileData?.data?.role === "admin" ||
-                          profileData?.data?.role === "superAdmin"
+                          profileData?.data?.role === 'admin' ||
+                          profileData?.data?.role === 'superAdmin'
                             ? `/admin/user-profile/${loginUser?.id}`
                             : `/dashboard/user-profile/${loginUser?.id}`
                         }
@@ -255,7 +254,7 @@ export function Header() {
                             <div className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
                               <img
                                 src={
-                                  profileData?.data?.photo || "/placeholder.svg"
+                                  profileData?.data?.photo || '/placeholder.svg'
                                 }
                                 alt="Profile"
                                 className="w-full h-full object-cover"
@@ -286,7 +285,7 @@ export function Header() {
 
                     {/* User Name */}
                     <span className="font-semibold text-lg text-orange-600">
-                      <span className="font-medium italic">Hello,</span>{" "}
+                      <span className="font-medium italic">Hello,</span>{' '}
                       {userName}
                     </span>
                   </div>
@@ -302,30 +301,26 @@ export function Header() {
                 </div>
               )}
               {isAuthenticated ? (
-                userDetails?.role == "user" ? (
-                  <Link href={`/dashboard`} passHref>
-                    <Button
-                      asChild
-                      className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
-                    >
-                      <a>Main Panel</a>
+                userDetails?.role == 'user' ? (
+                  <Link href={`/dashboard`}>
+                    <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+                      Main Panel
                     </Button>
                   </Link>
-                ) : userDetails?.role == "admin" ||
-                  userDetails?.role == "superAdmin" ? (
-                  <Link href={`/admin/overview`} passHref>
-                    <Button
-                      asChild
-                      className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
-                    >
-                      <a>Admin Panel</a>
+                ) : userDetails?.role == 'admin' ||
+                  userDetails?.role == 'superAdmin' ? (
+                  <Link href={`/admin/overview`}>
+                    <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+                      Admin Panel
                     </Button>
                   </Link>
                 ) : null
               ) : (
-                <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
-                  <Link href="/sign-up">Sign Up</Link>
-                </Button>
+                <Link href="/sign-up">
+                  <Button className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+                    Sign Up
+                  </Button>
+                </Link>
               )}
             </div>
           </div>
@@ -333,7 +328,7 @@ export function Header() {
 
         {/* Navigation Bar (Desktop) */}
         <nav className="bg-gradient-to-r from-red-800 to-red-900 px-4 hidden md:block">
-          <div className="container mx-auto flex text-[13px] whitespace-nowrap" >
+          <div className="container mx-auto flex text-[13px] whitespace-nowrap">
             {navigationItems.map((item) =>
               item.children ? (
                 <div key={item.title} className="relative group ">
@@ -399,7 +394,7 @@ export function Header() {
     w-64 sm:w-80 md:w-96 lg:w-64 
     h-full shadow-lg p-4 space-y-4 
     transform transition-transform duration-300 ease-in-out 
-    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+    ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
     pointer-events-auto overflow-y-auto`}
             >
               {/* Top Section */}
@@ -459,7 +454,7 @@ export function Header() {
                     {/* User Image */}
                     <div className="w-18 h-18 rounded-full bg-gray-300 overflow-hidden shadow-md absolute top-1 left-1">
                       <img
-                        src={profileData?.data?.photo || "/placeholder.svg"}
+                        src={profileData?.data?.photo || '/placeholder.svg'}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -558,7 +553,7 @@ export function Header() {
                       ) : (
                         <>
                           {/* ✅ Main Panel / Admin Panel */}
-                          {userDetails?.role === "user" ? (
+                          {userDetails?.role === 'user' ? (
                             <Link
                               href={`/dashboard`}
                               passHref
@@ -568,8 +563,8 @@ export function Header() {
                                 Main Panel
                               </Button>
                             </Link>
-                          ) : userDetails?.role === "admin" ||
-                            userDetails?.role === "superAdmin" ? (
+                          ) : userDetails?.role === 'admin' ||
+                            userDetails?.role === 'superAdmin' ? (
                             <Link
                               href={`/admin/overview`}
                               passHref
@@ -613,8 +608,8 @@ export function Header() {
             <div
               className={`flex-1 transition-opacity duration-300 ease-in-out ${
                 sidebarOpen
-                  ? "bg-black bg-opacity-50 pointer-events-auto"
-                  : "bg-transparent pointer-events-none"
+                  ? 'bg-black bg-opacity-50 pointer-events-auto'
+                  : 'bg-transparent pointer-events-none'
               }`}
               onClick={() => setSidebarOpen(false)}
             />

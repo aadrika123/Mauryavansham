@@ -1,29 +1,30 @@
-import { db } from "@/src/drizzle/db";
-import { discussionReplyLikes } from "@/src/drizzle/db/schemas/discussionReplyLikes";
-import { discussionReplies } from "@/src/drizzle/db/schemas/discussionReplies";
-import { eq, and, count } from "drizzle-orm";
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/src/lib/auth";
+import { db } from '@/src/drizzle/db';
+import { discussionReplyLikes } from '@/src/drizzle/db/schemas/discussionReplyLikes';
+import { discussionReplies } from '@/src/drizzle/db/schemas/discussionReplies';
+import { eq, and, count } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/src/lib/auth';
 
 // ✅ Toggle like on a reply
 export async function POST(
   req: Request,
-  { params }: { params: { replyId: string } }
+  { params }: { params: Promise<{ replyId: string }> }
 ) {
   try {
+    const { replyId: replyIdParam } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json(
-        { success: false, message: "Unauthorized" },
+        { success: false, message: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const replyId = parseInt(params.replyId);
+    const replyId = parseInt(replyIdParam);
     if (!replyId) {
       return NextResponse.json(
-        { success: false, message: "Invalid reply ID" },
+        { success: false, message: 'Invalid reply ID' },
         { status: 400 }
       );
     }
@@ -37,7 +38,7 @@ export async function POST(
 
     if (reply.length === 0) {
       return NextResponse.json(
-        { success: false, message: "Reply not found" },
+        { success: false, message: 'Reply not found' },
         { status: 404 }
       );
     }
@@ -72,7 +73,7 @@ export async function POST(
       // Like - add the like
       await db.insert(discussionReplyLikes).values({
         replyId,
-        userId: session.user.id,
+        userId: session.user.id
       });
       isLiked = true;
     }
@@ -90,13 +91,13 @@ export async function POST(
       data: {
         isLiked,
         likeCount,
-        replyId,
-      },
+        replyId
+      }
     });
   } catch (error) {
-    console.error("Error toggling reply like:", error);
+    console.error('Error toggling reply like:', error);
     return NextResponse.json(
-      { success: false, message: "Failed to toggle like" },
+      { success: false, message: 'Failed to toggle like' },
       { status: 500 }
     );
   }

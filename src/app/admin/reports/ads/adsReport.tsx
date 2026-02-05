@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
+import { useState, useEffect } from 'react';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
 
 interface Ad {
   id: number;
@@ -27,7 +27,7 @@ interface Ad {
 export default function AdsReportPage() {
   const [ads, setAds] = useState<Ad[]>([]);
   const [allFilteredAds, setAllFilteredAds] = useState<Ad[]>([]);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,9 +41,9 @@ export default function AdsReportPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        params.append("page", "1");
-        params.append("limit", "1000");
-        if (statusFilter) params.append("status", statusFilter);
+        params.append('page', '1');
+        params.append('limit', '1000');
+        if (statusFilter) params.append('status', statusFilter);
 
         const res = await fetch(`/api/ads?${params.toString()}`);
         const data = await res.json();
@@ -51,7 +51,9 @@ export default function AdsReportPage() {
         const adsData = data.ads || [];
         setAllFilteredAds(adsData);
         setTotalCount(adsData.length);
-        setAds(adsData.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+        setAds(
+          adsData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        );
       } catch (err) {
         console.error(err);
       } finally {
@@ -63,38 +65,35 @@ export default function AdsReportPage() {
   }, [statusFilter, currentPage, pageSize]);
 
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return '-';
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (allFilteredAds.length === 0) return;
 
     // Sort alphabetically by Ad Title
     const sortedAds = [...allFilteredAds].sort((a, b) =>
-      a.title.localeCompare(b.title, "en", { sensitivity: "base" })
+      a.title.localeCompare(b.title, 'en', { sensitivity: 'base' })
     );
 
     const dataToExport = sortedAds.map((ad) => ({
-      "Ad Title": ad.title,
-      "Advertiser Name": ad.user?.name || "-",
-      "Advertiser Email": ad.user?.email || "-",
-      "From Date": formatDate(ad.fromDate),
-      "To Date": formatDate(ad.toDate),
+      'Ad Title': ad.title,
+      'Advertiser Name': ad.user?.name || '-',
+      'Advertiser Email': ad.user?.email || '-',
+      'From Date': formatDate(ad.fromDate),
+      'To Date': formatDate(ad.toDate),
       Status: ad.status,
-      "Views Count": ad.viewCount,
-      "Days Left": ad.daysLeft ?? "-",
-      "Created On": formatDate(ad.createdAt),
+      'Views Count': ad.viewCount,
+      'Days Left': ad.daysLeft ?? '-',
+      'Created On': formatDate(ad.createdAt)
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Ads");
-    XLSX.writeFile(workbook, "ads-report.xlsx");
+    await exportToExcel(dataToExport, 'Ads', 'ads-report');
   };
 
   return (
@@ -115,7 +114,7 @@ export default function AdsReportPage() {
         </select>
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel
@@ -159,14 +158,20 @@ export default function AdsReportPage() {
                       </td>
                       <td className="px-4 py-2 border">{ad.title}</td>
                       <td className="px-4 py-2 border">
-                        {ad.user?.name || "-"}
+                        {ad.user?.name || '-'}
                       </td>
-                      <td className="px-4 py-2 border">{formatDate(ad.fromDate)}</td>
-                      <td className="px-4 py-2 border">{formatDate(ad.toDate)}</td>
-                      <td className="px-4 py-2 border capitalize">{ad.status}</td>
+                      <td className="px-4 py-2 border">
+                        {formatDate(ad.fromDate)}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {formatDate(ad.toDate)}
+                      </td>
+                      <td className="px-4 py-2 border capitalize">
+                        {ad.status}
+                      </td>
                       <td className="px-4 py-2 border">{ad.viewCount}</td>
                       <td className="px-4 py-2 border">
-                        {ad.daysLeft ? `${ad.daysLeft} days` : "-"}
+                        {ad.daysLeft ? `${ad.daysLeft} days` : '-'}
                       </td>
                     </tr>
                   ))

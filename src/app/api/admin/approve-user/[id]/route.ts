@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { db } from "@/src/drizzle/db";
-import { eq, and } from "drizzle-orm";
-import { users, userApprovals } from "@/src/drizzle/schema";
-import nodemailer from "nodemailer";
+import { NextResponse } from 'next/server';
+import { db } from '@/src/drizzle/db';
+import { eq, and } from 'drizzle-orm';
+import { users, userApprovals } from '@/src/drizzle/schema';
+import nodemailer from 'nodemailer';
 
 const REQUIRED_APPROVALS = 3;
 
@@ -12,27 +12,28 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+    pass: process.env.EMAIL_PASS
+  }
 });
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = Number(params.id);
+    const { id } = await params;
+    const userId = Number(id);
     const { adminId, adminName } = await req.json();
 
     // 1️⃣ Check if this admin already acted
     const existing = await db.query.userApprovals.findFirst({
-      where: (ua) => and(eq(ua.userId, userId), eq(ua.adminId, adminId)),
+      where: (ua) => and(eq(ua.userId, userId), eq(ua.adminId, adminId))
     });
 
     if (existing) {
       return NextResponse.json({
         success: false,
-        message: "You have already approved this user.",
+        message: 'You have already approved this user.'
       });
     }
 
@@ -41,29 +42,29 @@ export async function POST(
       userId,
       adminId,
       adminName,
-      status: "approved",
+      status: 'approved'
     });
 
     // 3️⃣ Recalculate approvals
     const approvals = await db.query.userApprovals.findMany({
-      where: (ua) => eq(ua.userId, userId),
+      where: (ua) => eq(ua.userId, userId)
     });
 
     const approvedCount = approvals.filter(
-      (a) => a.status === "approved"
+      (a) => a.status === 'approved'
     ).length;
     const rejectedCount = approvals.filter(
-      (a) => a.status === "rejected"
+      (a) => a.status === 'rejected'
     ).length;
 
-    let newStatus: "pending" | "approved" | "rejected" = "pending";
+    let newStatus: 'pending' | 'approved' | 'rejected' = 'pending';
     let isApproved = false;
 
     if (rejectedCount > 0) {
-      newStatus = "rejected";
+      newStatus = 'rejected';
       isApproved = false;
     } else if (approvedCount >= REQUIRED_APPROVALS) {
-      newStatus = "approved";
+      newStatus = 'approved';
       isApproved = true;
     }
 
@@ -78,18 +79,18 @@ export async function POST(
     if (!user?.email) {
       return NextResponse.json({
         success: true,
-        message: "User approved (no email found).",
+        message: 'User approved (no email found).'
       });
     }
 
     // 5️⃣ Determine email content based on approval count
-    let subject = "";
-    let html = "";
+    let subject = '';
+    let html = '';
     const approvedByAdmin = adminName;
 
     if (approvedCount === 1) {
       subject =
-        "Your www.mauryavansham.com Registration – First Step Completed ✅";
+        'Your www.mauryavansham.com Registration – First Step Completed ✅';
       html = `
         <p>Dear ${user.name},</p>
         <p>We are pleased to inform you that your registration on <b>www.mauryavansham.com</b> has successfully received its <b>first approval</b> from an Admin Member.</p>
@@ -102,7 +103,7 @@ export async function POST(
         <p>Warm regards,<br/>www.mauryavansham.com Team<br/>(Designed & Hosted by Aadrika Enterprises – A Community Development Initiative)</p>
       `;
     } else if (approvedCount === 2) {
-      subject = "Your www.mauryavansham.com Registration – Almost There 🎉";
+      subject = 'Your www.mauryavansham.com Registration – Almost There 🎉';
       html = `
         <p>Dear ${user.name},</p>
         <p>Good news! Your registration on <b>www.mauryavansham.com</b> has now received <b>two (2) Admin approvals</b>.</p>
@@ -116,7 +117,7 @@ export async function POST(
       `;
     } else if (approvedCount >= 3) {
       subject =
-        "Welcome to www.mauryavansham.com – Your Profile is Now Active 🌟";
+        'Welcome to www.mauryavansham.com – Your Profile is Now Active 🌟';
       html = `
        <p>Dear ${user.name},</p>
     <p>Congratulations and welcome aboard! 🎊</p>
@@ -140,18 +141,18 @@ export async function POST(
         from: `"Mauryavansham" <${process.env.EMAIL_USER}>`,
         to: user.email,
         subject,
-        html,
+        html
       });
     }
 
     return NextResponse.json({
       success: true,
-      message: "User approval recorded and email sent.",
+      message: 'User approval recorded and email sent.'
     });
   } catch (error) {
-    console.error("Approve error:", error);
+    console.error('Approve error:', error);
     return NextResponse.json(
-      { error: "Failed to approve user" },
+      { error: 'Failed to approve user' },
       { status: 500 }
     );
   }

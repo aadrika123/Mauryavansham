@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
+import { useState, useEffect } from 'react';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
 
 interface Blog {
   id: number;
@@ -27,7 +27,7 @@ interface Blog {
 export default function BlogsReportPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [allFilteredBlogs, setAllFilteredBlogs] = useState<Blog[]>([]);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,9 +41,9 @@ export default function BlogsReportPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        params.append("page", "1");
-        params.append("limit", "1000");
-        if (statusFilter) params.append("status", statusFilter);
+        params.append('page', '1');
+        params.append('limit', '1000');
+        if (statusFilter) params.append('status', statusFilter);
 
         const res = await fetch(`/api/blogs?${params.toString()}`);
         const data = await res.json();
@@ -51,7 +51,9 @@ export default function BlogsReportPage() {
         const blogData = data.blogs || [];
         setAllFilteredBlogs(blogData);
         setTotalCount(blogData.length);
-        setBlogs(blogData.slice((currentPage - 1) * pageSize, currentPage * pageSize));
+        setBlogs(
+          blogData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        );
       } catch (err) {
         console.error(err);
       } finally {
@@ -63,41 +65,37 @@ export default function BlogsReportPage() {
   }, [statusFilter, currentPage, pageSize]);
 
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return '-';
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (allFilteredBlogs.length === 0) return;
 
     // Sort alphabetically by title
     const sortedBlogs = [...allFilteredBlogs].sort((a, b) =>
-      a.title.localeCompare(b.title, "en", { sensitivity: "base" })
+      a.title.localeCompare(b.title, 'en', { sensitivity: 'base' })
     );
 
     const dataToExport = sortedBlogs.map((b) => ({
-      "Blog Title": b.title,
-      "Author Name": b.author?.name || "-",
-      "Author Email": b.author?.email || "-",
+      'Blog Title': b.title,
+      'Author Name': b.author?.name || '-',
+      'Author Email': b.author?.email || '-',
       Status: b.status,
-      title: b.title,
-      summary: b.summary,
-      content: b.content,
-      "Created On": formatDate(b.createdAt),
-      "Approved On": formatDate(b.approvedAt || ""),
-      "Rejection Reason": b.rejectionReason || "-",
-      "Removed By": b.removedByName || "-",
-      "Remove Reason": b.removeReason || "-",
+      Summary: b.summary,
+      Content: b.content,
+      'Created On': formatDate(b.createdAt),
+      'Approved On': formatDate(b.approvedAt || ''),
+      'Rejection Reason': b.rejectionReason || '-',
+      'Removed By': b.removedByName || '-',
+      'Remove Reason': b.removeReason || '-'
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Blogs");
-    XLSX.writeFile(workbook, "blogs-report.xlsx");
+    await exportToExcel(dataToExport, 'Blogs', 'blogs-report');
   };
 
   return (
@@ -119,7 +117,7 @@ export default function BlogsReportPage() {
         </select>
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel
@@ -166,16 +164,30 @@ export default function BlogsReportPage() {
                         {(currentPage - 1) * pageSize + index + 1}
                       </td>
                       <td className="px-4 py-2 border">{b.title}</td>
-                      <td className="px-4 py-2 border">{b.author?.name || "-"}</td>
+                      <td className="px-4 py-2 border">
+                        {b.author?.name || '-'}
+                      </td>
                       <td className="px-4 py-2 border">{b.title}</td>
-                        {/* <td className="px-4 py-2 border truncate">{b.content}</td> */}
+                      {/* <td className="px-4 py-2 border truncate">{b.content}</td> */}
                       <td className="px-4 py-2 border">{b.summary}</td>
-                      <td className="px-4 py-2 border capitalize">{b.status}</td>
-                      <td className="px-4 py-2 border">{formatDate(b.createdAt)}</td>
-                      <td className="px-4 py-2 border">{formatDate(b.approvedAt || "")}</td>
-                        <td className="px-4 py-2 border">{b.rejectionReason || "-"}</td>
-                        <td className="px-4 py-2 border">{b.removedByName || "-"}</td>
-                        <td className="px-4 py-2 border">{b.removeReason || "-"}</td>
+                      <td className="px-4 py-2 border capitalize">
+                        {b.status}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {formatDate(b.createdAt)}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {formatDate(b.approvedAt || '')}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {b.rejectionReason || '-'}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {b.removedByName || '-'}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {b.removeReason || '-'}
+                      </td>
                     </tr>
                   ))
                 )}

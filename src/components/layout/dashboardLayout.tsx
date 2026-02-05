@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "@/src/components/ui/button";
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu";
-import { cn } from "@/src/lib/utils";
+  DropdownMenuTrigger
+} from '@/src/components/ui/dropdown-menu';
+import { cn } from '@/src/lib/utils';
 import {
   Crown,
   Bell,
@@ -31,20 +31,21 @@ import {
   BookAIcon,
   AmbulanceIcon,
   Trophy,
-  Calendar,
-} from "lucide-react";
-import type { User as NextAuthUser } from "next-auth";
-import { signOut } from "next-auth/react";
+  Calendar
+} from 'lucide-react';
+import type { User as NextAuthUser } from 'next-auth';
+import { signOut } from 'next-auth/react';
 
 export default function DashboardLayout({
   children,
-  user,
+  user
 }: {
   children: React.ReactNode;
   user: NextAuthUser;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const [notifications, setNotifications] = useState<any[]>([]);
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
@@ -54,49 +55,64 @@ export default function DashboardLayout({
   );
   const unreadCount = unreadNotifications.length;
 
+  // Track scroll position
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const sidebarItems = [
-    { title: "Home", href: "/", icon: LayoutDashboard },
-    { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { title: 'Home', href: '/', icon: LayoutDashboard },
+    { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     {
-      title: "My Inbox",
-      href: "/dashboard/messenger-page",
-      icon: MessageSquare,
+      title: 'My Inbox',
+      href: '/dashboard/messenger-page',
+      icon: MessageSquare
     },
     {
-      title: "Enquiries",
-      href: "/dashboard/enquiries",
-      icon: MessageSquare,
+      title: 'Enquiries',
+      href: '/dashboard/enquiries',
+      icon: MessageSquare
     },
     {
-      title: "Achievements",
-      href: "",
+      title: 'Achievements',
+      href: '',
       icon: Trophy,
       subItems: [
-        { title: "Create Achievements", href: "/dashboard/create-achievement-general", icon: Calendar },
-        { title: "My Achievements", href: "/dashboard/created-achievement-general", icon: Calendar },
-      ],
+        {
+          title: 'Create Achievements',
+          href: '/dashboard/create-achievement-general',
+          icon: Calendar
+        },
+        {
+          title: 'My Achievements',
+          href: '/dashboard/created-achievement-general',
+          icon: Calendar
+        }
+      ]
     },
     {
-      title: "Matrimonial",
-      href: "",
+      title: 'Matrimonial',
+      href: '',
       icon: HeartHandshakeIcon,
       subItems: [
         {
-          title: "Create Matrimonial Profile",
-          href: "/dashboard/create-profile",
-          icon: LayoutDashboard,
+          title: 'Create Matrimonial Profile',
+          href: '/dashboard/create-profile',
+          icon: LayoutDashboard
         },
         {
-          title: "My Matrimonial Profiles",
-          href: "/dashboard/profile-list",
-          icon: LayoutDashboard,
+          title: 'My Matrimonial Profiles',
+          href: '/dashboard/profile-list',
+          icon: LayoutDashboard
         },
         {
-          title: "Search Matrimonial Profiles",
-          href: "/dashboard/search-profile",
-          icon: Search,
-        },
-      ],
+          title: 'Search Matrimonial Profiles',
+          href: '/dashboard/search-profile',
+          icon: Search
+        }
+      ]
     },
     // {
     //   title: "Create Matrimonial Profile",
@@ -113,57 +129,57 @@ export default function DashboardLayout({
     //   href: "/dashboard/search-profile",
     //   icon: Search,
     // },
-    { title: "My Blog's", href: "/dashboard/blogs", icon: Camera },
-    { title: "Book Ads", href: "/dashboard/ads", icon: Tv },
+    { title: "My Blog's", href: '/dashboard/blogs', icon: Camera },
+    { title: 'Book Ads', href: '/dashboard/ads', icon: Tv },
     {
-      title: "Register-business",
-      href: "/dashboard/register-business",
-      icon: Wallet2Icon,
+      title: 'Register-business',
+      href: '/dashboard/register-business',
+      icon: Wallet2Icon
     },
     {
-      title: "My Registered-business",
-      href: "/dashboard/view-business",
-      icon: Wallet2Icon,
+      title: 'My Registered-business',
+      href: '/dashboard/view-business',
+      icon: Wallet2Icon
     },
     {
-      title: "Education & Coaching",
-      href: "",
+      title: 'Education & Coaching',
+      href: '',
       icon: BookAIcon,
       subItems: [
         {
-          title: "Register Coaching",
-          href: "/dashboard/register-coaching",
-          icon: BookAIcon,
+          title: 'Register Coaching',
+          href: '/dashboard/register-coaching',
+          icon: BookAIcon
         },
         {
-          title: "My Registered Coaching",
-          href: "/dashboard/register-coaching/view",
-          icon: BookAIcon,
-        },
-      ],
+          title: 'My Registered Coaching',
+          href: '/dashboard/register-coaching/view',
+          icon: BookAIcon
+        }
+      ]
     },
     {
-      title: "Health & Wellness",
-      href: "",
+      title: 'Health & Wellness',
+      href: '',
       icon: AmbulanceIcon,
       subItems: [
         {
-          title: "Register Health Service",
-          href: "/dashboard/health-wellness",
-          icon: BookAIcon,
+          title: 'Register Health Service',
+          href: '/dashboard/health-wellness',
+          icon: BookAIcon
         },
         {
-          title: "My Registered Health Services",
-          href: "/dashboard/health-wellness/view",
-          icon: BookAIcon,
-        },
-      ],
-    },
+          title: 'My Registered Health Services',
+          href: '/dashboard/health-wellness/view',
+          icon: BookAIcon
+        }
+      ]
+    }
   ];
 
   useEffect(() => {
-    if (user?.role === "user") {
-      fetch("/api/admin/notifications")
+    if (user?.role === 'user') {
+      fetch('/api/admin/notifications')
         .then((res) => res.json())
         .then((data) => setNotifications(data || []))
         .catch(() => setNotifications([]));
@@ -174,10 +190,10 @@ export default function DashboardLayout({
     const unread = notifications.filter((n) => !n.isRead);
     if (unread.length === 0) return;
 
-    await fetch("/api/admin/notifications/mark-read", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
+    await fetch('/api/admin/notifications/mark-read', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notificationIds: unread.map((n) => n.id) })
     });
 
     // update local state
@@ -197,10 +213,10 @@ export default function DashboardLayout({
     if (unread.length === 0) return;
 
     try {
-      const res = await fetch("/api/admin/notifications/mark-read", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) }),
+      const res = await fetch('/api/admin/notifications/mark-read', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationIds: unread.map((n) => n.id) })
       });
 
       if (res.ok) {
@@ -209,19 +225,19 @@ export default function DashboardLayout({
         //     unread.find((u) => u.id === n.id) ? { ...n, isRead: true } : n
         //   )
         // );
-        console.log("✅ Notifications marked as read");
+        console.log('✅ Notifications marked as read');
       } else {
-        console.error("❌ Failed to mark notifications as read");
+        console.error('❌ Failed to mark notifications as read');
       }
     } catch (err) {
-      console.error("⚠️ Error marking notifications:", err);
+      console.error('⚠️ Error marking notifications:', err);
     }
   };
 
   const handleSignOut = async () => {
     setIsOpen(false);
-    await signOut({ callbackUrl: "/", redirect: false });
-    window.location.href = "/";
+    await signOut({ callbackUrl: '/', redirect: false });
+    window.location.href = '/';
   };
   const toggleMenu = (title: string) => {
     setOpenMenus((prev) => ({ ...prev, [title]: !prev[title] }));
@@ -246,16 +262,16 @@ export default function DashboardLayout({
           <Crown className="w-8 hidden lg:block h-8 text-orange-400" />
           <div className="hidden lg:block">
             <h1 className="text-2xl font-bold capitalize">
-              Welcome back, {user?.name || ""}
+              Welcome back, {user?.name || ''}
             </h1>
             {/* <p className="text-red-200">Your matrimonial journey continues</p> */}
           </div>
-           <div className=" flex items-center gap-2 md:hidden">
+          <div className=" flex items-center gap-2 md:hidden">
             <div
               className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${
                 scrollY > 20
-                  ? "bg-gradient-to-br from-red-600 to-orange-500"
-                  : "bg-white/20 backdrop-blur-sm"
+                  ? 'bg-gradient-to-br from-red-600 to-orange-500'
+                  : 'bg-white/20 backdrop-blur-sm'
               }`}
             >
               <Crown className="w-6 h-6 text-white" />
@@ -263,14 +279,14 @@ export default function DashboardLayout({
             <div>
               <h1
                 className={`text-base font-bold leading-tight ${
-                  scrollY > 20 ? "text-red-700" : "text-white"
+                  scrollY > 20 ? 'text-red-700' : 'text-white'
                 }`}
               >
                 Mauryavansham
               </h1>
               <p
                 className={`text-xs leading-tight ${
-                  scrollY > 20 ? "text-orange-600" : "text-orange-100"
+                  scrollY > 20 ? 'text-orange-600' : 'text-orange-100'
                 }`}
               >
                 मौर्यवंश - गौरवशाली परंपरा
@@ -280,7 +296,7 @@ export default function DashboardLayout({
         </div>
         <div className="flex items-center gap-4">
           {/* Notifications */}
-          {user?.role === "user" && (
+          {user?.role === 'user' && (
             <DropdownMenu onOpenChange={handleNotificationsOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -311,22 +327,22 @@ export default function DashboardLayout({
                       onClick={async () => {
                         try {
                           const res = await fetch(
-                            "/api/notifications/mark-all-read",
+                            '/api/notifications/mark-all-read',
                             {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ userId: user?.id }),
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ userId: user?.id })
                             }
                           );
 
                           if (res.ok) {
                             setNotifications([]);
-                            console.log("✅ All notifications marked as read");
+                            console.log('✅ All notifications marked as read');
                           } else {
-                            console.error("❌ Failed to mark all as read");
+                            console.error('❌ Failed to mark all as read');
                           }
                         } catch (err) {
-                          console.error("⚠️ Error marking all as read:", err);
+                          console.error('⚠️ Error marking all as read:', err);
                         }
                       }}
                       className="text-xs text-blue-700 hover:underline font-medium"
@@ -342,8 +358,8 @@ export default function DashboardLayout({
                       key={n.id}
                       className={`rounded-md border p-2 m-2 shadow-sm ${
                         n.isRead
-                          ? "bg-gray-50 border-gray-200"
-                          : "bg-yellow-50 border-yellow-300"
+                          ? 'bg-gray-50 border-gray-200'
+                          : 'bg-yellow-50 border-yellow-300'
                       }`}
                     >
                       <DropdownMenuItem className="whitespace-normal text-sm">
@@ -404,8 +420,8 @@ export default function DashboardLayout({
         {/* Sidebar */}
         <div
           className={cn(
-            "bg-yellow-50 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+            'bg-yellow-50 border-yellow-200 rounded-lg p-4 w-64 h-[calc(100vh-6rem)] flex flex-col fixed top-24 z-30 transform transition-transform duration-300',
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           )}
         >
           {/* Profile section */}
@@ -413,13 +429,13 @@ export default function DashboardLayout({
             <div
               className="w-14 h-14 rounded-full bg-gray-300 overflow-hidden shadow-md cursor-pointer"
               onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.location.href = "/dashboard/user-profile/" + user?.id;
+                if (typeof window !== 'undefined') {
+                  window.location.href = '/dashboard/user-profile/' + user?.id;
                 }
               }}
             >
               <img
-                src={user?.photo || "/placeholder.svg"}
+                src={user?.photo || '/placeholder.svg'}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -445,10 +461,10 @@ export default function DashboardLayout({
                       <button
                         onClick={() => toggleMenu(item.title)}
                         className={cn(
-                          "flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                          'flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                           pathname === item.href
-                            ? "bg-orange-100 text-orange-700"
-                            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                            ? 'bg-orange-100 text-orange-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                         )}
                       >
                         <div className="flex items-center space-x-3">
@@ -472,10 +488,10 @@ export default function DashboardLayout({
                               key={sub.href}
                               href={sub.href}
                               className={cn(
-                                "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                                'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                                 pathname === sub.href
-                                  ? "bg-orange-50 text-orange-600"
-                                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                  ? 'bg-orange-50 text-orange-600'
+                                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
                               )}
                               onClick={() => setSidebarOpen(false)}
                             >
@@ -493,10 +509,10 @@ export default function DashboardLayout({
                     <Link
                       href={item.href}
                       className={cn(
-                        "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                        'flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                         pathname === item.href
-                          ? "bg-orange-100 text-orange-700"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                          ? 'bg-orange-100 text-orange-700'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                       )}
                       onClick={() => setSidebarOpen(false)}
                     >

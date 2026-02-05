@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { Input } from "@/src/components/ui/input";
-import { Button } from "@/src/components/ui/button";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
-import * as XLSX from "xlsx";
+  CardTitle
+} from '@/src/components/ui/card';
+import { Input } from '@/src/components/ui/input';
+import { Button } from '@/src/components/ui/button';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
+import { exportToExcel } from '@/src/utils/exportExcel';
 
 interface Discussion {
   id: number;
@@ -43,11 +43,11 @@ export default function DiscussionReports() {
   const [totalCount, setTotalCount] = useState(0);
 
   const [filters, setFilters] = useState({
-    search: "",
-    category: "",
-    status: "",
-    dateFrom: "",
-    dateTo: "",
+    search: '',
+    category: '',
+    status: '',
+    dateFrom: '',
+    dateTo: ''
   });
 
   const totalPages = Math.ceil(totalCount / pageSize);
@@ -60,7 +60,7 @@ export default function DiscussionReports() {
       const query = new URLSearchParams({
         page: currentPage.toString(),
         limit: pageSize.toString(),
-        ...filters,
+        ...filters
       });
 
       const res = await fetch(`/api/reports/discussions?${query.toString()}`);
@@ -71,7 +71,7 @@ export default function DiscussionReports() {
         setTotalCount(data.pagination?.total || 0);
       }
     } catch (error) {
-      console.error("Error fetching discussions:", error);
+      console.error('Error fetching discussions:', error);
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ export default function DiscussionReports() {
   };
 
   // 🔹 Export to Excel
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (discussions.length === 0) return;
 
     const dataToExport = discussions.map((d) => ({
@@ -99,24 +99,21 @@ export default function DiscussionReports() {
       Content: d.content,
       Category: d.category,
       Author: d.authorName,
-      Location: d.location || "",
+      Location: d.location || '',
       Likes: d.likesCount,
       Replies: d.repliesCount,
       Status: d.status,
-      ApprovedBy: d.approvedBy || "",
-      ApprovedAt: d.approvedAt ? new Date(d.approvedAt).toLocaleString() : "",
-      RejectedBy: d.rejectedBy || "",
-      RejectedAt: d.rejectedAt ? new Date(d.rejectedAt).toLocaleString() : "",
-      RejectionReason: d.rejectionReason || "",
-      Completed: d.isCompleted ? "Yes" : "No",
+      ApprovedBy: d.approvedBy || '',
+      ApprovedAt: d.approvedAt ? new Date(d.approvedAt).toLocaleString() : '',
+      RejectedBy: d.rejectedBy || '',
+      RejectedAt: d.rejectedAt ? new Date(d.rejectedAt).toLocaleString() : '',
+      RejectionReason: d.rejectionReason || '',
+      Completed: d.isCompleted ? 'Yes' : 'No',
       CreatedAt: new Date(d.createdAt).toLocaleString(),
-      UpdatedAt: new Date(d.updatedAt).toLocaleString(),
+      UpdatedAt: new Date(d.updatedAt).toLocaleString()
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Discussion Report");
-    XLSX.writeFile(workbook, "discussion-report.xlsx");
+    await exportToExcel(dataToExport, 'Discussion Report', 'discussion-report');
   };
 
   if (loading) return <Loader />;
@@ -173,7 +170,7 @@ export default function DiscussionReports() {
             >
               Apply Filters
             </Button>
-            <Button onClick={exportToExcel} variant="outline">
+            <Button onClick={handleExportToExcel} variant="outline">
               Export to Excel
             </Button>
           </div>
@@ -212,31 +209,31 @@ export default function DiscussionReports() {
                       <td className="border px-4 py-2">{d.title}</td>
                       <td className="border px-4 py-2">{d.category}</td>
                       <td className="border px-4 py-2">{d.authorName}</td>
-                      <td className="border px-4 py-2">{d.location || "—"}</td>
+                      <td className="border px-4 py-2">{d.location || '—'}</td>
                       <td className="border px-4 py-2">{d.likesCount}</td>
                       <td className="border px-4 py-2">{d.repliesCount}</td>
                       <td className="border px-4 py-2">{d.status}</td>
                       <td className="border px-4 py-2">
-                        {d.approvedBy || "—"}
+                        {d.approvedBy || '—'}
                       </td>
                       <td className="border px-4 py-2">
                         {d.approvedAt
                           ? new Date(d.approvedAt).toLocaleString()
-                          : "—"}
+                          : '—'}
                       </td>
                       <td className="border px-4 py-2">
-                        {d.rejectedBy || "—"}
+                        {d.rejectedBy || '—'}
                       </td>
                       <td className="border px-4 py-2">
                         {d.rejectedAt
                           ? new Date(d.rejectedAt).toLocaleString()
-                          : "—"}
+                          : '—'}
                       </td>
                       <td className="border px-4 py-2">
-                        {d.rejectionReason || "—"}
+                        {d.rejectionReason || '—'}
                       </td>
                       <td className="border px-4 py-2">
-                        {d.isCompleted ? "Yes" : "No"}
+                        {d.isCompleted ? 'Yes' : 'No'}
                       </td>
                       <td className="border px-4 py-2">
                         {new Date(d.createdAt).toLocaleString()}

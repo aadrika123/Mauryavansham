@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
+import { useState, useEffect } from 'react';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
 
 interface Achievement {
   id: number;
@@ -38,9 +38,9 @@ export default function AchievementsReportPage() {
   const [allFilteredAchievements, setAllFilteredAchievements] = useState<
     Achievement[]
   >([]);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [loading, setLoading] = useState(false);
 
@@ -56,10 +56,10 @@ export default function AchievementsReportPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        params.append("page", "1");
-        params.append("limit", "1000");
-        if (statusFilter) params.append("status", statusFilter);
-        if (categoryFilter) params.append("category", categoryFilter);
+        params.append('page', '1');
+        params.append('limit', '1000');
+        if (statusFilter) params.append('status', statusFilter);
+        if (categoryFilter) params.append('category', categoryFilter);
 
         const res = await fetch(
           `/api/reports/achievements?${params.toString()}`
@@ -86,7 +86,7 @@ export default function AchievementsReportPage() {
           records.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         );
       } catch (err) {
-        console.error("Error fetching achievements:", err);
+        console.error('Error fetching achievements:', err);
       } finally {
         setLoading(false);
       }
@@ -97,19 +97,19 @@ export default function AchievementsReportPage() {
 
   // ✅ Format date
   const formatDate = (dateStr?: string) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return '-';
     const d = new Date(dateStr);
-    return `${String(d.getDate()).padStart(2, "0")}-${String(
+    return `${String(d.getDate()).padStart(2, '0')}-${String(
       d.getMonth() + 1
-    ).padStart(2, "0")}-${d.getFullYear()}`;
+    ).padStart(2, '0')}-${d.getFullYear()}`;
   };
 
   // ✅ Export Excel
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (allFilteredAchievements.length === 0) return;
 
     const sortedData = [...allFilteredAchievements].sort((a, b) =>
-      a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+      a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
     );
 
     const dataToExport = sortedData.map((a) => ({
@@ -118,24 +118,21 @@ export default function AchievementsReportPage() {
       Category: a.category,
       Year: a.year,
       Location: a.location,
-      "Key Achievement": a.keyAchievement,
+      'Key Achievement': a.keyAchievement,
       Impact: a.impact,
-      Verified: a.isVerified ? "Yes" : "No",
-      Featured: a.isFeatured ? "Yes" : "No",
-      "Hall of Fame": a.isHallOfFame ? "Yes" : "No",
+      Verified: a.isVerified ? 'Yes' : 'No',
+      Featured: a.isFeatured ? 'Yes' : 'No',
+      'Hall of Fame': a.isHallOfFame ? 'Yes' : 'No',
       Status: a.status,
-      "Created By": a.createdBy,
-      "Created On": formatDate(a.createdAt),
-      "Updated On": formatDate(a.updatedAt),
-      "Removed By": a.removedBy || "-",
-      "Removed On": formatDate(a.removedAt),
-      Reason: a.reason || "-",
+      'Created By': a.createdBy,
+      'Created On': formatDate(a.createdAt),
+      'Updated On': formatDate(a.updatedAt),
+      'Removed By': a.removedBy || '-',
+      'Removed On': formatDate(a.removedAt),
+      Reason: a.reason || '-'
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Achievements");
-    XLSX.writeFile(workbook, "achievements-report.xlsx");
+    await exportToExcel(dataToExport, 'Achievements', 'achievements-report');
   };
 
   return (
@@ -187,7 +184,7 @@ export default function AchievementsReportPage() {
         />
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
           Export Excel
@@ -246,18 +243,18 @@ export default function AchievementsReportPage() {
                       </td>
                       {/* <td className="px-4 py-2 border">{a.isVerified ? "Yes" : "No"}</td> */}
                       <td className="px-4 py-2 border">
-                        {a.isFeatured ? "Yes" : "No"}
+                        {a.isFeatured ? 'Yes' : 'No'}
                       </td>
                       <td className="px-4 py-2 border">{a.createdBy}</td>
                       <td className="px-4 py-2 border">
                         {formatDate(a.createdAt)}
                       </td>
                       <td className="px-4 py-2 border">
-                        {a.updatedBy ? formatDate(a.updatedAt) : "-"}
+                        {a.updatedBy ? formatDate(a.updatedAt) : '-'}
                       </td>
-                      <td className="px-4 py-2 border">{a.updatedBy || "-"}</td>
-                      <td className="px-4 py-2 border">{a.removedBy || "-"}</td>
-                      <td className="px-4 py-2 border">{a.reason || "-"}</td>
+                      <td className="px-4 py-2 border">{a.updatedBy || '-'}</td>
+                      <td className="px-4 py-2 border">{a.removedBy || '-'}</td>
+                      <td className="px-4 py-2 border">{a.reason || '-'}</td>
                     </tr>
                   ))
                 )}

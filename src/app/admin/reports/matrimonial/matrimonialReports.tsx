@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { Input } from "@/src/components/ui/input";
-import { Button } from "@/src/components/ui/button";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
-import * as XLSX from "xlsx";
+  CardTitle
+} from '@/src/components/ui/card';
+import { Input } from '@/src/components/ui/input';
+import { Button } from '@/src/components/ui/button';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
+import { exportToExcel } from '@/src/utils/exportExcel';
 
 export default function MatrimonialReports() {
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -21,12 +21,12 @@ export default function MatrimonialReports() {
   const [loading, setLoading] = useState(false);
 
   const [filters, setFilters] = useState({
-    search: "",
-    city: "",
-    state: "",
-    mobile: "",
-    dateFrom: "",
-    dateTo: "",
+    search: '',
+    city: '',
+    state: '',
+    mobile: '',
+    dateFrom: '',
+    dateTo: ''
   });
 
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
@@ -36,69 +36,69 @@ export default function MatrimonialReports() {
 
   // ✅ Always visible columns
   const basicColumns = [
-    { key: "name", label: "Name" },
-    { key: "gender", label: "Gender" },
-    { key: "phoneNo", label: "Phone" },
-    { key: "email", label: "Email" },
-    { key: "createdBy", label: "Created By" },
-    { key: "createdAt", label: "Created At" },
+    { key: 'name', label: 'Name' },
+    { key: 'gender', label: 'Gender' },
+    { key: 'phoneNo', label: 'Phone' },
+    { key: 'email', label: 'Email' },
+    { key: 'createdBy', label: 'Created By' },
+    { key: 'createdAt', label: 'Created At' }
   ];
 
   const optionalColumns = [
-    { key: "aboutMe", label: "About Me" },
-    { key: "ancestralVillage", label: "Ancestral Village" },
-    { key: "annualIncome", label: "Annual Income" },
-    { key: "bodyType", label: "Body Type" },
-    { key: "brothers", label: "Brothers" },
-    { key: "castPreferences", label: "Cast Preferences" },
-    { key: "collegeUniversity", label: "College / University" },
-    { key: "communityContributions", label: "Community Contributions" },
-    { key: "companyOrganization", label: "Company / Organization" },
-    { key: "complexion", label: "Complexion" },
-    { key: "deactivateReason", label: "Deactivate Reason" },
-    { key: "deactivateReview", label: "Deactivate Review" },
-    { key: "designation", label: "Designation" },
-    { key: "diet", label: "Diet" },
-    { key: "dob", label: "DOB" },
-    { key: "drinking", label: "Drinking" },
-    { key: "exercise", label: "Exercise" },
-    { key: "facebook", label: "Facebook" },
-    { key: "familyHistory", label: "Family History" },
-    { key: "familyIncome", label: "Family Income" },
-    { key: "familyTraditions", label: "Family Traditions" },
-    { key: "fatherName", label: "Father Name" },
-    { key: "fatherOccupation", label: "Father Occupation" },
-    { key: "gotraDetails", label: "Gotra Details" },
-    { key: "height", label: "Height" },
-    { key: "highestEducation", label: "Highest Education" },
-    { key: "hobbies", label: "Hobbies" },
-    { key: "instagram", label: "Instagram" },
+    { key: 'aboutMe', label: 'About Me' },
+    { key: 'ancestralVillage', label: 'Ancestral Village' },
+    { key: 'annualIncome', label: 'Annual Income' },
+    { key: 'bodyType', label: 'Body Type' },
+    { key: 'brothers', label: 'Brothers' },
+    { key: 'castPreferences', label: 'Cast Preferences' },
+    { key: 'collegeUniversity', label: 'College / University' },
+    { key: 'communityContributions', label: 'Community Contributions' },
+    { key: 'companyOrganization', label: 'Company / Organization' },
+    { key: 'complexion', label: 'Complexion' },
+    { key: 'deactivateReason', label: 'Deactivate Reason' },
+    { key: 'deactivateReview', label: 'Deactivate Review' },
+    { key: 'designation', label: 'Designation' },
+    { key: 'diet', label: 'Diet' },
+    { key: 'dob', label: 'DOB' },
+    { key: 'drinking', label: 'Drinking' },
+    { key: 'exercise', label: 'Exercise' },
+    { key: 'facebook', label: 'Facebook' },
+    { key: 'familyHistory', label: 'Family History' },
+    { key: 'familyIncome', label: 'Family Income' },
+    { key: 'familyTraditions', label: 'Family Traditions' },
+    { key: 'fatherName', label: 'Father Name' },
+    { key: 'fatherOccupation', label: 'Father Occupation' },
+    { key: 'gotraDetails', label: 'Gotra Details' },
+    { key: 'height', label: 'Height' },
+    { key: 'highestEducation', label: 'Highest Education' },
+    { key: 'hobbies', label: 'Hobbies' },
+    { key: 'instagram', label: 'Instagram' },
     // { key: "isActive", label: "Is Active" },
     // { key: "isDeleted", label: "Is Deleted" },
     // { key: "isPremium", label: "Is Premium" },
     // { key: "isVerified", label: "Is Verified" },
-    { key: "languagesKnown", label: "Languages Known" },
-    { key: "linkedin", label: "LinkedIn" },
-    { key: "maritalStatus", label: "Marital Status" },
-    { key: "motherName", label: "Mother Name" },
-    { key: "motherOccupation", label: "Mother Occupation" },
-    { key: "moviePreferences", label: "Movie Preferences" },
-    { key: "musicPreferences", label: "Music Preferences" },
-    { key: "nickName", label: "Nick Name" },
-    { key: "occupation", label: "Occupation" },
-    { key: "profileImage", label: "Profile Image" },
-    { key: "profileRelation", label: "Profile Relation" },
-    { key: "readingInterests", label: "Reading Interests" },
-    { key: "religiousBeliefs", label: "Religious Beliefs" },
-    { key: "sisters", label: "Sisters" },
-    { key: "smoking", label: "Smoking" },
-    { key: "state", label: "State" },
-    { key: "travelInterests", label: "Travel Interests" },
-    { key: "updatedAt", label: "Updated At" },
-    { key: "website", label: "Website" },
-    { key: "weight", label: "Weight" },
-    { key: "workExperience", label: "Work Experience" },
-    { key: "workLocation", label: "Work Location" },
+    { key: 'languagesKnown', label: 'Languages Known' },
+    { key: 'linkedin', label: 'LinkedIn' },
+    { key: 'maritalStatus', label: 'Marital Status' },
+    { key: 'motherName', label: 'Mother Name' },
+    { key: 'motherOccupation', label: 'Mother Occupation' },
+    { key: 'moviePreferences', label: 'Movie Preferences' },
+    { key: 'musicPreferences', label: 'Music Preferences' },
+    { key: 'nickName', label: 'Nick Name' },
+    { key: 'occupation', label: 'Occupation' },
+    { key: 'profileImage', label: 'Profile Image' },
+    { key: 'profileRelation', label: 'Profile Relation' },
+    { key: 'readingInterests', label: 'Reading Interests' },
+    { key: 'religiousBeliefs', label: 'Religious Beliefs' },
+    { key: 'sisters', label: 'Sisters' },
+    { key: 'smoking', label: 'Smoking' },
+    { key: 'state', label: 'State' },
+    { key: 'travelInterests', label: 'Travel Interests' },
+    { key: 'updatedAt', label: 'Updated At' },
+    { key: 'website', label: 'Website' },
+    { key: 'weight', label: 'Weight' },
+    { key: 'workExperience', label: 'Work Experience' },
+    { key: 'workLocation', label: 'Work Location' }
   ];
 
   // 🔹 Fetch profiles
@@ -108,7 +108,7 @@ export default function MatrimonialReports() {
       const query = new URLSearchParams({
         ...filters,
         page: String(currentPage),
-        limit: String(pageSize),
+        limit: String(pageSize)
       });
 
       const res = await fetch(`/api/reports/matrimonial?${query.toString()}`);
@@ -119,7 +119,7 @@ export default function MatrimonialReports() {
         setTotalCount(data.pagination?.total || 0);
       }
     } catch (error) {
-      console.error("Error fetching matrimonial reports:", error);
+      console.error('Error fetching matrimonial reports:', error);
     } finally {
       setLoading(false);
     }
@@ -156,8 +156,8 @@ export default function MatrimonialReports() {
     }
   };
 
-  // 🔹 Export to Excel (keep same)
-  const exportToExcel = () => {
+  // 🔹 Export to Excel
+  const handleExportToExcel = async () => {
     if (profiles.length === 0) return;
 
     const dataToExport = profiles.map((p: any, index: number) => {
@@ -165,23 +165,24 @@ export default function MatrimonialReports() {
       const prof = p.profiles || {};
 
       return {
-        "#": index + 1,
+        '#': index + 1,
         Name: prof.name,
-        "Profile Relation": prof.profileRelation,
-        "Created By": u.name || "—",
+        'Profile Relation': prof.profileRelation,
+        'Created By': u.name || '—',
         Gender: prof.gender,
         Phone: prof.phoneNo,
         Email: prof.email,
-        "Created At": prof.createdAt
+        'Created At': prof.createdAt
           ? new Date(prof.createdAt).toLocaleDateString()
-          : "—",
+          : '—'
       };
     });
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Matrimonial Report");
-    XLSX.writeFile(workbook, "matrimonial-report.xlsx");
+    await exportToExcel(
+      dataToExport,
+      'Matrimonial Report',
+      'matrimonial-report'
+    );
   };
 
   if (loading) return <Loader />;
@@ -189,7 +190,7 @@ export default function MatrimonialReports() {
   // Merge visible columns
   const visibleColumns = [
     ...basicColumns,
-    ...optionalColumns.filter((col) => selectedColumns.includes(col.key)),
+    ...optionalColumns.filter((col) => selectedColumns.includes(col.key))
   ];
 
   return (
@@ -248,7 +249,7 @@ export default function MatrimonialReports() {
             >
               Apply Filters
             </Button>
-            <Button onClick={exportToExcel} variant="outline">
+            <Button onClick={handleExportToExcel} variant="outline">
               Export to Excel
             </Button>
           </div>
@@ -306,13 +307,13 @@ export default function MatrimonialReports() {
                       <tr key={index} className="hover:bg-gray-50">
                         <td className="border px-4 py-2">{index + 1}</td>
                         {visibleColumns.map((col) => {
-                          let value = "";
-                          if (col.key === "createdBy") value = u.name || "—";
-                          else if (col.key === "createdAt")
+                          let value = '';
+                          if (col.key === 'createdBy') value = u.name || '—';
+                          else if (col.key === 'createdAt')
                             value = prof.createdAt
                               ? new Date(prof.createdAt).toLocaleDateString()
-                              : "—";
-                          else value = prof[col.key] || "—";
+                              : '—';
+                          else value = prof[col.key] || '—';
 
                           return (
                             <td key={col.key} className="border px-4 py-2">

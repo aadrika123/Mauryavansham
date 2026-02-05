@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
+import { useState, useEffect } from 'react';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
 
 interface HealthService {
   id: number;
@@ -33,11 +33,13 @@ interface HealthService {
 
 export default function HealthReportsPage() {
   const [services, setServices] = useState<HealthService[]>([]);
-  const [allFilteredServices, setAllFilteredServices] = useState<HealthService[]>([]);
-  const [statusFilter, setStatusFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [cityFilter, setCityFilter] = useState("");
-  const [stateFilter, setStateFilter] = useState("");
+  const [allFilteredServices, setAllFilteredServices] = useState<
+    HealthService[]
+  >([]);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,12 +53,12 @@ export default function HealthReportsPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        params.append("page", currentPage.toString());
-        params.append("limit", pageSize.toString());
-        if (statusFilter) params.append("status", statusFilter);
-        if (cityFilter) params.append("city", cityFilter);
-        if (stateFilter) params.append("state", stateFilter);
-        if (searchQuery) params.append("search", searchQuery);
+        params.append('page', currentPage.toString());
+        params.append('limit', pageSize.toString());
+        if (statusFilter) params.append('status', statusFilter);
+        if (cityFilter) params.append('city', cityFilter);
+        if (stateFilter) params.append('state', stateFilter);
+        if (searchQuery) params.append('search', searchQuery);
 
         const res = await fetch(`/api/reports/health?${params.toString()}`);
         const result = await res.json();
@@ -73,43 +75,52 @@ export default function HealthReportsPage() {
     };
 
     fetchData();
-  }, [statusFilter, cityFilter, stateFilter, searchQuery, currentPage, pageSize]);
+  }, [
+    statusFilter,
+    cityFilter,
+    stateFilter,
+    searchQuery,
+    currentPage,
+    pageSize
+  ]);
 
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return '-';
     const d = new Date(dateStr);
-    return `${d.getDate().toString().padStart(2, "0")}-${(d.getMonth() + 1)
+    return `${d.getDate().toString().padStart(2, '0')}-${(d.getMonth() + 1)
       .toString()
-      .padStart(2, "0")}-${d.getFullYear()}`;
+      .padStart(2, '0')}-${d.getFullYear()}`;
   };
 
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (allFilteredServices.length === 0) return;
 
     const dataToExport = allFilteredServices.map((s) => ({
-      "Center Name": s.centerName,
+      'Center Name': s.centerName,
       Category: s.category,
-      "Owner Name": s.ownerName,
-      Email: s.email || "-",
+      'Owner Name': s.ownerName,
+      Email: s.email || '-',
       Phone: s.phone,
-      Address: s.address || "-",
-      City: s.city || "-",
-      State: s.state || "-",
-      Pincode: s.pincode || "-",
-      Offerings: s.offerings?.join(", ") || "-",
+      Address: s.address || '-',
+      City: s.city || '-',
+      State: s.state || '-',
+      Pincode: s.pincode || '-',
+      Offerings: s.offerings?.join(', ') || '-',
       Branches:
-        s.branches?.map((b) => `${b.name} (${b.phone || "-"}, ${b.address || "-"})`).join("; ") ||
-        "-",
-      Logo: s.logoUrl || "-",
-      Documents: s.docUrls?.join(", ") || "-",
+        s.branches
+          ?.map((b) => `${b.name} (${b.phone || '-'}, ${b.address || '-'})`)
+          .join('; ') || '-',
+      Logo: s.logoUrl || '-',
+      Documents: s.docUrls?.join(', ') || '-',
       Status: s.status,
-      "Created On": formatDate(s.createdAt),
+      'Created On': formatDate(s.createdAt)
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Health Services");
-    XLSX.writeFile(workbook, "health-services-report.xlsx");
+    await exportToExcel(
+      dataToExport,
+      'Health Services',
+      'health-services-report'
+    );
   };
 
   return (
@@ -153,22 +164,22 @@ export default function HealthReportsPage() {
         >
           <option value="">All States</option>
           {[
-            "Bihar",
-            "Uttar Pradesh",
-            "Delhi",
-            "Maharashtra",
-            "West Bengal",
-            "Madhya Pradesh",
-            "Rajasthan",
-            "Karnataka",
-            "Tamil Nadu",
-            "Kerala",
-            "Punjab",
-            "Haryana",
-            "Gujarat",
-            "Jharkhand",
-            "Odisha",
-            "Assam",
+            'Bihar',
+            'Uttar Pradesh',
+            'Delhi',
+            'Maharashtra',
+            'West Bengal',
+            'Madhya Pradesh',
+            'Rajasthan',
+            'Karnataka',
+            'Tamil Nadu',
+            'Kerala',
+            'Punjab',
+            'Haryana',
+            'Gujarat',
+            'Jharkhand',
+            'Odisha',
+            'Assam'
           ].map((state) => (
             <option key={state} value={state}>
               {state}
@@ -177,7 +188,7 @@ export default function HealthReportsPage() {
         </select>
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel
@@ -231,18 +242,18 @@ export default function HealthReportsPage() {
                             className="w-10 h-10 object-cover rounded"
                           />
                         ) : (
-                          "-"
+                          '-'
                         )}
                       </td>
                       <td className="px-4 py-2 border">{s.centerName}</td>
                       <td className="px-4 py-2 border">{s.category}</td>
                       <td className="px-4 py-2 border">{s.ownerName}</td>
-                      <td className="px-4 py-2 border">{s.email || "-"}</td>
+                      <td className="px-4 py-2 border">{s.email || '-'}</td>
                       <td className="px-4 py-2 border">{s.phone}</td>
-                      <td className="px-4 py-2 border">{s.city || "-"}</td>
-                      <td className="px-4 py-2 border">{s.state || "-"}</td>
+                      <td className="px-4 py-2 border">{s.city || '-'}</td>
+                      <td className="px-4 py-2 border">{s.state || '-'}</td>
                       <td className="px-4 py-2 border">
-                        {s.offerings?.join(", ") || "-"}
+                        {s.offerings?.join(', ') || '-'}
                       </td>
                       <td className="px-4 py-2 border">
                         {s.branches?.length > 0 ? (
@@ -258,7 +269,7 @@ export default function HealthReportsPage() {
                             ))}
                           </ul>
                         ) : (
-                          "-"
+                          '-'
                         )}
                       </td>
                       <td className="px-4 py-2 border">
@@ -277,11 +288,15 @@ export default function HealthReportsPage() {
                             ))}
                           </div>
                         ) : (
-                          "-"
+                          '-'
                         )}
                       </td>
-                      <td className="px-4 py-2 border capitalize">{s.status}</td>
-                      <td className="px-4 py-2 border">{formatDate(s.createdAt)}</td>
+                      <td className="px-4 py-2 border capitalize">
+                        {s.status}
+                      </td>
+                      <td className="px-4 py-2 border">
+                        {formatDate(s.createdAt)}
+                      </td>
                     </tr>
                   ))
                 )}

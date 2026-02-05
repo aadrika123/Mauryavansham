@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import MobileLayout from "./mobileViewLayout";
-import AuthLayout from "./webVeiwLayout";
+import React, { useEffect, useState } from 'react';
+import MobileLayout from './mobileViewLayout';
+import AuthLayout from './webVeiwLayout';
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -13,7 +13,7 @@ export default function RootLayout({
 
   useEffect(() => {
     // ✅ Check if running inside React Native WebView
-    if (typeof window !== "undefined" && (window as any).ReactNativeWebView) {
+    if (typeof window !== 'undefined' && (window as any).ReactNativeWebView) {
       setIsMobile(true);
     } else {
       const userAgent = navigator.userAgent;
@@ -23,15 +23,9 @@ export default function RootLayout({
     }
   }, []);
 
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        {isMobile ? (
-          <MobileLayout>{children}</MobileLayout>
-        ) : (
-          <AuthLayout>{children}</AuthLayout>
-        )}
-      </body>
-    </html>
+  return isMobile ? (
+    <MobileLayout>{children}</MobileLayout>
+  ) : (
+    <AuthLayout>{children}</AuthLayout>
   );
 }

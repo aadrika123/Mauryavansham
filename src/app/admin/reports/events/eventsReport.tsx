@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
-import Loader from "@/src/components/ui/loader";
-import Pagination from "@/src/components/common/Pagination";
+import { useState, useEffect } from 'react';
+import { exportToExcel } from '@/src/utils/exportExcel';
+import Loader from '@/src/components/ui/loader';
+import Pagination from '@/src/components/common/Pagination';
 
 interface Event {
   id: number;
@@ -36,7 +36,7 @@ interface Event {
 export default function EventReportsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [allFilteredEvents, setAllFilteredEvents] = useState<Event[]>([]);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,9 +51,9 @@ export default function EventReportsPage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
-        params.append("page", "1");
-        params.append("limit", "1000");
-        if (statusFilter) params.append("status", statusFilter);
+        params.append('page', '1');
+        params.append('limit', '1000');
+        if (statusFilter) params.append('status', statusFilter);
 
         const res = await fetch(`/api/events?${params.toString()}`);
         const data = await res.json();
@@ -76,43 +76,40 @@ export default function EventReportsPage() {
 
   // ✅ Format date
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return "-";
+    if (!dateStr) return '-';
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
   // ✅ Export to Excel
-  const exportToExcel = () => {
+  const handleExportToExcel = async () => {
     if (allFilteredEvents.length === 0) return;
 
     // Sort alphabetically by title
     const sortedEvents = [...allFilteredEvents].sort((a, b) =>
-      a.title.localeCompare(b.title, "en", { sensitivity: "base" })
+      a.title.localeCompare(b.title, 'en', { sensitivity: 'base' })
     );
 
     const dataToExport = sortedEvents.map((e) => ({
-      "Event Title": e.title,
-      Description: e.description || "-",
-      "Event Date": formatDate(e.eventDate),
-      "Event Time": `${e.fromTime} - ${e.toTime}`,
-      "Event Type": e.type,
-      Location: e.location || "-",
-      "Created By": e.organizerInfo.name || "-",
-      "Total Attendees": e.attendeesCount || 0,
-      "Attendee Names": e.attendees?.map((a) => a.name).join(", ") || "-",
-      "Created On": formatDate(e.createdAt),
-      Status: e.status || "-",
-      "Rejected By": e.rejectedBy || "-",
-      "Rejection Reason": e.reason || "-",
+      'Event Title': e.title,
+      Description: e.description || '-',
+      'Event Date': formatDate(e.eventDate),
+      'Event Time': `${e.fromTime} - ${e.toTime}`,
+      'Event Type': e.type,
+      Location: e.location || '-',
+      'Created By': e.organizerInfo.name || '-',
+      'Total Attendees': e.attendeesCount || 0,
+      'Attendee Names': e.attendees?.map((a) => a.name).join(', ') || '-',
+      'Created On': formatDate(e.createdAt),
+      Status: e.status || '-',
+      'Rejected By': e.rejectedBy || '-',
+      'Rejection Reason': e.reason || '-'
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Events");
-    XLSX.writeFile(workbook, "events-report.xlsx");
+    await exportToExcel(dataToExport, 'Events', 'events-report');
   };
 
   return (
@@ -132,7 +129,7 @@ export default function EventReportsPage() {
         </select>
 
         <button
-          onClick={exportToExcel}
+          onClick={handleExportToExcel}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Export Excel
@@ -197,7 +194,7 @@ export default function EventReportsPage() {
                       </td>
                       <td className="px-4 py-2 border">{e.title}</td>
                       <td className="px-4 py-2 border  sm:table-cell">
-                        {e.description || "-"}
+                        {e.description || '-'}
                       </td>
                       <td className="px-4 py-2 border">{formatDate(e.date)}</td>
                       <td className="px-4 py-2 border  md:table-cell">
@@ -209,9 +206,9 @@ export default function EventReportsPage() {
                       <td className="px-4 py-2 border  lg:table-cell">
                         {e.type}
                       </td>
-                      <td className="px-4 py-2 border">{e.location || "-"}</td>
+                      <td className="px-4 py-2 border">{e.location || '-'}</td>
                       <td className="px-4 py-2 border  sm:table-cell">
-                        {e.organizerInfo.name || "-"}
+                        {e.organizerInfo.name || '-'}
                       </td>
                       <td className="px-4 py-2 border text-center">
                         {e.attendeesCount || 0}
@@ -220,13 +217,13 @@ export default function EventReportsPage() {
                         {formatDate(e.createdAt)}
                       </td>
                       <td className="px-4 py-2 border  md:table-cell capitalize">
-                        {e.status || "-"}
+                        {e.status || '-'}
                       </td>
                       <td className="px-4 py-2 border  lg:table-cell">
-                        {e.rejectedBy || "-"}
+                        {e.rejectedBy || '-'}
                       </td>
                       <td className="px-4 py-2 border  lg:table-cell">
-                        {e.reason || "-"}
+                        {e.reason || '-'}
                       </td>
                     </tr>
                   ))

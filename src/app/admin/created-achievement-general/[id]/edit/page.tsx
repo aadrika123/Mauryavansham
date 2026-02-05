@@ -1,22 +1,23 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/src/lib/auth";
-import { db } from "@/src/drizzle/db";
-import { achievements } from "@/src/drizzle/schema";
-import { eq } from "drizzle-orm";
-import AdmindashboardLayout from "@/src/components/layout/adminDashboardLayout";
-import CreateAchievementForm from "../../../create-achievement-general/createAchievementForm";
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/src/lib/auth';
+import { db } from '@/src/drizzle/db';
+import { achievements } from '@/src/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import AdmindashboardLayout from '@/src/components/layout/adminDashboardLayout';
+import CreateAchievementForm from '../../../create-achievement-general/createAchievementForm';
 // import CreateAchievementForm from "../../../create-achievement/createAchievementForm";
 
 export default async function EditAchievementPage({
-  params,
+  params
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id: paramId } = await params;
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/sign-in");
+  if (!session?.user?.id) redirect('/sign-in');
 
-  const id = Number(params.id);
+  const id = Number(paramId);
   const existing = await db
     .select()
     .from(achievements)
@@ -25,7 +26,7 @@ export default async function EditAchievementPage({
 
   const achievement = existing[0];
   if (!achievement) {
-    redirect("/admin/created-achievement-general");
+    redirect('/admin/created-achievement-general');
   }
 
   // ✅ Format for editing form
@@ -38,7 +39,7 @@ export default async function EditAchievementPage({
     description: achievement.description,
     images: achievement.images ?? [], // array of up to 3
     category: achievement.category,
-    otherCategory: achievement.otherCategory || "",
+    otherCategory: achievement.otherCategory || '',
     isVerified: achievement.isVerified,
     isFeatured: achievement.isFeatured,
     isHallOfFame: achievement.isHallOfFame,
@@ -46,7 +47,7 @@ export default async function EditAchievementPage({
     location: achievement.location,
     keyAchievement: achievement.keyAchievement,
     impact: achievement.impact,
-    achievements: achievement.achievements ?? [],
+    achievements: achievement.achievements ?? []
   };
 
   return (
